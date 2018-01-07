@@ -20,7 +20,7 @@ Developers will demonstrate a comprehensive knowledge and ability to correctly i
 * [ ] 14. Understand Package Management (B)
 * [ ] 15. Understand how a process works (B)
 
-NOTE: See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
+**NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
 ## RESEARCH SOURCES
 
