@@ -14,7 +14,7 @@ Developers will apply standard ___ techniques to Linux system programming
 **NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
 ## RESEARCH SOURCES
-
+* [PIC in shared libraries](https://eli.thegreenplace.net/2011/11/03/position-independent-code-pic-in-shared-libraries/)
 
 ## TO DO
 
