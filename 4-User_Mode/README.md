@@ -5,7 +5,7 @@ Developers will apply standard ___ techniques to Linux system programming
 
 ## TASK LIST
 * [ ] 1. Demonstrate comprehension of how to perform User Mode Operations (2c)
-* [ ] 2. Develop Position Independent Code (PIC) (3c)
+* [X] 2. Develop Position Independent Code (PIC) (3c)
 * [ ] 3. Inject Position Independent Code (PIC) (3c)
 * [ ] 4. Execute Position Independent Code (PIC) (3c)
 * [ ] 5. Divert Code Execution (3c)
