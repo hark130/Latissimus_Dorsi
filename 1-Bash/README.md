@@ -15,7 +15,7 @@ Developers will gain understanding of the Bash Scripting language, its potential
 * [ ] 9. Utilize Functions (2b)
 * [ ] 10. Advanced Programming (B)
 
-NOTE: See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
+**NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
 ## RESEARCH SOURCES
 
