@@ -32,3 +32,11 @@ In my free time.
 3. Linux Internals
 4. Linux User Mode Development
 5. Linux Kernel Development
+
+# Branching Policies
+* Master - should only contain finalized, verifiable, releasable code
+* Practice - branching location for working on tasks
+* X-Y - Naming convention for branching off of Practice
+  * X should be the top-level task number (currently 1 - 5)
+  * Y should be the task's sub-task number (found in that task's specific README)
+  * Example: Branch "3-21" is for work pertaining to task "3. Linux Internals" and sub-task "21. Use BSD sockets for network communication"
