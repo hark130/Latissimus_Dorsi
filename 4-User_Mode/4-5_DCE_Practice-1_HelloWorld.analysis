@@ -1,0 +1,34 @@
+Commands:
+##### BEFORE #####
+objdump -M intel -d 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.objdump
+readelf -S 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.readelf
+readelf -r 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.relocate
+ldd ./4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.ldd
+##### HIJACK THE LIBRARY #####
+export LD_PRELOAD=$PWD/lib451DCE_evil_puts.so
+##### AFTER #####
+objdump -M intel -d 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.objdump
+readelf -S 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.readelf
+readelf -r 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.relocate
+ldd ./4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.ldd
+##### RESET #####
+export LD_PRELOAD=""
+
+Files:
+	4-5_DCE_Practice-1_HelloWorld-before.objdump
+	4-5_DCE_Practice-1_HelloWorld-before.readelf
+	4-5_DCE_Practice-1_HelloWorld-before.relocate
+	4-5_DCE_Practice-1_HelloWorld-after.objdump
+	4-5_DCE_Practice-1_HelloWorld-after.readelf
+	4-5_DCE_Practice-1_HelloWorld-after.relocate
+	4-5_DCE_Practice-1_HelloWorld-after.ldd
+
+Ref:
+	https://blog.netspi.com/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/
+	https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/
+
+Analysis:
+	- objdump unchanged (binaries don't recompile just because shared libraries change)
+	- readelf unchanged (binaries don't recompile just because shared libraries change)
+	- relocate unchanged (binaries don't recompile just because shared libraries change)
+	- ldd noted the change in shared library reference
