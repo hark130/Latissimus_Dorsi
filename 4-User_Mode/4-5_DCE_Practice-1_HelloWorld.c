@@ -1,12 +1,15 @@
 /*
-	4-5_DCE_Practice 1 attempts to replicate a concept read in "Learning 
-		Linux Binary Analysis" Ch 2. (see: 4 README)
+	4-5_DCE_Practice 1 attempts to replicate a concept read in 
+		"Function Hooking - Part I" (see: 4 README)
 		
-	"Let us pretend we are an attacker and we want to infect a 32-bit program 
-	that calls puts() to print Hello World. Our goal is to hijack puts() so 
-	that it calls evil_puts()""
+	"The LD_PRELOAD environment variable is used to specify a shared 
+	library that is to be loaded first by the loader. Loading our shared 
+	library first enables us to intercept function calls and using the 
+	dynamic loader API we can bind the originally intended function to 
+	a function pointer and pass the original arguments through it, 
+	effectively wrapping the function call."
 
-	This is the source of the binary to hijack.
+	This is the source of the binary to be fooled.
  */
 
 #include <stdio.h>
