@@ -15,6 +15,10 @@ Developers will apply standard ___ techniques to Linux system programming
 
 ## RESEARCH SOURCES
 * [PIC in shared libraries](https://eli.thegreenplace.net/2011/11/03/position-independent-code-pic-in-shared-libraries/)
+* Learning Linux Binary Analysis - 2. The ELF Binary Format - ELF relocations - Relocatable code injection-based binary patching (Author: Ryan O'Neill, Pub. Date: Feb 29, 2016)
+* [Wrap a libc system call](http://samanbarghi.com/blog/2014/09/05/how-to-wrap-a-system-call-libc-function-in-linux/)
+* [Function Hooking - Part I](https://blog.netspi.com/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/) then...
+* [Dynamic Linker Tricks](https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/)
 
 ## TO DO
 
