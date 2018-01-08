@@ -18,6 +18,7 @@ Files:
 	4-5_DCE_Practice-1_HelloWorld-before.objdump
 	4-5_DCE_Practice-1_HelloWorld-before.readelf
 	4-5_DCE_Practice-1_HelloWorld-before.relocate
+	4-5_DCE_Practice-1_HelloWorld-before.ldd
 	4-5_DCE_Practice-1_HelloWorld-after.objdump
 	4-5_DCE_Practice-1_HelloWorld-after.readelf
 	4-5_DCE_Practice-1_HelloWorld-after.relocate
