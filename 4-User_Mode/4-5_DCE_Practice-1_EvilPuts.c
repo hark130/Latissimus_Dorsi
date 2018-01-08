@@ -14,6 +14,7 @@
 
 #include <sys/syscall.h>	// write, SYS_write
 #include <string.h>			// strlen
+#include <unistd.h>			// syscall
 
 // int puts(const char *s);
 int puts(const char *s)
