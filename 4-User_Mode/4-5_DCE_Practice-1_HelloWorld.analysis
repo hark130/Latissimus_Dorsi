@@ -32,3 +32,15 @@ Analysis:
 	- readelf unchanged (binaries don't recompile just because shared libraries change)
 	- relocate unchanged (binaries don't recompile just because shared libraries change)
 	- ldd noted the change in shared library reference
+
+Notes - Possible uses of Function Hooking:
+    - Gain root privileges
+    - Cheat games: Unrandomize
+    - Cheat games: Bullet time
+    - Investigate apps: List accessed files
+    - Investigate apps: Monitor internet access
+    - Investigate apps: Inspect GTK structures
+    - Sandbox unsafe applications
+    - Implement features. zlibc is an actual library which is run this precise way; it uncompresses files on the go as they are accessed, so that any application can work on compressed data without even realizing it.
+    - Fix bugs
+    - Manually access application’s own memory
