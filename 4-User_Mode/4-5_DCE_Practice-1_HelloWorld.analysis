@@ -45,3 +45,4 @@ Notes - Possible uses of Function Hooking:
     - Implement features. zlibc is an actual library which is run this precise way; it uncompresses files on the go as they are accessed, so that any application can work on compressed data without even realizing it.
     - Fix bugs
     - Manually access application’s own memory
+    - Intercept calls to the calls to SSL_write in the OpenSSL library
