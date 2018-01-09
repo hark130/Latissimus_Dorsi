@@ -14,7 +14,7 @@ CC = gcc
 	# $(CC) -o 4-5_DCE_Practice-2_MapMemTest.exe Map_Memory.o 4-5_DCE_Practice-2_MapMemTest.c
 	$(CC) -o 4-5_DCE_Practice-2_ModEntryPoint.exe Elf_Manipulation.o Map_Memory.o 4-5_DCE_Practice-2_ModEntryPoint.c
 
-ALL: 
+all: 
 	421
 	451
 	452
