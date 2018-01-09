@@ -11,6 +11,7 @@
 // MEMORY TYPE MACROS
 #define MM_TYPE_HEAP ((int)1)	// malloc'd or calloc'd memory
 #define MM_TYPE_MMAP ((int)2)	// mmap'd memory
+#define MM_TYPE_CAVE ((int)3)	// code cave... mem not owned by this struct
 
 typedef struct mappedMemory 
 {
