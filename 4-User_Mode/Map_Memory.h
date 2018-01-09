@@ -2,16 +2,21 @@
 #define __MAP_MEMORY__
 
 #include <stdbool.h>		// bool, true, false
-#include <stdlib.h>		// size_t
+#include <stdlib.h>			// size_t
 
 #ifndef NULL
 #define NULL ((void*)0)
 #endif  // NULL
 
+// MEMORY TYPE MACROS
+#define MM_TYPE_HEAP ((int)1)	// malloc'd or calloc'd memory
+#define MM_TYPE_MMAP ((int)2)	// mmap'd memory
+
 typedef struct mappedMemory 
 {
 	char* fileMem_ptr;
 	size_t memSize;
+	int memType;
 } mapMem, *mapMem_ptr;
 
 
