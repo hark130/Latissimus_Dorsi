@@ -9,12 +9,15 @@ CC = gcc
 	$(CC) -fpic -shared -o lib451DCE_evil_puts.so 4-5_DCE_Practice-1_EvilPuts.c
 
 452:
+	$(CC) -c Elf_Manipulation.c
 	$(CC) -c Map_Memory.c
-	$(CC) -o 4-5_DCE_Practice-2_MapMemTest.exe Map_Memory.o 4-5_DCE_Practice-2_MapMemTest.c
+	# $(CC) -o 4-5_DCE_Practice-2_MapMemTest.exe Map_Memory.o 4-5_DCE_Practice-2_MapMemTest.c
+	$(CC) -o 4-5_DCE_Practice-2_ModEntryPoint.exe Elf_Manipulation.o Map_Memory.o 4-5_DCE_Practice-2_ModEntryPoint.c
 
 ALL: 
 	421
 	451
+	452
 
 clean: 
 	rm -f *.o *.exe *.so
