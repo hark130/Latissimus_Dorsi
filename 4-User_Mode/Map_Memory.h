@@ -36,6 +36,14 @@ mapMem_ptr map_file(const char* filename);
 
 
 /*
+	Purpose - Unmap a file's contents from memory
+	Input - mappedMemory pointer
+	Output - None
+ */
+void unmap_file(mapMem_ptr memStruct_ptr);
+
+
+/*
 	Purpose - Free a mappedMemory struct on the heap
 	Input - Pointer to a mappedMemory pointer to free
 	Output - None
