@@ -35,15 +35,16 @@ mapMem_ptr create_mapMem_ptr(void);
  */
 mapMem_ptr map_file(const char* filename);
 
-
 /*
 	Purpose - Unmap a file's contents from memory
 	Input
 		memStruct_ptr - mappedMemory pointer
 		syncMem - if true, msync to file
-	Output - None
+	Output - true on success, otherwise false
+	Notes:
+		Calling function is responsible for free()'ing memStruct_ptr on success
  */
-void unmap_file(mapMem_ptr memStruct_ptr, bool syncMem);
+bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem);
 
 
 /*
