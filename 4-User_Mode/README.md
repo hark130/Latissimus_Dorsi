@@ -19,8 +19,25 @@ Developers will apply standard ___ techniques to Linux system programming
 * [Wrap a libc system call](http://samanbarghi.com/blog/2014/09/05/how-to-wrap-a-system-call-libc-function-in-linux/)
 * [Function Hooking - Part I](https://blog.netspi.com/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/) then...
 * [Dynamic Linker Tricks](https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/)
+* 4.5. - [Code caves](https://en.wikipedia.org/wiki/Code_cave)
 * 4.6. - [Test a binary for PIC](https://unix.stackexchange.com/questions/89211/test-whether-linux-binary-is-compiled-as-position-independent-code)
 * 4.6. - [Mitigate ptrace attacks](https://blog.netspi.com/using-strace-to-monitor-ssh-connections-on-linux/)
 
 ## TO DO
 
+### 4-5-2
+* [ ] Load a file into mapped memory
+* [ ] Determine if that file is an ELF binary
+* [ ] Determine the file's entry point
+* [ ] Change the file's entry point to a function pointer loaded from a shared object
+
+### 4-5-3
+* [ ] Load a file into mapped memory
+* [ ] Determine if that file is an ELF binary
+* [ ] Determine the file's entry point
+* [ ] Determine the file's _____ (virtual address offset?)
+* [ ] Find the largest 'empty' location to inject code
+* [ ] Determine the section that holds that 'empty' location
+* [ ] Make that section executable
+* [ ] Add some Assembly
+* [ ] Execute the new binary
