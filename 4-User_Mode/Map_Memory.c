@@ -34,7 +34,27 @@ mapMem_ptr create_mapMem_ptr(void)
 		mapMem_ptr must be free()'d by the calling function
 		mapMem_ptr->fileMem_ptr must be free()'d by the calling function
  */
-mapMem_ptr map_file(const char* filename);
+mapMem_ptr map_file(const char* filename)
+{
+	// 1. Create mapMem_ptr
+	// 2. Get file descriptor for filename
+	// 3. Map the file descriptor into memory
+	// 4. Close the file descriptor (mapping into memory increments the file's reference count)
+	// 5. Populate mapMem_ptr
+	// 6. Return
+	/*
+		#include <sys/mman.h>
+
+		void * mmap (void *addr,
+					 size_t len,
+					 int prot,
+					 int flags,
+					 int fd,
+					 off_t offset);
+	 */
+	// Protection: PROT_READ | PROT_WRITE | PROT_EXEC
+	// Flags: MAP_SHARED - Writing into the mapping is equivalent to writing to the file
+}
 
 
 void free_struct(mapMem_ptr* oldStruct_ptr)
