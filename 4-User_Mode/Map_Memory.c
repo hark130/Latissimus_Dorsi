@@ -223,6 +223,11 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 
 			switch(tempStruct_ptr->memType)
 			{
+				// Free memory (as appropriate, if appropriate, in appropriate ways)
+				case MM_TYPE_CAVE:
+					// Represents an offset into memory not owned by this struct
+					// Do *NOT* attempt to free this memory
+					break;
 				case MM_TYPE_MMAP:
 					if (!unmap_file(tempStruct_ptr, true))
 					{
@@ -251,7 +256,8 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 			// Clear memSize
 			tempSize = 0;
 			tempStruct_ptr->memSize = 0;
-
+			// Clear memType
+			tempStruct_ptr->memType = 0;
 			
 			// 2. FREE/CLEAR STRUCT
 			// Free the struct pointer
