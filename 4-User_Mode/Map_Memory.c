@@ -119,7 +119,8 @@ mapMem_ptr map_file(const char* filename)
 							}
 							else
 							{
-								fprintf(stdout, "map_file() appears to have succeeded!\n");	
+								fprintf(stdout, "map_file() appears to have succeeded!\n");
+								mamMem_ptr->memType = MM_TYPE_MMAP;
 							}
 						}
 					}
@@ -220,16 +221,30 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 			tempBuff = tempStruct_ptr->fileMem_ptr;
 			tempSize = tempStruct_ptr->memSize;
 
-			// Memset
-			if (tempSize > 0 && NULL != tempBuff)
+			switch(tempStruct_ptr->memType)
 			{
-				memset(tempBuff, 0x0, tempSize);
+				case MM_TYPE_MMAP:
+					if (!unmap_file(tempStruct_ptr, true))
+					{
+						fprintf(stderr, "free_struct() - unmap_file() failed\n");
+					}
+					break;
+				case MM_TYPE_HEAP:
+					// Treat malloc/calloc mem types same as default
+				default:
+					// Memset
+					if (tempSize > 0 && NULL != tempBuff)
+					{
+						memset(tempBuff, 0x0, tempSize);
+					}
+					// Free fileMem_ptr
+					if (NULL != tempBuff)
+					{
+						free(tempBuff);
+					}
+					break;
 			}
-			// Free fileMem_ptr
-			if (NULL != tempBuff)
-			{
-				free(tempBuff);
-			}
+			
 			// Clear the pointer variables
 			tempBuff = NULL;
 			tempStruct_ptr->fileMem_ptr = NULL;
@@ -237,6 +252,7 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 			tempSize = 0;
 			tempStruct_ptr->memSize = 0;
 
+			
 			// 2. FREE/CLEAR STRUCT
 			// Free the struct pointer
 			free((void*)*oldStruct_ptr);
