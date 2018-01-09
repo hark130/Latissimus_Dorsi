@@ -1,9 +1,10 @@
 #include "Map_Memory.h"
+#include <stdbool.h>		// bool, true, false
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/mman.h>	// mmap
-#include <sys/stat.h>	// fstat
+#include <sys/mman.h>		// mmap, msync, munmap
+#include <sys/stat.h>		// fstat
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -116,6 +117,10 @@ mapMem_ptr map_file(const char* filename)
 							{
 								fprintf(stderr, "map_file() - mmap failed to map file descriptor %d into memory\n", fileDesc);
 							}
+							else
+							{
+								fprintf(stdout, "map_file() appears to have succeeded!\n");	
+							}
 						}
 					}
 				}
@@ -149,22 +154,51 @@ mapMem_ptr map_file(const char* filename)
 
 /*
 	Purpose - Unmap a file's contents from memory
-	Input - mappedMemory pointer
-	Output - None
+	Input
+		memStruct_ptr - mappedMemory pointer
+		syncMem - if true, msync to file
+	Output - true on *total* success, otherwise false
+	Notes:
+		Calling function is responsible for free()'ing memStruct_ptr on success
  */
-void unmap_file(mapMem_ptr memStruct_ptr)
+bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 {
-	// 1. Sync memory with the file
-	/*
-		#include <sys/mman.h>
-
-		int msync (void *addr, size_t len, int flags);
-		Flags: MS_INVALIDATE | MS_SYNC
-	 */
+	// LOCAL VARIABLES
+	bool retVal = false;
 	
+	// INPUT VALIDATION
+	if (NULL != memStruct_ptr)
+	{
+		if (NULL != memStruc_ptr->fileMem_ptr && memStruc_ptr->memSize > 0)
+		{
+			// 1. Sync memory with the file IAW syncMem
+			if (true == syncMem)
+			{
+				if (msync(memStruc_ptr->fileMem_ptr, memStruc_ptr->memSize, MS_INVALIDATE | MS_SYNC))
+				{
+					fprintf(stderr, "unmap_file() - unable to msync mem to file\n");
+				}
+				else
+				{
+					fprintf(stdout, "unmap_file() appears to have successfully msync()'d mem to file!\n");	
+				}
+			}
+			
+			// 2. Unmap mem
+			if (munmap(memStruc_ptr->fileMem_ptr, memStruc_ptr->memSize))
+			{
+				fprintf(stderr, "unmap_file() - munmap() failed\n");
+			}
+			else
+			{
+				fprintf(stdout, "unmap_file() appears to have successfully unmapped memory!\n");
+				retVal = true;
+			}
+		}
+	}	
 	
 	// DONE
-	return;
+	return retVal;
 }
 
 
