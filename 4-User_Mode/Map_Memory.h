@@ -27,6 +27,7 @@ typedef struct mappedMemory
 	Output - Pointer to a mappedMemory struct on the heap
 	Notes:
 		mapMem_ptr must be free()'d by the calling function
+		Calling function is responsible for setting the memType member
  */
 mapMem_ptr create_mapMem_ptr(void);
 
