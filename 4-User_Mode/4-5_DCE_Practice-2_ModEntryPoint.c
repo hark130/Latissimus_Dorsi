@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
             // 1.2.2. Verify the struct's memSize is present
             if (0 >= elfBinary->memSize)
             {
-                fprintf(stderr, "main() - map_file() appears to have improperly calculated the size of '%s' as %d!\n", argv[1], elfBinary->memSize);
+                fprintf(stderr, "main() - map_file() appears to have improperly calculated the size of '%s' as %zu!\n", argv[1], elfBinary->memSize);
                 retVal = -2;
             }
             
