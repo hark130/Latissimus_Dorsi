@@ -57,6 +57,27 @@ mapMem_ptr map_file(const char* filename)
 }
 
 
+/*
+	Purpose - Unmap a file's contents from memory
+	Input - mappedMemory pointer
+	Output - None
+ */
+void unmap_file(mapMem_ptr memStruct_ptr)
+{
+	// 1. Sync memory with the file
+	/*
+		#include <sys/mman.h>
+
+		int msync (void *addr, size_t len, int flags);
+		Flags: MS_INVALIDATE | MS_SYNC
+	 */
+	
+	
+	// DONE
+	return;
+}
+
+
 void free_struct(mapMem_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
