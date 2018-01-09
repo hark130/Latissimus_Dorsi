@@ -105,3 +105,7 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 	return;
 }
 
+/*
+	Refs:
+		https://www.safaribooksonline.com/library/view/linux-system-programming/0596009585/ch04s03.html
+ */
