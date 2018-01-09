@@ -5,6 +5,8 @@
 #include <string.h>
 #include <sys/mman.h>		// mmap, msync, munmap
 #include <sys/stat.h>		// fstat
+#include <fcntl.h>			// open
+#include <unistd.h>			// close
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -97,7 +99,7 @@ mapMem_ptr map_file(const char* filename)
 						else
 						{
 							// 3.3. Populate mapMem struct with file size
-							mapMem_ptr->memSize = fileStat.st_size;
+							retVal->memSize = fileStat.st_size;
 							// 4. Map the file descriptor into memory
 							/*
 								void * mmap (void *addr,
@@ -107,20 +109,20 @@ mapMem_ptr map_file(const char* filename)
 											 int fd,
 											 off_t offset);
 							 */
-							mapMem_ptr->fileMem_ptr = mmap(NULL, \
-														   mapMem_ptr->memSize, \
+							retVal->fileMem_ptr = mmap(NULL, \
+														   retVal->memSize, \
 														   PROT_READ | PROT_WRITE | PROT_EXEC, \
 														   MAP_SHARED, \
 														   fileDesc, \
 														   0);
-							if (NULL == mapMem_ptr->fileMem_ptr)
+							if (NULL == retVal->fileMem_ptr)
 							{
 								fprintf(stderr, "map_file() - mmap failed to map file descriptor %d into memory\n", fileDesc);
 							}
 							else
 							{
 								fprintf(stdout, "map_file() appears to have succeeded!\n");
-								mamMem_ptr->memType = MM_TYPE_MMAP;
+								retVal->memType = MM_TYPE_MMAP;
 							}
 						}
 					}
@@ -170,12 +172,12 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 	// INPUT VALIDATION
 	if (NULL != memStruct_ptr)
 	{
-		if (NULL != memStruc_ptr->fileMem_ptr && memStruc_ptr->memSize > 0)
+		if (NULL != memStruct_ptr->fileMem_ptr && memStruct_ptr->memSize > 0)
 		{
 			// 1. Sync memory with the file IAW syncMem
 			if (true == syncMem)
 			{
-				if (msync(memStruc_ptr->fileMem_ptr, memStruc_ptr->memSize, MS_INVALIDATE | MS_SYNC))
+				if (msync(memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize, MS_INVALIDATE | MS_SYNC))
 				{
 					fprintf(stderr, "unmap_file() - unable to msync mem to file\n");
 				}
@@ -186,7 +188,7 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 			}
 			
 			// 2. Unmap mem
-			if (munmap(memStruc_ptr->fileMem_ptr, memStruc_ptr->memSize))
+			if (munmap(memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize))
 			{
 				fprintf(stderr, "unmap_file() - munmap() failed\n");
 			}
