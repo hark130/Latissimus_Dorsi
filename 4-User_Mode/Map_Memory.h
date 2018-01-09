@@ -1,6 +1,7 @@
 #ifndef __MAP_MEMORY__
 #define __MAP_MEMORY__
 
+#include <stdbool.h>		// bool, true, false
 #include <stdlib.h>		// size_t
 
 #ifndef NULL
