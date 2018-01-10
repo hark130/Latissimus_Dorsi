@@ -39,6 +39,8 @@ bool is_elf(mapMem_ptr file);
 		ELFCLASSNONE if mappedMemory is not an ELF file
 		ELFCLASS32 if mappedMemory is a 32-bit ELF file
 		ELFCLASS64 if mappedMemory is a 64-bit ELF file
+        -1 on error
+        -999 on 'horrible' error
  */
 int determine_elf_class(mapMem_ptr elfFile);
 
