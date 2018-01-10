@@ -13,6 +13,7 @@ CC = gcc
 	$(CC) -c Map_Memory.c
 	# $(CC) -o 4-5_DCE_Practice-2_MapMemTest.exe Map_Memory.o 4-5_DCE_Practice-2_MapMemTest.c
 	$(CC) -o 4-5_DCE_Practice-2_ModEntryPoint.exe Elf_Manipulation.o Map_Memory.o 4-5_DCE_Practice-2_ModEntryPoint.c
+	# $(CC) -o 4-5_DCE_Practice-2_FindCaveTest.exe Elf_Manipulation.o Map_Memory.o 4-5_DCE_Practice-2_FindCaveTest.c
 
 all: 
 	421
