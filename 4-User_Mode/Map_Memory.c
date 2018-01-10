@@ -300,7 +300,7 @@ bool validate_struct(mapMem_ptr checkThis_ptr)
 			fprintf(stderr, "This mappedMemory struct contains an invalid memory size!");	
 		}
 		else if (MM_TYPE_CAVE != checkThis_ptr->memType && \
-			     MM_TYPE_HEAP != checkThis_ptr->memType && \ 
+			     MM_TYPE_HEAP != checkThis_ptr->memType && \
 			     MM_TYPE_MMAP != checkThis_ptr->memType)
 		{
 			retVal = false;
@@ -309,6 +309,7 @@ bool validate_struct(mapMem_ptr checkThis_ptr)
 	}
 
 	// DONE
+	// puts("Finished validate_struct()");  // DEBUGGING
 	return retVal;
 }
 
