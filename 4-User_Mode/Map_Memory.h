@@ -19,6 +19,12 @@ typedef struct mappedMemory
 	size_t memSize;
 	int memType;
 } mapMem, *mapMem_ptr;
+/*
+	NOTE: Updates to the mappedMemory struct and/or memory type macros
+		constitutes a change to the following functions:
+	- free_struct()
+	- validate_struct()
+ */
 
 
 /*
@@ -42,6 +48,7 @@ mapMem_ptr create_mapMem_ptr(void);
  */
 mapMem_ptr map_file(const char* filename);
 
+
 /*
 	Purpose - Unmap a file's contents from memory
 	Input
@@ -64,6 +71,17 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem);
 		Will memset(0x0), free, and NULL oldStruct_ptr
  */
 void free_struct(mapMem_ptr* oldStruct_ptr);
+
+
+/*
+	Purpose - Validate the contents of a mappedMemory struct pointer
+	Input - Pointer to a mappedMemory struct
+	Output - true if valid, otherwise false
+	Notes:
+		Can not validate memType against the type of memory allocated
+		Merely checks that memType is valid
+ */
+bool validate_struct(mapMem_ptr checkThis_ptr);
 
 
 #endif  // __MAP_MEMORY__

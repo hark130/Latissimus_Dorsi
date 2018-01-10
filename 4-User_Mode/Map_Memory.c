@@ -274,7 +274,48 @@ void free_struct(mapMem_ptr* oldStruct_ptr)
 	return;
 }
 
+
+bool validate_struct(mapMem_ptr checkThis_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+
+	// INPUT VALIDATION
+	if (NULL == checkThis_ptr)
+	{
+		retVal = false;
+	}
+	else
+	{
+		// CHECK THE STRUCT
+		// 1. fileMem_ptr
+		if (NULL == checkThis_ptr->fileMem_ptr)
+		{
+			retVal = false;
+			fprintf(stderr, "This mappedMemory struct contains a NULL pointer!");
+		}
+		else if (0 >= checkThis_ptr->memSize)
+		{
+			retVal = false;
+			fprintf(stderr, "This mappedMemory struct contains an invalid memory size!");	
+		}
+		else if (MM_TYPE_CAVE != checkThis_ptr->memType && \
+			     MM_TYPE_HEAP != checkThis_ptr->memType && \ 
+			     MM_TYPE_MMAP != checkThis_ptr->memType)
+		{
+			retVal = false;
+			fprintf(stderr, "This mappedMemory struct contains an invalid memory type!");			
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
 /*
 	Refs:
 		https://www.safaribooksonline.com/library/view/linux-system-programming/0596009585/ch04s03.html
  */
+
+
+
