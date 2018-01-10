@@ -46,6 +46,18 @@ int determine_elf_class(mapMem_ptr elfFile);
 
 
 /*
+	Purpose - Allocate and populate a Mapped_Memory_Elf64 struct with ELF details
+	Input - mappedMemory struct pointer to an ELF file
+	Output - Dynamically allocated Mapped_Memory_Elf64 pointer
+	Notes
+		Calls validate_struct() to validate elfFile
+		Calls is_elf() to verify format
+		Calls determine_elf_class() to verify this is the right function
+ */
+mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile);
+
+
+/*
 	Purpose - Search an ELF binary for the largest section of 'nothing'
 	Input - elfBinary - struct* mappedMemory
 	Output - struct* mappedMemory which holds the address and size of the 
