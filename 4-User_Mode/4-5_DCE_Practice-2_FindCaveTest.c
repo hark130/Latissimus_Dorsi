@@ -3,7 +3,7 @@
 #include <stdbool.h>	        // bool, true, false
 #include <stdio.h>              // fprintf
 
-typdef struct testFindCaveStruct
+typedef struct testFindCaveStruct
 {
     char* inputMem;
     size_t inputSize;
@@ -24,7 +24,7 @@ int main(void)
     mapMem_ptr testOutput = NULL;
     int i = 0;
 
-    // Test input
+    // Normal Test input
     // 1. Nothing, expect NULL
     char array1[] = { 'a', 'b', 'c', 'd', 'e' };
     size_t array1size = sizeof(array1) / sizeof(char);
@@ -54,61 +54,65 @@ int main(void)
     size_t array9size = sizeof(array9) / sizeof(char);
 
     // Array of test input
-    testStruct normalTests[] = { \
-        { array1, array1size, MM_TYPE_HEAP, NULL, 0, NULL, DEFAULT_SIZE }, \
-        { array2, array2size, MM_TYPE_HEAP, array2 + 3, 0, NULL, DEFAULT_SIZE }, \
-        { array3, array3size, MM_TYPE_HEAP, array3, 0, NULL, DEFAULT_SIZE }, \
-        { array4, array4size, MM_TYPE_HEAP, array4 + 5, 0, NULL, DEFAULT_SIZE }, \
-        { array5, array5size, MM_TYPE_HEAP, array5 + 11, 0, NULL, DEFAULT_SIZE }, \
-        { array6, array6size, MM_TYPE_HEAP, array6 + 5, 0, NULL, DEFAULT_SIZE }, \
-        { array7, array7size, MM_TYPE_HEAP, array7, 0, NULL, DEFAULT_SIZE }, \
-        { array8, array8size, MM_TYPE_HEAP, array8 + 11, 0, NULL, DEFAULT_SIZE }, \
-        { array9, array9size, MM_TYPE_HEAP, array9 + 5, 0, NULL, DEFAULT_SIZE }, \
+    testStruct unitTests[] = { \
+        // Normal Tests
+        { array1, array1size, MM_TYPE_HEAP, NULL,        0, NULL, DEFAULT_SIZE }, \
+        { array2, array2size, MM_TYPE_HEAP, array2 + 3,  2, NULL, DEFAULT_SIZE }, \
+        { array3, array3size, MM_TYPE_HEAP, array3,      4, NULL, DEFAULT_SIZE }, \
+        { array4, array4size, MM_TYPE_HEAP, array4 + 5,  4, NULL, DEFAULT_SIZE }, \
+        { array5, array5size, MM_TYPE_HEAP, array5 + 11, 8, NULL, DEFAULT_SIZE }, \
+        { array6, array6size, MM_TYPE_HEAP, array6 + 5,  8, NULL, DEFAULT_SIZE }, \
+        { array7, array7size, MM_TYPE_HEAP, array7,      5, NULL, DEFAULT_SIZE }, \
+        { array8, array8size, MM_TYPE_HEAP, array8 + 11, 5, NULL, DEFAULT_SIZE }, \
+        { array9, array9size, MM_TYPE_HEAP, array9 + 5,  4, NULL, DEFAULT_SIZE }, \
     };
 
     // RUN THE TESTS
-    for (i = 0; i < sizeof(normalTests) / sizeof(testStruct); i++)
+    for (i = 0; i < sizeof(unitTests) / sizeof(testStruct); i++)
     {
         // Output
         fprintf(stdout, "TEST #%d:\n", i + 1);
 
         // Setup input
-        testInput.fileMem_ptr = (*(normalTests + i)).inputMem;
-        testInput.memSize = (*(normalTests + i)).inputSize;
-        testInput.memType = (*(normalTests + i)).inputMemType;
+        testInput.fileMem_ptr = (*(unitTests + i)).inputMem;
+        testInput.memSize = (*(unitTests + i)).inputSize;
+        testInput.memType = (*(unitTests + i)).inputMemType;
 
         // Function call
+        // puts("Pre-function call");  // DEBUGGING
         testOutput = find_code_cave(&testInput);
+        // puts("Post-function call");  // DEBUGGING
 
         // Save return
         if (NULL != testOutput)
         {
-            (*(normalTests + i)).actual_ptr = testOutput->fileMem_ptr;
-            (*(normalTests + i)).actualSize = testOutput->memSize;
+            (*(unitTests + i)).actual_ptr = testOutput->fileMem_ptr;
+            (*(unitTests + i)).actualSize = testOutput->memSize;
         }
 
         // Validate return values
         fprintf(stdout, "\tPointer:\t");
-        if ((*(normalTests + i)).expected_ptr == (*(normalTests + i)).actual_ptr)
+        if ((*(unitTests + i)).expected_ptr == (*(unitTests + i)).actual_ptr)
         {
             fprintf(stdout, "Pass\n");
         }
         else
         {
-            fprintf(stdout, "FAIL... expected 0x%p, received 0x%p\n", (*(normalTests + i)).expected_ptr, (*(normalTests + i)).actual_ptr);
+            fprintf(stdout, "FAIL... with array %p, expected %p, received %p\n", (*(unitTests + i)).inputMem, (*(unitTests + i)).expected_ptr, (*(unitTests + i)).actual_ptr);
         }
         fprintf(stdout, "\tSize:\t\t");
-        if ((*(normalTests + i)).expectedSize == (*(normalTests + i)).actualSize)
+        if ((*(unitTests + i)).expectedSize == (*(unitTests + i)).actualSize)
         {
             fprintf(stdout, "Pass\n");
         }
         else
         {
-            fprintf(stdout, "FAIL... expected %d, received %d\n", (*(normalTests + i)).expectedSize, (*(normalTests + i)).actualSize);
+            fprintf(stdout, "FAIL... expected %zu, received %zu\n", (*(unitTests + i)).expectedSize, (*(unitTests + i)).actualSize);
         }
 
         // Free the return value
         free_struct(&testOutput);
+        // fprintf(stdout, "i == %d < %zu\n", i, sizeof(unitTests) / sizeof(unitTests));
     }
 
 
