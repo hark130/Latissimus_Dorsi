@@ -6,8 +6,9 @@
 int main(int argc, char *argv[])
 {
     // LOCAL VARIABLES
-    int retVal = 0;
+    int retVal = -999;  // Change to 0 if map_file() succeeds and go from there
     mapMem_ptr elfBinary = NULL;
+    mapMem_ptr codeCave = NULL;
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -31,7 +32,9 @@ int main(int argc, char *argv[])
             retVal = -1;
         }
         else
-        {            
+        {
+            retVal = 0;  // Going good so far
+
             // 1.2.2. Verify the struct's memSize is present
             if (0 >= elfBinary->memSize)
             {
@@ -67,10 +70,24 @@ int main(int argc, char *argv[])
     if (0 == retVal)
     {
         // 2. OPERATE ON ELF BINARY
+        codeCave = find_code_cave(elfBinary);
+        if (false == validate_struct(codeCave))
+        {
+            fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
+            retVal = -6;
+        }
+        else
+        {
+            fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
+            fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
+        }
     }
     
     // X. CLEAN UP
-    free_struct(&elfBinary);
+    if (NULL != elfBinary)
+    {
+        free_struct(&elfBinary);
+    }
 
     // DONE
     return retVal;
