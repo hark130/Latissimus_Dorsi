@@ -5,6 +5,11 @@
 #include <stdio.h>          // fprintf
 #include <string.h>         // strstr
 
+#ifndef MAX_TRIES
+// MACRO to limit repeated allocation attempts
+#define MAX_TRIES 3
+#endif // MAX_TRIES
+
 bool is_elf(mapMem_ptr file)
 {
     // LOCAL VARIABLES
@@ -94,6 +99,69 @@ int determine_elf_class(mapMem_ptr elfFile)
         }
     }
     
+    // DONE
+    return retVal;
+}
+
+
+/*
+	Purpose - Allocate and populate a Mapped_Memory_Elf64 struct with ELF details
+	Input - mappedMemory struct pointer to an ELF file
+	Output - Dynamically allocated Mapped_Memory_Elf64 pointer
+	Notes
+		Calls validate_struct() to validate elfFile
+		Calls is_elf() to verify format
+		Calls determine_elf_class() to verify this is the right function
+ */
+mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile)
+{
+    // LOCAL VARIABLES
+    mapElf64_ptr retVal = NULL;
+	int numTries = 0;
+    
+	// INPUT VALIDATION
+	// 1. Validate mappedMemory struct pointer
+	if (false == validate_struct(elfFile))
+	{
+		fprintf(stderr, "populate_mapElf64_struct() - elfFile is an invalid mappedMemory struct pointer!\n");	
+	}
+	// 2. Verify elfFile is actually an ELF file
+	else if (false == is_elf(elfFile))
+	{
+		fprintf(stderr, "populate_mapElf64_struct() - elfFile is, in fact, NOT and ELF file!\n");
+	}
+	// 3. Verify this ELF file is, in fact, 64-bit ELF
+	else if (ELFCLASS64 != determine_elf_class(elfFile))
+	{
+		fprintf(stderr, "populate_mapElf64_struct() - elfFile is not a 64-bit ELF file!\n");
+	}
+	else
+	{	
+		// ALLOCATE A STRUCT
+		while (NULL == retVal && numTries < MAX_TRIES)
+		{
+			retVal = (mapElf64_ptr)calloc(1, sizeof(mapElf64));
+			numTries++;
+		}
+		
+		if (NULL == retVal)
+		{
+			fprintf(stderr, "populate_mapElf64_struct() - allocation of Mapped_Memory_Elf64 struct has failed %d times!\n", numTries);
+		}
+		else
+		{
+			// MAP ELF FILE HEADERS
+			// 1. mappedMemory struct pointer
+			retVal->binary_ptr = elfFile;
+			// 2. ELF Header pointer
+			retVal->binaryEhdr_ptr = retVal->binary_ptr->fileMem_ptr;
+			// 3. Program Header pointer
+			retVal->binaryPhdr_ptr = retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_phoff;
+			// 4. Section Header pointer
+			retVal->binaryShdr_ptr = retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_shoff;
+		}		
+	}
+	
     // DONE
     return retVal;
 }
