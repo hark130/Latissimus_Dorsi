@@ -183,7 +183,7 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 				}
 				else
 				{
-					fprintf(stdout, "unmap_file() appears to have successfully msync()'d mem to file!\n");	
+					// fprintf(stdout, "unmap_file() appears to have successfully msync()'d mem to file!\n");
 				}
 			}
 			
@@ -194,7 +194,7 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 			}
 			else
 			{
-				fprintf(stdout, "unmap_file() appears to have successfully unmapped memory!\n");
+				// fprintf(stdout, "unmap_file() appears to have successfully unmapped memory!\n");
 				retVal = true;
 			}
 		}
