@@ -1,3 +1,5 @@
+#include <elf.h>
+#include "Elf_Manipulation.h"
 #include "Map_Memory.h"
 #include <stdbool.h>		// bool, true, false
 #include <stdio.h>          // fprintf
@@ -28,6 +30,67 @@ bool is_elf(mapMem_ptr file)
                 retVal = true;
                 fprintf(stdout, "Found the ELF magic number at 0x%p but the mapped file begins at 0x%p", return_ptr, file->fileMem_ptr);  // DEBUGGING
             }
+        }
+    }
+    
+    // DONE
+    return retVal;
+}
+
+
+/*
+	Purpose - Determine if a mappedMemory file is 32-bit ELF or 64-bit ELF
+	Input - mappedMemory struct pointer
+	Output
+		ELFCLASSNONE if mappedMemory is not an ELF file
+		ELFCLASS32 if mappedMemory is a 32-bit ELF file
+		ELFCLASS64 if mappedMemory is a 64-bit ELF file
+        -1 on error
+        -999 on 'horrible' error
+ */
+int determine_elf_class(mapMem_ptr elfFile)
+{
+    // LOCAL VARIABLES
+    int retVal = -999;
+    char* magicNum = NULL;
+    
+    // INPUT VALIDATION
+    // 0. Is the mapMem_ptr an actual pointer?
+    if (NULL == elfFile)
+    {
+        retVal = -1;
+    }    
+    // 1. Is elfFile a valid mappedMemory struct
+    else if (false == validate_struct(elfFile))
+    {
+        retVal = -1;
+    }
+    // 2. Is elfFile actually an ELF file
+    else if (false == is_elf(elfFile))
+    {
+        retVal = ELFCLASSNONE;
+    }    
+    // 3. Is elfFile 32-bit or 64-bit?
+    else
+    {
+        magicNum = elfFile->fileMem_ptr;
+        
+        if (NULL != magicNum)
+        {
+            // "The fifth byte identifies the architecture for this binary"
+            retVal = (int)(*(magicNum + 4));
+            // Validate what we found
+            if (retVal != ELFCLASSNONE && \
+                retVal != ELFCLASS32 && \
+                retVal != ELFCLASS64)
+            {
+                fprintf(stderr, "determine_elf_class() - found an unsupported EI_CLASS value of %d!\n", retVal);
+                retVal = -999;    
+            }
+        }
+        else
+        {
+            retVal = -1;    
         }
     }
     
