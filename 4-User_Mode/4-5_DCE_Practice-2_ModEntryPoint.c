@@ -2,6 +2,8 @@
 #include "Map_Memory.h"
 #include <stdbool.h>	        // bool, true, false
 #include <stdio.h>              // fprintf
+#include <dlfcn.h>
+
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +12,7 @@ int main(int argc, char *argv[])
     mapMem_ptr elfBinary = NULL;
     mapMem_ptr codeCave = NULL;
     mapElf64_ptr elfStruct_ptr = NULL;
+    void(*func_ptr)(void) = NULL;
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -97,24 +100,33 @@ int main(int argc, char *argv[])
                 (void*) elfStruct_ptr->binaryEhdr_ptr, \
                 (void*) elfStruct_ptr->binaryPhdr_ptr, \
                 (void*) elfStruct_ptr->binaryShdr_ptr);  // DEBUGGING
-        fprintf(stdout, "Entry Point Offset:\t%p\n", (void*) elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
-        fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*) (elfStruct_ptr->binaryEhdr_ptr + \
-                elfStruct_ptr->binaryEhdr_ptr->e_entry));  // DEBUGGING
+        if (elfStruct_ptr->binaryEhdr_ptr->e_entry)
+        {
+            fprintf(stdout, "Entry Point Offset:\t%p\n", (void*) elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
+            fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*) (elfStruct_ptr->binaryEhdr_ptr + \
+                    elfStruct_ptr->binaryEhdr_ptr->e_entry));  // DEBUGGING
+        }
+        else
+        {
+            fprintf(stdout, "No Entry Point\n");
+        }
     }
 
-    // 2.3. Find a Code Cave
-    codeCave = find_code_cave(elfBinary);
-    if (false == validate_struct(codeCave))
+    // 2.4. Find a Code Cave
+    if (0 == retVal)
     {
-        fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
-        retVal = -7;
+        codeCave = find_code_cave(elfBinary);
+        if (false == validate_struct(codeCave))
+        {
+            fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
+            retVal = -7;
+        }
+        else
+        {
+            fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
+            fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
+        }
     }
-    else
-    {
-        fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
-        fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
-    }
-
     
     // X. CLEAN UP
     if (NULL != elfBinary)
