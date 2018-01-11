@@ -116,15 +116,22 @@ int main(int argc, char *argv[])
     // 2.3. Determine base virtual address
     if (0 == retVal)
     {
-        baseVirtAddr = get_elf64_base_address(elfStruct_ptr);
-        if (0 == baseVirtAddr)
+        if (0 < elfStruct_ptr->binaryEhdr_ptr->e_phnum)
         {
-            fprintf(stderr, "main() - get_elf64_base_address() returned NULL!\n");
-            retVal = -7;
+            baseVirtAddr = get_elf64_base_address(elfStruct_ptr);
+            if (0 == baseVirtAddr)
+            {
+                fprintf(stderr, "main() - get_elf64_base_address() returned NULL!\n");
+                retVal = -7;
+            }
+            else
+            {
+                fprintf(stdout, "Base virtual address:\t%p\n", (void*) baseVirtAddr);
+            }
         }
         else
         {
-            fprintf(stdout, "Base virtual address:\t%p\n", (void*) baseVirtAddr);
+            fprintf(stdout, "No Program Headers\n");
         }
     }
 
@@ -139,7 +146,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
+            fprintf(stdout, "\nFound a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
             fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
         }
     }
