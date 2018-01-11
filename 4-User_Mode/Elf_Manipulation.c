@@ -180,7 +180,7 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
     // LOCAL VARIABLES
     Elf64_Addr retVal = 0;  // Value of the ELF's base virtual address
     Elf64_Phdr* currPrgmHdr_ptr = NULL;  // Program Header pointer
-    Elf64_Half pHdrsize = 0;  // Size of each Program Header
+    // Elf64_Half pHdrsize = 0;  // Size of each Program Header
     Elf64_Half currHdrNum = 0;  // Tracks the current header number
     Elf64_Half numPrgmHdrs = 0;  // Number of Program Headers
 
@@ -193,7 +193,7 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
     {
         // GET PROGRAM HEADER DETAILS
         // Program Header size
-        pHdrsize = elf64File->binaryEhdr_ptr->e_phentsize;
+        // pHdrsize = elf64File->binaryEhdr_ptr->e_phentsize;
         // Number of Program Headers
         numPrgmHdrs = elf64File->binaryEhdr_ptr->e_phnum;
         // First Program Header
