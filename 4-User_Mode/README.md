@@ -29,14 +29,8 @@ Developers will apply standard ___ techniques to Linux system programming
 * [X] Load a file into mapped memory
 * [X] Determine if that file is an ELF binary
 * [X] Determine the file's entry point
-* [ ] Change the file's entry point to a function pointer loaded from a shared object
-
-### 4-5-3
-* [ ] Load a file into mapped memory
-* [ ] Determine if that file is an ELF binary
-* [ ] Determine the file's entry point
 * [ ] Determine the file's _____ (virtual address offset?)
-* [ ] Find the largest 'empty' location to inject code
+* [X] Find the largest 'empty' location to inject code
 * [ ] Determine the section that holds that 'empty' location
 * [ ] Make that section executable
 * [ ] Add some Assembly
