@@ -1,9 +1,11 @@
 #include <elf.h>
 #include "Elf_Manipulation.h"
+#include <inttypes.h>       // uint format specifiers
 #include "Map_Memory.h"
 #include <stdbool.h>		// bool, true, false
 #include <stdio.h>          // fprintf
 #include <string.h>         // strstr
+
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -109,11 +111,11 @@ int determine_elf_class(mapMem_ptr elfFile)
 	Input - mappedMemory struct pointer to an ELF file
 	Output - Dynamically allocated Mapped_Memory_Elf64 pointer
 	Notes
-		Calls validate_struct() to validate elfFile
+		Calls validate_struct() to validate elf64File
 		Calls is_elf() to verify format
 		Calls determine_elf_class() to verify this is the right function
  */
-mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile)
+mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elf64File)
 {
     // LOCAL VARIABLES
     mapElf64_ptr retVal = NULL;
@@ -121,19 +123,19 @@ mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile)
     
 	// INPUT VALIDATION
 	// 1. Validate mappedMemory struct pointer
-	if (false == validate_struct(elfFile))
+	if (false == validate_struct(elf64File))
 	{
-		fprintf(stderr, "populate_mapElf64_struct() - elfFile is an invalid mappedMemory struct pointer!\n");	
+		fprintf(stderr, "populate_mapElf64_struct() - elf64File is an invalid mappedMemory struct pointer!\n");	
 	}
-	// 2. Verify elfFile is actually an ELF file
-	else if (false == is_elf(elfFile))
+	// 2. Verify elf64File is actually an ELF file
+	else if (false == is_elf(elf64File))
 	{
-		fprintf(stderr, "populate_mapElf64_struct() - elfFile is, in fact, NOT and ELF file!\n");
+		fprintf(stderr, "populate_mapElf64_struct() - elf64File is, in fact, NOT and ELF file!\n");
 	}
 	// 3. Verify this ELF file is, in fact, 64-bit ELF
-	else if (ELFCLASS64 != determine_elf_class(elfFile))
+	else if (ELFCLASS64 != determine_elf_class(elf64File))
 	{
-		fprintf(stderr, "populate_mapElf64_struct() - elfFile is not a 64-bit ELF file!\n");
+		fprintf(stderr, "populate_mapElf64_struct() - elf64File is not a 64-bit ELF file!\n");
 	}
 	else
 	{	
@@ -152,16 +154,69 @@ mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile)
 		{
 			// MAP ELF FILE HEADERS
 			// 1. mappedMemory struct pointer
-			retVal->binary_ptr = elfFile;
+			retVal->binary_ptr = elf64File;
 			// 2. ELF Header pointer
-			retVal->binaryEhdr_ptr = retVal->binary_ptr->fileMem_ptr;
+			retVal->binaryEhdr_ptr = (Elf64_Ehdr*) retVal->binary_ptr->fileMem_ptr;
 			// 3. Program Header pointer
-			retVal->binaryPhdr_ptr = retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_phoff;
+			retVal->binaryPhdr_ptr = (Elf64_Phdr*) (retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_phoff);
 			// 4. Section Header pointer
-			retVal->binaryShdr_ptr = retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_shoff;
+			retVal->binaryShdr_ptr = (Elf64_Shdr*) (retVal->binary_ptr->fileMem_ptr + retVal->binaryEhdr_ptr->e_shoff);
 		}		
 	}
 	
+    // DONE
+    return retVal;
+}
+
+
+/*
+    Purpose - Determine the ELF file's base virtual address from the first
+        LOAD program header
+    Input - Mapped_Memory_Elf64 struct pointer to an ELF file's details
+    Output - Value of the base virtual address for elf64File
+ */
+Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
+{
+    // LOCAL VARIABLES
+    Elf64_Addr retVal = 0;  // Value of the ELF's base virtual address
+    Elf64_Phdr* currPrgmHdr_ptr = NULL;  // Program Header pointer
+    Elf64_Half pHdrsize = 0;  // Size of each Program Header
+    Elf64_Half currHdrNum = 0;  // Tracks the current header number
+    Elf64_Half numPrgmHdrs = 0;  // Number of Program Headers
+
+    // INPUT VALIDATION
+    if (NULL == elf64File)
+    {
+        fprintf(stderr, "get_elf64_base_address() - elf64File is NULL\n");
+    }
+    else
+    {
+        // GET PROGRAM HEADER DETAILS
+        // Program Header size
+        pHdrsize = elf64File->binaryEhdr_ptr->e_phentsize;
+        // Number of Program Headers
+        numPrgmHdrs = elf64File->binaryEhdr_ptr->e_phnum;
+        // First Program Header
+        currPrgmHdr_ptr = elf64File->binaryPhdr_ptr;
+
+        // PARSE PROGRAM HEADERS
+        for (currHdrNum = 1; currHdrNum <= numPrgmHdrs; currHdrNum++)
+        {
+            // fprintf(stdout, "Checking Program Header #%d\t", currHdrNum);  // DEBUGGING
+            if (PT_LOAD == currPrgmHdr_ptr->p_type)
+            {
+                // fprintf(stdout, "PT_LOAD found!\n");  // DEBUGGING
+                retVal = currPrgmHdr_ptr->p_vaddr;
+                break;
+            }
+            else
+            {
+                // fprintf(stdout, "currPrgmHdr_ptr->p_type == %"PRIu32"\n", currPrgmHdr_ptr->p_type);  // DEBUGGING
+                currPrgmHdr_ptr++;
+            }
+        }
+    }
+
     // DONE
     return retVal;
 }

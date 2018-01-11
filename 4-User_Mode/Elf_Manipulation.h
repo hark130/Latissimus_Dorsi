@@ -50,11 +50,20 @@ int determine_elf_class(mapMem_ptr elfFile);
 	Input - mappedMemory struct pointer to an ELF file
 	Output - Dynamically allocated Mapped_Memory_Elf64 pointer
 	Notes
-		Calls validate_struct() to validate elfFile
+		Calls validate_struct() to validate elf64File
 		Calls is_elf() to verify format
 		Calls determine_elf_class() to verify this is the right function
  */
-mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elfFile);
+mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elf64File);
+
+
+/*
+	Purpose - Determine the ELF file's base virtual address from the first
+		LOAD program header
+	Input - Mapped_Memory_Elf64 struct pointer to an ELF file's details
+	Output - Value of the base virtual address for elf64File
+ */
+Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File);
 
 
 /*
