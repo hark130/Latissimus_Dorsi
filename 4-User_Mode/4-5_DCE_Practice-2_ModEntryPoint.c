@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     mapMem_ptr codeCave = NULL;
     mapElf64_ptr elfStruct_ptr = NULL;
     void(*func_ptr)(void) = NULL;
+    Elf64_Addr baseVirtAddr = 0;  // Holds the value of the base virtual address
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -112,6 +113,21 @@ int main(int argc, char *argv[])
         }
     }
 
+    // 2.3. Determine base virtual address
+    if (0 == retVal)
+    {
+        baseVirtAddr = get_elf64_base_address(elfStruct_ptr);
+        if (0 == baseVirtAddr)
+        {
+            fprintf(stderr, "main() - get_elf64_base_address() returned NULL!\n");
+            retVal = -7;
+        }
+        else
+        {
+            fprintf(stdout, "Base virtual address:\t%p\n", (void*) baseVirtAddr);
+        }
+    }
+
     // 2.4. Find a Code Cave
     if (0 == retVal)
     {
@@ -119,7 +135,7 @@ int main(int argc, char *argv[])
         if (false == validate_struct(codeCave))
         {
             fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
-            retVal = -7;
+            retVal = -8;
         }
         else
         {
