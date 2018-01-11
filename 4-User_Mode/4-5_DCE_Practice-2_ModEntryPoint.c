@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     int retVal = -999;  // Change to 0 if map_file() succeeds and go from there
     mapMem_ptr elfBinary = NULL;
     mapMem_ptr codeCave = NULL;
+    mapElf64_ptr elfStruct_ptr = NULL;
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -67,38 +68,63 @@ int main(int argc, char *argv[])
         }        
     }
     
+
+    // 2. OPERATE ON ELF BINARY
+    // 2.1. Map elfBinary to Mapped_Memory_Elf64 struct pointer
     if (0 == retVal)
     {
-        // 2. OPERATE ON ELF BINARY
-        // 2.1. Map elfBinary to Mapped_Memory_Elf64 struct pointer
         if (ELFCLASS64 != determine_elf_class(elfBinary))
         {
             fprintf(stdout, "This ELF binary class is not supported.\n");
         }
         else
         {
-            populate_mapElf64_struct(elfBinary);
-
-
-            // 2.2. Find a Code Cave
-            codeCave = find_code_cave(elfBinary);
-            if (false == validate_struct(codeCave))
+            elfStruct_ptr = populate_mapElf64_struct(elfBinary);
+            if (NULL == elfStruct_ptr)
             {
-                fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
+                fprintf(stdout, "main() - populate_mapElf64_struct() has returned NULL!\n");
                 retVal = -6;
-            }
-            else
-            {
-                fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
-                fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
             }
         }
     }
+
+    // 2.2. Determine entry point
+    if (0 == retVal)
+    {
+        // DEBUGGING
+        // Verify address
+        fprintf(stdout, "ELF Header:\t\t%p\nProgram Header:\t\t%p\nSection Header:\t\t%p\n", \
+                (void*) elfStruct_ptr->binaryEhdr_ptr, \
+                (void*) elfStruct_ptr->binaryPhdr_ptr, \
+                (void*) elfStruct_ptr->binaryShdr_ptr);  // DEBUGGING
+        fprintf(stdout, "Entry Point Offset:\t%p\n", (void*) elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
+        fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*) (elfStruct_ptr->binaryEhdr_ptr + \
+                elfStruct_ptr->binaryEhdr_ptr->e_entry));  // DEBUGGING
+    }
+
+    // 2.3. Find a Code Cave
+    codeCave = find_code_cave(elfBinary);
+    if (false == validate_struct(codeCave))
+    {
+        fprintf(stderr, "main() - validate_struct() doesn't agree with the return value from find_code_cave()!\n");
+        retVal = -7;
+    }
+    else
+    {
+        fprintf(stdout, "Found a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
+        fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
+    }
+
     
     // X. CLEAN UP
     if (NULL != elfBinary)
     {
         free_struct(&elfBinary);
+    }
+    if (NULL != elfStruct_ptr)
+    {
+        free(elfStruct_ptr);
+        elfStruct_ptr = NULL;
     }
 
     // DONE
