@@ -26,9 +26,9 @@ Developers will apply standard ___ techniques to Linux system programming
 ## TO DO
 
 ### 4-5-2
-* [ ] Load a file into mapped memory
-* [ ] Determine if that file is an ELF binary
-* [ ] Determine the file's entry point
+* [X] Load a file into mapped memory
+* [X] Determine if that file is an ELF binary
+* [X] Determine the file's entry point
 * [ ] Change the file's entry point to a function pointer loaded from a shared object
 
 ### 4-5-3
