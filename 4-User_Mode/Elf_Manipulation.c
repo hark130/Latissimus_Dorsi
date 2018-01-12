@@ -223,6 +223,60 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
 
 
 /*
+	Purpose - Find the program header entry associated with a given address
+	Input
+		elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
+		addr - Address somewhere inside the 'haystack' ELF
+	Output
+		On succeess, pointer to the program header table entry responsibile for this address
+		On failure, NULL
+	Notes
+		A valid use case of this function is that addr may not be contained within the program headers
+			so NULL does not mean "error"
+ */
+Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
+{
+	// LOCAL VARIABLES
+	Elf64_Phdr* retval = NULL;
+	Elf64_Phdr* currProgHdr = NULL;
+	int progHdrNum = 0;
+	
+	// INPUT VALIDATION
+	if (NULL != elf64File && NULL != addr)
+	{
+		currProgHdr = elf64File->binaryPhdr_ptr;
+		progHdrNum = 1;
+		
+		while (NULL != currProgHdr && progHdrNum <= elf64File->binaryEhdr_ptr->e_phnum)
+		{
+			// DEBUGGING
+			fprintf(stdout, "Looking for:\t%p in Program Header #%d\n", (void*) addr, progHdrNum);
+			fprintf(stdout, "\tp_offset == %p\n", (void*) currProgHdr->p_offset);
+			fprintf(stdout, "\tp_vaddr == %p\n", (void*) currProgHdr->p_vaddr);
+			fprintf(stdout, "\tp_paddr == %p\n", (void*) currProgHdr->p_paddr);
+			
+			// If found it, store, break and return
+			if (1 == 0)  // IMPLEMENT THIS LATER
+			{
+				fprintf(stdout, "\tFOUND IT!\n");  // DEBUGGING
+				retVal = currProgHdr;
+				break;
+			}
+			else
+			{
+				fprintf(stdout, "\tDidn't find it!\n");  // DEBUGGING
+				currProgHdr++;  // Next Program Header entry 
+				progHdrNum++;  // Increment the number to match the entry
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
     Purpose - Search an ELF binary for the largest section of 'nothing'
     Input - elfBinary - struct* mappedMemory
     Output - struct* mappedMemory which holds the address and size of the 
