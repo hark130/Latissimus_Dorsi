@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     mapElf64_ptr elfStruct_ptr = NULL;
     void(*func_ptr)(void) = NULL;
     Elf64_Addr baseVirtAddr = 0;  // Holds the value of the base virtual address
+    Elf64_Phdr* codeCavePrgmHdr = NULL;  // Holds a pointer to the Program Header entry which contains the code cave
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -149,6 +150,22 @@ int main(int argc, char *argv[])
             fprintf(stdout, "\nFound a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
             fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
         }
+    }
+    
+    // 2.5. Where is that Code Cave located
+    if (0 == retVal)
+    {
+        // Look in the ELF Header
+        
+        // Look in the Program Header entries
+        codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfBinary, (Elf64_Addr) codeCave->fileMem_ptr);
+        if (NULL == codeCavePrgrmhdr)
+        {
+            fprintf(stdout, "The code cave at %p does not appear to be in a Program Header.\n", );    
+        }
+        
+        // Look in the Section Header entries
+        
     }
     
     // X. CLEAN UP
