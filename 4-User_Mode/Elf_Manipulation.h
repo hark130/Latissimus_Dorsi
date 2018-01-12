@@ -67,6 +67,21 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File);
 
 
 /*
+	Purpose - Find the program header entry associated with a given address
+	Input
+		elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
+		addr - Address somewhere inside the 'haystack' ELF
+	Output
+		On succeess, pointer to the program header table entry responsibile for this address
+		On failure, NULL
+	Notes
+		A valid use case of this function is that addr may not be contained within the program headers
+			so NULL does not mean "error"
+ */
+Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr);
+
+
+/*
 	Purpose - Search an ELF binary for the largest section of 'nothing'
 	Input - elfBinary - struct* mappedMemory
 	Output - struct* mappedMemory which holds the address and size of the 
