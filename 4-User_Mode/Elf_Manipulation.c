@@ -237,12 +237,12 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
 Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 {
 	// LOCAL VARIABLES
-	Elf64_Phdr* retval = NULL;
+	Elf64_Phdr* retVal = NULL;
 	Elf64_Phdr* currProgHdr = NULL;
 	int progHdrNum = 0;
 	
 	// INPUT VALIDATION
-	if (NULL != elf64File && NULL != addr)
+	if (NULL != elf64File && 0 != addr)
 	{
 		currProgHdr = elf64File->binaryPhdr_ptr;
 		progHdrNum = 1;
@@ -250,25 +250,41 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 		while (NULL != currProgHdr && progHdrNum <= elf64File->binaryEhdr_ptr->e_phnum)
 		{
 			// DEBUGGING
-			fprintf(stdout, "Looking for:\t%p in Program Header #%d\n", (void*) addr, progHdrNum);
-			fprintf(stdout, "\tp_offset == %p\n", (void*) currProgHdr->p_offset);
-			fprintf(stdout, "\tp_vaddr == %p\n", (void*) currProgHdr->p_vaddr);
-			fprintf(stdout, "\tp_paddr == %p\n", (void*) currProgHdr->p_paddr);
+			// fprintf(stdout, "Looking for:\t%p in Program Header #%d\n", (void*) addr, progHdrNum);
+			// fprintf(stdout, "\tp_offset == %p\n", (void*) currProgHdr->p_offset);
+			// fprintf(stdout, "\tp_vaddr == %p\n", (void*) currProgHdr->p_vaddr);
+			// fprintf(stdout, "\tp_paddr == %p\n", (void*) currProgHdr->p_paddr);
 			
-			// If found it, store, break and return
-			if (1 == 0)  // IMPLEMENT THIS LATER
+
+			// If found it, store, and continue checking
+			if (currProgHdr->p_offset < addr)  // IMPLEMENT THIS LATER
 			{
-				fprintf(stdout, "\tFOUND IT!\n");  // DEBUGGING
-				retVal = currProgHdr;
-				break;
+                // Already found one
+                if (NULL != retVal)
+                {
+                    if (currProgHdr->p_offset > retVal->p_offset)
+                    {
+                        retVal = currProgHdr;
+                        // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Program Header Offset %p\n", \
+                                (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
+                    }
+                }
+                // First one we found
+                else
+                {
+                    retVal = currProgHdr;
+                    // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Program Header Offset %p\n", \
+                            (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
+                }
 			}
 			else
 			{
-				fprintf(stdout, "\tDidn't find it!\n");  // DEBUGGING
-				currProgHdr++;  // Next Program Header entry 
-				progHdrNum++;  // Increment the number to match the entry
+				// fprintf(stdout, "\tDidn't find it here!\n");  // DEBUGGING
 			}
+            currProgHdr++;  // Next Program Header entry 
+            progHdrNum++;  // Increment the number to match the entry
 		}
+        // fprintf(stdout, "\tFOUND IT!\nCod Cave Offset %p is DEFINITELY in Program Header Offset %p\n", (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
 	}
 	
 	// DONE
