@@ -23,7 +23,8 @@ Developers will apply standard ___ techniques to Linux system programming
 * 4.6. - [Test a binary for PIC](https://unix.stackexchange.com/questions/89211/test-whether-linux-binary-is-compiled-as-position-independent-code)
 * 4.6. - [Mitigate ptrace attacks](https://blog.netspi.com/using-strace-to-monitor-ssh-connections-on-linux/)
 * [Yale ELF Format](http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf)
-* [ELF Rundown](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4) 
+* [ELF Rundown](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
+* [Code Injection into Running Linux Application](https://www.codeproject.com/Articles/33340/Code-Injection-into-Running-Linux-Application)
 
 ## TO DO
 
@@ -33,7 +34,9 @@ Developers will apply standard ___ techniques to Linux system programming
 * [X] Determine the file's entry point
 * [X] Determine the file's "ELF base address"
 * [X] Find the largest 'empty' location to inject code
-* [ ] Determine the section that holds that 'empty' location
-* [ ] Make that section executable
+* [X] Determine the section that holds that 'empty' location
+* [X] Make that section executable
 * [ ] Add some Assembly
 * [ ] Execute the new binary
+
+### 4-5-3 (Inject into a running ELF)
