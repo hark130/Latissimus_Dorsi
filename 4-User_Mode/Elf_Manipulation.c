@@ -293,6 +293,75 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 
 
 /*
+    Purpose - Find the section header entry associated with a given address
+    Input
+        elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
+        addr - Address somewhere inside the 'haystack' ELF
+    Output
+        On succeess, pointer to the section header table entry responsible for this address
+        On failure, NULL
+    Notes
+        A valid use case of this function is that addr may not be contained within the section headers
+            so NULL does not mean "error"
+ */
+Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
+{
+    // LOCAL VARIABLES
+    Elf64_Shdr* retVal = NULL;
+    Elf64_Shdr* currSectHdr = NULL;
+    int sectHdrNum = 0;
+    
+    // INPUT VALIDATION
+    if (NULL != elf64File && 0 != addr)
+    {
+        currSectHdr = elf64File->binaryShdr_ptr;
+        sectHdrNum = 1;
+        
+        while (NULL != currSectHdr && sectHdrNum <= elf64File->binaryEhdr_ptr->e_shnum)
+        {
+            // DEBUGGING
+            // fprintf(stdout, "Looking for:\t%p in Section Header #%d\n", (void*) addr, sectHdrNum);
+            // fprintf(stdout, "\tp_offset == %p\n", (void*) currSectHdr->sh_offset);
+            // fprintf(stdout, "\tp_paddr == %p\n", (void*) currSectHdr->sh_addr);
+            
+
+            // If found it, store, and continue checking
+            if (currSectHdr->sh_offset < addr)  // IMPLEMENT THIS LATER
+            {
+                // Already found one
+                if (NULL != retVal)
+                {
+                    if (currSectHdr->sh_offset > retVal->sh_offset)
+                    {
+                        retVal = currSectHdr;
+                        // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Section Header Offset %p\n", \
+                                (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
+                    }
+                }
+                // First one we found
+                else
+                {
+                    retVal = currSectHdr;
+                    // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Section Header Offset %p\n", \
+                            (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
+                }
+            }
+            else
+            {
+                // fprintf(stdout, "\tDidn't find it here!\n");  // DEBUGGING
+            }
+            currSectHdr++;  // Next Section Header entry 
+            sectHdrNum++;  // Increment the number to match the entry
+        }
+        fprintf(stdout, "\tFOUND IT!\nCod Cave Offset %p is DEFINITELY in Section Header Offset %p\n", (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
+    }
+    
+    // DONE
+    return retVal;
+}
+
+
+/*
     Purpose - Search an ELF binary for the largest section of 'nothing'
     Input - elfBinary - struct* mappedMemory
     Output - struct* mappedMemory which holds the address and size of the 

@@ -72,13 +72,28 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File);
 		elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
 		addr - Address somewhere inside the 'haystack' ELF
 	Output
-		On succeess, pointer to the program header table entry responsibile for this address
+		On succeess, pointer to the program header table entry responsible for this address
 		On failure, NULL
 	Notes
 		A valid use case of this function is that addr may not be contained within the program headers
 			so NULL does not mean "error"
  */
 Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr);
+
+
+/*
+	Purpose - Find the section header entry associated with a given address
+	Input
+		elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
+		addr - Address somewhere inside the 'haystack' ELF
+	Output
+		On succeess, pointer to the section header table entry responsible for this address
+		On failure, NULL
+	Notes
+		A valid use case of this function is that addr may not be contained within the section headers
+			so NULL does not mean "error"
+ */
+Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr);
 
 
 /*

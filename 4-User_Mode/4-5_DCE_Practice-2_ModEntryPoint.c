@@ -2,6 +2,7 @@
 #include "Map_Memory.h"
 #include <stdbool.h>	        // bool, true, false
 #include <stdio.h>              // fprintf
+#include <string.h>             // memcpy 
 #include <dlfcn.h>
 
 
@@ -12,10 +13,15 @@ int main(int argc, char *argv[])
     mapMem_ptr elfBinary = NULL;
     mapMem_ptr codeCave = NULL;
     mapElf64_ptr elfStruct_ptr = NULL;
-    void(*func_ptr)(void) = NULL;
+    // void(*func_ptr)(void) = NULL;
     Elf64_Addr baseVirtAddr = 0;  // Holds the value of the base virtual address
     Elf64_Phdr* codeCavePrgmHdr = NULL;  // Holds a pointer to the Program Header entry which contains the code cave
+    Elf64_Shdr* codeCaveSectHdr = NULL;  // Holds a pointer to the Section Header entry which contains the code cave
     Elf64_Addr codeCaveOffset = 0;  // Calculates the relative offset of the Code Cave
+    char movInstr[] = { 0x48, 0xc7, 0xc0, 0x30, 0x04, 0x40, 0x00 };     // mov    $0x400430,%rax
+    char jmpInstr[] = { 0xff, 0xe0 };                                   // jmpq   *%rax
+    void* memCopyReturn = NULL;
+    int i = 0;  // Iterating variable
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -160,23 +166,31 @@ int main(int argc, char *argv[])
         // Look in the ELF Header
 
         
-        // Look in the Program Header entries
-        codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, codeCaveOffset);
-        // codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, (Elf64_Addr) codeCave->fileMem_ptr);
-        if (NULL == codeCavePrgmHdr)
+        // // Look in the Program Header entries
+        // codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, codeCaveOffset);
+        // // codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, (Elf64_Addr) codeCave->fileMem_ptr);
+        // if (NULL == codeCavePrgmHdr)
+        // {
+        //     fprintf(stdout, "The code cave at %p does not appear to be in a Program Header.\n", (void*)codeCave->fileMem_ptr);    
+        // }
+        // else
+        // {
+        //     fprintf(stdout, "Found code cave address %p inside the Program Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCavePrgmHdr);
+        // }
+
+        // Look in the Section Header entries
+        codeCaveSectHdr = find_this_sect_hdr_64addr(elfStruct_ptr, codeCaveOffset);
+        if (NULL == codeCaveSectHdr)
         {
-            fprintf(stdout, "The code cave at %p does not appear to be in a Program Header.\n", (void*)codeCave->fileMem_ptr);    
+            fprintf(stdout, "The code cave at %p does not appear to be in a Section Header.\n", (void*)codeCave->fileMem_ptr);    
         }
         else
         {
-            fprintf(stdout, "Found code cave address %p inside the Program Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCavePrgmHdr);
-        }
-
-        // Look in the Section Header entries
-
+            fprintf(stdout, "Found code cave address %p inside the Section Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCaveSectHdr);
+        }        
        
         // Verify we found something
-        if (NULL == codeCavePrgmHdr)  // Add ELF and Section Header return values here later
+        if (NULL == codeCavePrgmHdr && NULL == codeCaveSectHdr)  // Add ELF and Section Header return values here later
         {
             retVal = -9;
         }
@@ -189,13 +203,58 @@ int main(int argc, char *argv[])
 
         // ELF Header
 
-        // Program Header
-        if (NULL != codeCavePrgmHdr)
-        {
-            codeCavePrgmHdr->p_flags |= PF_X;  // Set the exeucte flag
-        }
+        // // Program Header
+        // if (NULL != codeCavePrgmHdr)
+        // {
+        //     codeCavePrgmHdr->p_flags |= PF_X;  // Set the exeucte flag
+        // }
 
         // Section Header
+        if (NULL != codeCaveSectHdr)
+        {
+            codeCaveSectHdr->sh_flags |= SHF_EXECINSTR;  // Set the exeucte flag
+        }
+    }
+
+    // 2.7. Copy the Assembly into the Code Cave
+    if (0 == retVal)
+    {
+        // Print mov instruction
+        // for (i = 0; i < sizeof(movInstr); i++)
+        // {
+        //     fprintf(stdout, "0x%02hhx ", (unsigned char)*(movInstr + i));
+        // }
+        // fprintf(stdout, "\n");
+
+        // Copy mov instruction
+        memCopyReturn = memcpy((void*)(codeCave->fileMem_ptr + 1), movInstr, sizeof(movInstr));
+        if (memCopyReturn != (codeCave->fileMem_ptr + 1))
+        {
+            fprintf(stderr, "Something went wrong with the memcpy of the mov instruction!\n");
+        }
+        else
+        {
+            // fprintf(stdout, "Size of movInstr is %lu\n", sizeof(movInstr));  // DEBUGGING
+            // for (i = 0; i < sizeof(movInstr); i++)
+            // {
+            //     fprintf(stdout, "0x%02hhx ", (unsigned char)*(codeCave->fileMem_ptr + 1 + i));
+            // }
+            // fprintf(stdout, "\n");
+        }
+
+        // Copy jmp instruction
+        memCopyReturn = memcpy((void*)(codeCave->fileMem_ptr + 1 + sizeof(movInstr)), jmpInstr, sizeof(jmpInstr));
+        if (memCopyReturn != (codeCave->fileMem_ptr + 1 + sizeof(movInstr)))
+        {
+            fprintf(stderr, "Something went wrong with the memcpy of the jmp instruction!\n");
+        }        
+    }
+
+    // 2.8. Change the entry point
+    if (0 == retVal)
+    {
+        elfStruct_ptr->binaryEhdr_ptr->e_entry = (Elf64_Addr)(baseVirtAddr + codeCaveOffset + 1);
+        fprintf(stdout, "*NEW* Entry Point:\t%p\n", (void*)elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
     }
     
     // X. CLEAN UP
