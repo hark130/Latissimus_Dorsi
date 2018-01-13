@@ -36,7 +36,8 @@ Developers will apply standard ___ techniques to Linux system programming
 * [X] Find the largest 'empty' location to inject code
 * [X] Determine the section that holds that 'empty' location
 * [X] Make that section executable
-* [ ] Add some Assembly
-* [ ] Execute the new binary
+* [X] Add some Assembly
+* [ ] Dynamically build Assembly
+* [X] Execute the new binary
 
 ### 4-5-3 (Inject into a running ELF)
