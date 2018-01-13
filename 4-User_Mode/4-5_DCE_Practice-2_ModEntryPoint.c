@@ -105,14 +105,15 @@ int main(int argc, char *argv[])
     {
         // DEBUGGING
         // Verify address
-        fprintf(stdout, "ELF Header:\t\t%p\nProgram Header:\t\t%p\nSection Header:\t\t%p\n", \
+        // fprintf(stdout, "ELF Header:\t\t%p\nProgram Header:\t\t%p\nSection Header:\t\t%p\n", \
                 (void*)elfStruct_ptr->binaryEhdr_ptr, \
                 (void*)elfStruct_ptr->binaryPhdr_ptr, \
                 (void*)elfStruct_ptr->binaryShdr_ptr);  // DEBUGGING
         if (elfStruct_ptr->binaryEhdr_ptr->e_entry)
         {
-            fprintf(stdout, "Entry Point Offset:\t%p\n", (void*)elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
-            fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*)(elfStruct_ptr->binaryEhdr_ptr + \
+            fprintf(stdout, "Current Entry Point:\t%p\n", (void*)elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
+            // fprintf(stdout, "Entry Point Offset:\t%p\n", (void*)elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
+            // fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*)(elfStruct_ptr->binaryEhdr_ptr + \
                     elfStruct_ptr->binaryEhdr_ptr->e_entry));  // DEBUGGING
         }
         else
@@ -134,7 +135,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                fprintf(stdout, "Base virtual address:\t%p\n", (void*)baseVirtAddr);
+                // fprintf(stdout, "Base virtual address:\t%p\n", (void*)baseVirtAddr);
             }
         }
         else
@@ -155,8 +156,8 @@ int main(int argc, char *argv[])
         else
         {
             codeCaveOffset = (Elf64_Addr)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr);
-            fprintf(stdout, "\nFound a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
-            fprintf(stdout, "Offset:\t\t%p\n", (void*)codeCaveOffset);
+            // fprintf(stdout, "\nFound a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
+            fprintf(stdout, "Code Cave Offset:\t%p\n", (void*)codeCaveOffset + baseVirtAddr);
         }
     }
     
@@ -186,7 +187,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            fprintf(stdout, "Found code cave address %p inside the Section Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCaveSectHdr);
+            // fprintf(stdout, "Found code cave address %p inside the Section Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCaveSectHdr);
         }        
        
         // Verify we found something
@@ -210,7 +211,11 @@ int main(int argc, char *argv[])
         // }
 
         // Section Header
-        if (NULL != codeCaveSectHdr)
+        if (NULL == codeCaveSectHdr)
+        {
+            retVal = -10;
+        }
+        else
         {
             codeCaveSectHdr->sh_flags |= SHF_EXECINSTR;  // Set the exeucte flag
         }

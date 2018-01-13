@@ -265,7 +265,7 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
                     if (currProgHdr->p_offset > retVal->p_offset)
                     {
                         retVal = currProgHdr;
-                        // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Program Header Offset %p\n", \
+                        // fprintf(stdout, "\tFOUND ONE!\nCode Cave Offset %p could be in Program Header Offset %p\n", \
                                 (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
                     }
                 }
@@ -273,7 +273,7 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
                 else
                 {
                     retVal = currProgHdr;
-                    // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Program Header Offset %p\n", \
+                    // fprintf(stdout, "\tFOUND ONE!\nCode Cave Offset %p could be in Program Header Offset %p\n", \
                             (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
                 }
 			}
@@ -284,7 +284,7 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
             currProgHdr++;  // Next Program Header entry 
             progHdrNum++;  // Increment the number to match the entry
 		}
-        // fprintf(stdout, "\tFOUND IT!\nCod Cave Offset %p is DEFINITELY in Program Header Offset %p\n", (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
+        // fprintf(stdout, "\tFOUND IT!\nCode Cave Offset %p is DEFINITELY in Program Header Offset %p\n", (void*)addr, (void*)retVal->p_offset);  // DEBUGGING
 	}
 	
 	// DONE
@@ -334,7 +334,7 @@ Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
                     if (currSectHdr->sh_offset > retVal->sh_offset)
                     {
                         retVal = currSectHdr;
-                        // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Section Header Offset %p\n", \
+                        // fprintf(stdout, "\tFOUND ONE!\nCode Cave Offset %p could be in Section Header Offset %p\n", \
                                 (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
                     }
                 }
@@ -342,7 +342,7 @@ Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
                 else
                 {
                     retVal = currSectHdr;
-                    // fprintf(stdout, "\tFOUND ONE!\nCod Cave Offset %p could be in Section Header Offset %p\n", \
+                    // fprintf(stdout, "\tFOUND ONE!\nCode Cave Offset %p could be in Section Header Offset %p\n", \
                             (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
                 }
             }
@@ -353,7 +353,7 @@ Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
             currSectHdr++;  // Next Section Header entry 
             sectHdrNum++;  // Increment the number to match the entry
         }
-        fprintf(stdout, "\tFOUND IT!\nCod Cave Offset %p is DEFINITELY in Section Header Offset %p\n", (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
+        // fprintf(stdout, "\tFOUND IT!\nCode Cave Offset %p is DEFINITELY in Section Header Offset %p\n", (void*)addr, (void*)retVal->sh_offset);  // DEBUGGING
     }
     
     // DONE
