@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     void(*func_ptr)(void) = NULL;
     Elf64_Addr baseVirtAddr = 0;  // Holds the value of the base virtual address
     Elf64_Phdr* codeCavePrgmHdr = NULL;  // Holds a pointer to the Program Header entry which contains the code cave
+    Elf64_Addr codeCaveOffset = 0;  // Calculates the relative offset of the Code Cave
     
     // INPUT VALIDATION
     if (2 > argc)
@@ -99,13 +100,13 @@ int main(int argc, char *argv[])
         // DEBUGGING
         // Verify address
         fprintf(stdout, "ELF Header:\t\t%p\nProgram Header:\t\t%p\nSection Header:\t\t%p\n", \
-                (void*) elfStruct_ptr->binaryEhdr_ptr, \
-                (void*) elfStruct_ptr->binaryPhdr_ptr, \
-                (void*) elfStruct_ptr->binaryShdr_ptr);  // DEBUGGING
+                (void*)elfStruct_ptr->binaryEhdr_ptr, \
+                (void*)elfStruct_ptr->binaryPhdr_ptr, \
+                (void*)elfStruct_ptr->binaryShdr_ptr);  // DEBUGGING
         if (elfStruct_ptr->binaryEhdr_ptr->e_entry)
         {
-            fprintf(stdout, "Entry Point Offset:\t%p\n", (void*) elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
-            fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*) (elfStruct_ptr->binaryEhdr_ptr + \
+            fprintf(stdout, "Entry Point Offset:\t%p\n", (void*)elfStruct_ptr->binaryEhdr_ptr->e_entry);  // DEBUGGING
+            fprintf(stdout, "Absolute Entry Point:\t%p\n", (void*)(elfStruct_ptr->binaryEhdr_ptr + \
                     elfStruct_ptr->binaryEhdr_ptr->e_entry));  // DEBUGGING
         }
         else
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                fprintf(stdout, "Base virtual address:\t%p\n", (void*) baseVirtAddr);
+                fprintf(stdout, "Base virtual address:\t%p\n", (void*)baseVirtAddr);
             }
         }
         else
@@ -147,8 +148,9 @@ int main(int argc, char *argv[])
         }
         else
         {
+            codeCaveOffset = (Elf64_Addr)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr);
             fprintf(stdout, "\nFound a code cave!\nPointer:\t%p\nMem Size:\t%zu\n", codeCave->fileMem_ptr, codeCave->memSize);
-            fprintf(stdout, "Offset:\t\t%p\n", (void*)(codeCave->fileMem_ptr - elfBinary->fileMem_ptr));
+            fprintf(stdout, "Offset:\t\t%p\n", (void*)codeCaveOffset);
         }
     }
     
@@ -156,16 +158,44 @@ int main(int argc, char *argv[])
     if (0 == retVal)
     {
         // Look in the ELF Header
+
         
         // Look in the Program Header entries
-        codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfBinary, (Elf64_Addr) codeCave->fileMem_ptr);
-        if (NULL == codeCavePrgrmhdr)
+        codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, codeCaveOffset);
+        // codeCavePrgmHdr = find_this_prgm_hdr_64addr(elfStruct_ptr, (Elf64_Addr) codeCave->fileMem_ptr);
+        if (NULL == codeCavePrgmHdr)
         {
-            fprintf(stdout, "The code cave at %p does not appear to be in a Program Header.\n", );    
+            fprintf(stdout, "The code cave at %p does not appear to be in a Program Header.\n", (void*)codeCave->fileMem_ptr);    
         }
-        
+        else
+        {
+            fprintf(stdout, "Found code cave address %p inside the Program Header entry at %p.\n", (void*)codeCave->fileMem_ptr, (void*)codeCavePrgmHdr);
+        }
+
         // Look in the Section Header entries
-        
+
+       
+        // Verify we found something
+        if (NULL == codeCavePrgmHdr)  // Add ELF and Section Header return values here later
+        {
+            retVal = -9;
+        }
+    }
+
+    // 2.6. Set the Code Cave section to execute
+    if (0 == retVal)
+    {
+        // NOTE: Maybe unnecessary given that code caves could be in sections with flags to set to "execute"
+
+        // ELF Header
+
+        // Program Header
+        if (NULL != codeCavePrgmHdr)
+        {
+            codeCavePrgmHdr->p_flags |= PF_X;  // Set the exeucte flag
+        }
+
+        // Section Header
     }
     
     // X. CLEAN UP
