@@ -25,6 +25,9 @@ Developers will apply standard ___ techniques to Linux system programming
 * [Yale ELF Format](http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf)
 * [ELF Rundown](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
 * [Code Injection into Running Linux Application](https://www.codeproject.com/Articles/33340/Code-Injection-into-Running-Linux-Application)
+* [LD_PRELOAD Function Hooking](https://www.technovelty.org/c/using-ld_preload-to-override-a-function.html)
+* [Modifying a Dynamic Library Without Changing the Source Code](http://www.linuxjournal.com/article/7795)
+* [Magic of LD_PRELOAD for Userland Rootkits](http://fluxius.handgrep.se/2011/10/31/the-magic-of-ld_preload-for-userland-rootkits/)
 
 ## TO DO
 
