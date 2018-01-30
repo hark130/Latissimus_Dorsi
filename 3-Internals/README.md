@@ -45,3 +45,4 @@ Developers will have an in-depth working knowledge of Linux Internals
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
 * [/dev/null](https://www.networkworld.com/article/3025497/linux/sending-data-into-the-void-with-dev-null.html)
+* Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" /* try PRIuMAX if %ju unsupported */
