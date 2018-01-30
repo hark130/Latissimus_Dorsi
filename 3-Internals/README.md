@@ -30,6 +30,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## RESEARCH SOURCES
 * [File Descriptor Wiki](https://en.wikipedia.org/wiki/File_descriptor)
+* [Chapter 1. General Unix and Advanced C - File Descriptors](https://www.bottomupcs.com/file_descriptors.xhtml)
 
 ## TO DO
 
