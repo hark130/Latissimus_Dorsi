@@ -41,3 +41,6 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] Close a File Descriptor
 * [ ] Modify a File Descriptor
 * [ ] Duplicate a File Descriptor
+
+## NOTES
+* File descriptor ranges from 0 to OPEN_MAX
