@@ -29,7 +29,12 @@ Developers will have an in-depth working knowledge of Linux Internals
 **NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
 ## RESEARCH SOURCES
-
+* [File Descriptor Wiki](https://en.wikipedia.org/wiki/File_descriptor)
 
 ## TO DO
 
+### 3-3-1
+* [ ] Open a File Descriptor
+* [ ] Close a File Descriptor
+* [ ] Modify a File Descriptor
+* [ ] Duplicate a File Descriptor
