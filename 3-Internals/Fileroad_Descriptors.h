@@ -19,8 +19,9 @@ typedef struct fileDescriptorDetails
 	NOTE: Updates to the fileDetails struct 
 		constitutes a change to the following functions:
 	- free_fdDetails()
-    - open_fd()
+	- open_fd()
 	- validate_fdDetails()
+	- update_fdDetails()
  */
 
 
