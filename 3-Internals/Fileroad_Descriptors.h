@@ -4,6 +4,10 @@
 #include <inttypes.h>       // uintmax_t
 #include <stdbool.h>	    // bool, true, false
 
+#ifndef NULL
+#define NULL ((void*)0)
+#endif  // NULL
+
 typedef struct fileDescriptorDetails
 {
     char* filename_ptr;     // Path to file
