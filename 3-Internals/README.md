@@ -32,6 +32,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [File Descriptor Wiki](https://en.wikipedia.org/wiki/File_descriptor)
 * [Chapter 1. General Unix and Advanced C - File Descriptors](https://www.bottomupcs.com/file_descriptors.xhtml)
 * [nixCraft: Find Out How Many File Descriptors Are Being Used](https://www.cyberciti.biz/tips/linux-procfs-file-descriptors.html)
+* [File Descriptors Explained](https://linuxmeerkat.wordpress.com/2011/12/02/file-descriptors-explained/)
 
 ## TO DO
 
