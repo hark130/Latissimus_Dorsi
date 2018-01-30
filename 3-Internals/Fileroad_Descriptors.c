@@ -1,4 +1,11 @@
 #include "Fileroad_Descriptors.h"
+#include <stdio.h>          // fprintf
+#include <string.h>         // memset
+
+#ifndef MAX_TRIES
+// MACRO to limit repeated allocation attempts
+#define MAX_TRIES 3
+#endif  // MAX_TRIES
 
 /*
 typedef struct fileDescriptorDetails
@@ -22,6 +29,14 @@ fdDetails_ptr create_fdDetails_ptr(void)
 {
     // LOCAL VARIABLES
     fdDetails_ptr retVal = NULL;
+	int numTries = 0;
+
+	// ALLOCATE MEMORY
+	while(numTries < MAX_TRIES && retVal == NULL)
+	{
+		retVal = (fdDetails_ptr)calloc(1, sizeof(fdDetails));
+		numTries++;
+    }
     
     // DONE
     return retVal;
@@ -59,8 +74,59 @@ fdDetails_ptr open_fd(const char* filename)
  */
 void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
 {
-    // INPUT VALIDATION
+    // LOCAL VARIABLES
+    fdDetails_ptr tempStruct_ptr = NULL;
+    void* temp_ptr = NULL;
+    size_t len = 0;
     
+    // INPUT VALIDATION
+    if (oldStruct_ptr != NULL)
+    {
+        if (*oldStruct_ptr != NULL)
+        {
+            tempStruct_ptr = (fdDetails_ptr)*oldStruct_ptr;
+            
+            // char* filename_ptr;     // Path to file
+            if (tempStruct_ptr->filename_ptr != NULL)
+            {
+                // Get the filename length
+                len = strlen(tempStruct_ptr->filename_ptr);
+                    
+                // Memset
+                if (len > 0)
+                {
+                    temp_ptr = memeset(tempStruct_ptr->filename_ptr, 0x0, len);
+                    
+                    if (temp_ptr != tempStruct_ptr->filename_ptr)
+                    {
+                        fprintf(stderr, "***ERROR*** - free_fdDetails() - memset failed to zeroize the struct's filename_ptr\n");
+                    }
+                }
+                
+                // Free
+                free(tempStruct_ptr->filename_ptr);
+                
+                // NULL
+                tempStruct_ptr->filename_ptr = NULL;
+            }
+            
+            // int fileDesc;           // File descriptor
+            tempStruct_ptr->fileDesc = 0;
+            
+            // uintmax_t fileSize;     // Actual size of file
+            tempStruct_ptr->fileSize = 0;
+            
+            // uintmax_t diskSize; // Size of file on disk
+            tempStruct_ptr->diskSize = 0;
+            
+			// 2. FREE/CLEAR STRUCT
+			// Free the struct pointer
+			free((void*)*oldStruct_ptr);
+			// Clear the struct pointer
+			tempStruct_ptr = NULL;
+            *oldStruct_ptr = NULL;
+        }
+    }
     
     // DONE
     return;
