@@ -1,8 +1,10 @@
 #include "Fileroad_Descriptors.h"
-#include <fcntl.h>			// open(), open() flags
+#include <fcntl.h>			// open, open flags
 #include <stdio.h>          // fprintf
+#include <stdlib.h>			// calloc
 #include <string.h>         // memset
 #include <sys/stat.h>		// mode_t
+#include <unistd.h>			// close
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -70,6 +72,8 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 	if (flags != O_RDONLY &&
 		flags != O_WRONLY &&
 		flags != O_RDWR &&
+		flags != (O_WRONLY | O_CREAT) &&
+		flags != (O_RDWR | O_CREAT) &&
 	    success == true)
 	{
 		success = false;
@@ -113,13 +117,13 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 			else
 			{
 				// 4. Allocate and copy the filename into the struct
-				retVal->filename = (char*)calloc(strlen(fname) + 1, sizeof(char));
+				retVal->filename_ptr = (char*)calloc(strlen(fname) + 1, sizeof(char));
 
-				if (retVal->filename != NULL)
+				if (retVal->filename_ptr != NULL)
 				{
-					temp_ptr = (char*)strncpy(retVal->filename, fname, len);
+					temp_ptr = (char*)strncpy(retVal->filename_ptr, fname, len);
 
-					if (temp_ptr != retVal->filename)
+					if (temp_ptr != retVal->filename_ptr)
 					{
 						success = false;
 						fprintf(stderr, "<<<ERROR>>> - open_fd() - strncpy() failed!\n");
@@ -158,7 +162,7 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 		{
 			if (retVal->fileDesc > 2)
 			{
-				fclose(retVal->fileDesc);
+				close(retVal->fileDesc);
 			}
 		}
 		
@@ -203,7 +207,7 @@ void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
                 // Memset
                 if (len > 0)
                 {
-                    temp_ptr = memeset(tempStruct_ptr->filename_ptr, 0x0, len);
+                    temp_ptr = memset(tempStruct_ptr->filename_ptr, 0x0, len);
                     
                     if (temp_ptr != tempStruct_ptr->filename_ptr)
                     {
@@ -291,15 +295,11 @@ long get_file_len(int fileDesc)
 	if (fileDesc >= 0)
 	{
 		// GET LENGTH
-	    // Move file point at the end of file
-	    fseek(fileDesc, 0, SEEK_END);
-	     
-	    // Get the current position of the file pointer
-	    retVal = ftell(fp);
+	    retVal = lseek(fileDesc, 0, SEEK_END);
 	     
 	    if(retVal == -1)
 	    {
-	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - fseek()/ftell() failed!\n");
+	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - lseek() failed!\n");
 	    }    
 	}
 	// DONE
