@@ -13,8 +13,9 @@ typedef struct fileDescriptorDetails
 {
     char* filename_ptr;     // Path to file
     int fileDesc;           // File descriptor
-    long fileSize;     		// Actual size of file
-    // uintmax_t diskSize;     // Size of file on disk
+    off_t fileSize;     	// Actual size of file
+    int fileDescFlags;		// File descriptor flags
+    int fileStatFlags;		// File status flags
 } fdDetails, *fdDetails_ptr;
 /*
 	NOTE: Updates to the fileDetails struct 
