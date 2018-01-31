@@ -48,7 +48,7 @@ fdDetails_ptr create_fdDetails_ptr(void)
 /*
 	Purpose - Open a file and populate a fileDescriptorDetails struct
 	Input
-		filename - Filename to open
+		fname - Filename to open
 		flags - Access modes: O_RDONLY, O_WRONLY, or O_RDWR
 		mode - A bitwise OR of file creation flags and file status flags
 	Output - Pointer to a fileDescriptorDetails struct
@@ -57,11 +57,13 @@ fdDetails_ptr create_fdDetails_ptr(void)
 		fdDetails_ptr->filename_ptr must be free()'d by the calling function
         This function calls create_fdDetails_ptr() to allocate a struct
  */
-fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode)
+fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 {
     // LOCAL VARIABLES
     fdDetails_ptr retVal = NULL;
 	bool success = true;
+	size_t len = 0;  // Length of filename
+	char* temp_ptr = NULL;  // Holds return value from strncpy()
 	
 	// INPUT VALIDATION
 	// 1. Flags
@@ -82,15 +84,19 @@ fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode)
 	}
 	
 	// 3. Filename
-	if (filename != NULL && success == true)
+	if (fname != NULL && success == true)
 	{
+		// OPEN FILE TO GET A FILE DESCRIPTOR
 		// 1. Create a fileDescriptorDetails struct
 		retVal = (fdDetails_ptr)create_fdDetails_ptr();
+
+		// 2. Get the filename length
+		len = strlen(fname);
 		
 		if (retVal != NULL)
 		{
-			// 2. Get the file descriptor
-			retVal->fileDesc = open(filename, flags, mode);
+			// 3. Get the file descriptor
+			retVal->fileDesc = open(fname, flags, mode);
 			// NOTE TO THE FUTURE:  Logic branch based on creation intent or not?
 			// open(char*, flags) vs open(char*, flags, mode)?
 			
@@ -106,7 +112,34 @@ fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode)
 			}
 			else
 			{
-				
+				// 4. Allocate and copy the filename into the struct
+				retVal->filename = (char*)calloc(strlen(fname) + 1, sizeof(char));
+
+				if (retVal->filename != NULL)
+				{
+					temp_ptr = (char*)strncpy(retVal->filename, fname, len);
+
+					if (temp_ptr != retVal->filename)
+					{
+						success = false;
+						fprintf(stderr, "<<<ERROR>>> - open_fd() - strncpy() failed!\n");
+					}
+					else
+					{
+						retVal->fileSize = get_file_len(retVal->fileDesc);
+
+						if (retVal->fileSize == -1)
+						{
+							success = false;
+							fprintf(stderr, "<<<ERROR>>> - open_fd() - get_file_len() failed!\n");		
+						}
+					}
+				}
+				else
+				{
+					success = false;
+					fprintf(stderr, "<<<ERROR>>> - open_fd() - calloc() failed!\n");
+				}
 			}
 		}
 	}
@@ -121,11 +154,18 @@ fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode)
 	{
 		// Something failed.  Undo everything!
 		// 1. Close the file descriptor
-		//  NOTE TO THE FUTURE:  Implement this as a helper function?
+		if (retVal != NULL)
+		{
+			if (retVal->fileDesc > 2)
+			{
+				fclose(retVal->fileDesc);
+			}
+		}
 		
 		// 2. Free the struct
 		free_fdDetails(&retVal);
 	}
+
     return retVal;
 }
 
@@ -186,7 +226,7 @@ void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
             tempStruct_ptr->fileSize = 0;
             
             // uintmax_t diskSize; // Size of file on disk
-            tempStruct_ptr->diskSize = 0;
+            // tempStruct_ptr->diskSize = 0;
             
 			// 2. FREE/CLEAR STRUCT
 			// Free the struct pointer
@@ -233,6 +273,39 @@ int update_fdDetails(fdDetails_ptr updateThis_ptr)
     // DONE
     return retVal;
 }
+
+
+/*
+	Purpose - Determine the file size of a file descriptor
+	Input - An open file descriptor
+	Output - Size of the file descriptor
+	Notes:
+		This function will rewind() the file descriptor
+ */
+long get_file_len(int fileDesc)
+{
+	// LOCAL VARIABLES
+	long retVal = 0;
+
+	// INPUT VALIDATION
+	if (fileDesc >= 0)
+	{
+		// GET LENGTH
+	    // Move file point at the end of file
+	    fseek(fileDesc, 0, SEEK_END);
+	     
+	    // Get the current position of the file pointer
+	    retVal = ftell(fp);
+	     
+	    if(retVal == -1)
+	    {
+	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - fseek()/ftell() failed!\n");
+	    }    
+	}
+	// DONE
+	return retVal;
+}
+
 
 /*
 // For later

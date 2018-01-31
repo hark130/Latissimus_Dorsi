@@ -1,7 +1,7 @@
 #ifndef __FILEROAD_DESCRIPTORS__
 #define __FILEROAD_DESCRIPTORS__
 
-#include <inttypes.h>       // uintmax_t
+// #include <inttypes.h>       // uintmax_t
 #include <stdbool.h>	    // bool, true, false
 #include <sys/stat.h>		// mode_t
 
@@ -13,8 +13,8 @@ typedef struct fileDescriptorDetails
 {
     char* filename_ptr;     // Path to file
     int fileDesc;           // File descriptor
-    uintmax_t fileSize;     // Actual size of file
-    uintmax_t diskSize;     // Size of file on disk
+    long fileSize;     		// Actual size of file
+    // uintmax_t diskSize;     // Size of file on disk
 } fdDetails, *fdDetails_ptr;
 /*
 	NOTE: Updates to the fileDetails struct 
@@ -39,7 +39,7 @@ fdDetails_ptr create_fdDetails_ptr(void);
 /*
 	Purpose - Open a file and populate a fileDescriptorDetails struct
 	Input
-		filename - Filename to open
+		fname - Filename to open
 		flags - Access modes: O_RDONLY, O_WRONLY, or O_RDWR
 		mode - A bitwise OR of file creation flags and file status flags
 	Output - Pointer to a fileDescriptorDetails struct
@@ -48,7 +48,7 @@ fdDetails_ptr create_fdDetails_ptr(void);
 		fdDetails_ptr->filename_ptr must be free()'d by the calling function
         This function calls create_fdDetails_ptr() to allocate a struct
  */
-fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode);
+fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode);
 
 
 /*
@@ -81,6 +81,16 @@ bool validate_fdDetails(fdDetails_ptr checkThis_ptr);
     Output - 0 on success, error code on failure
  */
 int update_fdDetails(fdDetails_ptr updateThis_ptr);
+
+
+/*
+	Purpose - Determine the file size of a file descriptor
+	Input - An open file descriptor
+	Output - Size of the file descriptor
+	Notes:
+		This function will rewind() the file descriptor
+ */
+long get_file_len(int fileDesc);
 
 
 #endif  // __FILEROAD_DESCRIPTORS__
