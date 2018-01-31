@@ -88,6 +88,42 @@ int update_fdDetails(fdDetails_ptr updateThis_ptr);
 
 
 /*
+	Purpose - Set an I/O Operating Mode flag(s) for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		setThisFlag - Operating mode flag(s) to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+	Notes:
+		This function will preserve the unchanged flags
+		This function calls _____()
+ */
+bool set_oper_mode_flag(fdDetails_ptr updateThis_ptr, int setThisFlag);
+
+
+/*
+	Purpose - Clear an I/O Operating Mode flag(s) for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		clrThisFlag - Operating mode flag(s) to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+	Notes:
+		This function will preserve the unchanged flags
+		This function calls write_oper_mode_flags()
+ */
+bool clear_oper_mode_flag(fdDetails_ptr updateThis_ptr, int clrThisFlag);
+
+
+/*
+	Purpose - Overwrite all I/O Operating Mode flags for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		setTheseFlags - Operating mode flags to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+ */
+bool write_oper_mode_flags(fdDetails_ptr updateThis_ptr, int setTheseFlags);
+
+
+/*
 	Purpose - Determine the file size of a file descriptor
 	Input - An open file descriptor
 	Output - Size of the file descriptor
