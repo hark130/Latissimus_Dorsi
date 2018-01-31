@@ -1,6 +1,8 @@
 #include "Fileroad_Descriptors.h"
+#include <fcntl.h>			// open(), open() flags
 #include <stdio.h>          // fprintf
 #include <string.h>         // memset
+#include <sys/stat.h>		// mode_t
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -45,19 +47,85 @@ fdDetails_ptr create_fdDetails_ptr(void)
 
 /*
 	Purpose - Open a file and populate a fileDescriptorDetails struct
-	Input - Filename to open
+	Input
+		filename - Filename to open
+		flags - Access modes: O_RDONLY, O_WRONLY, or O_RDWR
+		mode - A bitwise OR of file creation flags and file status flags
 	Output - Pointer to a fileDescriptorDetails struct
 	Notes:
 		fdDetails_ptr must be free()'d by the calling function
 		fdDetails_ptr->filename_ptr must be free()'d by the calling function
         This function calls create_fdDetails_ptr() to allocate a struct
  */
-fdDetails_ptr open_fd(const char* filename)
+fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode)
 {
     // LOCAL VARIABLES
     fdDetails_ptr retVal = NULL;
+	bool success = true;
+	
+	// INPUT VALIDATION
+	// 1. Flags
+	if (flags != O_RDONLY &&
+		flags != O_WRONLY &&
+		flags != O_RDWR &&
+	    success == true)
+	{
+		success = false;
+		fprintf(stderr, "<<<ERROR>>> - open_fd() - bad flags parameter\n");  // DEBUGGING
+	}
+	
+	// 2. Mode
+	if (!(mode >= 0) && success == true)
+	{
+		success = false;
+		fprintf(stderr, "<<<ERROR>>> - open_fd() - bad mode parameter\n");  // DEBUGGING
+	}
+	
+	// 3. Filename
+	if (filename != NULL && success == true)
+	{
+		// 1. Create a fileDescriptorDetails struct
+		retVal = (fdDetails_ptr)create_fdDetails_ptr();
+		
+		if (retVal != NULL)
+		{
+			// 2. Get the file descriptor
+			retVal->fileDesc = open(filename, flags, mode);
+			// NOTE TO THE FUTURE:  Logic branch based on creation intent or not?
+			// open(char*, flags) vs open(char*, flags, mode)?
+			
+			if (retVal->fileDesc < 0)
+			{
+				success = false;
+				fprintf(stderr, "<<<ERROR>>> - open_fd() - open() system call failed:\t%d\n", retVal->fileDesc);	
+			}
+			else if (retVal->fileDesc < 3)
+			{
+				success = false;
+				fprintf(stderr, "¿¿¿ERROR??? - open_fd() - open() system call returned a standard POSIX file descriptor:\t%d\n", retVal->fileDesc);		
+			}
+			else
+			{
+				
+			}
+		}
+	}
+	else
+	{
+		success = false;
+		fprintf(stderr, "<<<ERROR>>> - open_fd() - NULL filename parameter\n");  // DEBUGGING	
+	}
     
     // DONE
+	if (success == false)
+	{
+		// Something failed.  Undo everything!
+		// 1. Close the file descriptor
+		//  NOTE TO THE FUTURE:  Implement this as a helper function?
+		
+		// 2. Free the struct
+		free_fdDetails(&retVal);
+	}
     return retVal;
 }
 
@@ -99,7 +167,8 @@ void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
                     
                     if (temp_ptr != tempStruct_ptr->filename_ptr)
                     {
-                        fprintf(stderr, "***ERROR*** - free_fdDetails() - memset failed to zeroize the struct's filename_ptr\n");
+						// DEBUGGING
+                        fprintf(stderr, "<<<ERROR>>> - free_fdDetails() - memset failed to zeroize the struct's filename_ptr\n");
                     }
                 }
                 
