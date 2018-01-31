@@ -40,7 +40,10 @@ fdDetails_ptr create_fdDetails_ptr(void);
 	Purpose - Open a file and populate a fileDescriptorDetails struct
 	Input
 		fname - Filename to open
-		flags - Access modes: O_RDONLY, O_WRONLY, or O_RDWR
+		flags
+			Access modes: O_RDONLY, O_WRONLY, or O_RDWR
+			File creation flags: O_CLOEXEC, O_CREAT, O_DIRECTORY, O_EXCL, 
+			                     O_NOCTTY, O_NOFOLLOW, O_TMPFILE, and O_TRUNC
 		mode - A bitwise OR of file creation flags and file status flags
 	Output - Pointer to a fileDescriptorDetails struct
 	Notes:
