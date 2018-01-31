@@ -290,6 +290,150 @@ int update_fdDetails(fdDetails_ptr updateThis_ptr)
 
 
 /*
+	Purpose - Set an I/O Operating Mode flag(s) for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		setThisFlag - Operating mode flag(s) to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+	Notes:
+		This function will preserve the unchanged flags
+		This function calls write_oper_mode_flags()
+ */
+bool set_oper_mode_flag(fdDetails_ptr updateThis_ptr, int setThisFlag)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int curFlags = 0;
+	
+	// INPUT VALIDATION
+	if (updateThis_ptr == NULL)
+	{
+		retVal = false;
+		fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - updateThis_ptr is NULL!\n");
+	}
+	// NOTE TO THE FUTURE: Verify setThisFlag doesn't contain non-I/O Operating Mode flags
+	else if (0)
+	{
+		//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
+		retVal = false;
+		fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - Detected non-operating mode flag(s)!\n");
+	}
+	else
+	{
+		// GET CURRENT FLAGS
+		curFlags = fcntl(updateThis_ptr->fileDesc, F_GETFL);
+		fprintf(stdout, "set_oper_mode_flag() - fcntl() returned %d.\n", curFlags);  // DEBUGGING
+		
+		if (curFlags < 0)
+		{
+			retVal = false;
+			fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - Unable to determine current flag(s)!\n");
+		}
+		else
+		{	
+			// ADD NEW FLAG
+			curFlags |= setThisFlag;
+			
+			// CALL write_oper_mode_flags()
+			retVal = write_oper_mode_flags(updateThis_ptr, curFlags);
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	Purpose - Clear an I/O Operating Mode flag(s) for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		clrThisFlag - Operating mode flag(s) to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+	Notes:
+		This function will preserve the unchanged flags
+		This function calls write_oper_mode_flags()
+ */
+bool clear_oper_mode_flag(fdDetails_ptr updateThis_ptr, int clrThisFlag)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int curFlags = 0;
+	
+	// INPUT VALIDATION
+	if (updateThis_ptr == NULL)
+	{
+		retVal = false;
+		fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - updateThis_ptr is NULL!\n");
+	}
+	// NOTE TO THE FUTURE: Verify setThisFlag doesn't contain non-I/O Operating Mode flags
+	else if (0)
+	{
+		//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
+		retVal = false;
+		fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - Detected non-operating mode flag(s)!\n");
+	}
+	else
+	{
+		// GET CURRENT FLAGS
+		curFlags = fcntl(updateThis_ptr->fileDesc, F_GETFL);
+		fprintf(stdout, "clear_oper_mode_flag() - fcntl() returned %d.\n", curFlags);  // DEBUGGING
+		
+		if (curFlags < 0)
+		{
+			retVal = false;
+			fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - Unable to determine current flag(s)!\n");
+		}
+		else
+		{	
+			// CLEAR THE FLAG
+			curFlags &= ~clrThisFlag;
+			
+			// CALL write_oper_mode_flags()
+			retVal = write_oper_mode_flags(updateThis_ptr, curFlags);
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	Purpose - Overwrite all I/O Operating Mode flags for a file descriptor
+	Input
+		updateThis_ptr - fileDescriptorDetails struct pointer
+		setTheseFlags - Operating mode flags to set for updateThis_ptr's fd
+	Output - true on success, false on failure
+	Notes
+		This function does not preserve original flags, it overwrites flags
+		fcntl() ignores certain flags in arg, only the following can be changed:
+			O_APPEND, O_ASYNC, O_DIRECT, O_NOATIME, and O_NONBLOCK 
+ */
+bool write_oper_mode_flags(fdDetails_ptr updateThis_ptr, int setTheseFlags)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int fcntlRetVal = 0;  // Holds the return value from fcntl()
+
+	// INPUT VALIDATION
+	if (updateThis_ptr == NULL)
+	{
+		retVal = false;
+		fprintf(stderr, "<<<ERROR>>> - set_oper_mode_flag() - updateThis_ptr is NULL!\n");
+	}
+	else
+	{
+		fcntlRetVal = fcntl(updateThis_ptr->fileDesc, F_SETFL, setTheseFlags);
+		fprintf(stdout, "write_oper_mode_flags() - fcntl() returned %d.\n", fcntlRetVal);  // DEBUGGING
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
 	Purpose - Determine the file size of a file descriptor
 	Input - An open file descriptor
 	Output - Size of the file descriptor
