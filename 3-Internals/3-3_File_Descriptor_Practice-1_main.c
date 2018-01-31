@@ -1,4 +1,4 @@
-#define _GNU_SOURCE
+// #define _GNU_SOURCE  // Don't force it
 
 #include "Fileroad_Descriptors.h"
 #include <fcntl.h>			// open flags
@@ -14,12 +14,12 @@ void print_binary(FILE* stream, void* valueToPrint, size_t numBytesToPrint, bool
 
 int main(int argc, char* argv[])
 {
-	// LOCAL VARIABLES
+	// 1. LOCAL VARIABLES
 	int retVal = 0;
 	char* filename = NULL;
 	fdDetails_ptr fileStruct_ptr = NULL;
 
-	// INPUT VALIDATION
+	// 2. INPUT VALIDATION
 	if (argc < 2)
 	{
 		fprintf(stderr, "<<<ERROR>>> - main() - Too few arguments!\n");
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		// CREATE A FILE
+		// 3. CREATE A FILE
 		// Get the filename
 		filename = argv[1];
 
@@ -52,56 +52,53 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			// PRINT FILE DETAILS
+			// 4. PRINT FILE DETAILS
+			
+			// 4.1. General File Details
 			fprintf(stdout, "\n\nSuccessfully opened %s\n", fileStruct_ptr->filename_ptr);
 			fprintf(stdout, "The file descriptor is %d\n", fileStruct_ptr->fileDesc);
 			fprintf(stdout, "The size of the file is %ld bytes\n", fileStruct_ptr->fileSize);
+			
+			// 4.2. File Descriptor Flags
 			fprintf(stdout, "The file descriptor flags:\t");
 			print_binary(stdout, &(fileStruct_ptr->fileDescFlags), sizeof(fileStruct_ptr->fileDescFlags), false);
 			fprintf(stdout, "\n");
 			fprintf(stdout, "\tFD_CLOEXEC:\t%d\n", FD_CLOEXEC & fileStruct_ptr->fileDescFlags ? 1 : 0);
+			
+			// 4.3. File Status Flags
 			fprintf(stdout, "\nThe file status flags:\t\t");
 			print_binary(stdout, &(fileStruct_ptr->fileStatFlags), sizeof(fileStruct_ptr->fileStatFlags), false);
-			fprintf(stdout, "\n");
+			
+			// 4.3.1. File Access Mode Flags
+			// https://www.gnu.org/software/libc/manual/html_node/Access-Modes.html#Access-Modes
+			fprintf(stdout, "\n\tFile Access Modes:\n");
 			// O_RDONLY == 0 so don't use BIN_CHECK() or you'll get a false positive
 			// O_RDONLY == 0 so we have to be tricky here
 			// http://www.delorie.com/djgpp/doc/incs/fcntl.h
 			fprintf(stdout, "\tO_RDONLY:\t%d\n", (O_WRONLY | O_RDWR) & fileStruct_ptr->fileStatFlags ? 0 : 1);
 			fprintf(stdout, "\tO_WRONLY:\t%d\n", BIN_CHECK(O_WRONLY, fileStruct_ptr->fileStatFlags));
 			fprintf(stdout, "\tO_RDWR: \t%d\n", BIN_CHECK(O_RDWR, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_ACCMODE: \t%d\n", BIN_CHECK(O_ACCMODE, fileStruct_ptr->fileStatFlags));
 
-			// Apparently, these macros aren't in fcntl.h
-			// fprintf(stdout, "\tO_BINARY: \t%d\n", BIN_CHECK(O_BINARY, fileStruct_ptr->fileStatFlags));
-			// fprintf(stdout, "\tO_TEXT: \t%d\n", BIN_CHECK(O_TEXT, fileStruct_ptr->fileStatFlags));
-			// fprintf(stdout, "\tO_NOINHERIT: \t%d\n", BIN_CHECK(O_NOINHERIT, fileStruct_ptr->fileStatFlags));
-
-			fprintf(stdout, "\tO_CREAT:\t%d\n", BIN_CHECK(O_CREAT, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_EXCL: \t%d\n", BIN_CHECK(O_EXCL, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_NOCTTY: \t%d\n", BIN_CHECK(O_NOCTTY, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_TRUNC: \t%d\n", BIN_CHECK(O_TRUNC, fileStruct_ptr->fileStatFlags));
+			// 4.3.2. Open Time Flags
+			// https://www.gnu.org/software/libc/manual/html_node/Open_002dtime-Flags.html#Open_002dtime-Flags
+			// NOTES: 
+			//	The open-time flags specify options affecting how open will behave. 
+			// 	These options are not preserved once the file is open. 
+			//	The exception to this is O_NONBLOCK, which is also an I/O operating mode and so it is saved.
+			// fprintf(stdout, "\tO_CREAT:\t%d\n", BIN_CHECK(O_CREAT, fileStruct_ptr->fileStatFlags));
+			// fprintf(stdout, "\tO_EXCL: \t%d\n", BIN_CHECK(O_EXCL, fileStruct_ptr->fileStatFlags));
+			// fprintf(stdout, "\tO_NOCTTY: \t%d\n", BIN_CHECK(O_NOCTTY, fileStruct_ptr->fileStatFlags));
+			
+			// 4.3.3. I/O Operating Mode Flags
+			// https://www.gnu.org/software/libc/manual/html_node/Operating-Modes.html#Operating-Modes
+			// NOTES:
+			//	The operating modes affect how input and output operations using a file descriptor work. 
+			//	These flags are set by open and can be fetched and changed with fcntl.
 			fprintf(stdout, "\tO_APPEND:\t%d\n", BIN_CHECK(O_APPEND, fileStruct_ptr->fileStatFlags));
 			fprintf(stdout, "\tO_NONBLOCK: \t%d\n", BIN_CHECK(O_NONBLOCK, fileStruct_ptr->fileStatFlags));
-
-			fprintf(stdout, "\tO_ASYNC: \t%d\n", BIN_CHECK(O_ASYNC, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_DIRECT: \t%d\n", BIN_CHECK(O_DIRECT, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_NOATIME: \t%d\n", BIN_CHECK(O_NOATIME, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_DSYNC: \t%d\n", BIN_CHECK(O_DSYNC, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tO_SYNC: \t%d\n", BIN_CHECK(O_SYNC, fileStruct_ptr->fileStatFlags));
-
-			// File Types (?)
-			// https://elixir.free-electrons.com/linux/v2.6.32/source/include/linux/stat.h
-			fprintf(stdout, "\tS_IFMT: \t%d\n", BIN_CHECK(S_IFMT, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFSOCK: \t%d\n", BIN_CHECK(S_IFSOCK, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFLNK: \t%d\n", BIN_CHECK(S_IFLNK, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFREG: \t%d\n", BIN_CHECK(S_IFREG, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFBLK: \t%d\n", BIN_CHECK(S_IFBLK, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFDIR: \t%d\n", BIN_CHECK(S_IFDIR, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFCHR: \t%d\n", BIN_CHECK(S_IFCHR, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_IFIFO: \t%d\n", BIN_CHECK(S_IFIFO, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_ISUID: \t%d\n", BIN_CHECK(S_ISUID, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_ISGID: \t%d\n", BIN_CHECK(S_ISGID, fileStruct_ptr->fileStatFlags));
-			fprintf(stdout, "\tS_ISVTX: \t%d\n", BIN_CHECK(S_ISVTX, fileStruct_ptr->fileStatFlags));
+			// O_NDELAY is an obsolete name for O_NONBLOCK, provided for compatibility with BSD. 
+			//	It is not defined by the POSIX.1 standard. 
+			fprintf(stdout, "\tO_NDELAY: \t%d\n", BIN_CHECK(O_NDELAY, fileStruct_ptr->fileStatFlags));
 
 			// WRITE TO THE FILE DESCRIPTOR
 			// Implement write and call it here?
