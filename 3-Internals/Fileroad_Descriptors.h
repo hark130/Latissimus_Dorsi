@@ -3,6 +3,7 @@
 
 #include <inttypes.h>       // uintmax_t
 #include <stdbool.h>	    // bool, true, false
+#include <sys/stat.h>		// mode_t
 
 #ifndef NULL
 #define NULL ((void*)0)
@@ -37,14 +38,17 @@ fdDetails_ptr create_fdDetails_ptr(void);
 
 /*
 	Purpose - Open a file and populate a fileDescriptorDetails struct
-	Input - Filename to open
+	Input
+		filename - Filename to open
+		flags - Access modes: O_RDONLY, O_WRONLY, or O_RDWR
+		mode - A bitwise OR of file creation flags and file status flags
 	Output - Pointer to a fileDescriptorDetails struct
 	Notes:
 		fdDetails_ptr must be free()'d by the calling function
 		fdDetails_ptr->filename_ptr must be free()'d by the calling function
         This function calls create_fdDetails_ptr() to allocate a struct
  */
-fdDetails_ptr open_fd(const char* filename);
+fdDetails_ptr open_fd(const char* filename, int flags, mode_t mode);
 
 
 /*
