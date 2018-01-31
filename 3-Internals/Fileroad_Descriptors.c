@@ -130,6 +130,7 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 					}
 					else
 					{
+						// 5. Store the file length
 						retVal->fileSize = get_file_len(retVal->fileDesc);
 
 						if (retVal->fileSize == -1)
@@ -137,6 +138,12 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 							success = false;
 							fprintf(stderr, "<<<ERROR>>> - open_fd() - get_file_len() failed!\n");		
 						}
+
+						// 6. Store the file descriptor flags
+						retVal->fileDescFlags = fcntl(retVal->fileDesc, F_GETFD);
+
+						// 7. Store the file status flags
+						retVal->fileStatFlags = fcntl(retVal->fileDesc, F_GETFL);
 					}
 				}
 				else
@@ -229,8 +236,11 @@ void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
             // uintmax_t fileSize;     // Actual size of file
             tempStruct_ptr->fileSize = 0;
             
-            // uintmax_t diskSize; // Size of file on disk
-            // tempStruct_ptr->diskSize = 0;
+		    // int fileDescFlags;		// File descriptor flags
+            tempStruct_ptr->fileDescFlags = 0;
+
+		    // int fileStatFlags;		// File status flags
+		    tempStruct_ptr->fileStatFlags = 0;
             
 			// 2. FREE/CLEAR STRUCT
 			// Free the struct pointer
@@ -284,23 +294,34 @@ int update_fdDetails(fdDetails_ptr updateThis_ptr)
 	Input - An open file descriptor
 	Output - Size of the file descriptor
 	Notes:
-		This function will rewind() the file descriptor
+		This function will preserve the file offset
  */
-long get_file_len(int fileDesc)
+off_t get_file_len(int fileDesc)
 {
 	// LOCAL VARIABLES
-	long retVal = 0;
+	off_t retVal = 0;
+	off_t curVal = 0;	// We need to preserve the current offset
 
 	// INPUT VALIDATION
 	if (fileDesc >= 0)
 	{
 		// GET LENGTH
+		// Get current offset
+		curVal = lseek(fileDesc, 0, SEEK_CUR);
+
+		// Seek to the end
 	    retVal = lseek(fileDesc, 0, SEEK_END);
 	     
 	    if(retVal == -1)
 	    {
 	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - lseek() failed!\n");
-	    }    
+	    }
+
+	    // Preserve offset
+	    if (curVal != lseek(fileDesc, curVal, SEEK_SET))
+	    {
+	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - Failed to recover the existing offset!\n");
+	    }
 	}
 	// DONE
 	return retVal;
