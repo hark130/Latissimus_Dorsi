@@ -35,6 +35,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [File Descriptors Explained](https://linuxmeerkat.wordpress.com/2011/12/02/file-descriptors-explained/)
 * [GNU C Library: File Descriptor Flags](https://www.gnu.org/software/libc/manual/html_node/Descriptor-Flags.html)
 * [GNU C Library: File Status Flags](https://www.gnu.org/software/libc/manual/html_node/File-Status-Flags.html)
+* [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
 
 ## TO DO
 
