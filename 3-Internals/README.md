@@ -36,12 +36,13 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [GNU C Library: File Descriptor Flags](https://www.gnu.org/software/libc/manual/html_node/Descriptor-Flags.html)
 * [GNU C Library: File Status Flags](https://www.gnu.org/software/libc/manual/html_node/File-Status-Flags.html)
 * [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
+* [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
 
 ## TO DO
 
 ### 3-3-1
-* [ ] Open a File Descriptor
-* [ ] Close a File Descriptor
+* [X] Open a File Descriptor
+* [X] Close a File Descriptor
 * [ ] Modify a File Descriptor
 * [ ] Duplicate a File Descriptor
 
