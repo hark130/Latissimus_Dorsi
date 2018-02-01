@@ -50,3 +50,4 @@ Developers will have an in-depth working knowledge of Linux Internals
 * File descriptor ranges from 0 to OPEN_MAX
 * [/dev/null](https://www.networkworld.com/article/3025497/linux/sending-data-into-the-void-with-dev-null.html)
 * Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" /* try PRIuMAX if %ju unsupported */
+* Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
