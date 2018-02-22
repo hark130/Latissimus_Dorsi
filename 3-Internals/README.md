@@ -33,3 +33,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## TO DO
 
+### 3-10-1
+
+* [ ] Programatically determine which applications are running
+* [ ] Prompt the user to choose an application
+* [ ] List the modules loaded in that application
+* [ ] Inspect those modules
