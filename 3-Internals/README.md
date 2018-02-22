@@ -30,6 +30,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## RESEARCH SOURCES
 
+* [procps - The /proc file system utilities](http://procps.sourceforge.net/)
 
 ## TO DO
 
