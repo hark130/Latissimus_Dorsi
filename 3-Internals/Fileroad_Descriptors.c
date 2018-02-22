@@ -6,10 +6,10 @@
 #include <sys/stat.h>		// mode_t
 #include <unistd.h>			// close
 
-#ifndef MAX_TRIES
+#ifndef FD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
-#define MAX_TRIES 3
-#endif  // MAX_TRIES
+#define FD_MAX_TRIES 3
+#endif  // FD_MAX_TRIES
 
 /*
 typedef struct fileDescriptorDetails
@@ -36,7 +36,7 @@ fdDetails_ptr create_fdDetails_ptr(void)
 	int numTries = 0;
 
 	// ALLOCATE MEMORY
-	while(numTries < MAX_TRIES && retVal == NULL)
+	while(numTries < FD_MAX_TRIES && retVal == NULL)
 	{
 		retVal = (fdDetails_ptr)calloc(1, sizeof(fdDetails));
 		numTries++;
