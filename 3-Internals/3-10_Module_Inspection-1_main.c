@@ -18,6 +18,8 @@
 			4. Read the /proc filesystem directly (strace ps -aux)
 				(Essentially, loop through all numeric folders in /proc/<pid>, then do readlink 
 				/proc/<pid>/exe, or cat /proc/<pid>/cmdline)
+				1. List all directories in /proc
+				2. Match only the directory names with all numbers
 	2. Prompt the user to choose an application
 	3. List the modules loaded in that application
 		1. ldd - print shared library dependencies
