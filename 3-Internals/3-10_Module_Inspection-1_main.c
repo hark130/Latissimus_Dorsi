@@ -37,6 +37,6 @@
  int main(void)
  {
  	puts("main() isn't doing anything yet!");
- 	return;
+ 	return 0;
  }
  
