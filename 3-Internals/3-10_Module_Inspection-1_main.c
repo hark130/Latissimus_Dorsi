@@ -41,65 +41,95 @@
  	dirDetails_ptr test1 = NULL;
  	dirDetails_ptr test2 = NULL;
  	dirDetails_ptr test3 = NULL;
+ 	dirDetails_ptr test4 = NULL;
+ 	char** name_arr = NULL;
+ 	int fileNum = 0;
 
 	puts("main() is barely doing something!");
 
-	// TEST 1 - NULL
-	test1 = open_dir(NULL);
-	if (test1)
-	{
-		if (test1->dirName)
-		{
-			fprintf(stdout, "Test 1: dirName == %s\n", test1->dirName);
-		}
-		else
-		{
-			fprintf(stderr, "Test 1: ERROR... dirName is NULL!");
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Test 1: ERROR... struct pointer is NULL!");
-	}
-	free_dirDetails_ptr(&test1);
+	// // TEST 1 - NULL
+	// test1 = open_dir(NULL);
+	// if (test1)
+	// {
+	// 	if (test1->dirName)
+	// 	{
+	// 		fprintf(stdout, "Test 1: dirName == %s\n", test1->dirName);
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stderr, "Test 1: ERROR... dirName is NULL!");
+	// 	}
+	// }
+	// else
+	// {
+	// 	fprintf(stderr, "Test 1: ERROR... struct pointer is NULL!");
+	// }
+	// free_dirDetails_ptr(&test1);
 
-	// TEST 2 - Blank string
-	test2 = open_dir("");
-	if (test2)
-	{
-		if (test2->dirName)
-		{
-			fprintf(stdout, "Test 2: dirName == %s\n", test2->dirName);
-		}
-		else
-		{
-			fprintf(stderr, "Test 2: ERROR... dirName is NULL!");
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Test 2: ERROR... struct pointer is NULL!");
-	}
-	free_dirDetails_ptr(&test2);
+	// // TEST 2 - Blank string
+	// test2 = open_dir("");
+	// if (test2)
+	// {
+	// 	if (test2->dirName)
+	// 	{
+	// 		fprintf(stdout, "Test 2: dirName == %s\n", test2->dirName);
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stderr, "Test 2: ERROR... dirName is NULL!");
+	// 	}
+	// }
+	// else
+	// {
+	// 	fprintf(stderr, "Test 2: ERROR... struct pointer is NULL!");
+	// }
+	// free_dirDetails_ptr(&test2);
 
-	// TEST 3 - Actual directory
-	test3 = open_dir("../3-Internals");
-	if (test3)
+	// // TEST 3 - Actual directory
+	// test3 = open_dir("../3-Internals");
+	// if (test3)
+	// {
+	// 	if (test3->dirName)
+	// 	{
+	// 		fprintf(stdout, "Test 3: dirName == %s\n", test3->dirName);
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stderr, "Test 3: ERROR... dirName is NULL!");
+	// 	}
+	// }
+	// else
+	// {
+	// 	fprintf(stderr, "Test 3: ERROR... struct pointer is NULL!");
+	// }
+	// free_dirDetails_ptr(&test3);
+
+	// TEST 4 - Test the remaining struct members
+	test4 = open_dir(".");
+	if (test4)
 	{
-		if (test3->dirName)
+		fprintf(stdout, "NAME:\t%s\n", test4->dirName);
+		fprintf(stdout, "FILES:\t%d\n", test4->numFiles);
+		name_arr = test4->fileName_arr;
+		if (name_arr)
 		{
-			fprintf(stdout, "Test 3: dirName == %s\n", test3->dirName);
+			while (*name_arr)
+			{
+				fileNum++;
+				fprintf(stdout, "%d:\t%s\n", fileNum, *name_arr);
+				name_arr++;
+			}
 		}
 		else
 		{
-			fprintf(stderr, "Test 3: ERROR... dirName is NULL!");
+			fprintf(stdout, "No files found!");
 		}
 	}
 	else
 	{
-		fprintf(stderr, "Test 3: ERROR... struct pointer is NULL!");
+		fprintf(stderr, "Test 4: ERROR... struct pointer is NULL!");
 	}
-	free_dirDetails_ptr(&test3);
+	free_dirDetails_ptr(&test4);
 
 	return 0;
  }
