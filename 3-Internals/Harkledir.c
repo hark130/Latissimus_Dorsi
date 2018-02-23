@@ -591,3 +591,90 @@ bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fil
 	return retVal;
 }
 
+
+bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
+	void* realloc_ptr = NULL;  // Return value from realloc
+	char* temp_ptr = NULL;  // Return value from calloc
+
+	// INPUT VALIDATION
+	if (!updateThis_ptr)
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - updateThis_ptr NULL pointer!\n");
+		retVal = false;
+	}
+	else if (!fileEntry)
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - fileEntry NULL pointer!\n");
+		retVal = false;
+	}
+	else if (!(updateThis_ptr->dirName_arr))
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - dirName_arr NULL pointer!\n");
+		retVal = false;
+	}
+
+	// VALIDATE ARRAY
+	// 1. Calculate necessary size
+	necessarySize = updateThis_ptr->numFiles * sizeof(char*);  	// Total bytes currently stored
+	necessarySize += sizeof(char*);  							// The new fileEntry to store
+	necessarySize += sizeof(char*);								// The terminating NULL pointer
+	// 2. Verify the array is large enough
+	if (updateThis_ptr->dirArrSize < necessarySize)
+	{
+		// 2.1. Not enough
+		realloc_ptr = realloc(updateThis_ptr->dirName_arr, updateThis_ptr->dirArrSize + HDIR_ARRAY_LEN);
+
+		if (realloc_ptr)
+		{
+			updateThis_ptr->dirName_arr = realloc_ptr;
+			updateThis_ptr->dirArrSize += HDIR_ARRAY_LEN;
+			realloc_ptr = NULL;
+		}
+		else
+		{
+			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to realloc the dirName_arr!\n");
+			retVal = false;
+		}
+	}
+
+	// COPY THE FILENAME
+	if (retVal == true)
+	{
+		// 1. Allocate an array for the new filename
+		temp_ptr = calloc(strlen(fileEntry->d_name), sizeof(char));
+
+		if (temp_ptr)
+		{
+			// 2. Store that pointer in the struct array
+			(*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)) = temp_ptr;
+
+			// 3. Copy the filename in
+			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), fileEntry->d_name);
+
+			if (temp_ptr != (*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)))
+			{
+				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to copy the d_name into the array!\n");
+				retVal = false;
+			}
+			else
+			{
+				updateThis_ptr->numDirs++;  // Increment the file count
+			}
+		}
+		else
+		{
+			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to calloc an array for the d_name!\n");
+			retVal = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+	
+	
