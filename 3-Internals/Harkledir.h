@@ -27,12 +27,12 @@ dirDetails_ptr create_dirDetails_ptr(void);
 /*
 	Purpose - Read and parse a given directory name
 	Input
-		dirName - stack-allocated, nul-terminated, directory name
+		directoryName - stack-allocated, nul-terminated, directory name
 	Output - heap-allocated, fully populated, directoryDetails struct pointer
 	Notes:
-		
+		If directoryName is NULL or empty, will default to cwd
  */
-dirDetails_ptr open_dir(char* dirName);
+dirDetails_ptr open_dir(char* directoryName);
 
 
 /*

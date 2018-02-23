@@ -1,7 +1,8 @@
 #include <stdlib.h>		// calloc
 #include "Harkledir.h"
 #include <stdbool.h>	// bool, true, false
-#include <string.h>		// memset
+#include <stdio.h>
+#include <string.h>		// memset, strncpy
 
 
 #ifndef HDIR_MAX_TRIES
@@ -33,21 +34,70 @@ dirDetails_ptr create_dirDetails_ptr(void)
 		retVal = (dirDetails_ptr)calloc(1, sizeof(dirDetails));
 		numTries++;
     }
+
+    if (!retVal)
+    {
+    	fprintf(stderr, "<<<ERROR>>> - create_dirDetails_ptr() - Failed to allocate a dirDetails struct pointer!\n");
+    }
     
     // DONE
 	return retVal;
 }
 
 
-/*
-	Purpose - Read and parse a given directory name
-	Input
-		dirName - stack-allocated, nul-terminated, directory name
-	Output - heap-allocated, fully populated, directoryDetails struct pointer
-	Notes:
-		
- */
-dirDetails_ptr open_dir(char* dirName);
+dirDetails_ptr open_dir(char* directoryName)
+{
+	// LOCAL VARIABLES
+	dirDetails_ptr retVal = create_dirDetails_ptr();
+	char defaultDirName[] = {"."};  // cwd
+	char* temp_ptr = NULL;  // Return value from strncpy()
+	size_t nameLen = 0;  // Holds the length of strings to allocate
+
+	if (retVal)
+	{
+		// POPULATE dirDetails_ptr
+		// 1. Copy in directoryName
+		// 1.1. Validate directoryName
+		if (!directoryName)
+		{
+			directoryName = defaultDirName;
+		}
+		else
+		{
+			if (*directoryName == 0)
+			{
+				directoryName = defaultDirName;
+			}
+		}
+
+		// 1.2. Allocate a char array
+		nameLen = strlen(directoryName);
+		retVal->dirName = (char*)calloc(nameLen + 1, sizeof(char));
+
+		if (!(retVal->dirName))
+		{
+			fprintf(stderr, "<<<ERROR>>> - open_dir() - Failed to allocate an array for dirName!\n");
+		}
+		else
+		{
+			temp_ptr = strncpy(retVal->dirName, directoryName, nameLen);
+
+			if (temp_ptr != retVal->dirName)
+			{
+				fprintf(stderr, "<<<ERROR>>> - open_dir() - Failed to copy the directory name into dirName!\n");
+			}
+		}
+
+		// 2. Populate files
+		///////////////////////////////////// IMPLEMENT LATER /////////////////////////////////////
+
+		// 3. Populate dirs
+		///////////////////////////////////// IMPLEMENT LATER /////////////////////////////////////
+	}
+
+	// DONE
+	return retVal;
+}
 
 
 /*
@@ -78,7 +128,7 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			// 1. char* dirName;
 			if (oldStruct->dirName)
 			{
-				if (*(oldStruct->dirname))
+				if (*(oldStruct->dirName))
 				{
 					// 1.1. memset dirName
 					temp_ptr = memset(oldStruct->dirName, 0x0, strlen(oldStruct->dirName));
