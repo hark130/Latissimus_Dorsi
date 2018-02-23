@@ -7,9 +7,9 @@
 #include <string.h>		// memset, strncpy
 
 // lstat
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+// #include <sys/types.h>
+// #include <sys/stat.h>
+// #include <unistd.h>
 
 
 #ifndef HDIR_MAX_TRIES
