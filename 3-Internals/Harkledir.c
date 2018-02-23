@@ -3,6 +3,7 @@
 #include "Harkledir.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
+#include <stdlib.h>		// realloc 
 #include <string.h>		// memset, strncpy
 
 // lstat
@@ -97,7 +98,43 @@ dirDetails_ptr create_dirDetails_ptr(void)
     {
     	fprintf(stderr, "<<<ERROR>>> - create_dirDetails_ptr() - Failed to allocate a dirDetails struct pointer!\n");
     }
-    
+	else
+	{
+		// ALLOCATE THE ARRAYS
+		// fileName_arr
+		numTries = 0;
+		while(numTries < HDIR_MAX_TRIES && retVal->fileName_arr == NULL)
+		{
+			retVal->fileName_arr = (char**)calloc(HDIR_ARRAY_LEN + 1, sizeof(char*));
+			numTries++;
+	    }
+
+	    if (!(retVal->fileName_arr))
+	    {
+	    	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - Failed to allocate fileName_arr!\n");
+	    }
+	    else
+	    {
+	    	retVal->fileArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(char*);
+	    }
+	    // dirName_arr
+		numTries = 0;
+		while(numTries < HDIR_MAX_TRIES && retVal->dirName_arr == NULL)
+		{
+			retVal->dirName_arr = (char**)calloc(HDIR_ARRAY_LEN + 1, sizeof(char*));
+			numTries++;
+	    }
+
+	    if (!(retVal->dirName_arr))
+	    {
+	    	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - Failed to allocate dirName_arr!\n");
+	    }
+	    else
+	    {
+	    	retVal->dirArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(char*);
+	    }
+	}   
+
     // DONE
 	return retVal;
 }
@@ -245,11 +282,11 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			}
 
 			// 2.b. int numFiles;
-			if (oldStruct->numFiles != 0)
+			if (oldStruct->numFiles > 0)
 			{
-				oldStruct->numFiles = 0;
 				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numFiles was %d, a non-zero value!\n", oldStruct->numFiles);
 			}
+			oldStruct->numFiles = 0;
 
 			// 2.c. char** fileName_arr;	// Array of filenames
 			// 2.c.1. memset fileName_arr
@@ -371,6 +408,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 	bool retVal = true;
 	DIR* cwd = NULL;  // Directory stream opened from dirDetails_ptr->dirName
 	struct dirent* currDirEntry = NULL;  // An entry read from directory stream cwd
+	int numTries = 0;  // Used to count allocation attempts
 
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -378,22 +416,22 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - updateThis_ptr NULL pointer!\n");
 		retVal = false;
 	}
-	else if (!(updateThis_ptr->fileArrSize))
-	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileArrSize NULL pointer!\n");
-		retVal = false;
-	}
-	else if (!(updateThis_ptr->dirArrSize))
-	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirArrSize NULL pointer!\n");
-		retVal = false;
-	}
-	else if (updateThis_ptr->fileArrSize < 1 || updateThis_ptr->fileArrSize < HDIR_ARRAY_LEN)
+	// else if (!(updateThis_ptr->fileArrSize))
+	// {
+	// 	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileArrSize NULL pointer!\n");
+	// 	retVal = false;
+	// }
+	// else if (!(updateThis_ptr->dirArrSize))
+	// {
+	// 	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirArrSize NULL pointer!\n");
+	// 	retVal = false;
+	// }
+	else if (updateThis_ptr->fileArrSize < 1 || updateThis_ptr->fileArrSize < (HDIR_ARRAY_LEN * sizeof(char*)))
 	{
 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileArrSize too small!\n");
 		retVal = false;
 	}
-	else if (updateThis_ptr->dirArrSize < 1 || updateThis_ptr->dirArrSize < HDIR_ARRAY_LEN)
+	else if (updateThis_ptr->dirArrSize < 1 || updateThis_ptr->dirArrSize < (HDIR_ARRAY_LEN * sizeof(char*)))
 	{
 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirArrSize too small!\n");
 		retVal = false;
@@ -414,52 +452,142 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 		retVal = false;
 	}
 
-	// WALK DIR
-	// 1. Open the directory stream
-	cwd = opendir(updateThis_ptr->dirName);
-
-	// 2. Read all of the directory entries
-	do
+	if (retVal == true)
 	{
-		currDirEntry = readdir(cwd);
+		// WALK DIR
+		// 1. Open the directory stream
+		cwd = opendir(updateThis_ptr->dirName);
 
-		if (currDirEntry)
+		// 2. Read all of the directory entries
+		do
 		{
-			switch (currDirEntry->d_type)
-			{
-				case DT_BLK:
-					fprintf(stdout, "%s is a block device.\n", currDirEntry->d_name);
-					break;
-				case DT_CHR:
-					fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
-					break;
-				case DT_DIR:
-					fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
-					break;
-				case DT_FIFO:
-					fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
-					break;
-				case DT_LNK:
-					fprintf(stdout, "%s is a symbolic link.\n", currDirEntry->d_name);
-					break;
-				case DT_REG:
-					fprintf(stdout, "%s is a regular file.\n", currDirEntry->d_name);
-					break; 
-				case DT_SOCK:
-					fprintf(stdout, "%s is a UNIX domain socket.\n", currDirEntry->d_name);
-					break;
-				case DT_UNKNOWN:
-					fprintf(stdout, "This file type is unknown.\n");
-					// break;
-				default:
-					fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
-					fprintf(stdout, "Time to implement lstat()!\n");
-					break;
-			}
-		}
-	} while (currDirEntry);
+			currDirEntry = readdir(cwd);
 
+			if (currDirEntry)
+			{
+				switch (currDirEntry->d_type)
+				{
+					case DT_BLK:
+						fprintf(stdout, "%s is a block device.\n", currDirEntry->d_name);
+						break;
+					case DT_CHR:
+						fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
+						break;
+					case DT_DIR:
+						fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
+						break;
+					case DT_FIFO:
+						fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
+						break;
+					case DT_LNK:
+						fprintf(stdout, "%s is a symbolic link.\n", currDirEntry->d_name);
+						break;
+					case DT_REG:
+						// fprintf(stdout, "%s is a regular file.\n", currDirEntry->d_name);
+						retVal = populate_dirDetails_files(updateThis_ptr, currDirEntry);
+						break; 
+					case DT_SOCK:
+						fprintf(stdout, "%s is a UNIX domain socket.\n", currDirEntry->d_name);
+						break;
+					case DT_UNKNOWN:
+						fprintf(stdout, "This file type is unknown.\n");
+						// break;
+					default:
+						fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
+						fprintf(stdout, "Time to implement lstat()!\n");
+						break;
+				}
+			}
+		} while (currDirEntry);
+	}
 
 	// DONE
 	return retVal;
 }
+
+
+bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	// size_t currArrSize = 0;
+	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
+	void* realloc_ptr = NULL;  // Return value from realloc
+	char* temp_ptr = NULL;  // Return value from calloc
+
+	// INPUT VALIDATION
+	if (!updateThis_ptr)
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - updateThis_ptr NULL pointer!\n");
+		retVal = false;
+	}
+	else if (!fileEntry)
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - fileEntry NULL pointer!\n");
+		retVal = false;
+	}
+	else if (!(updateThis_ptr->fileName_arr))
+	{
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - fileEntry NULL pointer!\n");
+		retVal = false;
+	}
+
+	// VALIDATE ARRAY
+	// 1. Calculate necessary size
+	necessarySize = updateThis_ptr->numFiles * sizeof(char*);  	// Total bytes currently stored
+	necessarySize += sizeof(char*);  							// The new fileEntry to store
+	necessarySize += sizeof(char*);								// The terminating NULL pointer
+	// 2. Verify the array is large enough
+	if (updateThis_ptr->fileArrSize < necessarySize)
+	{
+		// 2.1. Not enough
+		realloc_ptr = realloc(updateThis_ptr->fileName_arr, updateThis_ptr->fileArrSize + HDIR_ARRAY_LEN);
+
+		if (realloc_ptr)
+		{
+			updateThis_ptr->fileName_arr = realloc_ptr;
+			updateThis_ptr->fileArrSize += HDIR_ARRAY_LEN;
+			realloc_ptr = NULL;
+		}
+		else
+		{
+			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to realloc the fileName_arr!\n");
+			retVal = false;
+		}
+	}
+
+	// COPY THE FILENAME
+	if (retVal == true)
+	{
+		// 1. Allocate an array for the new filename
+		temp_ptr = calloc(strlen(fileEntry->d_name), sizeof(char));
+
+		if (temp_ptr)
+		{
+			// 2. Store that pointer in the struct array
+			(*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)) = temp_ptr;
+
+			// 3. Copy the filename in
+			temp_ptr = strcpy((*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)), fileEntry->d_name);
+
+			if (temp_ptr != (*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)))
+			{
+				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to copy the d_name into the array!\n");
+				retVal = false;
+			}
+			else
+			{
+				updateThis_ptr->numFiles++;  // Increment the file count
+			}
+		}
+		else
+		{
+			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to calloc an array for the d_name!\n");
+			retVal = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
