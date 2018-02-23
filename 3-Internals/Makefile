@@ -1,9 +1,15 @@
 CC = gcc
 
-3101: 
-	$(CC) -o 3-10_Module_Inspection-1_main.exe 3-10_Module_Inspection-1_main.c
+331: 
+	$(CC) -c Fileroad_Descriptors.c
+	$(CC) -o 3-3_File_Descriptor_Practice-1_main.exe Fileroad_Descriptors.o 3-3_File_Descriptor_Practice-1_main.c
 
-all: 
+3101:
+	$(CC) -c Harkledir.c
+	$(CC) -o 3-10_Module_Inspection-1_main.exe Harkledir.o 3-10_Module_Inspection-1_main.c
+
+all:
+	331
 	3101
 
 clean: 
