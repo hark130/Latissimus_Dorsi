@@ -2,15 +2,18 @@
 #define __HARKLEDIR__
 
 #include <stdbool.h>	// bool, true, false
+#include <stdlib.h>		// size_t
 
 
 typedef struct directoryDetails
 {
-	char* dirName;
-	int numFiles;
-	char** fileName_arr;
-	int numDirs;
-	char** dirName_arr;
+	char* dirName;			// Directory name to walk
+	int numFiles;			// Number of char* in fileName_arr
+	char** fileName_arr;	// Array of filenames
+	size_t fileArrSize;		// Allocated bytes for fileName_arr
+	int numDirs;			// Number of char* in dirName_arr
+	char** dirName_arr;		// Array of directory names
+	size_t dirArrSize;		// Allocated bytes for dirName_arr
 } dirDetails, *dirDetails_ptr;
 
 
