@@ -13,4 +13,4 @@ all:
 	3101
 
 clean: 
-rm -f *.o *.exe *.so
+	rm -f *.o *.exe *.so
