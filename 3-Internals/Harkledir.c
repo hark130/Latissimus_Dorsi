@@ -63,8 +63,9 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
-	dirDetails_ptr oldStruct = NULL;
-	char* temp_ptr = NULL;
+	dirDetails_ptr oldStruct = NULL;  // Easier to deal with the oldStruct this way
+	char* temp_ptr = NULL;  // Will hold the return value from memset()
+	char* name_ptr = NULL;  // Will hold a char* from one of the dirDetails arrays
 
 	// INPUT VALIDATION
 	if (oldStruct_ptr)
@@ -95,12 +96,88 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 				}
 			}
 
-			// 2. int numFiles;
-			oldStruct->numFiles = 0;
+			// 2.a. char** fileName_arr;
+			if (oldStruct->numFiles > 0)
+			{
+				while (oldStruct->numFiles >= 0)
+				{
+					name_ptr = (*(oldStruct->fileName_arr + oldStruct->numFiles));
 
-			// char** fileName_arr;
-			// int numDirs;
-			// char** dirName_arr;
+					if (name_ptr)
+					{
+						if (*name_ptr)
+						{
+							// 2.a.1. memset filename
+							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
+
+							if (temp_ptr != name_ptr)
+							{
+								fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize one of the filenames in the struct's fileName_arr\n");
+							}
+						}
+
+					}
+
+					// 2.a.2. free filename
+					free(name_ptr);
+
+					// 2.a.3. Zero filename
+					name_ptr = NULL;
+					(*(oldStruct->fileName_arr + oldStruct->numFiles)) = NULL;
+
+					// 2.a.4. Next filename
+					oldStruct->numFiles--;
+				}
+			}
+
+			// 2.b. int numFiles;
+			if (oldStruct->numFiles != 0)
+			{
+				oldStruct->numFiles = 0;
+				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numFiles was %d, a non-zero value\n", oldStruct->numFiles);
+			}
+			
+
+			// 3.a. char** dirName_arr;
+			if (oldStruct->numDirs > 0)
+			{
+				while (oldStruct->numDirs >= 0)
+				{
+					name_ptr = (*(oldStruct->dirName_arr + oldStruct->numDirs));
+
+					if (name_ptr)
+					{
+						if (*name_ptr)
+						{
+							// 3.a.1. memset filename
+							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
+
+							if (temp_ptr != name_ptr)
+							{
+								fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize one of the filenames in the struct's fileName_arr\n");
+							}
+						}
+
+					}
+
+					// 3.a.2. free filename
+					free(name_ptr);
+
+					// 3.a.3. Zero filename
+					name_ptr = NULL;
+					(*(oldStruct->dirName_arr + oldStruct->numDirs)) = NULL;
+
+					// 3.a.4. Next filename
+					oldStruct->numDirs--;
+				}
+			}
+
+			// 3.b. int numDirs;
+			if (oldStruct->numDirs != 0)
+			{
+				oldStruct->numDirs = 0;
+				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numDirs was %d, a non-zero value\n", oldStruct->numDirs);
+			}
 		}
 	}
 
