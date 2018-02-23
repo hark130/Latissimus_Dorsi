@@ -42,8 +42,9 @@
  	dirDetails_ptr test2 = NULL;
  	dirDetails_ptr test3 = NULL;
  	dirDetails_ptr test4 = NULL;
- 	char** name_arr = NULL;
- 	int fileNum = 0;
+ 	char** name_arr = NULL;  // Incrementing variable for the arrays
+ 	int fileNum = 0;  // Numbers the file names found in the array
+	int dirNum = 0;  // Numbers the directory names found in the array
 
 	puts("main() is barely doing something!");
 
@@ -108,7 +109,9 @@
 	test4 = open_dir(".");
 	if (test4)
 	{
-		fprintf(stdout, "NAME:\t%s\n", test4->dirName);
+		// CURRENT WORKING DIRECTORY
+		fprintf(stdout, "NAME:\t%s\n", test4->dirName);\
+		// FILES
 		fprintf(stdout, "FILES:\t%d\n", test4->numFiles);
 		name_arr = test4->fileName_arr;
 		if (name_arr)
@@ -123,6 +126,22 @@
 		else
 		{
 			fprintf(stdout, "No files found!");
+		}
+		// DIRECTORIES
+		fprintf(stdout, "DIRECTORIES:\t%d\n", test4->numDirs);
+		name_arr = test4->dirName_arr;
+		if (name_arr)
+		{
+			while (*name_arr)
+			{
+				dirNum++;
+				fprintf(stdout, "%d:\t%s\n", dirNum, *name_arr);
+				name_arr++;
+			}
+		}
+		else
+		{
+			fprintf(stdout, "No directories found!");	
 		}
 	}
 	else
