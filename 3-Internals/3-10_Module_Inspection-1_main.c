@@ -46,7 +46,7 @@
  	int fileNum = 0;  // Numbers the file names found in the array
 	int dirNum = 0;  // Numbers the directory names found in the array
 
-	puts("main() is barely doing something!");
+	puts("main() is now walking directories!");
 
 	// // TEST 1 - NULL
 	// test1 = open_dir(NULL);
