@@ -474,7 +474,8 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 						fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
 						break;
 					case DT_DIR:
-						fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
+						retVal = populate_dirDetails_dirs(updateThis_ptr, currDirEntry);
 						break;
 					case DT_FIFO:
 						fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
@@ -495,10 +496,11 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 					default:
 						fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
 						fprintf(stdout, "Time to implement lstat()!\n");
+						retVal = false;
 						break;
 				}
 			}
-		} while (currDirEntry);
+		} while (currDirEntry && retVal == true);
 	}
 
 	// DONE
