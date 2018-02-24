@@ -37,6 +37,10 @@ Developers will have an in-depth working knowledge of Linux Internals
 ### 3-10-1
 
 * [ ] Programatically determine which applications are running
-* [ ] Prompt the user to choose an application
+	* [X] Get a list of PIDs
+	* [ ] Associate those PIDs with applications
+		* ```ls -la /proc/<PID>/exe```
+		* ```cat /proc/<PID>/cmdline```
+* [ ] Prompt the user to choose one
 * [ ] List the modules loaded in that application
 * [ ] Inspect those modules
