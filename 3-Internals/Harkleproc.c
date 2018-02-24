@@ -111,7 +111,7 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
             tempFN_ptr = procWalk_ptr->dirName_arr;
             while (retVal == NULL && numTries < HPROC_MAX_TRIES)
             {
-                retVal = (char**)calloc(numNames, sizeof(char*));
+                retVal = (char**)calloc(numNames + 1, sizeof(char*));
                 numTries++;
             }
 
@@ -121,11 +121,19 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
                 
                 for (i = 0; i < numNames; i++)
                 {
-                    (*temp_ptr) = copy_a_name(*tempFN_ptr);
-
-                    if(!(*temp_ptr))
+                    if (true == is_it_a_PID((*temp_ptr)))
                     {
-                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_name failed!\n");
+                        fprintf(stdout, "%s is a PID!\n", *temp_ptr);  // DEBUGGING
+                        (*temp_ptr) = copy_a_name(*tempFN_ptr);
+
+                        if(!(*temp_ptr))
+                        {
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_name failed!\n");
+                        }
+                    }
+                    else
+                    {
+                        fprintf(stdout, "%s is not a PID.\n", *temp_ptr);  // DEBUGGING
                     }
 
                     temp_ptr++;
