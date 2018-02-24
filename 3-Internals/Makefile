@@ -6,7 +6,8 @@ CC = gcc
 
 3101:
 	$(CC) -c Harkledir.c
-	$(CC) -o 3-10_Module_Inspection-1_main.exe Harkledir.o 3-10_Module_Inspection-1_main.c
+	$(CC) -c Harkleproc.c
+	$(CC) -o 3-10_Module_Inspection-1_main.exe Harkledir.o Harkleproc.o 3-10_Module_Inspection-1_main.c
 
 all:
 	331
