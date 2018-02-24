@@ -280,3 +280,39 @@ char* copy_a_name(const char* fileName)
     return retVal;
 }
 
+
+bool is_it_a_PID(const char* dirName)
+{
+    // LOCAL VARIABLES
+    bool retVal = true;  // Default answer to prove incorrect
+    char* temp_ptr = NULL;  // Iterating variable
+
+    // INPUT VALIDATION
+    if (dirName)
+    {
+        if (*dirName)
+        {
+            temp_ptr = dirName;
+
+            while (*temp_ptr && retVal == true)
+            {
+                if (*temp_ptr < 48 || *temp_ptr > 57)
+                {
+                    retVal = false;
+                }
+                else
+                {
+                    temp_ptr++;
+                }
+            }
+        }
+        else
+        {
+            retVal = false;
+        }
+    }
+
+    // DONE
+    return retVal
+}
+

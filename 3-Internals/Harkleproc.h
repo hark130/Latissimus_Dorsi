@@ -50,6 +50,21 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr);
  */
 bool free_char_arr(char*** charArr_ptr);
 
+
+/*
+	Purpose - Check a /proc directory name for all numbers
+	Input
+		dirName - nul-terminated char array holding a /proc directory name
+	Output - true if dirName a non-empty string of numbers, false otherwise
+	Notes:
+		This function does not validate whether dirName is a directory
+		This function does not validate whether dirName is in /proc
+		This function merely was intentended to be used in this manner
+ */
+bool is_it_a_PID(const char* dirName);
+
+
+
 /*
 parse_proc_PIDs()
 1. walk_proc() -> open_dir("/proc")
