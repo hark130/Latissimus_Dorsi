@@ -32,16 +32,27 @@ char* copy_a_name(const char* fileName);
  */
 char** parse_proc_PIDs(void)
 {
-/*
-parse_proc_PIDs()
-1. walk_proc() -> open_dir("/proc")
-2. parse_PID_dirs_to_arr() -> copy_a_name() walks dirNames_arr for <PID> dirs adding them to a char**]
-3. free_dirDetails_ptr()
-4. return the char**
-NOTE:  
-	Implement copy_a_name() inside Harkleproc.c
-	User must call free_char_arr() or do it manually
- */
+    // LOCAL VARIABLES
+    char** retVal = NULL;
+    dirDetails_ptr procDetails_ptr = NULL;
+
+    // 1. walk_proc()
+    procDetails_ptr = walk_proc();
+
+    // 2. parse_PID_dirs_to_arr()
+    if (procDetails_ptr)
+    {
+        retVal = parse_PID_dirs_to_arr(procDetails_ptr);
+    }
+
+    // 3. free_dirDetails_ptr()
+    if (procDetails_ptr)
+    {
+        free_dirDetails_ptr(&procDetails_ptr);
+    }
+
+    // DONE
+    return retVal;
 }
 
 
@@ -52,7 +63,19 @@ NOTE:
 	Notes:
 		It is your responsibility to call free_dirDetails_ptr(&dirDetails_ptr)
  */
-dirDetails_ptr walk_proc(void);
+dirDetails_ptr walk_proc(void)
+{
+    // LOCAL VARIABLES
+    dirDetails_ptr retVal = open_dir("/proc");
+
+    if (!dirDetails_ptr)
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - walk_proc() - open_dir failed!\n");
+    }
+
+    // DONE
+    return retVal;
+}
 
 
 /*
@@ -63,19 +86,142 @@ dirDetails_ptr walk_proc(void);
 	Notes:
 		This function will ignore files and filter out non-<PID> directories in /proc
  */
-char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr);
+char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
+{
+    // LOCAL VARIABLES
+    char** retVal = NULL;  // Return value
+    char** temp_ptr = NULL;  // Iterating variable
+    char** tempFN_ptr = NULL;  // Iterating variable for the dirName_arr
+    int numTries = 0;  // Tracks attempts to avoid upper end limit of allocation attempts
+    int numNames = 0;  // Number of names to add
+    int i = 0;  // Loop iterating variable
+
+    // INPUT VALIDATION
+    if (procWalk_ptr)
+    {
+        // Allocate the array of char pointers
+        if (procWalk_ptr->numDirs > 0 && procWalk_ptr->dirName_arr)
+        {
+            numNames = procWalk_ptr->numDir;
+            tempFN_ptr = procWalk_ptr->dirName_arr;
+            while (retVal == NULL && numTries < HPROC_MAX_TRIES)
+            {
+                retVal = (char**)calloc(numNames, sizeof(char*));
+                numTries++;
+            }
+
+            if (retVal)
+            {
+                temp_ptr = retVal;
+                
+                for (i = 0; i < numNames; i++)
+                {
+                    (*temp_ptr) = copy_a_name(*tempFN_ptr);
+
+                    if(!(*temp_ptr))
+                    {
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_name failed!\n");
+                    }
+
+                    temp_ptr++;
+                    tempFN_ptr++;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - calloc failed!\n");
+            }
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - invalid dirDetails struct!\n");
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - NULL pointer!\n");
+    }
+
+    // DONE
+    return retVal;
+}
 
 
-/*
-	Purpose - Ease the suffering of free()ing a char** from parse_proc_PIDs()
-	Input
-		charArr_ptr - A pointer to an array of char pointers
-	Output - true on success, false on failure
-	Notes:
-		All C-strings will be memset to 0, free()d, and made NULL
-		The array of C-strings will then be free()d and made NULL
- */
-bool free_char_arr(char*** charArr_ptr);
+bool free_char_arr(char*** charArr_ptr)
+{
+    // LOCAL VARIABLES
+    bool retVal = true;
+    char* currChar_ptr = NULL;  // C-string to be cleared
+    char* temp_ptr = NULL;  // Return value from memset
+    char** currChar_arr = NULL;  // Array of C-strings to be cleared
+    size_t currLen = 0;  // Length of the current string
+
+    // INPUT VALIDATION
+    if (charArr_ptr)
+    {
+        if (*charArr_ptr)
+        {
+            currChar_arr = *charArr_ptr;
+
+            while (*currChar_arr)
+            {
+                currChar_ptr = *currChar_arr;
+
+                if (currChar_ptr)
+                {
+                    // memset char*
+                    if (*currChar_ptr)
+                    {
+                        currLen = strlen(currChar_ptr);
+
+                        if (currLen > 0)
+                        {
+                            temp_ptr = memset(currChar_ptr, 0x0, currLen);
+
+                            if (temp_ptr != currChar_ptr)
+                            {
+                                fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - memset failed!\n");
+                                retVal = false;
+                            }
+                            else
+                            {
+                                temp_ptr = NULL;
+                            }
+                        }
+                    }
+
+                    // free char*
+                    free(currChar_ptr);
+
+                    // NULL char*
+                    currChar_ptr = NULL;
+                    *currChar_arr = NULL;
+                }
+                // Next char*
+                currChar_ptr++;
+            }
+
+            // free char**
+            free(*charArr_ptr);
+
+            // NULL char**
+            charArr_ptr = NULL;
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - NULL pointer!\n");
+            retVal = false;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - NULL pointer!\n");
+        retVal = false;
+    }
+
+    // DONE
+    return retVal;
+}
 
 
 char* copy_a_name(const char* fileName)
@@ -128,6 +274,4 @@ char* copy_a_name(const char* fileName)
     // DONE
     return retVal;
 }
-
-
 
