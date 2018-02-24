@@ -293,7 +293,7 @@ bool is_it_a_PID(const char* dirName)
 {
     // LOCAL VARIABLES
     bool retVal = true;  // Default answer to prove incorrect
-    char* temp_ptr = NULL;  // Iterating variable
+    const char* temp_ptr = NULL;  // Iterating variable
 
     // INPUT VALIDATION
     if (dirName)
@@ -321,6 +321,6 @@ bool is_it_a_PID(const char* dirName)
     }
 
     // DONE
-    return retVal
+    return retVal;
 }
 
