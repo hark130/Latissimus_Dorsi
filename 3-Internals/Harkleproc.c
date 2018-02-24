@@ -39,15 +39,18 @@ char** parse_proc_PIDs(void)
     dirDetails_ptr procDetails_ptr = NULL;
 
     // 1. walk_proc()
+    // puts("1. walk_proc()");  // DEBUGGING
     procDetails_ptr = walk_proc();
 
     // 2. parse_PID_dirs_to_arr()
+    // puts("2. parse_PID_dirs_to_arr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         retVal = parse_PID_dirs_to_arr(procDetails_ptr);
     }
 
     // 3. free_dirDetails_ptr()
+    // puts("3. free_dirDetails_ptr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         free_dirDetails_ptr(&procDetails_ptr);

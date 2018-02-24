@@ -227,6 +227,7 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			numberOfDirs = oldStruct->numDirs;
 
 			// FREE
+			// puts("1. char* dirName");  // DEBUGGING
 			// 1. char* dirName;
 			if (oldStruct->dirName)
 			{
@@ -248,17 +249,21 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 				}
 			}
 
+			// puts("2. char* fileNames");  // DEBUGGING
 			// 2.a. char* fileNames;
 			if (oldStruct->numFiles > 0)
 			{
-				while (oldStruct->numFiles >= 0)
+				while (oldStruct->numFiles > 0)
 				{
-					name_ptr = (*(oldStruct->fileName_arr + oldStruct->numFiles));
+					name_ptr = (char*)(*(oldStruct->fileName_arr + oldStruct->numFiles - 1));
+					// fprintf(stdout, "name_ptr:\t%p\n", name_ptr);  // DEBUGGING
 
 					if (name_ptr)
 					{
+						// fprintf(stdout, "filename:\t%s\n", name_ptr);  // DEBUGGING
 						if (*name_ptr)
 						{
+							// puts("2.a.1. memset filename");  // DEBUGGING
 							// 2.a.1. memset filename
 							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
 
@@ -269,18 +274,22 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 						}
 					}
 
+					// puts("2.a.2. free filename");  // DEBUGGING
 					// 2.a.2. free filename
 					free(name_ptr);
 
+					// puts("2.a.3. Zero filename");  // DEBUGGING
 					// 2.a.3. Zero filename
 					name_ptr = NULL;
-					(*(oldStruct->fileName_arr + oldStruct->numFiles)) = NULL;
+					(*(oldStruct->fileName_arr + oldStruct->numFiles - 1)) = NULL;
 
+					// puts("2.a.4. Next filename");  // DEBUGGING
 					// 2.a.4. Next filename
 					oldStruct->numFiles--;
 				}
 			}
 
+			// puts("2.b. int numFiles");  // DEBUGGING
 			// 2.b. int numFiles;
 			if (oldStruct->numFiles > 0)
 			{
@@ -288,6 +297,7 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			}
 			oldStruct->numFiles = 0;
 
+			// puts("2.c. char** fileName_arr");  // DEBUGGING
 			// 2.c. char** fileName_arr;	// Array of filenames
 			// 2.c.1. memset fileName_arr
 			if (oldStruct->fileArrSize >= (numberOfFiles * sizeof(char*)))
@@ -313,17 +323,24 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			// 2.d. size_t fileArrSize;		// Allocated bytes for fileName_arr
 			oldStruct->fileArrSize = 0;
 
+			// puts("3. char* dirNames");  // DEBUGGING
 			// 3.a. char* dirNames;
 			if (oldStruct->numDirs > 0)
 			{
-				while (oldStruct->numDirs >= 0)
+				// fprintf(stdout, "Number of dirs:\t%d\n", oldStruct->numDirs);  // DEBUGGING
+				while (oldStruct->numDirs > 0)
 				{
-					name_ptr = (*(oldStruct->dirName_arr + oldStruct->numDirs));
+					name_ptr = (char*)(*(oldStruct->dirName_arr + oldStruct->numDirs - 1));
+					// fprintf(stdout, "1. name_ptr:\t%p\n", name_ptr);  // DEBUGGING
+					// name_ptr = oldStruct->dirName_arr[oldStruct->numDirs - 1];
+					// fprintf(stdout, "2. name_ptr:\t%p\n", name_ptr);  // DEBUGGING
 
 					if (name_ptr)
 					{
+						// fprintf(stdout, "dir name:\t%s\n", name_ptr);  // DEBUGGING
 						if (*name_ptr)
 						{
+							// puts("3.a.1. memset filename");  // DEBUGGING
 							// 3.a.1. memset filename
 							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
 
@@ -332,21 +349,29 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 								fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize one of the filenames in the struct's fileName_arr!\n");
 							}
 						}
-
+						// puts("3.a.2. free filename");  // DEBUGGING
+						// fprintf(stdout, "free(%p)\n", name_ptr);  // DEBUGGING
+						// 3.a.2. free filename
+						free(name_ptr);
 					}
 
-					// 3.a.2. free filename
-					free(name_ptr);
+					// puts("3.a.2. free filename");  // DEBUGGING
+					// fprintf(stdout, "free(%p)\n", name_ptr);  // DEBUGGING
+					// // 3.a.2. free filename
+					// free(name_ptr);
 
+					// puts("3.a.3. Zero filename");  // DEBUGGING
 					// 3.a.3. Zero filename
 					name_ptr = NULL;
-					(*(oldStruct->dirName_arr + oldStruct->numDirs)) = NULL;
+					(*(oldStruct->dirName_arr + oldStruct->numDirs - 1)) = NULL;
 
+					// puts("3.a.4. Next filename");  // DEBUGGING
 					// 3.a.4. Next filename
 					oldStruct->numDirs--;
 				}
 			}
 
+			// puts("3.b. int numDirs");  // DEBUGGING
 			// 3.b. int numDirs;
 			if (oldStruct->numDirs > 0)
 			{
@@ -354,7 +379,9 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			}
 			oldStruct->numDirs = 0;
 
+			// puts("3.c. char** dirName_arr");  // DEBUGGING
 			// 3.c. char** dirName_arr;		// Array of directory names
+			// puts("3.c.1. memset dirName_arr");  // DEBUGGING
 			// 3.c.1. memset dirName_arr
 			if (oldStruct->dirArrSize >= (numberOfDirs * sizeof(char*)))
 			{
@@ -370,12 +397,15 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize the struct's dirName_arr!\n");
 			}
 
+			// puts("3.c.2. free dirName_arr");  // DEBUGGING
 			// 3.c.2. free dirName_arr
 			free(oldStruct->dirName_arr);
 
+			// puts("3.c.3. Zero dirName_arr");  // DEBUGGING
 			// 3.c.3. Zero dirName_arr
 			oldStruct->dirName_arr = NULL;
 
+			// puts("3.d. size_t dirArrSize");  // DEBUGGING
 			// 3.d. size_t dirArrSize;		// Allocated bytes for dirName_arr
 			oldStruct->dirArrSize = 0;
 		}
@@ -468,27 +498,27 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 				switch (currDirEntry->d_type)
 				{
 					case DT_BLK:
-						fprintf(stdout, "%s is a block device.\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a block device.\n", currDirEntry->d_name);
 						break;
 					case DT_CHR:
-						fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
 						break;
 					case DT_DIR:
 						// fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
 						retVal = populate_dirDetails_dirs(updateThis_ptr, currDirEntry);
 						break;
 					case DT_FIFO:
-						fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
 						break;
 					case DT_LNK:
-						fprintf(stdout, "%s is a symbolic link.\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a symbolic link.\n", currDirEntry->d_name);
 						break;
 					case DT_REG:
 						// fprintf(stdout, "%s is a regular file.\n", currDirEntry->d_name);
 						retVal = populate_dirDetails_files(updateThis_ptr, currDirEntry);
 						break; 
 					case DT_SOCK:
-						fprintf(stdout, "%s is a UNIX domain socket.\n", currDirEntry->d_name);
+						// fprintf(stdout, "%s is a UNIX domain socket.\n", currDirEntry->d_name);
 						break;
 					case DT_UNKNOWN:
 						fprintf(stdout, "This file type is unknown.\n");
@@ -550,6 +580,8 @@ bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fil
 			updateThis_ptr->fileName_arr = realloc_ptr;
 			updateThis_ptr->fileArrSize += HDIR_ARRAY_LEN;
 			realloc_ptr = NULL;
+			// Set the last index to NULL
+			(*(updateThis_ptr->fileName_arr + updateThis_ptr->fileArrSize - 1)) = NULL;
 		}
 		else
 		{
@@ -621,7 +653,7 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 
 	// VALIDATE ARRAY
 	// 1. Calculate necessary size
-	necessarySize = updateThis_ptr->numFiles * sizeof(char*);  	// Total bytes currently stored
+	necessarySize = updateThis_ptr->numDirs * sizeof(char*);  	// Total bytes currently stored
 	necessarySize += sizeof(char*);  							// The new fileEntry to store
 	necessarySize += sizeof(char*);								// The terminating NULL pointer
 	// 2. Verify the array is large enough
@@ -635,6 +667,8 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 			updateThis_ptr->dirName_arr = realloc_ptr;
 			updateThis_ptr->dirArrSize += HDIR_ARRAY_LEN;
 			realloc_ptr = NULL;
+			// Set the last index to NULL
+			(*(updateThis_ptr->dirName_arr + updateThis_ptr->dirArrSize - 1)) = NULL;
 		}
 		else
 		{
