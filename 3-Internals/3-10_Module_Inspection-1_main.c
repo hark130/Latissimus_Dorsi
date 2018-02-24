@@ -1,4 +1,5 @@
 #include "Harkledir.h"
+#include "Harkleproc.h"
 #include <stdio.h>
 // Initial commit
 
@@ -43,10 +44,30 @@
  	dirDetails_ptr test3 = NULL;
  	dirDetails_ptr test4 = NULL;
  	char** name_arr = NULL;  // Incrementing variable for the arrays
+ 	char** temp_arr = NULL;  // Another incrementing variable for the arrays
  	int fileNum = 0;  // Numbers the file names found in the array
 	int dirNum = 0;  // Numbers the directory names found in the array
+	int num = 0;  // Generic counting variable
 
-	puts("main() is now walking directories!");
+	puts("main() is now walking /proc!");
+
+	name_arr = parse_proc_PIDs();
+
+	if (name_arr)
+	{
+		temp_arr = name_arr;
+
+		puts("Directories in /proc:");
+
+		while (*temp_arr)
+		{
+			num++;
+			fprintf(stdout, "%d:\t%s\n", num, *temp_arr);
+			temp_arr++;
+		}
+
+		free_char_arr(&name_arr);
+	}
 
 	// // TEST 1 - NULL
 	// test1 = open_dir(NULL);
@@ -105,50 +126,50 @@
 	// }
 	// free_dirDetails_ptr(&test3);
 
-	// TEST 4 - Test the remaining struct members
-	test4 = open_dir(".");
-	if (test4)
-	{
-		// CURRENT WORKING DIRECTORY
-		fprintf(stdout, "NAME:\t%s\n", test4->dirName);\
-		// FILES
-		fprintf(stdout, "FILES:\t%d\n", test4->numFiles);
-		name_arr = test4->fileName_arr;
-		if (name_arr)
-		{
-			while (*name_arr)
-			{
-				fileNum++;
-				fprintf(stdout, "%d:\t%s\n", fileNum, *name_arr);
-				name_arr++;
-			}
-		}
-		else
-		{
-			fprintf(stdout, "No files found!");
-		}
-		// DIRECTORIES
-		fprintf(stdout, "DIRECTORIES:\t%d\n", test4->numDirs);
-		name_arr = test4->dirName_arr;
-		if (name_arr)
-		{
-			while (*name_arr)
-			{
-				dirNum++;
-				fprintf(stdout, "%d:\t%s\n", dirNum, *name_arr);
-				name_arr++;
-			}
-		}
-		else
-		{
-			fprintf(stdout, "No directories found!");	
-		}
-	}
-	else
-	{
-		fprintf(stderr, "Test 4: ERROR... struct pointer is NULL!");
-	}
-	free_dirDetails_ptr(&test4);
+	// // TEST 4 - Test the remaining struct members
+	// test4 = open_dir(".");
+	// if (test4)
+	// {
+	// 	// CURRENT WORKING DIRECTORY
+	// 	fprintf(stdout, "NAME:\t%s\n", test4->dirName);\
+	// 	// FILES
+	// 	fprintf(stdout, "FILES:\t%d\n", test4->numFiles);
+	// 	name_arr = test4->fileName_arr;
+	// 	if (name_arr)
+	// 	{
+	// 		while (*name_arr)
+	// 		{
+	// 			fileNum++;
+	// 			fprintf(stdout, "%d:\t%s\n", fileNum, *name_arr);
+	// 			name_arr++;
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stdout, "No files found!");
+	// 	}
+	// 	// DIRECTORIES
+	// 	fprintf(stdout, "DIRECTORIES:\t%d\n", test4->numDirs);
+	// 	name_arr = test4->dirName_arr;
+	// 	if (name_arr)
+	// 	{
+	// 		while (*name_arr)
+	// 		{
+	// 			dirNum++;
+	// 			fprintf(stdout, "%d:\t%s\n", dirNum, *name_arr);
+	// 			name_arr++;
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stdout, "No directories found!");	
+	// 	}
+	// }
+	// else
+	// {
+	// 	fprintf(stderr, "Test 4: ERROR... struct pointer is NULL!");
+	// }
+	// free_dirDetails_ptr(&test4);
 
 	return 0;
  }
