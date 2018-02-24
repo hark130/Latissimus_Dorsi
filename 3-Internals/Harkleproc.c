@@ -1,5 +1,7 @@
 #include "Harkledir.h"
+#include "Harkleproc.h"
 #include <stdbool.h>	// bool, true, false
+#include <stdio.h>
 #include <stdlib.h>     // calloc
 #include <string.h>     // strlen
 
@@ -68,7 +70,7 @@ dirDetails_ptr walk_proc(void)
     // LOCAL VARIABLES
     dirDetails_ptr retVal = open_dir("/proc");
 
-    if (!dirDetails_ptr)
+    if (!retVal)
     {
         fprintf(stderr, "<<<ERROR>>> - Harkleproc - walk_proc() - open_dir failed!\n");
     }
@@ -102,7 +104,7 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
         // Allocate the array of char pointers
         if (procWalk_ptr->numDirs > 0 && procWalk_ptr->dirName_arr)
         {
-            numNames = procWalk_ptr->numDir;
+            numNames = procWalk_ptr->numDirs;
             tempFN_ptr = procWalk_ptr->dirName_arr;
             while (retVal == NULL && numTries < HPROC_MAX_TRIES)
             {

@@ -348,11 +348,11 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			}
 
 			// 3.b. int numDirs;
-			if (oldStruct->numDirs != 0)
+			if (oldStruct->numDirs > 0)
 			{
-				oldStruct->numDirs = 0;
 				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numDirs was %d, a non-zero value!\n", oldStruct->numDirs);
 			}
+			oldStruct->numDirs = 0;
 
 			// 3.c. char** dirName_arr;		// Array of directory names
 			// 3.c.1. memset dirName_arr
@@ -608,7 +608,7 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - updateThis_ptr NULL pointer!\n");
 		retVal = false;
 	}
-	else if (!fileEntry)
+	else if (!dirEntry)
 	{
 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - fileEntry NULL pointer!\n");
 		retVal = false;
@@ -647,7 +647,7 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 	if (retVal == true)
 	{
 		// 1. Allocate an array for the new filename
-		temp_ptr = calloc(strlen(fileEntry->d_name), sizeof(char));
+		temp_ptr = calloc(strlen(dirEntry->d_name), sizeof(char));
 
 		if (temp_ptr)
 		{
@@ -655,7 +655,7 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 			(*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)) = temp_ptr;
 
 			// 3. Copy the filename in
-			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), fileEntry->d_name);
+			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), dirEntry->d_name);
 
 			if (temp_ptr != (*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)))
 			{
