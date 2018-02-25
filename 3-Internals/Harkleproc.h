@@ -4,6 +4,68 @@
 #include "Harkledir.h"
 #include <stdbool.h>	// bool, true, false
 
+typedef struct harklePIDDetails
+{
+    char* pidName;          // Absolute path of PID
+    char* pidCmdline;       // Complete cmdline used to execute the PID
+    bool stillExists;       // False if PID ever disappears
+} pidDetails, *pidDetails_ptr;
+
+
+/*
+    Purpose - Allocated a harklePIDDetails on the heap
+    Input - None
+    Output - A heap-allocated, zeroized, harklePIDDetails pointer
+    Notes:
+        It is the caller's responsibility to call 
+            free_PID_struct(&pidDetails_ptr) when this struct pointer
+            is not longer needed.
+ */
+pidDetails_ptr create_PID_struct(void);
+
+
+/*
+    Purpose - Populate a harklePIDDetails struct with PID information
+    Input - None
+    Output
+        A pointer to a heap-allocated harklePIDDetails struct complete
+            with information about the PID found at pidPath on success.
+            NULL on failure.
+    Notes:
+        Returns NULL if pidPath does not begin with /proc
+        Returns NULL if the directory following /proc is not a PID (non-number)
+        Returns a pointer if pidPath is missing but stillExists is False
+ */
+pidDetails_ptr populate_PID_struct(const char* pidPath);
+
+
+/*
+    Purpose - To memset, free, and NULL a harklePIDDetails pointer
+    Input
+        pidDetails_ptr - A pointer to a pidDetails_ptr
+    Output - True on success, False on failure
+    Notes:
+        Will memset each non-empty, non-NULL char* in the struct
+        Will free each non-NULL char* in the struct
+        Will NULL each char* in the struct
+        Will set pidDetails_ptr to NULL when done
+ */
+bool free_PID_struct(pidDetails_ptr* pidDetails_ptr);
+
+
+/*
+    Purpose - To memset, free, and NULL all harklePIDDetails pointers
+        in an array, to include the array itself
+    Input
+        pidDetails_arr - Pointer to a NULL-terminated array of harklePIDDetails pointers
+    Output - True on success, False on failure
+    Notes:
+        Calls free_PID_struct() to free each pidDetails_ptr in the array
+        Will free the array itself
+        Will NULL the array pointer
+ */
+bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr);
+
 
 /*
 	Purpose - Provide a 'list' of running PIDs based on /proc
