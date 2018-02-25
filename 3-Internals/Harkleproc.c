@@ -500,7 +500,7 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
     // LOCAL VARIABLES
     bool retVal = true;
     bool freeReturn = true;
-    pidDetails_ptr currStruct_ptr = NULL;  // Will hold each struct pointer in the array
+    // pidDetails_ptr currStruct_ptr = NULL;  // Will hold each struct pointer in the array
     pidDetails_ptr* currStruct_arr = NULL;  // Will hold the pointer to the array
 
     // INPUT VALIDATION
@@ -513,16 +513,17 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
             // 1. Free each struct pointer
             while (*currStruct_arr)
             {
-                currStruct_ptr = *currStruct_arr;
+                // currStruct_ptr = *currStruct_arr;
 
-                fprintf(stdout, "BEFORE currStruct_ptr:\t%p\n", currStruct_ptr);  // DEBUGGING
-                fprintf(stdout, "BEFORE *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
-                freeReturn = free_PID_struct(&currStruct_ptr);
-                fprintf(stdout, "AFTER currStruct_ptr:\t%p\n", currStruct_ptr);  // DEBUGGING
-                fprintf(stdout, "AFTER *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+                // fprintf(stdout, "BEFORE currStruct_arr:\t%p\n", currStruct_arr);  // DEBUGGING
+                // fprintf(stdout, "BEFORE *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+                freeReturn = free_PID_struct(currStruct_arr);
+                // fprintf(stdout, "AFTER currStruct_arr:\t%p\n", currStruct_arr);  // DEBUGGING
+                // fprintf(stdout, "AFTER *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
 
                 if (freeReturn == false)
                 {
+                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - free_PID_struct failed!\n");
                     retVal = false;
                 }
 
@@ -538,13 +539,13 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
         }
         else
         {
-            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - NULL pointer!\n");
             retVal = false;
         }
     }
     else
     {
-        fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - NULL pointer!\n");
         retVal = false;
     }
 
@@ -603,8 +604,8 @@ pidDetails_ptr* parse_proc_PID_structs(void)
     puts("1. parse_proc_PID_structs() calls walk_proc()");  // DEBUGGING
     procDetails_ptr = walk_proc();
 
-    // 2. ???
-    // puts("2. parse_proc_PID_structs() calls ???");  // DEBUGGING
+    // 2. parse_PID_dirs_to_struct_arr()
+    puts("2. parse_proc_PID_structs() calls parse_PID_dirs_to_struct_arr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         retVal = parse_PID_dirs_to_struct_arr(procDetails_ptr);
