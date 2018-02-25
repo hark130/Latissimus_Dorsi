@@ -389,7 +389,7 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
     // LOCAL VARIABLES
     bool retVal = true;
     pidDetails_ptr tmpStruct_ptr = NULL;  // Easier to deal with this way
-    char* tmp_ptr = NULL;  // Easier to deal with char array pointers this way
+    char* temp_ptr = NULL;  // Easier to deal with char array pointers this way
     char* mem_ptr = NULL;  // Return value from memset function calls
     size_t length = 0;  // Length of a char array
 
@@ -403,18 +403,18 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
             // 1. char* pidName;          // Absolute path of PID
             if (tmpStruct_ptr->pidName)
             {
-                tmp_ptr = tmpStruct_ptr->pidName;
+                temp_ptr = tmpStruct_ptr->pidName;
 
-                if (*tmp_ptr)
+                if (*temp_ptr)
                 {
                     // 1.1. memset pidName
-                    length = strlen(tmp_ptr);
+                    length = strlen(temp_ptr);
 
                     if (length > 0)
                     {
-                        mem_ptr = memset(tmp_ptr, 0x0, length);
+                        mem_ptr = memset(temp_ptr, 0x0, length);
 
-                        if (mem_ptr != tmp_ptr)
+                        if (mem_ptr != temp_ptr)
                         {                            
                             fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
                             retVal = false;
@@ -422,10 +422,10 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
                     }
 
                     // 1.2. free pidName
-                    free(tmp_ptr);
+                    free(temp_ptr);
 
                     // 1.3. NULL pidName
-                    tmp_ptr = NULL;
+                    temp_ptr = NULL;
                     tmpStruct_ptr->pidName = NULL;
                 }
             }
@@ -433,18 +433,18 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
             // 2. char* pidCmdline;       // Complete cmdline used to execute the PID
             if (tmpStruct_ptr->pidCmdline)
             {
-                tmp_ptr = tmpStruct_ptr->pidCmdline;
+                temp_ptr = tmpStruct_ptr->pidCmdline;
 
-                if (*tmp_ptr)
+                if (*temp_ptr)
                 {
                     // 1.1. memset pidCmdline
-                    length = strlen(tmp_ptr);
+                    length = strlen(temp_ptr);
 
                     if (length > 0)
                     {
-                        mem_ptr = memset(tmp_ptr, 0x0, length);
+                        mem_ptr = memset(temp_ptr, 0x0, length);
 
-                        if (mem_ptr != tmp_ptr)
+                        if (mem_ptr != temp_ptr)
                         {
                             fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
                             retVal = false;
@@ -453,10 +453,10 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
                 }
 
                 // 1.2. free pidCmdline
-                free(tmp_ptr);
+                free(temp_ptr);
 
                 // 1.3. NULL pidCmdline
-                tmp_ptr = NULL;
+                temp_ptr = NULL;
                 tmpStruct_ptr->pidCmdline = NULL;
             }
 
@@ -1099,8 +1099,20 @@ char* read_a_file(char* fileName)
                 }
                 else if (numBytesRead == 0)
                 {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - 0 bytes read!\n");
-                    success = false;
+                    // It's ok if 0 bytes were read.  Some cmdline files are empty.
+                    // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - 0 bytes read!\n");
+                    // success = false;
+                    temp_ptr = strcpy(buff, "<EMPTY>");
+
+                    if (temp_ptr != buff)
+                    {
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strcpy failed!\n");
+                        success = false;
+                    }
+                    else
+                    {
+                        numBytesRead = strlen(buff);
+                    }
                 }
             }
 
