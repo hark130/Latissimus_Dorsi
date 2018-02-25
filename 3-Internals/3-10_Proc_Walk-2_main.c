@@ -14,7 +14,7 @@
  	// INPUT VALIDATION
  	if (procPIDStructs)
  	{
- 		while (temp_arr)
+ 		while (*temp_arr)
  		{
  			// Get a struct pointer
  			tempStruct_ptr = *temp_arr;
