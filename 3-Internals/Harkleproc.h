@@ -37,13 +37,13 @@ pidDetails_ptr create_PID_struct(void);
         Returns NULL if the directory following /proc is not a PID (non-number)
         Returns a pointer if pidPath is missing but stillExists is False
  */
-pidDetails_ptr populate_PID_struct(const char* pidPath);
+pidDetails_ptr populate_PID_struct(char* pidPath);
 
 
 /*
     Purpose - To memset, free, and NULL a harklePIDDetails pointer
     Input
-        pidDetails_ptr - A pointer to a pidDetails_ptr
+        pidDetailsStruct_ptr - A pointer to a pidDetails_ptr
     Output - True on success, False on failure
     Notes:
         Will memset each non-empty, non-NULL char* in the struct
@@ -51,7 +51,7 @@ pidDetails_ptr populate_PID_struct(const char* pidPath);
         Will NULL each char* in the struct
         Will set pidDetails_ptr to NULL when done
  */
-bool free_PID_struct(pidDetails_ptr* pidDetails_ptr);
+bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr);
 
 
 /*
@@ -124,7 +124,7 @@ bool free_char_arr(char*** charArr_ptr);
 		This function does not validate whether dirName is in /proc
 		This function merely was intentended to be used in this manner
  */
-bool is_it_a_PID(const char* dirName);
+bool is_it_a_PID(char* dirName);
 
 
 
