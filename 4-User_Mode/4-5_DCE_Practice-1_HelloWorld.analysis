@@ -46,3 +46,9 @@ Notes - Possible uses of Function Hooking:
     - Fix bugs
     - Manually access application’s own memory
     - Intercept calls to the calls to SSL_write in the OpenSSL library
+
+From [How do I add functionality to an existing binary executable](https://reverseengineering.stackexchange.com/questions/185/how-do-i-add-functionality-to-an-existing-binary-executable)
+3. Dynamic loading:
+
+You can use LD_PRELOAD to override functions that are going to be dynamically linked. This is a nice option when you want to change the behavior of a library function. Naturally, it does not work on statically linked binaries, or for static functions.
+
