@@ -3,7 +3,7 @@
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
 #include <stdlib.h>     // calloc
-#include <string.h>     // strlen
+#include <string.h>     // strlen, strstr
 
 #ifndef HPROC_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -46,7 +46,8 @@ pidDetails_ptr create_PID_struct(void)
 
 /*
     Purpose - Populate a harklePIDDetails struct with PID information
-    Input - None
+    Input
+        pidPath - Absolute path to /proc/<PID>
     Output
         A pointer to a heap-allocated harklePIDDetails struct complete
             with information about the PID found at pidPath on success.
@@ -56,7 +57,261 @@ pidDetails_ptr create_PID_struct(void)
         Returns NULL if the directory following /proc is not a PID (non-number)
         Returns a pointer if pidPath is missing but stillExists is False
  */
-pidDetails_ptr populate_PID_struct(const char* pidPath);
+pidDetails_ptr populate_PID_struct(const char* pidPath)
+{
+    // LOCAL VARIABLES
+    pidDetails_ptr retVal = NULL;
+    size_t pathLen = 0;  // strlen of pidPath
+    char* newPIDPath = NULL;  // In case we need to add a trailing slash
+    char* temp_ptr = NULL;  // Return value from string.h functions
+    char* pidCommandline = NULL;  // Temporarily holds the absolute path to /proc/<PID>/cmdline
+    size_t cmdlineLen = 0;  // The strlen of pidCommandline
+    int numTries = 0;  // Check this against nax number calloc attempts
+    bool success = true;  // If this is false prior to return, clean up
+    mapMem_ptr cmdlineContents = NULL;  // This will hold the contents of /proc/<PID>/cmdline
+
+    // 1. INPUT VALIDATION
+    if (pidPath)
+    {
+        if (*pidPath)
+        {
+            pathLen = strlen(pidPath);
+
+            // 1.1. Minimum length of a /proc/<PID> directory
+            if (pathLen >= strlen("/proc/1"))
+            {
+                if ((*(pidPath + pathLen - 1)) != '/')
+                {
+                    // We want trailing slashes
+                    // 1.1.1. Allocate a new array
+                    while (!newPIDPath && numTries < HPROC_MAX_TRIES)
+                    {
+                        // pathLen for the original path
+                        // 1 for the new trailing slash
+                        // 1 for the new nul terminator
+                        newPIDPath = (char*)calloc(pathLen + 2, sizeof(char));
+                        numTries++;
+                    }
+
+                    if (newPIDPath)
+                    {
+                        // 1.1.2. Copy the old path in
+                        temp_ptr = strncpy(newPIDPath, pidPath, pathLen);
+
+                        if (temp_ptr == newPIDPath)
+                        {
+                            // 1.1.3. Add a trailing slash
+                            temp_ptr = NULL;  // Don't need this anymore
+                            (*(newPIDPath + pathLen)) = '/';
+                            (*(newPIDPath + pathLen + 1)) = '\0';  // ...for safety
+                            pathLen = strlen(newPIDPath);
+                        }
+                        else
+                        {
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - strncpy failed!\n");
+                            success = false;
+                        }
+                    }
+                    else
+                    {
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - calloc failed!\n");
+                        success = false;
+                    }
+                }
+                else
+                {
+                    newPIDPath = pidPath;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Path too short!\n");
+                success = false;
+            }
+
+            // 1.2. Begins with /proc/
+            if (success == true)
+            {
+                temp_ptr = strstr(newPIDPath, "/proc/");
+
+                if (temp_ptr != newPIDPath)
+                {
+                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc path!\n");
+                    success = false;
+                }
+            }
+
+            // 1.3. Numerical directory name
+            if (success == true)
+            {
+
+                temp_ptr = newPIDPath + strlen("/proc/");
+
+                while (*temp_ptr != '/' && success == true)
+                {
+                    if (*temp_ptr < 48 || *temp_ptr > 57)
+                    {
+                        // Found a non-number
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc/<PID> path!\n");
+                        success = false;
+                    }
+                    else if (*temp_ptr == '\0')
+                    {
+                        // Missed the trailing slash?!
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc/<PID>/ path!\n");
+                        success = false;
+                    }
+                    else
+                    {
+                        temp_ptr++;
+                    }
+                }
+            }
+        }
+        else
+        {        
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Empty string!\n");
+            success = false;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - NULL pointer!\n");
+        success = false;
+    }
+
+    // 2. POPULATE STRUCT
+    if (success == true)
+    {
+        // 2.1. Allocate struct
+        retVal = create_PID_struct();
+
+        if (retVal)
+        {
+            // 2.2. Copy pidName
+            retVal->pidName = copy_a_name(newPIDPath);
+
+            if (retVal->pidName)
+            {
+                numTries = 0;
+
+                // 2.3. Read/allocate/copy /proc/<PID>/cmdline into char* pidCmdline
+                while (!pidCommandline && numTries < HPROC_MAX_TRIES)
+                {
+                    // pathLen for /proc/<PID>/
+                    // sizeof("cmdline") to make room for the filename
+                    cmdlineLen = pathLen + sizeof("cmdline");
+                    // 1 for the new nul-terminating character
+                    pidCommandline = (char*)calloc(cmdlineLen + 1, sizeof(char));
+                    numTries++;
+                }
+
+                if (pidCommandline)
+                {
+                    cmdlineLen = strlen(pidCommandline);  // ...for safety
+
+                    if (cmdlineLen >= strlen("/proc/1/cmdline"))  // Minimum length
+                    {
+                        cmdlineContents = map_file_mode(pidCommandline, O_RDONLY);
+
+                        if (cmdlineContents)
+                        {
+                            retVal->pidCmdline = copy_a_name(cmdlineContents->fileMem_ptr);
+
+                            if (retVal->pidCmdline)
+                            {
+                                // 2.4. bool stillExists
+                                retVal->stillExists = true;
+                            }
+                            else
+                            {
+                                fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_name failed!\n");
+                                success = false;
+                            }
+                        }
+                        else
+                        {
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - map_file_mode failed!\n");
+                            retVal->stillExists = false;
+                        }
+                    }
+                    else
+                    {
+                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array too short!\n");
+                        success = false;
+                    }
+                }
+                else
+                {
+                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array allocation failed!\n");
+                    success = false;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_name failed!\n");
+                success = false;
+            }
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - create_PID_struct failed!\n");
+            success = false;
+        }
+    }
+
+    // CLEAN UP?
+    // If anything failed, clean up everything
+    if (success == false)
+    {
+        if (false == free_PID_struct(&retVal))
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - free_PID_struct failed!\n");
+        }
+    }
+
+    // Clean up this mapMem struct pointer regardless of success or failure
+    if (cmdlineContents)
+    {
+        if (false == unmap_file(cmdlineContents, false))
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - unmap_file failed!\n");
+        }
+
+        free_struct(&cmdlineContents)
+    }
+
+    // Clean up this temporary char array regardless of success or failure
+    if (pidCommandline)
+    {
+        if (*pidCommandline)
+        {
+            if (cmdlineLen <= 0)
+            {
+                cmdlineLen = strlen(pidCommandline);
+            }
+
+            if (cmdlineLen > 0)
+            {
+                // memset pidCommandline
+                temp_ptr = memset(pidCommandline, 0x0, cmdlineLen);
+
+                if (temp_ptr != pidCommandline)
+                {
+                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - pidCommandline memset failed!\n");
+                }
+            }
+        }
+        // free pidCommandline
+        free(pidCommandline);
+
+        // NULL pidCommandline
+        pidCommandline = NULL;
+    }
+
+    // DONE
+    return retVal;
+}
 
 
 bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
