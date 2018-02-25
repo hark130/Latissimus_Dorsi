@@ -22,15 +22,6 @@
 char* copy_a_name(const char* fileName);
 
 
-/*
-    Purpose - Allocated a harklePIDDetails on the heap
-    Input - None
-    Output - A heap-allocated, zeroized, harklePIDDetails pointer
-    Notes:
-        It is the caller's responsibility to call 
-            free_PID_struct(&pidDetails_ptr) when this struct pointer
-            is not longer needed.
- */
 pidDetails_ptr create_PID_struct(void)
 {
     // LOCAL VARIABLES
@@ -79,7 +70,103 @@ pidDetails_ptr populate_PID_struct(const char* pidPath);
         Will NULL each char* in the struct
         Will set pidDetails_ptr to NULL when done
  */
-bool free_PID_struct(pidDetails_ptr* pidDetails_ptr);
+bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
+{
+    // LOCAL VARIABLES
+    bool retVal = true;
+    pidDetails_ptr tmpStruct_ptr = NULL;  // Easier to deal with this way
+    char* tmp_ptr = NULL;  // Easier to deal with char array pointers this way
+    char* mem_ptr = NULL;  // Return value from memset function calls
+    size_t length = 0;  // Length of a char array
+
+    // INPUT VALIDATION
+    if (pidDetails_ptr)
+    {
+        if (*pidDetails_ptr)
+        {
+            tmpStruct_ptr = *pidDetails_ptr;
+
+            // 1. char* pidName;          // Absolute path of PID
+            if (tmpStruct_ptr->pidName)
+            {
+                tmp_ptr = tmpStruct_ptr->pidName;
+
+                if (*tmp_ptr)
+                {
+                    // 1.1. memset pidName
+                    length = strlen(tmp_ptr);
+
+                    if (length > 0)
+                    {
+                        mem_ptr = memset(tmp_ptr, 0x0, length);
+
+                        if (mem_ptr != temp_ptr)
+                        {                            
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
+                            retVal = false;
+                        }
+                    }
+
+                    // 1.2. free pidName
+                    free(tmp_ptr);
+
+                    // 1.3. NULL pidName
+                    tmp_ptr = NULL;
+                    tmpStruct_ptr->pidName = NULL;
+                }
+            }
+
+            // 2. char* pidCmdline;       // Complete cmdline used to execute the PID
+            if (tmpStruct_ptr->pidCmdline)
+            {
+                tmp_ptr = tmpStruct_ptr->pidCmdline;
+
+                if (*tmp_ptr)
+                {
+                    // 1.1. memset pidCmdline
+                    length = strlen(tmp_ptr);
+
+                    if (length > 0)
+                    {
+                        mem_ptr = memset(tmp_ptr, 0x0, length);
+
+                        if (mem_ptr != temp_ptr)
+                        {
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
+                            retVal = false;
+                        }
+                    }
+
+                    // 1.2. free pidCmdline
+                    free(tmp_ptr);
+
+                    // 1.3. NULL pidCmdline
+                    tmp_ptr = NULL;
+                    tmpStruct_ptr->pidCmdline = NULL;
+            }
+
+            // 3. bool stillExists;       // False if PID ever disappears
+            // Just in case someone would think about accessing this
+            tmpStruct_ptr->stillExists = false;
+            
+            // 4. NULL pidDetails_ptr
+            *pidDetails_ptr = NULL;
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+            retVal = false;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+        retVal = false;
+    }
+
+    // DONE
+    return retVal;
+}
 
 
 /*
