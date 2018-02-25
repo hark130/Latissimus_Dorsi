@@ -30,6 +30,18 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## RESEARCH SOURCES
 
+* [procps - The /proc file system utilities](http://procps.sourceforge.net/)
 
 ## TO DO
 
+### 3-10-1
+
+* [ ] Programatically determine which applications are running
+	* [X] Get a list of PIDs
+	* [ ] Associate those PIDs with applications
+		* ```ls -la /proc/<PID>/exe```
+		* ```cat /proc/<PID>/cmdline```
+		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
+* [ ] Prompt the user to choose one
+* [ ] List the modules loaded in that application
+* [ ] Inspect those modules
