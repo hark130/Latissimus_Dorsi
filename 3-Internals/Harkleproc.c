@@ -1080,7 +1080,7 @@ char* read_a_file(char* fileName)
             {
                 fileDesc = open(fileName, O_RDONLY);
 
-                if (fileDesc == -1)
+                if (fileDesc < 0)
                 {
                     fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - open failed!\n");
                     success = false;
@@ -1162,6 +1162,15 @@ char* read_a_file(char* fileName)
 
             // NULL
             retVal = NULL;
+        }
+    }
+
+    // Close the file descriptor regardless of the success status
+    if (fileDesc > 2)
+    {
+        if (close(fileDesc) < 0)
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - close failed!\n");
         }
     }
 
