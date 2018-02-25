@@ -9,6 +9,11 @@ CC = gcc
 	$(CC) -c Harkleproc.c
 	$(CC) -o 3-10_Module_Inspection-1_main.exe Harkledir.o Harkleproc.o 3-10_Module_Inspection-1_main.c
 
+3102:
+	$(CC) -c Harkledir.c
+	$(CC) -c Harkleproc.c
+	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o 3-10_Proc_Walk-2_main.c
+
 all:
 	331
 	3101
