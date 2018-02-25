@@ -24,16 +24,16 @@
 	 			// PRINT PROC PID DETAILS
 	 			if (tempStruct_ptr->stillExists == true)
 	 			{
-	 				fprintf(stdout, "PID #%d:\t%s - %s\n", ++pidNum, tempStruct_ptr->pidName, tempStruct_ptr->pidCmdline);
+	 				fprintf(stdout, "PID #%03d:\t%s - %s\n", ++pidNum, tempStruct_ptr->pidName, tempStruct_ptr->pidCmdline);
 	 			}
 	 			else
 	 			{
-	 				fprintf(stdout, "PID #%d:\t%s - %s\n", ++pidNum, tempStruct_ptr->pidName, "No longer exists");
+	 				fprintf(stdout, "PID #%03d:\t%s - %s\n", ++pidNum, tempStruct_ptr->pidName, "No longer exists");
 	 			}
 	 		}
 	 		else
 	 		{
-	 			fprintf(stdout, "PID #%d:\t%s - %s\n", ++pidNum, "NULL", "Empty pidDetails struct");
+	 			fprintf(stdout, "PID #%03d:\t%s - %s\n", ++pidNum, "NULL", "Empty pidDetails struct");
 	 		}
 
  			// Next pidDetails_ptr
