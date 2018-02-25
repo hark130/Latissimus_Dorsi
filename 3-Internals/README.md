@@ -36,12 +36,31 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ### 3-10-1
 
-* [ ] Programatically determine which applications are running
+* [X] Create the framework to facilitate successful completion of 3-10
+* [X] Barely test the framework to facilitate successful completion of 3-10
+
+### 3-10-2
+
+* [X] Programatically determine which applications are running
 	* [X] Get a list of PIDs
-	* [ ] Associate those PIDs with applications
+	* [X] Associate those PIDs with applications
 		* ```ls -la /proc/<PID>/exe```
 		* ```cat /proc/<PID>/cmdline```
 		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
 * [ ] Prompt the user to choose one
 * [ ] List the modules loaded in that application
+	* lsof
+		* ```lsof -p <PID>```
+		* ```lsof /path/to/lib.so```
+		* ```lsof -p NNNN | awk '{print $9}' | grep '\.so'```
+	* /proc/maps
+		* ```sudo grep lib.so /proc/*/maps```
+		* ```cat /proc/NNNN/maps | awk '{print $6}' | grep '\.so' | sort | uniq```
+	* ```strace CMD.... 2>&1 | grep '^open(".*\.so"'```
+	* ```ltrace```
+	* ```ldd```
+	* ```objdump -p /path/to/program | grep NEEDED```
+	* ```pldd```
+	* ```pmap```
+	* ```nm```		
 * [ ] Inspect those modules
