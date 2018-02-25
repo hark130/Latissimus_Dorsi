@@ -26,7 +26,8 @@ pidDetails_ptr create_PID_struct(void);
 
 /*
     Purpose - Populate a harklePIDDetails struct with PID information
-    Input - None
+    Input
+    	pidPath - Absolute path to /proc/<PID>
     Output
         A pointer to a heap-allocated harklePIDDetails struct complete
             with information about the PID found at pidPath on success.
