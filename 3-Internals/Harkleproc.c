@@ -601,18 +601,18 @@ pidDetails_ptr* parse_proc_PID_structs(void)
     dirDetails_ptr procDetails_ptr = NULL;
 
     // 1. walk_proc()
-    puts("1. parse_proc_PID_structs() calls walk_proc()");  // DEBUGGING
+    // puts("1. parse_proc_PID_structs() calls walk_proc()");  // DEBUGGING
     procDetails_ptr = walk_proc();
 
     // 2. parse_PID_dirs_to_struct_arr()
-    puts("2. parse_proc_PID_structs() calls parse_PID_dirs_to_struct_arr()");  // DEBUGGING
+    // puts("2. parse_proc_PID_structs() calls parse_PID_dirs_to_struct_arr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         retVal = parse_PID_dirs_to_struct_arr(procDetails_ptr);
     }
 
     // 3. free_dirDetails_ptr()
-    puts("3. parse_proc_PID_structs() calls free_dirDetails_ptr()");  // DEBUGGING
+    // puts("3. parse_proc_PID_structs() calls free_dirDetails_ptr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         free_dirDetails_ptr(&procDetails_ptr);
