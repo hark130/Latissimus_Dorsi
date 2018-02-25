@@ -59,17 +59,6 @@ pidDetails_ptr create_PID_struct(void)
 pidDetails_ptr populate_PID_struct(const char* pidPath);
 
 
-/*
-    Purpose - To memset, free, and NULL a harklePIDDetails pointer
-    Input
-        pidDetails_ptr - A pointer to a pidDetails_ptr
-    Output - True on success, False on failure
-    Notes:
-        Will memset each non-empty, non-NULL char* in the struct
-        Will free each non-NULL char* in the struct
-        Will NULL each char* in the struct
-        Will set pidDetails_ptr to NULL when done
- */
 bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
 {
     // LOCAL VARIABLES
@@ -180,7 +169,62 @@ bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
         Will free the array itself
         Will NULL the array pointer
  */
-bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr);
+bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
+{
+    // LOCAL VARIABLES
+    bool retVal = true;
+    bool freeReturn = true;
+    pidDetails_ptr currStruct_ptr = NULL;  // Will hold each struct pointer in the array
+    pidDetails_ptr* currStruct_arr = NULL;  // Will hold the pointer to the array
+
+    // INPUT VALIDATION
+    if (pidDetails_arr)
+    {
+        if (*pidDetails_arr)
+        {
+            currStruct_arr = *pidDetails_ptr;
+
+            // 1. Free each struct pointer
+            while (*currStruct_arr)
+            {
+                currStruct_ptr = *currStruct_arr;
+
+                fprintf(stdout, "BEFORE currStruct_ptr:\t%p\n", currStruct_ptr);  // DEBUGGING
+                fprintf(stdout, "BEFORE *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+                freeReturn = free_PID_struct(&currStruct_ptr);
+                fprintf(stdout, "AFTER currStruct_ptr:\t%p\n", currStruct_ptr);  // DEBUGGING
+                fprintf(stdout, "AFTER *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+
+                if (freeReturn == false)
+                {
+                    retVal = false;
+                }
+
+                // Next struct pointer
+                currStruct_arr++;
+            }
+
+            // 2. Free the struct array
+            free(*pidDetails_arr);
+
+            // 3. NULL the struct array
+            *pidDetails_arr = NULL;
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+            retVal = false;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - NULL pointer!\n");
+        retVal = false;
+    }
+
+    // DONE
+    return retVal;
+}
 
 
 /*
