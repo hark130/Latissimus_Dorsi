@@ -24,6 +24,19 @@
 char* copy_a_name(const char* fileName);
 
 
+/*
+    Purpose - Format buf into /proc/<PID>/ based on PID
+    Input
+        buf - [OUT] char array to build absolute path
+        PID - <PID> in the above format
+        bufSize - Size of buf... for safety
+    Output - True on success, false on failure
+    Notes:
+        buf will be memset before work begins
+ */
+bool proc_builder(char* buf, char* PID, size_t bufSize);
+
+
 pidDetails_ptr create_PID_struct(void)
 {
     // LOCAL VARIABLES
@@ -485,16 +498,6 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 }
 
 
-/*
-	Purpose - Provide a 'list' of running PIDs based on /proc
-	Input - None
-	Ouput - A NULL-terminated, heap-allocated array of heap-allocated C-strings, one-per-directory
-	Notes:
-		Does all the 'heavy lifting' to walk /proc and filter out <PID> dirs
-		This function calls walk_proc() to procure a list of /proc directories
-		This function free()s the dirDetails_ptr resulting from walk_proc() before returning
-		It is your responsibility to free each char* and the char** itself (or call free_char_arr())
- */
 char** parse_proc_PIDs(void)
 {
     // LOCAL VARIABLES
@@ -514,6 +517,46 @@ char** parse_proc_PIDs(void)
 
     // 3. free_dirDetails_ptr()
     // puts("3. free_dirDetails_ptr()");  // DEBUGGING
+    if (procDetails_ptr)
+    {
+        free_dirDetails_ptr(&procDetails_ptr);
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+/*
+    Purpose - Provide a 'list' of running PIDs based on /proc
+    Input - None
+    Ouput - A NULL-terminated, heap-allocated array of heap-allocated harklePIDDetails structs, one-per-directory
+    Notes:
+        Does all the 'heavy lifting' to walk /proc and filter out <PID> dirs
+        This function calls walk_proc() to procure a list of /proc directories
+        This function free()s the dirDetails_ptr resulting from walk_proc() before returning
+        It is your responsibility to free each pidDetails_ptr and the pidDetails_ptr* itself 
+            (or call free_PID_struct_arr())
+ */
+pidDetails_ptr* parse_proc_PID_structs(void)
+{
+    // LOCAL VARIABLES
+    pidDetails_ptr* retVal = NULL;
+    dirDetails_ptr procDetails_ptr = NULL;
+
+    // 1. walk_proc()
+    puts("1. parse_proc_PID_structs() calls walk_proc()");  // DEBUGGING
+    procDetails_ptr = walk_proc();
+
+    // 2. ???
+    // puts("2. parse_proc_PID_structs() calls ???");  // DEBUGGING
+    if (procDetails_ptr)
+    {
+        retVal = parse_PID_dirs_to_arr(procDetails_ptr);
+    }
+
+    // 3. free_dirDetails_ptr()
+    puts("3. parse_proc_PID_structs() calls free_dirDetails_ptr()");  // DEBUGGING
     if (procDetails_ptr)
     {
         free_dirDetails_ptr(&procDetails_ptr);
@@ -546,14 +589,6 @@ dirDetails_ptr walk_proc(void)
 }
 
 
-/*
-	Purpose - Abstract-away the translation of a dirDetail array of directories into an array of char pointers
-	Input
-		procWalk_ptr - A dirDetails_ptr of /proc
-	Output - A NULL-terminated, heap-allocated array of heap-allocated C-strings, one-per-directory
-	Notes:
-		This function will ignore files and filter out non-<PID> directories in /proc
- */
 char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
 {
     // LOCAL VARIABLES
@@ -618,6 +653,95 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
     else
     {
         fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - NULL pointer!\n");
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+/*
+    Purpose - Abstract-away the translation of a dirDetail array of directories into an array of pidDetails struct pointers
+    Input
+        procWalk_ptr - A dirDetails_ptr of /proc
+    Output - A NULL-terminated, heap-allocated array of heap-allocated pidDetails struct pointers, one-per-directory
+    Notes:
+        This function will ignore files and filter out non-<PID> directories in /proc
+ */
+pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
+{
+    // LOCAL VARIABLES
+    pidDetails_ptr* retVal = NULL;  // Return value
+    pidDetails_ptr* temp_ptr = NULL;  // Iterating variable
+    char** tempFN_ptr = NULL;  // Iterating variable for the dirName_arr
+    int numTries = 0;  // Tracks attempts to avoid upper end limit of allocation attempts
+    int numNames = 0;  // Number of names to add
+    int i = 0;  // Loop iterating variable
+    char templateProc[32] = { "/proc/4194303/" };  // Array to utilize as /proc/<PID>/ absolute template
+    int templateSize = sizeof(templateProc) / sizeof(*templateProc);
+
+    // INPUT VALIDATION
+    if (procWalk_ptr)
+    {
+        // Allocate the array of char pointers
+        if (procWalk_ptr->numDirs > 0 && procWalk_ptr->dirName_arr)
+        {
+            numNames = procWalk_ptr->numDirs;
+            tempFN_ptr = procWalk_ptr->dirName_arr;
+            while (retVal == NULL && numTries < HPROC_MAX_TRIES)
+            {
+                retVal = (pidDetails_ptr*)calloc(numNames + 1, sizeof(pidDetails_ptr));
+                numTries++;
+            }
+
+            if (retVal)
+            {
+                temp_ptr = retVal;
+                
+                for (i = 0; i < numNames; i++)
+                {
+                    if (true == is_it_a_PID(*tempFN_ptr))
+                    {
+                        fprintf(stdout, "%s is a PID!\n", *tempFN_ptr);  // DEBUGGING
+                        // Create an absolute path to the PID dir
+                        if (true == proc_builder(templateProc, *tempFN_ptr, templateSize))
+                        {
+                            *temp_ptr = populate_PID_struct(templateProc);
+
+                            if(!(*temp_ptr))
+                            {
+                                fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_struct_arr() - populate_PID_struct failed!\n");
+                            }
+                            else
+                            {
+                                temp_ptr++;
+                            }
+                        }
+                        else
+                        {
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_struct_arr() - proc_builder failed!\n");
+                        }
+                    }
+                    // else
+                    // {
+                    //     fprintf(stdout, "%s is not a PID.\n", *tempFN_ptr);  // DEBUGGING
+                    // }
+                    tempFN_ptr++;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_struct_arr() - calloc failed!\n");
+            }
+        }
+        else
+        {
+            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_struct_arr() - invalid dirDetails struct!\n");
+        }
+    }
+    else
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_struct_arr() - NULL pointer!\n");
     }
 
     // DONE
@@ -702,6 +826,51 @@ bool free_char_arr(char*** charArr_ptr)
 }
 
 
+bool is_it_a_PID(char* dirName)
+{
+    // LOCAL VARIABLES
+    bool retVal = true;  // Default answer to prove incorrect
+    char* temp_ptr = NULL;  // Iterating variable
+
+    // INPUT VALIDATION
+    if (dirName)
+    {
+        if (*dirName)
+        {
+            temp_ptr = dirName;
+
+            while (*temp_ptr && retVal == true)
+            {
+                if (*temp_ptr < 48 || *temp_ptr > 57)
+                {
+                    retVal = false;
+                }
+                else
+                {
+                    temp_ptr++;
+                }
+            }
+        }
+        else
+        {
+            retVal = false;
+        }
+    }
+    else
+    {
+        retVal = false;
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// LOCAL FUNCTION DEFINITIONS /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
 char* copy_a_name(const char* fileName)
 {
     // LOCAL VARIABLES
@@ -754,42 +923,95 @@ char* copy_a_name(const char* fileName)
 }
 
 
-bool is_it_a_PID(char* dirName)
+/*
+    Purpose - Format buf into /proc/<PID>/ based on PID
+    Input
+        buf - [OUT] char array to build absolute path
+        PID - <PID> in the above format
+        bufSize - Size of buf... for safety
+    Output - True on success, false on failure
+    Notes:
+        buf will be memset before work begins
+ */
+bool proc_builder(char* buf, char* PID, size_t bufSize)
 {
     // LOCAL VARIABLES
-    bool retVal = true;  // Default answer to prove incorrect
-    char* temp_ptr = NULL;  // Iterating variable
+    bool retVal = true;
+    char* temp_ptr = NULL;  // Holds return values from string.h function calls
+    char* tempBuf_ptr = buf;  // Iterating variable starting at buf
+    char procPath[] = { "/proc/"};
 
     // INPUT VALIDATION
-    if (dirName)
+    if (!buf)
     {
-        if (*dirName)
-        {
-            temp_ptr = dirName;
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - NULL pointer!\n");
+        retVal = false;
+    }
+    else if (!PID)
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - NULL pointer!\n");
+        retVal = false;
+    }
+    else if (!(*PID))
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - empty PID!\n");
+        retVal = false;
+    }
+    else if (bufSize < 0)
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - invalid buf size!\n");
+        retVal = false;
+    }
+    else if (bufSize < (strlen(PID) + strlen("/proc//" + 1)))
+    {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - buf too small!\n");
+        retVal = false;
+    }
 
-            while (*temp_ptr && retVal == true)
-            {
-                if (*temp_ptr < 48 || *temp_ptr > 57)
-                {
-                    retVal = false;
-                }
-                else
-                {
-                    temp_ptr++;
-                }
-            }
-        }
-        else
+    // BUILD /proc/<PID>/
+    // 1. memset buf
+    temp_ptr = memset(buf, 0x0, bufSize);
+
+    if (temp_ptr == buf)
+    {
+        // 2. Precursor
+        temp_ptr = procPath;
+
+        while (*temp_ptr)
         {
-            retVal = false;
+            *tempBuf_ptr = *temp_ptr;
+            tempBuf_ptr++;
+            temp_ptr++;
+        }
+
+        // 3. PID
+        temp_ptr = PID;
+
+        while (*temp_ptr)
+        {
+            *tempBuf_ptr = *temp_ptr;
+            tempBuf_ptr++;
+            temp_ptr++;
+        }
+
+        // 4. Trailing slash
+        tempBuf_ptr--;  // Walk it back one to check for a trailing slash
+        if (*tempBuf_ptr != '/')
+        {
+            tempBuf_ptr++;
+            *tempBuf_ptr = '/';
         }
     }
     else
     {
+        fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - memset failed!\n");
         retVal = false;
     }
 
     // DONE
     return retVal;
 }
+
+
+
 

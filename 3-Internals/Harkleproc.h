@@ -82,6 +82,20 @@ char** parse_proc_PIDs(void);
 
 
 /*
+	Purpose - Provide a 'list' of running PIDs based on /proc
+	Input - None
+	Ouput - A NULL-terminated, heap-allocated array of heap-allocated harklePIDDetails structs, one-per-directory
+	Notes:
+		Does all the 'heavy lifting' to walk /proc and filter out <PID> dirs
+		This function calls walk_proc() to procure a list of /proc directories
+		This function free()s the dirDetails_ptr resulting from walk_proc() before returning
+		It is your responsibility to free each pidDetails_ptr and the pidDetails_ptr* itself 
+			(or call free_PID_struct_arr())
+ */
+pidDetails_ptr* parse_proc_PID_structs(void);
+
+
+/*
 	Purpose - Walk the /proc directory for a list of files and dirs
 	Input - None
 	Output - A pointer to a dirDetails struct as defined in Harkledir.h
@@ -100,6 +114,17 @@ dirDetails_ptr walk_proc(void);
 		This function will ignore files and filter out non-<PID> directories in /proc
  */
 char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr);
+
+
+/*
+    Purpose - Abstract-away the translation of a dirDetail array of directories into an array of pidDetails struct pointers
+    Input
+        procWalk_ptr - A dirDetails_ptr of /proc
+    Output - A NULL-terminated, heap-allocated array of heap-allocated pidDetails struct pointers, one-per-directory
+    Notes:
+        This function will ignore files and filter out non-<PID> directories in /proc
+ */
+pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr);
 
 
 /*
