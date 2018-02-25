@@ -12,7 +12,8 @@ CC = gcc
 3102:
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
-	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o 3-10_Proc_Walk-2_main.c
+	$(CC) -o ./Map_Memory.o -c ../4-User_Mode/Map_Memory.c
+	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o Map_Memory.o 3-10_Proc_Walk-2_main.c
 
 all:
 	331
