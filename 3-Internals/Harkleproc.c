@@ -1,5 +1,7 @@
 #include "Harkledir.h"
 #include "Harkleproc.h"
+#include <fcntl.h>      // open() flags
+#include "Map_Memory.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
 #include <stdlib.h>     // calloc
@@ -57,7 +59,7 @@ pidDetails_ptr create_PID_struct(void)
         Returns NULL if the directory following /proc is not a PID (non-number)
         Returns a pointer if pidPath is missing but stillExists is False
  */
-pidDetails_ptr populate_PID_struct(const char* pidPath)
+pidDetails_ptr populate_PID_struct(char* pidPath)
 {
     // LOCAL VARIABLES
     pidDetails_ptr retVal = NULL;
@@ -278,7 +280,7 @@ pidDetails_ptr populate_PID_struct(const char* pidPath)
             fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - unmap_file failed!\n");
         }
 
-        free_struct(&cmdlineContents)
+        free_struct(&cmdlineContents);
     }
 
     // Clean up this temporary char array regardless of success or failure
@@ -314,7 +316,7 @@ pidDetails_ptr populate_PID_struct(const char* pidPath)
 }
 
 
-bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
+bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 {
     // LOCAL VARIABLES
     bool retVal = true;
@@ -324,11 +326,11 @@ bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
     size_t length = 0;  // Length of a char array
 
     // INPUT VALIDATION
-    if (pidDetails_ptr)
+    if (pidDetailsStruct_ptr)
     {
-        if (*pidDetails_ptr)
+        if (*pidDetailsStruct_ptr)
         {
-            tmpStruct_ptr = *pidDetails_ptr;
+            tmpStruct_ptr = *pidDetailsStruct_ptr;
 
             // 1. char* pidName;          // Absolute path of PID
             if (tmpStruct_ptr->pidName)
@@ -344,7 +346,7 @@ bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
                     {
                         mem_ptr = memset(tmp_ptr, 0x0, length);
 
-                        if (mem_ptr != temp_ptr)
+                        if (mem_ptr != tmp_ptr)
                         {                            
                             fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
                             retVal = false;
@@ -374,27 +376,28 @@ bool free_PID_struct(pidDetails_ptr* pidDetails_ptr)
                     {
                         mem_ptr = memset(tmp_ptr, 0x0, length);
 
-                        if (mem_ptr != temp_ptr)
+                        if (mem_ptr != tmp_ptr)
                         {
                             fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
                             retVal = false;
                         }
                     }
+                }
 
-                    // 1.2. free pidCmdline
-                    free(tmp_ptr);
+                // 1.2. free pidCmdline
+                free(tmp_ptr);
 
-                    // 1.3. NULL pidCmdline
-                    tmp_ptr = NULL;
-                    tmpStruct_ptr->pidCmdline = NULL;
+                // 1.3. NULL pidCmdline
+                tmp_ptr = NULL;
+                tmpStruct_ptr->pidCmdline = NULL;
             }
 
             // 3. bool stillExists;       // False if PID ever disappears
             // Just in case someone would think about accessing this
             tmpStruct_ptr->stillExists = false;
             
-            // 4. NULL pidDetails_ptr
-            *pidDetails_ptr = NULL;
+            // 4. NULL pidDetailsStruct_ptr
+            *pidDetailsStruct_ptr = NULL;
         }
         else
         {
@@ -437,7 +440,7 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
     {
         if (*pidDetails_arr)
         {
-            currStruct_arr = *pidDetails_ptr;
+            currStruct_arr = *pidDetails_arr;
 
             // 1. Free each struct pointer
             while (*currStruct_arr)
@@ -751,11 +754,11 @@ char* copy_a_name(const char* fileName)
 }
 
 
-bool is_it_a_PID(const char* dirName)
+bool is_it_a_PID(char* dirName)
 {
     // LOCAL VARIABLES
     bool retVal = true;  // Default answer to prove incorrect
-    const char* temp_ptr = NULL;  // Iterating variable
+    char* temp_ptr = NULL;  // Iterating variable
 
     // INPUT VALIDATION
     if (dirName)
@@ -780,6 +783,10 @@ bool is_it_a_PID(const char* dirName)
         {
             retVal = false;
         }
+    }
+    else
+    {
+        retVal = false;
     }
 
     // DONE
