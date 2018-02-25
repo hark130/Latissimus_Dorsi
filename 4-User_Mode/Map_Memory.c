@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/mman.h>		// mmap, msync, munmap
 #include <sys/stat.h>		// fstat
+#include <inttypes.h>		// intmax_t
 #include <fcntl.h>			// open
 #include <unistd.h>			// close
 
@@ -51,7 +52,10 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 	mapMem_ptr retVal = NULL;
 	int fileDesc = -1;  // Set to error value by default for the purposes of clean-up
 	struct stat fileStat;
-	
+	int minFlags = O_RDONLY | O_WRONLY | O_RDWR;
+
+	// fprintf(stdout, "Min Flags:\t%d\n", minFlags);  // DEBUGGING
+	// fprintf(stdout, "int flags:\t%d\n", flags);  // DEBUGGING	
 	// INPUT VALIDATION
 	if (NULL == filename)
 	{
@@ -63,7 +67,7 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is empty!\n");
 		return retVal;
 	}
-	else if (!(flags && (O_RDONLY || O_WRONLY || O_RDWR)))
+	else if (!(flags & minFlags) && flags != 0)
 	{
 		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file_mode() - minimum flags missing!\n");
 		return retVal;
@@ -104,7 +108,7 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 					{
 						if (0 >= fileStat.st_size)
 						{
-							fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - Invalid size for '%s'!\n", filename);
+							fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - Invalid size of %jd for '%s'!\n", (intmax_t)fileStat.st_size, filename);
 						}
 						else
 						{
@@ -120,11 +124,11 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 											 off_t offset);
 							 */
 							retVal->fileMem_ptr = mmap(NULL, \
-														   retVal->memSize, \
-														   PROT_READ | PROT_WRITE | PROT_EXEC, \
-														   MAP_SHARED, \
-														   fileDesc, \
-														   0);
+													   retVal->memSize, \
+													   PROT_READ | PROT_WRITE | PROT_EXEC, \
+													   MAP_SHARED, \
+													   fileDesc, \
+													   0);
 							if (NULL == retVal->fileMem_ptr)
 							{
 								fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - mmap failed to map file descriptor %d into memory!\n", fileDesc);
