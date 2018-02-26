@@ -31,6 +31,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 ## RESEARCH SOURCES
 
 * [procps - The /proc file system utilities](http://procps.sourceforge.net/)
+* [proc(5) man page](http://man7.org/linux/man-pages/man5/proc.5.html)
+* [Brief, but good, /proc/<PID>/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
 
 ## TO DO
 
@@ -48,6 +50,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```cat /proc/<PID>/cmdline```
 		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
 * [X] Prompt the user to choose one
+* [ ] Change <EMPTY> cmdline reads to <ZOMBIE> (or something similar).  [Man page](http://man7.org/linux/man-pages/man5/proc.5.html) says empty cmdline files indicate a zombie process.
 * [ ] List the modules loaded in that application
 	* lsof
 		* ```lsof -p <PID>```
@@ -84,4 +87,13 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [ ] Use the above file IO functionality to resolve those (inevitably) symbolic links to their destinations
 	* [ ] Print the actual libraries loaded in /proc/<PID>/mem
 
+### NOTES
 
+* From proc(5) man page:
+/proc/[pid]/cmdline
+              This read-only file holds the complete command line for the
+              process, **unless the process is a zombie.  In the latter case,
+              there is nothing in this file: that is, a read on this file
+              will return 0 characters.**  The command-line arguments appear
+              in this file as a set of strings separated by null bytes
+              ('\0'), with a further null byte after the last string.
