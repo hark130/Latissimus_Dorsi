@@ -5,13 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>		// realloc 
 #include <string.h>		// memset, strncpy
+#include <sys/types.h>	// ino_t
 
 // lstat
 // #include <sys/types.h>
 // #include <sys/stat.h>
 // #include <unistd.h>
 
-
+ 
 #ifndef HDIR_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define HDIR_MAX_TRIES 3
@@ -47,59 +48,9 @@ typedef struct directoryDetails
 } dirDetails, *dirDetails_ptr;
  */
 
-
-/*
-	Purpose - Dynamically allocate a harkleDirEnt struct pointer on the heap
-	Input - None
-	Output - Pointer to a harkleDirEnt struct on the heap
-	Notes:
-		hdEnt_ptr must be free()'d by the calling function (see: free_hdEnt_ptr())
- */
-hdEnt_ptr create_hdEnt_ptr(void)
-{
-	// LOCAL VARIABLES
-	hdEnt_ptr retVal = NULL;
-	int numTries = 0;  // Tracks allocation attempts
-	
-	// ALLOCATION
-	while (!retVal && numTries < HDIR_MAX_TRIES)
-	{
-		retVal = (hdEntry_ptr)calloc(1, sizeof(hdEnt));
-		numTries++;
-	}
-	
-	if (!retVal)
-	{
-		HARKLE_ERROR(Harkledir, create_hdEnt_ptr, calloc failed);
-	}	
-	
-	// DONE
-	return retVal;
-}
-
-
-/*
-	Purpose - Populate a harkleDirEnt struct pointer with details from dirent (and other) sources
-	Input
-		updateThis_ptr - [OUT] harkleDirEnt struct pointer to populate
-		currDirEntry - dirent struct pointer to gather details from
-	Output - true on success, false on failure
-	Notes:
-		Will call readlink() to resolve any symbolic link "type"s into hd_symName
-		Will likely make multiple calls to Memoroad's copy_a_string()
- */
-bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
-
-
-/*
-	Purpose - Zeroize, nullify, and free a heap-allocated harkleDirEnt struct pointer
-	Input
-		oldStruct_ptr - Pointer to a hdEnt_ptr
-	Output - true on success, false on failure
-	Notes:
-		Will likely make multiple calls to Memoroad's release_a_string()
- */
-bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr);
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////// LOCAL FUNCTION PROTOTYPES START //////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 
 /*
@@ -147,6 +98,124 @@ bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fil
 		The array sizes may be updated as realloc() may be called
  */
 bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry);
+
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////// LOCAL FUNCTION PROTOTYPES STOP ///////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// HARKLEDIRENT FUNCTIONS START ////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+hdEnt_ptr create_hdEnt_ptr(void)
+{
+	// LOCAL VARIABLES
+	hdEnt_ptr retVal = NULL;
+	int numTries = 0;  // Tracks allocation attempts
+	
+	// ALLOCATION
+	while (!retVal && numTries < HDIR_MAX_TRIES)
+	{
+		retVal = (hdEntry_ptr)calloc(1, sizeof(hdEnt));
+		numTries++;
+	}
+	
+	if (!retVal)
+	{
+		HARKLE_ERROR(Harkledir, create_hdEnt_ptr, calloc failed);
+	}	
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	Purpose - Populate a harkleDirEnt struct pointer with details from dirent (and other) sources
+	Input
+		updateThis_ptr - [OUT] harkleDirEnt struct pointer to populate
+		currDirEntry - dirent struct pointer to gather details from
+	Output - true on success, false on failure
+	Notes:
+		Will call readlink() to resolve any symbolic link "type"s into hd_symName
+		Will likely make multiple calls to Memoroad's copy_a_string()
+ */
+bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
+
+
+bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Make this false if anything fails
+	hdEntr_ptr freeThis_ptr = NULL;  // Will be assigned *oldStruct_ptr if input validation passes
+	bool mrRetVal = true;  // Will hold return value form Memoroad function calls
+	
+	// INPUT VALIDATION
+	if (oldStruct_ptr == NULL)
+	{
+		HARKLE_ERROR(Harkledir, free_hdEnt_ptr, NULL pointer);
+		retVal = false;	
+	}
+	else if (*oldStruct_ptr == NULL)
+	{
+		HARKLE_ERROR(Harkledir, free_hdEnt_ptr, NULL pointer);
+		retVal = false;	
+	}
+	else
+	{
+		freeThis_ptr = *oldStruct_ptr;	
+	}
+	
+	// FREE
+	if (retVal == true)
+	{
+		// 1. Memset/Free/NULL the struct contents
+		// char* hd_Name;				// Should match struct dirent.d_name
+		mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
+		
+		if (mrRetVal == false)
+		{
+			HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
+			retVal = false;	
+		}
+		
+		// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
+		freeThis_ptr->hd_inodeNum = 0;
+		
+		// unsigned char hd_type; 		// Should match struct dirent.d_type
+		freeThis_ptr->hd_type = 0;
+		
+		// char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
+		mrRetVal = release_a_string(&(freeThis_ptr->hd_symName));
+		
+		if (mrRetVal == false)
+		{
+			HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
+			retVal = false;	
+		}
+		
+		// 2. Free the struct pointer
+		free(*oldStruct_ptr);
+		
+		// 3. NULL this pointer
+		freeThis_ptr = NULL;
+		*oldStruct_ptr = NULL;
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// HARKLEDIRENT FUNCTIONS STOP /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////// DIRECTORYDETAILS FUNCTIONS START //////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 
 dirDetails_ptr create_dirDetails_ptr(void)
@@ -484,6 +553,15 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+////////////////////// DIRECTORYDETAILS FUNCTIONS STOP ///////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////// LOCAL FUNCTION DEFINITIONS START //////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
 /*
 	Purpose - Coordinate the population of the fileName and dirName arrays
 	Input
@@ -781,4 +859,8 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 }
 
 	
+//////////////////////////////////////////////////////////////////////////////
+////////////////////// LOCAL FUNCTION DEFINITIONS STOP ///////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 	
