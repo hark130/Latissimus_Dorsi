@@ -1,19 +1,35 @@
+/*
+	VERSION 1 - Initial implementation
+	VERSION 2
+		Adding an harkleDirEnt struct
+		Changing dirDetails to hold arrays of harkleDirEnt struct pointers, as appropriate
+		Changing all of the directoryDetails functions/functionality to reflect this change
+		Adding similar create, populate, and free functions/functionality to support the new inodeDetails struct
+ */
+
 #ifndef __HARKLEDIR__
 #define __HARKLEDIR__
 
 #include <stdbool.h>	// bool, true, false
 #include <stdlib.h>		// size_t
 
+typdef struct harkleDirEnt
+{
+	char* hd_Name;				// Should match struct dirent.d_name
+	ino_t hd_inodeNum;			// Should match struct dirent.d_ino
+	unsigned char hd_type; 		// Should match struct dirent.d_type
+	char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
+} hdEnt, *hdEnt_ptr;
 
 typedef struct directoryDetails
 {
-	char* dirName;			// Directory name to walk
-	int numFiles;			// Number of char* in fileName_arr
-	char** fileName_arr;	// Array of filenames
-	size_t fileArrSize;		// Allocated bytes for fileName_arr
-	int numDirs;			// Number of char* in dirName_arr
-	char** dirName_arr;		// Array of directory names
-	size_t dirArrSize;		// Allocated bytes for dirName_arr
+	char* dirName;				// Directory name to walk
+	int numFiles;				// Number of hdEnt struct pointers in fileName_arr
+	hdEnt_ptr* fileName_arr;	// Array of pointers to hdEnt structs storing file information
+	size_t fileArrSize;			// Allocated bytes for fileName_arr
+	int numDirs;				// Number of hdEnt struct pointers in dirName_arr
+	hdEnt_ptr* dirName_arr;		// Array of pointers to hdEnt structs storing directory information
+	size_t dirArrSize;			// Allocated bytes for dirName_arr
 } dirDetails, *dirDetails_ptr;
 
 
