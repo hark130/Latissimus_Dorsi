@@ -309,10 +309,10 @@ char* read_a_file(char* fileName)
 }
 
 
-long long size_a_file(char* fileName)
+off_t size_a_file(char* fileName)
 {
 	// LOCAL VARIABLES
-	long long retVal = 0;  // This will be converted from data type off_t
+	off_t retVal = 0;  // This will be converted from data type off_t
 	bool success = true;  // If anything fails, set this to false
 	struct stat fileStat;  // OUT parameter for lstat()
 	int stRetVal = 0;  // Return value from stat()
@@ -342,7 +342,7 @@ long long size_a_file(char* fileName)
 		else
 		{
 			printf("File size:\t%lld bytes\n", (long long)fileStat.st_size);  // DEBUGGING
-			retVal = (long long)fileStat.st_size;
+			retVal = fileStat.st_size;
 		}
 	}
 	
