@@ -80,7 +80,7 @@ char* read_a_file(char* fileName);
 		This function calls stat()
 		The return value is converted from data type off_t	
  */
-long long size_a_file(char* fileName);
+off_t size_a_file(char* fileName);
 
 
 //////////////////////////////////////////////////////////////////////////////
