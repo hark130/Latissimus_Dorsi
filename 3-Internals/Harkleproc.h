@@ -152,16 +152,17 @@ bool free_char_arr(char*** charArr_ptr);
 bool is_it_a_PID(char* dirName);
 
 
-
 /*
-parse_proc_PIDs()
-1. walk_proc() -> open_dir("/proc")
-2. parse_PID_dirs_to_arr() -> copy_a_name() walks dirNames_arr for <PID> dirs adding them to a char**]
-3. free_dirDetails_ptr()
-4. return the char**
-NOTE:  
-	Implement copy_a_name() inside Harkleproc.c
-	User must call free_char_arr() or do it manually
+	Purpose - Create /proc/<PID>/ from <PID>
+	Input
+		pidNum - nul-terminate char array holding just a PID number
+	Output
+		On success, heap-allocated array holding /proc/<pidNum>/
+		On failure, NULL
+	Notes:
+		It is the caller's responsibility to free the returned pointer
  */
+char* make_PID_into_proc(char* pidNum);
+
 
 #endif  // __HARKLEPROC__

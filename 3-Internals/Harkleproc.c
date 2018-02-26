@@ -1,7 +1,9 @@
 #include "Harkledir.h"
 #include "Harkleproc.h"
-#include <fcntl.h>      // open() flags
+// #include <fcntl.h>      // open() flags
+#include "Fileroad.h"   // read_a_file
 // #include "Map_Memory.h"
+#include "Memoroad.h"   // copy_a_string
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
 #include <stdlib.h>     // calloc
@@ -13,22 +15,9 @@
 #define HPROC_MAX_TRIES 3
 #endif  // HPROC_MAX_TRIES
 
-#ifndef HPROC_BUFF_SIZE
-// MACRO to size static arrays
-#define HPROC_BUFF_SIZE 1024
-#endif  // HPROC_BUFF_SIZE
-
-
-/*
-    Purpose - Abstract-away copying names into heap-allocated arrays
-    Input
-        fileName - Nul-terminated character array
-    Output - A heap-allocated char array containing a copy of fileName
-    Notes:
-        It is your responsibility to free the char* returned by this function
- */
-char* copy_a_name(const char* fileName);
-
+#ifndef HARKLE_ERROR
+#define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
+#endif  // HARKLE_ERROR
 
 /*
     Purpose - Format buf into /proc/<PID>/ based on PID
@@ -41,18 +30,6 @@ char* copy_a_name(const char* fileName);
         buf will be memset before work begins
  */
 bool proc_builder(char* buf, char* PID, size_t bufSize);
-
-
-/*
-    Purpose - Open a fd, read the contents into a buffer, close the fd
-    Input
-        fileName - nul-terminated char array of the file to read
-    Ouput - Heap-allocated array containing the contents of fileName
-            on success, NULL on failure
-    Notes:
-        The caller is responsible for free()ing the return value
- */
-char* read_a_file(char* fileName);
 
 
 pidDetails_ptr create_PID_struct(void)
@@ -224,7 +201,7 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
         if (retVal)
         {
             // 2.2. Copy pidName
-            retVal->pidName = copy_a_name(newPIDPath);
+            retVal->pidName = copy_a_string(newPIDPath);
 
             if (retVal->pidName)
             {
@@ -271,7 +248,7 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
                         // if (cmdlineContents)
                         // {
-                        //     retVal->pidCmdline = copy_a_name(cmdlineContents->fileMem_ptr);
+                        //     retVal->pidCmdline = copy_a_string(cmdlineContents->fileMem_ptr);
 
                         //     if (retVal->pidCmdline)
                         //     {
@@ -280,7 +257,7 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
                         //     }
                         //     else
                         //     {
-                        //         fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_name failed!\n");
+                        //         fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
                         //         success = false;
                         //     }
                         // }
@@ -319,7 +296,7 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
             }
             else
             {
-                fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_name failed!\n");
+                fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
                 success = false;
             }
         }
@@ -678,11 +655,11 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
                     if (true == is_it_a_PID((*tempFN_ptr)))
                     {
                         // fprintf(stdout, "%s is a PID!\n", *tempFN_ptr);  // DEBUGGING
-                        (*temp_ptr) = copy_a_name(*tempFN_ptr);
+                        (*temp_ptr) = copy_a_string(*tempFN_ptr);
 
                         if(!(*temp_ptr))
                         {
-                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_name failed!\n");
+                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_string failed!\n");
                         }
                         else
                         {
@@ -922,61 +899,97 @@ bool is_it_a_PID(char* dirName)
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-///////////////////////// LOCAL FUNCTION DEFINITIONS /////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-
-char* copy_a_name(const char* fileName)
+/*
+    Purpose - Create /proc/<PID>/ from <PID>
+    Input
+        pidNum - nul-terminate char array holding just a PID number
+    Output
+        On success, heap-allocated array holding /proc/<pidNum>/
+        On failure, NULL
+    Notes:
+        It is the caller's responsibility to free the returned pointer
+ */
+char* make_PID_into_proc(char* pidNum)
 {
     // LOCAL VARIABLES
-    int numTries = 0;  // Max number to calloc attempts
-    char* retVal = NULL;  // Allocated char array
-    char* temp_ptr = NULL;  // Holds return value from memcpy
-    size_t fNameLen = 0;  // Length of fileName
-    
+    char* retVal = NULL;
+    bool success = true;  // If anything fails, make this false
+    size_t pidLen = 0;  // Get the length of the PID
+    size_t procPIDLen = 0;  // Length of return value
+
     // INPUT VALIDATION
-    if (fileName)
+    // 1. NULL Pointer
+    if (!pidNum)
     {
-        if (*fileName)
-        {    
-            // 1. Size the fileName
-            fNameLen = strlen(fileName);
-            
-            if (fNameLen > 0)
-            {            
-                // 2. Allocate a properly-sized array
-                while (retVal == NULL && numTries < HPROC_MAX_TRIES)
-                {
-                    retVal = (char*)calloc(fNameLen + 1, sizeof(char));
-                    numTries++;
-                }
-                
-                if (retVal)
-                {                
-                    // 3. Copy fileName into that array
-                    temp_ptr = (char*)memcpy((void*)retVal, (void*)fileName, fNameLen * sizeof(char));
-                    
-                    if (temp_ptr != retVal)
-                    {
-                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - copy_a_name() - memcpy failed!\n");
-                        // Free retVal
-                        free(retVal);
-                        // NULL retVal
-                        retVal = NULL;
-                    }
-                }
-                else
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - copy_a_name() - calloc failed!\n");
-                }                
+        HARKLE_ERROR(Harkleproc, make_PID_into_proc, NULL pointer);
+        success = false;
+    }
+    else
+    {
+        pidLen = strlen(pidNum);
+
+        // 2. Empty string
+        if (pidLen < 1)
+        {
+            HARKLE_ERROR(Harkleproc, make_PID_into_proc, empty string);
+            success = false;
+        }
+        else
+        {
+            // 3. Is it a PID
+            if (false == is_it_a_PID(pidNum))
+            {
+                HARKLE_ERROR(Harkleproc, make_PID_into_proc, Not a PID);
+                success = false;
             }
         }
     }
-    
+
+    // BUILD IT
+    if (success == true)
+    {
+        // 1. Determine size
+        procPIDLen = pidLen + sizeof("/proc//");
+
+        // 2. Allocate a buffer
+        retVal = get_me_a_buffer(procPIDLen);
+
+        if (!retVal)
+        {
+            HARKLE_ERROR(Harkleproc, make_PID_into_proc, get_me_a_buffer failed);
+            success = false;
+        }
+        // 3. Build the absolute /proc/<PID>/ path
+        else
+        {
+            if (false == proc_builder(retVal, pidNum, procPIDLen + 1))
+            {
+                HARKLE_ERROR(Harkleproc, make_PID_into_proc, proc_builder failed);
+                success = false;
+            }
+        }
+    }
+
+    // CLEAN UP
+    if (success == false)
+    {
+        if (retVal)
+        {
+            if (false == release_a_string_len(&retVal, procPIDLen))
+            {
+                HARKLE_ERROR(Harkleproc, make_PID_into_proc, release_a_string_len failed);
+            }
+        }
+    }
+
     // DONE
     return retVal;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// LOCAL FUNCTION DEFINITIONS /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 
 bool proc_builder(char* buf, char* PID, size_t bufSize)
@@ -1052,139 +1065,6 @@ bool proc_builder(char* buf, char* PID, size_t bufSize)
     {
         fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - memset failed!\n");
         retVal = false;
-    }
-
-    // DONE
-    return retVal;
-}
-
-
-char* read_a_file(char* fileName)
-{
-    // LOCAL VARIABLES
-    char* retVal = NULL;
-    int fileDesc = 0;  // Holds the file descriptor returned by open()
-    bool success = true;  // If anything fails, set this to false
-    char buff[HPROC_BUFF_SIZE + 1] = { 0 };  // Static array to read file contents
-    ssize_t numBytesRead = 0;  // Return value from read()
-    int numTries = 0;  // Keeps track of allocation attempts
-    char* temp_ptr = NULL;  // Return values from string.h function calls
-
-    // INPUT VALIDATION
-    if (fileName)
-    {
-        if (*fileName)
-        {
-            // READ THE FILE
-            // 1. Open the file
-            if (success == true)
-            {
-                fileDesc = open(fileName, O_RDONLY);
-
-                if (fileDesc < 0)
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - open failed!\n");
-                    success = false;
-                }
-            }
-
-            // 2. Read the file
-            if (success == true)
-            {
-                numBytesRead = read(fileDesc, buff, HPROC_BUFF_SIZE);
-
-                if (numBytesRead < 0)
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - read failed!\n");
-                    success = false;
-                }
-                else if (numBytesRead == 0)
-                {
-                    // It's ok if 0 bytes were read.  Some cmdline files are empty.
-                    // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - 0 bytes read!\n");
-                    // success = false;
-                    temp_ptr = strcpy(buff, "<EMPTY>");
-
-                    if (temp_ptr != buff)
-                    {
-                        fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strcpy failed!\n");
-                        success = false;
-                    }
-                    else
-                    {
-                        numBytesRead = strlen(buff);
-                    }
-                }
-            }
-
-            // 3. Allocate an array to store the file contents
-            if (success == true && numBytesRead > 0)
-            {
-                while (!retVal && numTries < HPROC_MAX_TRIES)
-                {
-                    retVal = (char*)calloc(numBytesRead + 1, sizeof(char));
-                    numTries++;
-                }
-
-                if (!retVal)
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - calloc failed!\n");
-                    success = false;
-                }
-            }
-
-            // 4. Read the file contents into the heap-allocated array
-            if (success == true && retVal)
-            {
-                temp_ptr = strncpy(retVal, buff, numBytesRead);
-
-                if (temp_ptr != retVal)
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strncpy failed!\n");
-                    success = false;
-                }
-            }
-        }
-    }
-    else
-    {
-        fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - NULL fileName!\n");
-        success = false;
-    }
-
-    // CLEAN UP
-    if (success == false)
-    {
-        if (retVal)
-        {
-            // memset
-            if (*retVal)
-            {
-                temp_ptr = memset(retVal, 0x0, strlen(retVal));
-
-                if (temp_ptr != retVal)
-                {
-                    fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - memset failed!\n");
-                }
-
-                temp_ptr = NULL;
-            }
-
-            // free
-            free(retVal);
-
-            // NULL
-            retVal = NULL;
-        }
-    }
-
-    // Close the file descriptor regardless of the success status
-    if (fileDesc > 2)
-    {
-        if (close(fileDesc) < 0)
-        {
-            fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - close failed!\n");
-        }
     }
 
     // DONE
