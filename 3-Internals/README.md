@@ -47,7 +47,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```ls -la /proc/<PID>/exe```
 		* ```cat /proc/<PID>/cmdline```
 		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
-* [ ] Prompt the user to choose one
+* [X] Prompt the user to choose one
 * [ ] List the modules loaded in that application
 	* lsof
 		* ```lsof -p <PID>```
