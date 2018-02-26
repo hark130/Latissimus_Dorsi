@@ -147,6 +147,8 @@ bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
+	off_t symLinkLength = 0;  // Will be used to allocate an array for any symlinks
+	ssize_t numBytesRead = 0;  // Return 
 	
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -199,7 +201,50 @@ bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_inodeNum == DT_LNK)
 		{
-			/////////////////////// IMPLEMENT THIS IF FILEROAD ///////////////////////
+			symLinkLength = size_a_file(updateThis_ptr->hd_Name);
+			
+			if (symLinkLength == -1)
+			{
+				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed);
+				retVal = false;
+			}
+			else if (symLinkLength == 0)
+			{
+				// Some symlinks (e.g., /proc, /sys) report 'st_size' as zero.
+				// PATH_MAX should be a "good enough" estimate
+				symLinkLength = PATH_MAX;
+			}
+			
+			if (retVal == true)
+			{
+				// Increase the size by one to look for truncation
+				symLinkLength++;
+				
+				// Allocate a buffer
+				updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength + 1);
+				
+				if (!(updateThis_ptr->hd_symName))
+				{
+					HARKLE_ERROR(Harkledir, populate_hdEnt_struct, get_me_a_buffer failed);
+					retVal = false;
+				}
+				else
+				{
+					// Read into that buffer
+					numBytesRead = readlink(updateThis_ptr->hd_Name, updateThis_ptr->hd_symName, symLinkLength);
+
+					// Validate the read
+					if (numBytesRead == -1)
+					{
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed);
+						retVal = false;
+					}
+					else if (numBytesRead == symLinkLength)
+					{
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
+					}
+				}				
+			}			
 		}
 	}
 	
