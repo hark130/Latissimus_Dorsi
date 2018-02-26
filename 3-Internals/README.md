@@ -52,15 +52,35 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* lsof
 		* ```lsof -p <PID>```
 		* ```lsof /path/to/lib.so```
-		* ```lsof -p NNNN | awk '{print $9}' | grep '\.so'```
+		* ```lsof -p <PID> | awk '{print $9}' | grep '\.so'```
 	* /proc/maps
 		* ```sudo grep lib.so /proc/*/maps```
-		* ```cat /proc/NNNN/maps | awk '{print $6}' | grep '\.so' | sort | uniq```
+		* ```cat /proc/<PID>/maps | awk '{print $6}' | grep '\.so' | sort | uniq```
+		* Programatically, strstr on "/lib/" or ".so"
 	* ```strace CMD.... 2>&1 | grep '^open(".*\.so"'```
 	* ```ltrace```
 	* ```ldd```
 	* ```objdump -p /path/to/program | grep NEEDED```
 	* ```pldd```
 	* ```pmap```
-	* ```nm```		
-* [ ] Inspect those modules
+	* ```nm```
+
+### 3-10-3
+
+**NOTE:** This is a continuation of 3-10-2
+
+* [ ] Parse the ELF of a PID's application to determine "NEEDED" libraries
+* [ ] Allow the user to visually compare the differences
+
+### 3-10-4
+
+**NOTE:** This is a continuation of 3-10-3
+
+* [ ] Extricate numerous Linux file IO functions into their own header
+* [ ] Write functions to resolve symbolic links, programatically
+* [ ] Draw the complete line of a program's loaded libraries by
+	* [ ] Printing the "NEEDED" libraries from an application's ELF Header
+	* [ ] Use the above file IO functionality to resolve those (inevitably) symbolic links to their destinations
+	* [ ] Print the actual libraries loaded in /proc/<PID>/mem
+
+
