@@ -294,6 +294,7 @@ dirDetails_ptr create_dirDetails_ptr(void)
     // LOCAL VARIABLES
     dirDetails_ptr retVal = NULL;
 	int numTries = 0;
+	bool success = true;  // If anything fails, make this false
 
 	// ALLOCATE MEMORY
 	while(numTries < HDIR_MAX_TRIES && retVal == NULL)
@@ -304,7 +305,8 @@ dirDetails_ptr create_dirDetails_ptr(void)
 
     if (!retVal)
     {
-    	fprintf(stderr, "<<<ERROR>>> - create_dirDetails_ptr() - Failed to allocate a dirDetails struct pointer!\n");
+		HARKLE_ERROR(Harkledir, create_dirDetails_ptr, dirDetails_ptr calloc failed);
+		success = false;
     }
 	else
 	{
@@ -313,35 +315,49 @@ dirDetails_ptr create_dirDetails_ptr(void)
 		numTries = 0;
 		while(numTries < HDIR_MAX_TRIES && retVal->fileName_arr == NULL)
 		{
-			retVal->fileName_arr = (char**)calloc(HDIR_ARRAY_LEN + 1, sizeof(char*));
+			retVal->fileName_arr = (hdEnt_ptr*)calloc(HDIR_ARRAY_LEN + 1, sizeof(hdEnt_ptr));
 			numTries++;
 	    }
 
 	    if (!(retVal->fileName_arr))
 	    {
-	    	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - Failed to allocate fileName_arr!\n");
+			HARKLE_ERROR(Harkledir, create_dirDetails_ptr, fileName_arr calloc failed);
+			success = false;
 	    }
 	    else
 	    {
-	    	retVal->fileArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(char*);
+	    	retVal->fileArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(hdEnt_ptr);
 	    }
 	    // dirName_arr
 		numTries = 0;
 		while(numTries < HDIR_MAX_TRIES && retVal->dirName_arr == NULL)
 		{
-			retVal->dirName_arr = (char**)calloc(HDIR_ARRAY_LEN + 1, sizeof(char*));
+			retVal->dirName_arr = (hdEnt_ptr*)calloc(HDIR_ARRAY_LEN + 1, sizeof(hdEnt_ptr));
 			numTries++;
 	    }
 
 	    if (!(retVal->dirName_arr))
 	    {
-	    	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - Failed to allocate dirName_arr!\n");
+			HARKLE_ERROR(Harkledir, create_dirDetails_ptr, dirName_arr calloc failed);
+			success = false;
 	    }
 	    else
 	    {
-	    	retVal->dirArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(char*);
+	    	retVal->dirArrSize = (size_t)(HDIR_ARRAY_LEN + 1) * sizeof(hdEnt_ptr);
 	    }
-	}   
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_dirDetails_ptr(&retVal))
+			{
+				HARKLE_ERROR(Harkledir, create_dirDetails_ptr, free_dirDetails_ptr failed);
+			}
+		}
+	}
 
     // DONE
 	return retVal;
