@@ -57,6 +57,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```sudo grep lib.so /proc/*/maps```
 		* ```cat /proc/<PID>/maps | awk '{print $6}' | grep '\.so' | sort | uniq```
 		* Programatically, strstr on "/lib/" or ".so"
+		* UPDATE: It should be enough to strstr /proc/PID/maps for ".so"
 	* ```strace CMD.... 2>&1 | grep '^open(".*\.so"'```
 	* ```ltrace```
 	* ```ldd```
