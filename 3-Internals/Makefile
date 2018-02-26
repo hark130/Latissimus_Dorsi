@@ -12,10 +12,10 @@ CC = gcc
 3102:
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
-	# $(CC) -o ./Map_Memory.o -c ../4-User_Mode/Map_Memory.c
-	# $(CC) -c -I ../4-User_Mode/ Harkleproc.c
-	# $(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o ./Map_Memory.o 3-10_Proc_Walk-2_main.c
-	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o 3-10_Proc_Walk-2_main.c
+	$(CC) -c Memoroad.c
+	$(CC) -c Fileroad.c
+	$(CC) -c 3-10_Proc_Walk-2_main.c
+	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Proc_Walk-2_main.o
 
 all:
 	331
@@ -23,3 +23,9 @@ all:
 
 clean: 
 	rm -f *.o *.exe *.so
+
+### OLD 3102 ###
+	# $(CC) -o ./Map_Memory.o -c ../4-User_Mode/Map_Memory.c
+	# $(CC) -c -I ../4-User_Mode/ Harkleproc.c
+	# $(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o ./Map_Memory.o 3-10_Proc_Walk-2_main.c
+################
