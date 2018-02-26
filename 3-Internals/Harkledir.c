@@ -8,12 +8,6 @@
 #include <sys/types.h>	// ino_t
 #include <unistd.h>		// readlink
 
-// lstat
-// #include <sys/types.h>
-// #include <sys/stat.h>
-// #include <unistd.h>
-
- 
 #ifndef HDIR_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define HDIR_MAX_TRIES 3
@@ -27,27 +21,6 @@
 #ifndef HARKLE_ERROR
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
 #endif // HARKLE_ERROR
-
-/*
-typdef struct harkleDirEnt
-{
-	char* hd_Name;				// Should match struct dirent.d_name
-	ino_t hd_inodeNum;			// Should match struct dirent.d_ino
-	unsigned char hd_type; 		// Should match struct dirent.d_type
-	char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
-} hdEnt, *hdEnt_ptr;
-
-typedef struct directoryDetails
-{
-	char* dirName;				// Directory name to walk
-	int numFiles;				// Number of hdEnt struct pointers in fileName_arr
-	hdEnt_ptr* fileName_arr;	// Array of pointers to hdEnt structs storing file information
-	size_t fileArrSize;			// Allocated bytes for fileName_arr
-	int numDirs;				// Number of hdEnt struct pointers in dirName_arr
-	hdEnt_ptr* dirName_arr;		// Array of pointers to hdEnt structs storing directory information
-	size_t dirArrSize;			// Allocated bytes for dirName_arr
-} dirDetails, *dirDetails_ptr;
- */
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// LOCAL FUNCTION PROTOTYPES START //////////////////////
@@ -133,16 +106,6 @@ hdEnt_ptr create_hdEnt_ptr(void)
 }
 
 
-/*
-	Purpose - Populate a harkleDirEnt struct pointer with details from dirent (and other) sources
-	Input
-		updateThis_ptr - [OUT] harkleDirEnt struct pointer to populate
-		currDirEntry - dirent struct pointer to gather details from
-	Output - true on success, false on failure
-	Notes:
-		Will call readlink() to resolve any symbolic link "type"s into hd_symName
-		Will likely make multiple calls to Memoroad's copy_a_string()
- */
 bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry)
 {
 	// LOCAL VARIABLES
@@ -443,15 +406,6 @@ dirDetails_ptr open_dir(char* directoryName)
 }
 
 
-/*
-	Purpose - Zeroize, nullify, and free a heap-allocated directoryDetails struct pointer
-	Input
-		oldStruct_ptr - Pointer to a dirDetails_ptr
-	Output - true on success, false on failure
-	Notes:
-		Will memset(0x0), free, and NULL any pointers
-		Will zeroize all other members
- */
 bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
@@ -670,22 +624,6 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	Purpose - Coordinate the population of the fileName and dirName arrays
-	Input
-		updateThis_ptr - directoryDetails pointer to populate
-	Output - true on success, false on failure
-	Notes:
-		This function calls populate_dirDetails_files() as appropriate
-		This function calls populate_dirDetails_dirs() as appropriate
-		This function does not currently support the following file types:
-			Character device
-			Block device
-			FIFO(named pipe)
-			Symbolic link
-			Socket
-		The array sizes may be updated as realloc() may be called
- */
 bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 {
 	// LOCAL VARIABLES
@@ -971,4 +909,4 @@ bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirE
 ////////////////////// LOCAL FUNCTION DEFINITIONS STOP ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-	
+
