@@ -1,11 +1,12 @@
 #include <dirent.h>		// opendir
-#include <stdlib.h>		// calloc
 #include "Harkledir.h"
+#include "Memoroad.h"	// release_a_string
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
-#include <stdlib.h>		// realloc 
+#include <stdlib.h>		// calloc, realloc 
 #include <string.h>		// memset, strncpy
 #include <sys/types.h>	// ino_t
+#include <unistd.h>		// readlink
 
 // lstat
 // #include <sys/types.h>
@@ -142,7 +143,69 @@ hdEnt_ptr create_hdEnt_ptr(void)
 		Will call readlink() to resolve any symbolic link "type"s into hd_symName
 		Will likely make multiple calls to Memoroad's copy_a_string()
  */
-bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
+bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	
+	// INPUT VALIDATION
+	if (!updateThis_ptr)
+	{
+		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, NULL pointer);
+		retVal = false;
+	}
+	else if (!currDirEntry)
+	{
+		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, NULL pointer);
+		retVal = false;
+	}
+	
+	// POPULATE STRUCT
+	if (retVal == true)
+	{
+		// char* hd_Name;				// Should match struct dirent.d_name
+		updateThis_ptr->hd_Name = copy_a_string(currDirEntry->d_name);
+		
+		if (!(updateThis_ptr->hd_Name))
+		{
+			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, copy_a_string failed);
+			retVal = false;
+		}
+		
+		// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
+		switch (currDirEntry->d_ino)
+		{
+			case DT_UNKNOWN:
+				fprintf(stdout, "This file type is unknown.\n");
+			case DT_BLK:
+			case DT_CHR:
+			case DT_DIR:
+			case DT_FIFO:
+			case DT_LNK:
+			case DT_REG:
+			case DT_SOCK:
+				updateThis_ptr->hd_inodeNum = currDirEntry->d_ino;
+				break;
+			default:
+				fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
+				fprintf(stdout, "Time to implement lstat()!\n");
+				retVal = false;
+				break;
+		}
+		
+		// unsigned char hd_type; 		// Should match struct dirent.d_type
+		updateThis_ptr->hd_type = currDirEntry->d_type;
+		
+		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
+		if (retVal == true && updateThis_ptr->hd_inodeNum == DT_LNK)
+		{
+			/////////////////////// IMPLEMENT THIS IF FILEROAD ///////////////////////
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
 bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
