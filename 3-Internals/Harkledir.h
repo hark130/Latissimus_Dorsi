@@ -10,6 +10,7 @@
 #ifndef __HARKLEDIR__
 #define __HARKLEDIR__
 
+#include <dirent.h>		// struct dirent
 #include <stdbool.h>	// bool, true, false
 #include <stdlib.h>		// size_t
 
@@ -34,7 +35,41 @@ typedef struct directoryDetails
 
 
 /*
-	Purpose - Dynamically allocate a struct pointer on the heap
+	Purpose - Dynamically allocate a harkleDirEnt struct pointer on the heap
+	Input - None
+	Output - Pointer to a harkleDirEnt struct on the heap
+	Notes:
+		hdEnt_ptr must be free()'d by the calling function (see: free_hdEnt_ptr())
+ */
+hdEnt_ptr create_hdEnt_ptr(void);
+
+
+/*
+	Purpose - Populate a harkleDirEnt struct pointer with details from dirent (and other) sources
+	Input
+		updateThis_ptr - [OUT] harkleDirEnt struct pointer to populate
+		currDirEntry - dirent struct pointer to gather details from
+	Output - true on success, false on failure
+	Notes:
+		Will call readlink() to resolve any symbolic link "type"s into hd_symName
+		Will likely make multiple calls to Memoroad's copy_a_string()
+ */
+bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
+
+
+/*
+	Purpose - Zeroize, nullify, and free a heap-allocated harkleDirEnt struct pointer
+	Input
+		oldStruct_ptr - Pointer to a hdEnt_ptr
+	Output - true on success, false on failure
+	Notes:
+		Will likely make multiple calls to Memoroad's release_a_string()
+ */
+bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr);
+
+
+/*
+	Purpose - Dynamically allocate a directoryDetails struct pointer on the heap
 	Input - None
 	Output - Pointer to a directoryDetails struct on the heap
 	Notes:
