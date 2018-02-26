@@ -32,7 +32,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 * [procps - The /proc file system utilities](http://procps.sourceforge.net/)
 * [proc(5) man page](http://man7.org/linux/man-pages/man5/proc.5.html)
-* [Brief, but good, /proc/<PID>/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
+* [Brief, but good, /proc/PID/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
+* [Zombie process wiki](https://en.wikipedia.org/wiki/Zombie_process)
+* [readlink(2) man page](http://man7.org/linux/man-pages/man2/readlink.2.html) to translate symlinks
 
 ## TO DO
 
