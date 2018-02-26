@@ -13,6 +13,7 @@
 #include <dirent.h>		// struct dirent
 #include <stdbool.h>	// bool, true, false
 #include <stdlib.h>		// size_t
+#include <sys/types.h>	// ino_t
 
 typdef struct harkleDirEnt
 {
