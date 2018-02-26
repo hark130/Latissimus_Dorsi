@@ -77,7 +77,7 @@ char* read_a_file(char* fileName);
 		On success, total size, of fileName, in bytes
 		On failure, -1
 	Notes:
-		This function calls lstat()
+		This function calls stat()
 		The return value is converted from data type off_t	
  */
 long long size_a_file(char* fileName);
