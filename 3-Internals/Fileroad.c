@@ -193,7 +193,7 @@ char* read_a_file(char* fileName)
                 if (fileDesc < 0)
                 {
                     // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - open failed!\n");
-        			HARKLE_ERROR(Harkleproc, read_a_file, open failed);
+        			HARKLE_ERROR(Fileroad, read_a_file, open failed);
                     success = false;
                 }
             }
@@ -206,7 +206,7 @@ char* read_a_file(char* fileName)
                 if (numBytesRead < 0)
                 {
                     // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - read failed!\n");
-        			HARKLE_ERROR(Harkleproc, read_a_file, read failed);
+        			HARKLE_ERROR(Fileroad, read_a_file, read failed);
                     success = false;
                 }
                 else if (numBytesRead == 0)
@@ -219,7 +219,7 @@ char* read_a_file(char* fileName)
                     if (temp_ptr != buff)
                     {
                         // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strcpy failed!\n");
-        				HARKLE_ERROR(Harkleproc, read_a_file, strcpy failed);
+        				HARKLE_ERROR(Fileroad, read_a_file, strcpy failed);
                         success = false;
                     }
                     else
@@ -241,7 +241,7 @@ char* read_a_file(char* fileName)
                 if (!retVal)
                 {
                     // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - calloc failed!\n");
-        			HARKLE_ERROR(Harkleproc, read_a_file, calloc failed);
+        			HARKLE_ERROR(Fileroad, read_a_file, calloc failed);
                     success = false;
                 }
             }
@@ -254,7 +254,7 @@ char* read_a_file(char* fileName)
                 if (temp_ptr != retVal)
                 {
                     // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strncpy failed!\n");
-        			HARKLE_ERROR(Harkleproc, read_a_file, strncpy failed);
+        			HARKLE_ERROR(Fileroad, read_a_file, strncpy failed);
                     success = false;
                 }
             }
@@ -263,7 +263,7 @@ char* read_a_file(char* fileName)
     else
     {
         // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - NULL fileName!\n");
-        HARKLE_ERROR(Harkleproc, read_a_file, NULL fileName);
+        HARKLE_ERROR(Fileroad, read_a_file, NULL fileName);
         success = false;
     }
 
@@ -280,7 +280,7 @@ char* read_a_file(char* fileName)
                 if (temp_ptr != retVal)
                 {
                     // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - memset failed!\n");
-        			HARKLE_ERROR(Harkleproc, read_a_file, memset failed);
+        			HARKLE_ERROR(Fileroad, read_a_file, memset failed);
                 }
 
                 temp_ptr = NULL;
@@ -300,12 +300,60 @@ char* read_a_file(char* fileName)
         if (close(fileDesc) < 0)
         {
             // fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - close failed!\n");
-        	HARKLE_ERROR(Harkleproc, read_a_file, close failed);
+        	HARKLE_ERROR(Fileroad, read_a_file, close failed);
         }
     }
 
     // DONE
     return retVal;
+}
+
+
+long long size_a_file(char* fileName)
+{
+	// LOCAL VARIABLES
+	long long retVal = 0;  // This will be converted from data type off_t
+	bool success = true;  // If anything fails, set this to false
+	struct stat fileStat;  // OUT parameter for lstat()
+	int stRetVal = 0;  // Return value from stat()
+	
+	// INPUT VALIDATION
+	if (!fileName)
+	{
+        HARKLE_ERROR(Fileroad, size_a_file, NULL pointer);
+		success = false;
+	}
+	else if (!(*fileName))
+	{
+        HARKLE_ERROR(Fileroad, size_a_file, Empty string);
+		success = false;
+	}
+	
+	// SIZE IT
+	if (success == true)
+	{
+		stRetVal = stat(fileName, &fileStat);
+		
+		if (stRetVal == -1)
+		{
+			HARKLE_ERROR(Fileroad, size_a_file, stat failed);
+			success = false;
+		}
+		else
+		{
+			printf("File size:\t%lld bytes\n", (long long)fileStat.st_size);  // DEBUGGING
+			retVal = (long long)fileStat.st_size;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		retVal = -1;	
+	}
+	
+	// DONE
+	return retVal;
 }
 
 
