@@ -69,6 +69,20 @@ char* buff_a_num(void);
 char* read_a_file(char* fileName);
 
 
+/*
+	Purpose - Utilize lstat to size a file
+	Input
+        fileName - nul-terminated char array of the file to read
+	Output
+		On success, total size, of fileName, in bytes
+		On failure, -1
+	Notes:
+		This function calls lstat()
+		The return value is converted from data type off_t	
+ */
+long long size_a_file(char* fileName);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FILE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
