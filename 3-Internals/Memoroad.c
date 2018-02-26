@@ -22,10 +22,54 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-char* copy_a_string(const char* char_ptr)
+/*
+	Purpose - Allocate a buffer of size length + 1
+	Input
+		length - The length of what you want to store
+	Ouput - Heap-allocated, memset, buffer of size length + 1
+	Notes:
+        It is the caller's responsibility to free the char* returned by 
+        	this function
+ */
+char* get_me_a_buffer(size_t length)
 {
     // LOCAL VARIABLES
     int numTries = 0;  // Max number to calloc attempts
+    char* retVal = NULL;  // Allocated char array
+    char* temp_ptr = NULL;  // Holds string.h function return values
+    bool success = true;  // If anything fails, this is becomes false
+
+    // INPUT VALIDATION
+    if (length < 1)
+    {
+    	HARKLE_ERROR(Memoroad, get_me_a_buffer, Invalid buffer length);
+    	success = false;
+    }
+
+    // ALLOCATION
+    if (success == true)
+    {
+        while (retVal == NULL && numTries < MEMROAD_MAX_TRIES)
+        {
+            retVal = (char*)calloc(length + 1, sizeof(char));
+            numTries++;
+        }
+
+        if (!retVal)
+        {
+	    	HARKLE_ERROR(Memoroad, get_me_a_buffer, calloc failed);
+	    	success = false;
+        }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+char* copy_a_string(const char* char_ptr)
+{
+    // LOCAL VARIABLES
     char* retVal = NULL;  // Allocated char array
     char* temp_ptr = NULL;  // Holds return value from memcpy
     size_t charLen = 0;  // Length of char_ptr
@@ -41,11 +85,7 @@ char* copy_a_string(const char* char_ptr)
             if (charLen > 0)
             {            
                 // 2. Allocate a properly-sized array
-                while (retVal == NULL && numTries < MEMROAD_MAX_TRIES)
-                {
-                    retVal = (char*)calloc(charLen + 1, sizeof(char));
-                    numTries++;
-                }
+            	retVal = get_me_a_buffer(charLen);
                 
                 if (retVal)
                 {                
@@ -64,8 +104,7 @@ char* copy_a_string(const char* char_ptr)
                 }
                 else
                 {
-                    // fprintf(stderr, "<<<ERROR>>> - Fileroad - copy_a_string() - calloc failed!\n");
-        			HARKLE_ERROR(Fileroad, copy_a_string, calloc failed);
+        			HARKLE_ERROR(Fileroad, copy_a_string, get_me_a_buffer failed);
                 }                
             }
         }

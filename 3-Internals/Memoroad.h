@@ -10,6 +10,18 @@
 
 
 /*
+	Purpose - Allocate a buffer of size length + 1
+	Input
+		length - The length of what you want to store
+	Ouput - Heap-allocated, memset, buffer of size length + 1
+	Notes:
+        It is the caller's responsibility to free the char* returned by 
+        	this function
+ */
+char* get_me_a_buffer(size_t length);
+
+
+/*
     Purpose - Abstract-away copying char arrays into heap-allocated arrays
     Input
         char_ptr - Nul-terminated character array
@@ -50,7 +62,7 @@ bool release_a_string(char** charPtr_ptr);
 		buffSize - The size, in memory, of *charPtr_ptr
 	Output - On success, true. Otherwise, false.
 	Notes:
-		Will memset buffSize byptes, free, and NULL "&char_ptr"
+		Will memset buffSize bytes, free, and NULL "&char_ptr"
 		Call this function like this:
 			release_a_string(&myCharArray, buffSize);
  */
