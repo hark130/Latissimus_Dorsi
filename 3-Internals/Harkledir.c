@@ -859,7 +859,7 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 				*arraySize_ptr += (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr));
 				realloc_ptr = NULL;
 				// Set the last index to NULL
-				// (*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
+				(*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
 				// fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			}
 			else
