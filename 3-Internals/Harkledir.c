@@ -251,7 +251,7 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 		// 1. Memset/Free/NULL the struct contents
 		// char* hd_Name;				// Should match struct dirent.d_name
 		temp_ptr = freeThis_ptr->hd_Name;
-		fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_Name %s (%p)\n", temp_ptr, temp_ptr);
+		// fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_Name %s (%p)\n", temp_ptr, temp_ptr);
 		mrRetVal = release_a_string(&temp_ptr);
 		// mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
 		
@@ -271,7 +271,7 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 		{
 			// char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
 			temp_ptr = freeThis_ptr->hd_symName;
-			fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_symName %s (%p)\n", temp_ptr, temp_ptr);
+			// fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_symName %s (%p)\n", temp_ptr, temp_ptr);
 			mrRetVal = release_a_string(&temp_ptr);
 			// mrRetVal = release_a_string(&(freeThis_ptr->hd_symName));
 		
@@ -283,13 +283,13 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 		}
 		
 		// 2. Free the struct pointer
-		fprintf(stdout, "free_hdEnt_ptr() - About to free() %p\n", *oldStruct_ptr);
-		// free(*oldStruct_ptr);
+		// fprintf(stdout, "free_hdEnt_ptr() - About to free() %p\n", *oldStruct_ptr);
+		free(*oldStruct_ptr);
 		
 		
 		// 3. NULL this pointer
 		freeThis_ptr = NULL;
-		// *oldStruct_ptr = NULL;
+		*oldStruct_ptr = NULL;
 	}
 	
 	// DONE
@@ -414,23 +414,30 @@ dirDetails_ptr open_dir(char* directoryName)
 		}
 
 		// 1.2. Allocate a char array
-		nameLen = strlen(directoryName);
-		retVal->dirName = (char*)calloc(nameLen + 1, sizeof(char));
+		// nameLen = strlen(directoryName);
+		// retVal->dirName = (char*)calloc(nameLen + 1, sizeof(char));
+
+		// if (!(retVal->dirName))
+		// {
+		// 	HARKLE_ERROR(Harkledir, open_dir, dirName calloc failed);
+		// 	success = false;
+		// }
+		// else
+		// {
+		// 	temp_ptr = strncpy(retVal->dirName, directoryName, nameLen);
+
+		// 	if (temp_ptr != retVal->dirName)
+		// 	{
+		// 		HARKLE_ERROR(Harkledir, open_dir, dirName strncpy failed);
+		// 		success = false;
+		// 	}
+		// }
+		retVal->dirName = copy_a_string(directoryName);
 
 		if (!(retVal->dirName))
 		{
-			HARKLE_ERROR(Harkledir, open_dir, dirName calloc failed);
+			HARKLE_ERROR(Harkledir, open_dir, copy_a_string failed);
 			success = false;
-		}
-		else
-		{
-			temp_ptr = strncpy(retVal->dirName, directoryName, nameLen);
-
-			if (temp_ptr != retVal->dirName)
-			{
-				HARKLE_ERROR(Harkledir, open_dir, dirName strncpy failed);
-				success = false;
-			}
 		}
 
 		// 2. Populate files & dirs
@@ -503,15 +510,15 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			}
 
 			// 2. File Array
-			puts("2. File Array");  // DEBUGGING
+			// puts("2. File Array");  // DEBUGGING
 			// 2.a. fileName_arr and all hdEnt_ptr contained within
-			puts("2.a. fileName_arr and all hdEnt_ptr contained within");  // DEBUGGING
+			// puts("2.a. fileName_arr and all hdEnt_ptr contained within");  // DEBUGGING
 			if (oldStruct->numFiles > 0)
 			{
 				while (numberOfFiles > 0)
 				{
 					// 2.a.1. hdEnt_ptr	
-					puts("2.a.1. hdEnt_ptr");  // DEBUGGING
+					// puts("2.a.1. hdEnt_ptr");  // DEBUGGING
 					hDE_ptr = (hdEnt_ptr)(*(oldStruct->fileName_arr + numberOfFiles - 1));
 
 					if (hDE_ptr)
@@ -533,13 +540,13 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 					}
 
 					// 2.a.2. Next struct
-					puts("2.a.2. Next struct");  // DEBUGGING
+					// puts("2.a.2. Next struct");  // DEBUGGING
 					numberOfFiles--;
 				}
 			}
 
 			// 2.a.3. fileName_arr
-			puts("2.a.3. fileName_arr");  // DEBUGGING
+			// puts("2.a.3. fileName_arr");  // DEBUGGING
 			// 2.a.3.i. memset
 			if (oldStruct->fileArrSize > 0)
 			{
@@ -715,7 +722,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 						break;
 					case DT_UNKNOWN:
 					default:
-						fprintf(stdout, "populate_dirDetails() found an invalid d_type of %u.\nGetting a second opinion from get_a_file_type().\n", currDirEntry->d_type);  // DEBUGGING
+						// fprintf(stdout, "populate_dirDetails() found an invalid d_type of %u.\nGetting a second opinion from get_a_file_type().\n", currDirEntry->d_type);  // DEBUGGING
 						absPath_ptr = os_path_join(updateThis_ptr->dirName, currDirEntry->d_name, false);
 
 						if (absPath_ptr)
@@ -730,7 +737,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 							else
 							{
 								// SUCCESS!
-								fprintf(stdout, "get_a_file_type() returned %u.\n", fileType);
+								// fprintf(stdout, "get_a_file_type() returned %u.\n", fileType);
 								currDirEntry->d_type = fileType;
 							}
 						}
@@ -772,6 +779,7 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	int* numEntries_ptr = NULL;  // Pointer to the numThings member of the relevant section
 	hdEnt_ptr** abstractArr_ptr = NULL;  // Pointer to the array member of the relevant section
 	size_t* arraySize_ptr = NULL;  // Pointer to the arraySize member of the relevant section
+	// hdEnt_ptr** debug_ptr = NULL;  // Pointer to the array member of the relevant section
 
 
 	// INPUT VALIDATION
@@ -833,21 +841,42 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (*arraySize_ptr < necessarySize)
 		{
 			// 2.1. Not enough
-			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + HDIR_ARRAY_LEN);
+			// fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
+			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
+			// /* DEBUGGING */
+			// debug_ptr = abstractArr_ptr;
+			// puts("BEFORE:");
+			// while (*debug_ptr != NULL)
+			// {
+			// 	fprintf(stdout, "%p, ", *debug_ptr);
+			// 	debug_ptr++;
+			// }
+			// putchar(0xA);
 
 			if (realloc_ptr)
 			{
 				*abstractArr_ptr = realloc_ptr;
-				*arraySize_ptr += HDIR_ARRAY_LEN;
+				*arraySize_ptr += (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr));
 				realloc_ptr = NULL;
 				// Set the last index to NULL
-				(*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
+				// (*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
+				// fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			}
 			else
 			{
 				HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, Failed to realloc the fileName_arr);
 				retVal = false;
 			}
+
+			// /* DEBUGGING */
+			// debug_ptr = abstractArr_ptr;
+			// puts("AFTER:");
+			// while (*debug_ptr != NULL)
+			// {
+			// 	fprintf(stdout, "%p, ", *debug_ptr);
+			// 	debug_ptr++;
+			// }
+			// putchar(0xA);
 		}
 	}
 
