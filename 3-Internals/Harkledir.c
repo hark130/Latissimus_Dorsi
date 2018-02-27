@@ -39,8 +39,7 @@
 		dirArrSize - A pointer to the actual size of the dirName_arr in memory
 	Output - true on success, false on failure
 	Notes:
-		This function calls populate_dirDetails_files() as appropriate
-		This function calls populate_dirDetails_dirs() as appropriate
+		This function calls populate_dirDetails_arrays()
 		This function does not currently support the following file types:
 			Character device
 			Block device
@@ -62,7 +61,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr);
 	Notes:
 		The array sizes may be updated as realloc() may be called
  */
-bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry);
+bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry);
 
 
 /*
@@ -75,7 +74,7 @@ bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fil
 	Notes:
 		The array sizes may be updated as realloc() may be called
  */
-bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry);
+// bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -638,42 +637,32 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - updateThis_ptr NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, updateThis_ptr NULL pointer);
 		retVal = false;
 	}
-	// else if (!(updateThis_ptr->fileArrSize))
-	// {
-	// 	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileArrSize NULL pointer!\n");
-	// 	retVal = false;
-	// }
-	// else if (!(updateThis_ptr->dirArrSize))
-	// {
-	// 	fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirArrSize NULL pointer!\n");
-	// 	retVal = false;
-	// }
-	else if (updateThis_ptr->fileArrSize < 1 || updateThis_ptr->fileArrSize < (HDIR_ARRAY_LEN * sizeof(char*)))
+	else if (updateThis_ptr->fileArrSize < 1 || updateThis_ptr->fileArrSize < (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileArrSize too small!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, fileArrSize too small);
 		retVal = false;
 	}
-	else if (updateThis_ptr->dirArrSize < 1 || updateThis_ptr->dirArrSize < (HDIR_ARRAY_LEN * sizeof(char*)))
+	else if (updateThis_ptr->dirArrSize < 1 || updateThis_ptr->dirArrSize < (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirArrSize too small!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, dirArrSize too small);
 		retVal = false;
 	}
 	else if (!updateThis_ptr->dirName)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirName NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, dirName NULL pointer);
 		retVal = false;
 	}
 	else if (!(updateThis_ptr->fileName_arr))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - fileName_arr NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, fileName_arr NULL pointer);
 		retVal = false;
 	}
 	else if (!(updateThis_ptr->dirName_arr))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails() - dirName_arr NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails, dirName_arr NULL pointer);
 		retVal = false;
 	}
 
@@ -690,40 +679,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 
 			if (currDirEntry)
 			{
-				switch (currDirEntry->d_type)
-				{
-					case DT_BLK:
-						// fprintf(stdout, "%s is a block device.\n", currDirEntry->d_name);
-						break;
-					case DT_CHR:
-						// fprintf(stdout, "%s is a character device.\n", currDirEntry->d_name);
-						break;
-					case DT_DIR:
-						// fprintf(stdout, "%s is a directory.\n", currDirEntry->d_name);
-						retVal = populate_dirDetails_dirs(updateThis_ptr, currDirEntry);
-						break;
-					case DT_FIFO:
-						// fprintf(stdout, "%s is a named pipe (FIFO).\n", currDirEntry->d_name);
-						break;
-					case DT_LNK:
-						// fprintf(stdout, "%s is a symbolic link.\n", currDirEntry->d_name);
-						break;
-					case DT_REG:
-						// fprintf(stdout, "%s is a regular file.\n", currDirEntry->d_name);
-						retVal = populate_dirDetails_files(updateThis_ptr, currDirEntry);
-						break; 
-					case DT_SOCK:
-						// fprintf(stdout, "%s is a UNIX domain socket.\n", currDirEntry->d_name);
-						break;
-					case DT_UNKNOWN:
-						fprintf(stdout, "This file type is unknown.\n");
-						// break;
-					default:
-						fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
-						fprintf(stdout, "Time to implement lstat()!\n");
-						retVal = false;
-						break;
-				}
+				retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry);
 			}
 		} while (currDirEntry && retVal == true);
 	}
@@ -733,85 +689,122 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 }
 
 
-bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry)
+bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
-	// size_t currArrSize = 0;
 	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
 	void* realloc_ptr = NULL;  // Return value from realloc
 	char* temp_ptr = NULL;  // Return value from calloc
+	hdEntr_ptr newStruct = NULL;  // Will temporarily hold new struct pointer allocation
+	// Abstract dirDetails References
+	int* numEntries_ptr = NULL;  // Pointer to the numThings member of the relevant section
+	hdEntr_ptr** abstractArr_ptr = NULL;  // Pointer to the array member of the relevant section
+	size_t* arraySize_ptr = NULL;  // Pointer to the arraySize member of the relevant section
+
 
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - updateThis_ptr NULL pointer!\n");
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - updateThis_ptr NULL pointer!\n");
 		retVal = false;
 	}
 	else if (!fileEntry)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - fileEntry NULL pointer!\n");
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - fileEntry NULL pointer!\n");
 		retVal = false;
 	}
 	else if (!(updateThis_ptr->fileName_arr))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - fileEntry NULL pointer!\n");
+		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - fileEntry NULL pointer!\n");
 		retVal = false;
 	}
 
-	// VALIDATE ARRAY
-	// 1. Calculate necessary size
-	necessarySize = updateThis_ptr->numFiles * sizeof(char*);  	// Total bytes currently stored
-	necessarySize += sizeof(char*);  							// The new fileEntry to store
-	necessarySize += sizeof(char*);								// The terminating NULL pointer
-	// 2. Verify the array is large enough
-	if (updateThis_ptr->fileArrSize < necessarySize)
+	// DECIDE WHICH ARRAY TO UPDATE
+	if (retVal == true)
 	{
-		// 2.1. Not enough
-		realloc_ptr = realloc(updateThis_ptr->fileName_arr, updateThis_ptr->fileArrSize + HDIR_ARRAY_LEN);
-
-		if (realloc_ptr)
+		switch (fileEntry->d_ino)
 		{
-			updateThis_ptr->fileName_arr = realloc_ptr;
-			updateThis_ptr->fileArrSize += HDIR_ARRAY_LEN;
-			realloc_ptr = NULL;
-			// Set the last index to NULL
-			(*(updateThis_ptr->fileName_arr + updateThis_ptr->fileArrSize - 1)) = NULL;
-		}
-		else
-		{
-			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to realloc the fileName_arr!\n");
-			retVal = false;
+			case DT_LNK:
+			case DT_REG:
+				numEntries_ptr = &(updateThis_ptr->numFiles);
+				abstractArr_ptr = &(updateThis_ptr->fileName_arr);
+				arraySize_ptr = &(updateThis_ptr->fileArrSize);
+				break;
+			case DT_DIR:
+				numEntries_ptr = &(updateThis_ptr->numDirs);
+				abstractArr_ptr = &(updateThis_ptr->dirName_arr);
+				arraySize_ptr = &(updateThis_ptr->dirArrSize);
+				break;
+			case DT_FIFO:
+			case DT_SOCK:
+			case DT_BLK:
+			case DT_CHR:
+			case DT_UNKNOWN:
+				break;
+			default:
+				HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, Invalid dirent data type);
+				retVal = false;
+				break;
 		}
 	}
 
-	// COPY THE FILENAME
-	if (retVal == true)
+	// VALIDATE ARRAY
+	if (retVal == true && numEntries_ptr && abstractArr_ptr && arraySize_ptr)
 	{
-		// 1. Allocate an array for the new filename
-		temp_ptr = calloc(strlen(fileEntry->d_name), sizeof(char));
-
-		if (temp_ptr)
+		// 1. Calculate necessary size
+		necessarySize = (*numEntries_ptr) * sizeof(hdEnt_ptr); 		 	// Total bytes currently stored
+		necessarySize += sizeof(hdEnt_ptr);  							// The new hdEntry to store
+		necessarySize += sizeof(hdEnt_ptr);								// The terminating NULL pointer
+		// 2. Verify the array is large enough
+		if (*arraySize_ptr < necessarySize)
 		{
-			// 2. Store that pointer in the struct array
-			(*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)) = temp_ptr;
+			// 2.1. Not enough
+			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + HDIR_ARRAY_LEN);
 
-			// 3. Copy the filename in
-			temp_ptr = strcpy((*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)), fileEntry->d_name);
-
-			if (temp_ptr != (*(updateThis_ptr->fileName_arr + updateThis_ptr->numFiles)))
+			if (realloc_ptr)
 			{
-				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to copy the d_name into the array!\n");
-				retVal = false;
+				*abstractArr_ptr = realloc_ptr;
+				*arraySize_ptr += HDIR_ARRAY_LEN;
+				realloc_ptr = NULL;
+				// Set the last index to NULL
+				(*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
 			}
 			else
 			{
-				updateThis_ptr->numFiles++;  // Increment the file count
+				HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, Failed to realloc the fileName_arr);
+				retVal = false;
+			}
+		}
+	}
+
+	// POPULATE THE ARRAY
+	if (retVal == true && numEntries_ptr && abstractArr_ptr && arraySize_ptr)
+	{
+		// 1. Allocate a struct
+		hdEntr_ptr = create_hdEnt_ptr();
+
+		if (hdEntr_ptr)
+		{
+			// 2. Populate that struct
+			if (true == populate_hdEnt_struct(hdEntr_ptr, fileEntry))
+			{
+				// 3. Store that pointer in the struct array
+				*((*abstractArr_ptr) + (*numEntries_ptr)) = hdEntr_ptr;
+				hdEntr_ptr = NULL;
+
+				// 4. Increment the file count
+				(*numEntries_ptr)++;
+			}
+			else
+			{
+				HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, populate_hdEnt_struct failed);
+				retVal = false;
 			}
 		}
 		else
 		{
-			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_files() - failed to calloc an array for the d_name!\n");
+			HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, copy_a_string failed);
 			retVal = false;
 		}
 	}
@@ -821,91 +814,91 @@ bool populate_dirDetails_files(dirDetails_ptr updateThis_ptr, struct dirent* fil
 }
 
 
-bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry)
-{
-	// LOCAL VARIABLES
-	bool retVal = true;
-	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
-	void* realloc_ptr = NULL;  // Return value from realloc
-	char* temp_ptr = NULL;  // Return value from calloc
+// bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry)
+// {
+// 	// LOCAL VARIABLES
+// 	bool retVal = true;
+// 	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
+// 	void* realloc_ptr = NULL;  // Return value from realloc
+// 	char* temp_ptr = NULL;  // Return value from calloc
 
-	// INPUT VALIDATION
-	if (!updateThis_ptr)
-	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - updateThis_ptr NULL pointer!\n");
-		retVal = false;
-	}
-	else if (!dirEntry)
-	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - fileEntry NULL pointer!\n");
-		retVal = false;
-	}
-	else if (!(updateThis_ptr->dirName_arr))
-	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - dirName_arr NULL pointer!\n");
-		retVal = false;
-	}
+// 	// INPUT VALIDATION
+// 	if (!updateThis_ptr)
+// 	{
+// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - updateThis_ptr NULL pointer!\n");
+// 		retVal = false;
+// 	}
+// 	else if (!dirEntry)
+// 	{
+// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - fileEntry NULL pointer!\n");
+// 		retVal = false;
+// 	}
+// 	else if (!(updateThis_ptr->dirName_arr))
+// 	{
+// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - dirName_arr NULL pointer!\n");
+// 		retVal = false;
+// 	}
 
-	// VALIDATE ARRAY
-	// 1. Calculate necessary size
-	necessarySize = updateThis_ptr->numDirs * sizeof(char*);  	// Total bytes currently stored
-	necessarySize += sizeof(char*);  							// The new fileEntry to store
-	necessarySize += sizeof(char*);								// The terminating NULL pointer
-	// 2. Verify the array is large enough
-	if (updateThis_ptr->dirArrSize < necessarySize)
-	{
-		// 2.1. Not enough
-		realloc_ptr = realloc(updateThis_ptr->dirName_arr, updateThis_ptr->dirArrSize + HDIR_ARRAY_LEN);
+// 	// VALIDATE ARRAY
+// 	// 1. Calculate necessary size
+// 	necessarySize = updateThis_ptr->numDirs * sizeof(char*);  	// Total bytes currently stored
+// 	necessarySize += sizeof(char*);  							// The new fileEntry to store
+// 	necessarySize += sizeof(char*);								// The terminating NULL pointer
+// 	// 2. Verify the array is large enough
+// 	if (updateThis_ptr->dirArrSize < necessarySize)
+// 	{
+// 		// 2.1. Not enough
+// 		realloc_ptr = realloc(updateThis_ptr->dirName_arr, updateThis_ptr->dirArrSize + HDIR_ARRAY_LEN);
 
-		if (realloc_ptr)
-		{
-			updateThis_ptr->dirName_arr = realloc_ptr;
-			updateThis_ptr->dirArrSize += HDIR_ARRAY_LEN;
-			realloc_ptr = NULL;
-			// Set the last index to NULL
-			(*(updateThis_ptr->dirName_arr + updateThis_ptr->dirArrSize - 1)) = NULL;
-		}
-		else
-		{
-			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to realloc the dirName_arr!\n");
-			retVal = false;
-		}
-	}
+// 		if (realloc_ptr)
+// 		{
+// 			updateThis_ptr->dirName_arr = realloc_ptr;
+// 			updateThis_ptr->dirArrSize += HDIR_ARRAY_LEN;
+// 			realloc_ptr = NULL;
+// 			// Set the last index to NULL
+// 			(*(updateThis_ptr->dirName_arr + updateThis_ptr->dirArrSize - 1)) = NULL;
+// 		}
+// 		else
+// 		{
+// 			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to realloc the dirName_arr!\n");
+// 			retVal = false;
+// 		}
+// 	}
 
-	// COPY THE FILENAME
-	if (retVal == true)
-	{
-		// 1. Allocate an array for the new filename
-		temp_ptr = calloc(strlen(dirEntry->d_name), sizeof(char));
+// 	// COPY THE FILENAME
+// 	if (retVal == true)
+// 	{
+// 		// 1. Allocate an array for the new filename
+// 		temp_ptr = calloc(strlen(dirEntry->d_name), sizeof(char));
 
-		if (temp_ptr)
-		{
-			// 2. Store that pointer in the struct array
-			(*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)) = temp_ptr;
+// 		if (temp_ptr)
+// 		{
+// 			// 2. Store that pointer in the struct array
+// 			(*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)) = temp_ptr;
 
-			// 3. Copy the filename in
-			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), dirEntry->d_name);
+// 			// 3. Copy the filename in
+// 			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), dirEntry->d_name);
 
-			if (temp_ptr != (*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)))
-			{
-				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to copy the d_name into the array!\n");
-				retVal = false;
-			}
-			else
-			{
-				updateThis_ptr->numDirs++;  // Increment the file count
-			}
-		}
-		else
-		{
-			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to calloc an array for the d_name!\n");
-			retVal = false;
-		}
-	}
+// 			if (temp_ptr != (*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)))
+// 			{
+// 				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to copy the d_name into the array!\n");
+// 				retVal = false;
+// 			}
+// 			else
+// 			{
+// 				updateThis_ptr->numDirs++;  // Increment the file count
+// 			}
+// 		}
+// 		else
+// 		{
+// 			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to calloc an array for the d_name!\n");
+// 			retVal = false;
+// 		}
+// 	}
 
-	// DONE
-	return retVal;
-}
+// 	// DONE
+// 	return retVal;
+// }
 
 	
 //////////////////////////////////////////////////////////////////////////////
