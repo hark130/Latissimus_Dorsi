@@ -18,6 +18,10 @@
 #define HDIR_ARRAY_LEN 10
 #endif  // HDIR_ARRAY_LEN
 
+#ifndef HDIR_MEMSET_DEFAULT
+#define HDIR_MEMSET_DEFAULT 0x0
+#endif  // MEMSET_DEFAULT
+
 #ifndef HARKLE_ERROR
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
 #endif // HARKLE_ERROR
@@ -457,7 +461,7 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 	bool retVal = true;
 	dirDetails_ptr oldStruct = NULL;  // Easier to deal with the oldStruct this way
 	void* temp_ptr = NULL;  // Will hold the return value from memset()
-	char* name_ptr = NULL;  // Will hold a char* from one of the dirDetails arrays
+	hdEnt* hDE_ptr = NULL;  // Will hold a harkleDirEnt* from one of the dirDetails arrays
 	int numberOfFiles = 0;  // Copy of oldStruct->numFiles
 	int numberOfDirs = 0;  // Copy of oldStruct->numDirs
 
@@ -477,180 +481,134 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 			{
 				if (*(oldStruct->dirName))
 				{
-					// 1.1. memset dirName
-					temp_ptr = memset(oldStruct->dirName, 0x0, strlen(oldStruct->dirName));
-
-					if (temp_ptr != oldStruct->dirName)
+					if (false == release_a_string(&(oldStruct->dirName)))
 					{
-						fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize the struct's dirName!\n");
+						HARKLE_ERROR(Harkledir, free_dirDetails_ptr, release_a_string failed);
+						retVal = false;
 					}
-
-					// 1.2. free dirName
-					free(oldStruct->dirName);
-
-					// 1.3. Zero dirName
-					oldStruct->dirName = NULL;
 				}
 			}
 
-			// puts("2. char* fileNames");  // DEBUGGING
-			// 2.a. char* fileNames;
+			// 2. File Array;
+			// 2.a. fileName_arr and all hdEnt_ptr contained within
 			if (oldStruct->numFiles > 0)
 			{
-				while (oldStruct->numFiles > 0)
+				while (numberOfFiles > 0)
 				{
-					name_ptr = (char*)(*(oldStruct->fileName_arr + oldStruct->numFiles - 1));
-					// fprintf(stdout, "name_ptr:\t%p\n", name_ptr);  // DEBUGGING
+					// 2.a.1. hdEnt_ptr	
+					hDE_ptr = (hdEnt*)(*(oldStruct->fileName_arr + numberOfFiles - 1));
 
-					if (name_ptr)
+					if (hDE_ptr)
 					{
-						// fprintf(stdout, "filename:\t%s\n", name_ptr);  // DEBUGGING
-						if (*name_ptr)
+						if (false == free_hdEnt_ptr(&hDE_ptr))
 						{
-							// puts("2.a.1. memset filename");  // DEBUGGING
-							// 2.a.1. memset filename
-							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
-
-							if (temp_ptr != name_ptr)
-							{
-								fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize one of the filenames in the struct's fileName_arr!\n");
-							}
+							HARKLE_ERROR(Harkledir, free_dirDetails_ptr, free_hdEnt_ptr failed);
+							retVal = false;
+						}
+						else
+						{
+							(*(oldStruct->fileName_arr + numberOfFiles - 1)) = NULL;
 						}
 					}
+					else
+					{
+						HARKLE_ERROR(Harkledir, free_dirDetails_ptr, NULL pointer in fileName_arr);
+						retVal = false;
+					}
 
-					// puts("2.a.2. free filename");  // DEBUGGING
-					// 2.a.2. free filename
-					free(name_ptr);
-
-					// puts("2.a.3. Zero filename");  // DEBUGGING
-					// 2.a.3. Zero filename
-					name_ptr = NULL;
-					(*(oldStruct->fileName_arr + oldStruct->numFiles - 1)) = NULL;
-
-					// puts("2.a.4. Next filename");  // DEBUGGING
-					// 2.a.4. Next filename
-					oldStruct->numFiles--;
+					// 2.a.2. Next struct
+					numberOfFiles--;
 				}
 			}
 
-			// puts("2.b. int numFiles");  // DEBUGGING
-			// 2.b. int numFiles;
-			if (oldStruct->numFiles > 0)
+			// 2.a.3. fileName_arr
+			// 2.a.3.i. memset
+			if (oldStruct->fileArrSize > 0)
 			{
-				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numFiles was %d, a non-zero value!\n", oldStruct->numFiles);
+				temp_ptr = memset(oldStruct->fileName_arr, HDIR_MEMSET_DEFAULT, oldStruct->fileArrSize);
+
+				if (temp_ptr != oldStruct->fileName_arr)
+				{
+					HARKLE_ERROR(Harkledir, free_dirDetails_ptr, memset failed on fileName_arr);
+					retVal = false;
+				}
+			}
+			// 2.a.3.ii. free
+			free(oldStruct->fileName_arr);
+			// 2.a.3.iii. NULL
+			temp_ptr = NULL;
+			oldStruct->fileName_arr = NULL;
+
+			// 2.b. int numFiles;
+			if (numberOfFiles > 0)
+			{
+				HARKLE_ERROR(Harkledir, free_dirDetails_ptr, numberOfFiles was a non-zero value);
+				retVal = false;
 			}
 			oldStruct->numFiles = 0;
 
-			// puts("2.c. char** fileName_arr");  // DEBUGGING
-			// 2.c. char** fileName_arr;	// Array of filenames
-			// 2.c.1. memset fileName_arr
-			if (oldStruct->fileArrSize >= (numberOfFiles * sizeof(char*)))
-			{
-				temp_ptr = memset(oldStruct->fileName_arr, 0x0, oldStruct->fileArrSize);
-			}
-			else
-			{
-				temp_ptr = memset(oldStruct->fileName_arr, 0x0, (numberOfFiles * sizeof(char*)));
-			}
-
-			if (temp_ptr != (void*)oldStruct->fileName_arr)
-			{
-				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize the struct's fileName_arr!\n");
-			}
-
-			// 2.c.2. free fileName_arr
-			free(oldStruct->fileName_arr);
-
-			// 2.c.3. Zero fileName_arr
-			oldStruct->fileName_arr = NULL;
-
-			// 2.d. size_t fileArrSize;		// Allocated bytes for fileName_arr
+			// 2.c. size_t fileArrSize;		// Allocated bytes for fileName_arr
 			oldStruct->fileArrSize = 0;
 
-			// puts("3. char* dirNames");  // DEBUGGING
-			// 3.a. char* dirNames;
+			// 3. Directory Array;
+			// 3.a. dirName_arr and all hdEnt_ptr contained within
 			if (oldStruct->numDirs > 0)
 			{
-				// fprintf(stdout, "Number of dirs:\t%d\n", oldStruct->numDirs);  // DEBUGGING
-				while (oldStruct->numDirs > 0)
+				while (numberOfDirs > 0)
 				{
-					name_ptr = (char*)(*(oldStruct->dirName_arr + oldStruct->numDirs - 1));
-					// fprintf(stdout, "1. name_ptr:\t%p\n", name_ptr);  // DEBUGGING
-					// name_ptr = oldStruct->dirName_arr[oldStruct->numDirs - 1];
-					// fprintf(stdout, "2. name_ptr:\t%p\n", name_ptr);  // DEBUGGING
+					// 3.a.1. hdEnt_ptr	
+					hDE_ptr = (hdEnt*)(*(oldStruct->dirName_arr + numberOfDirs - 1));
 
-					if (name_ptr)
+					if (hDE_ptr)
 					{
-						// fprintf(stdout, "dir name:\t%s\n", name_ptr);  // DEBUGGING
-						if (*name_ptr)
+						if (false == free_hdEnt_ptr(&hDE_ptr))
 						{
-							// puts("3.a.1. memset filename");  // DEBUGGING
-							// 3.a.1. memset filename
-							temp_ptr = memset(name_ptr, 0x0, strlen(name_ptr));
-
-							if (temp_ptr != name_ptr)
-							{
-								fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize one of the filenames in the struct's fileName_arr!\n");
-							}
+							HARKLE_ERROR(Harkledir, free_dirDetails_ptr, free_hdEnt_ptr failed);
+							retVal = false;
 						}
-						// puts("3.a.2. free filename");  // DEBUGGING
-						// fprintf(stdout, "free(%p)\n", name_ptr);  // DEBUGGING
-						// 3.a.2. free filename
-						free(name_ptr);
+						else
+						{
+							(*(oldStruct->dirName_arr + numberOfDirs - 1)) = NULL;
+						}
+					}
+					else
+					{
+						HARKLE_ERROR(Harkledir, free_dirDetails_ptr, NULL pointer in dirName_arr);
+						retVal = false;
 					}
 
-					// puts("3.a.2. free filename");  // DEBUGGING
-					// fprintf(stdout, "free(%p)\n", name_ptr);  // DEBUGGING
-					// // 3.a.2. free filename
-					// free(name_ptr);
-
-					// puts("3.a.3. Zero filename");  // DEBUGGING
-					// 3.a.3. Zero filename
-					name_ptr = NULL;
-					(*(oldStruct->dirName_arr + oldStruct->numDirs - 1)) = NULL;
-
-					// puts("3.a.4. Next filename");  // DEBUGGING
-					// 3.a.4. Next filename
-					oldStruct->numDirs--;
+					// 3.a.2. Next struct
+					numberOfDirs--;
 				}
 			}
 
-			// puts("3.b. int numDirs");  // DEBUGGING
-			// 3.b. int numDirs;
-			if (oldStruct->numDirs > 0)
+			// 3.a.3. dirName_arr
+			// 3.a.3.i. memset
+			if (oldStruct->dirArrSize > 0)
 			{
-				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - oldStruct->numDirs was %d, a non-zero value!\n", oldStruct->numDirs);
+				temp_ptr = memset(oldStruct->dirName_arr, HDIR_MEMSET_DEFAULT, oldStruct->dirArrSize);
+
+				if (temp_ptr != oldStruct->dirName_arr)
+				{
+					HARKLE_ERROR(Harkledir, free_dirDetails_ptr, memset failed on dirName_arr);
+					retVal = false;
+				}
+			}
+			// 3.a.3.ii. free
+			free(oldStruct->dirName_arr);
+			// 3.a.3.iii. NULL
+			temp_ptr = NULL;
+			oldStruct->dirName_arr = NULL;
+
+			// 3.b. int numDirs;
+			if (numberOfDirs > 0)
+			{
+				HARKLE_ERROR(Harkledir, free_dirDetails_ptr, numberOfDirs was a non-zero value);
+				retVal = false;
 			}
 			oldStruct->numDirs = 0;
 
-			// puts("3.c. char** dirName_arr");  // DEBUGGING
-			// 3.c. char** dirName_arr;		// Array of directory names
-			// puts("3.c.1. memset dirName_arr");  // DEBUGGING
-			// 3.c.1. memset dirName_arr
-			if (oldStruct->dirArrSize >= (numberOfDirs * sizeof(char*)))
-			{
-				temp_ptr = memset(oldStruct->dirName_arr, 0x0, oldStruct->dirArrSize);
-			}
-			else
-			{
-				temp_ptr = memset(oldStruct->dirName_arr, 0x0, (numberOfDirs * sizeof(char*)));
-			}
-
-			if (temp_ptr != (void*)oldStruct->dirName_arr)
-			{
-				fprintf(stderr, "<<<ERROR>>> - free_dirDetails_ptr() - memset failed to zeroize the struct's dirName_arr!\n");
-			}
-
-			// puts("3.c.2. free dirName_arr");  // DEBUGGING
-			// 3.c.2. free dirName_arr
-			free(oldStruct->dirName_arr);
-
-			// puts("3.c.3. Zero dirName_arr");  // DEBUGGING
-			// 3.c.3. Zero dirName_arr
-			oldStruct->dirName_arr = NULL;
-
-			// puts("3.d. size_t dirArrSize");  // DEBUGGING
-			// 3.d. size_t dirArrSize;		// Allocated bytes for dirName_arr
+			// 3.c. size_t dirArrSize;		// Allocated bytes for fileName_arr
 			oldStruct->dirArrSize = 0;
 		}
 	}
