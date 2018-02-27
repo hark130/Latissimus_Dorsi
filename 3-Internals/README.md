@@ -71,6 +71,10 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* ```pmap```
 	* ```nm```
 
+**BUGS:**
+* [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
+
+
 ### 3-10-3
 
 **NOTE:** This is a continuation of 3-10-2
