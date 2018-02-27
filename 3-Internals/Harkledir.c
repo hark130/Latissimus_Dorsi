@@ -367,6 +367,7 @@ dirDetails_ptr create_dirDetails_ptr(void)
 dirDetails_ptr open_dir(char* directoryName)
 {
 	// LOCAL VARIABLES
+	bool success = true;  // Set this to false if anything fails
 	// 1. directoryName
 	dirDetails_ptr retVal = create_dirDetails_ptr();
 	char defaultDirName[] = {"."};  // cwd
@@ -401,7 +402,8 @@ dirDetails_ptr open_dir(char* directoryName)
 
 		if (!(retVal->dirName))
 		{
-			fprintf(stderr, "<<<ERROR>>> - open_dir() - Failed to allocate an array for dirName!\n");
+			HARKLE_ERROR(Harkledir, open_dir, dirName calloc failed);
+			success = false;
 		}
 		else
 		{
@@ -409,12 +411,39 @@ dirDetails_ptr open_dir(char* directoryName)
 
 			if (temp_ptr != retVal->dirName)
 			{
-				fprintf(stderr, "<<<ERROR>>> - open_dir() - Failed to copy the directory name into dirName!\n");
+				HARKLE_ERROR(Harkledir, open_dir, dirName strncpy failed);
+				success = false;
 			}
 		}
 
 		// 2. Populate files & dirs
-		popRetVal = populate_dirDetails(retVal);
+		if (success == true)
+		{
+			popRetVal = populate_dirDetails(retVal);
+
+			if (popRetVal == false)
+			{
+				HARKLE_ERROR(Harkledir, open_dir, populate_dirDetails failed);
+				success = false;
+			}
+		}
+	}
+	else
+	{
+		HARKLE_ERROR(Harkledir, open_dir, create_dirDetails_ptr failed);
+		success = false;
+	}
+
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_dirDetails_ptr(&retVal))
+			{
+				HARKLE_ERROR(Harkledir, open_dir, free_dirDetails_ptr failed);
+			}
+		}
 	}
 
 	// DONE
