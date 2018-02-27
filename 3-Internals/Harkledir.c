@@ -116,7 +116,8 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	// LOCAL VARIABLES
 	bool retVal = true;
 	off_t symLinkLength = 0;  // Will be used to allocate an array for any symlinks
-	ssize_t numBytesRead = 0;  // Return 
+	ssize_t numBytesRead = 0;  // Return
+	char* absPath_ptr = NULL;  // Should hold absolute path for an file passed to size_a_file()
 	
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -155,6 +156,8 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			case DT_REG:
 			case DT_SOCK:
 				updateThis_ptr->hd_inodeNum = currDirEntry->d_ino;
+				// unsigned char hd_type; 		// Should match struct dirent.d_type
+				updateThis_ptr->hd_type = currDirEntry->d_type;
 				break;
 			default:
 				fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
@@ -164,11 +167,12 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		}
 		
 		// unsigned char hd_type; 		// Should match struct dirent.d_type
-		updateThis_ptr->hd_type = currDirEntry->d_type;
+		// updateThis_ptr->hd_type = currDirEntry->d_type;
 		
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
-		if (retVal == true && updateThis_ptr->hd_inodeNum == DT_LNK)
+		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
+			absPath_ptr = os_path_join()
 			symLinkLength = size_a_file(updateThis_ptr->hd_Name);
 			
 			if (symLinkLength == -1)
@@ -213,6 +217,15 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 					}
 				}				
 			}			
+		}
+	}
+
+	// CLEAN UP
+	if (absPath_ptr)
+	{
+		if (false == release_a_string(&absPath_ptr))
+		{
+			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string has failed);
 		}
 	}
 	

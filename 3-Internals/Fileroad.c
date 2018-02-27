@@ -336,6 +336,7 @@ off_t size_a_file(char* fileName)
 	// SIZE IT
 	if (success == true)
 	{
+		fprintf(stdout, "Sizing %s\n", fileName);  // DEBUGGING
 		stRetVal = stat(fileName, &fileStat);
 		
 		if (stRetVal == -1)

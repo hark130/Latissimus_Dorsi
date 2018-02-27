@@ -91,7 +91,7 @@
 
  		if (userProcPIDMapFiles)
  		{
- 			fprintf(stdout, "Processing directory %s\n", userProcPIDMapFiles);  // DEBUGGING
+ 			fprintf(stdout, "\nProcessing directory %s\n\n", userProcPIDMapFiles);  // DEBUGGING
  			userPIDMapFiles = open_dir(userProcPIDMapFiles);
 
  			if (!userPIDMapFiles)
