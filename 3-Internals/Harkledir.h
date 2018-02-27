@@ -15,7 +15,7 @@
 #include <stdlib.h>		// size_t
 #include <sys/types.h>	// ino_t
 
-typdef struct harkleDirEnt
+typedef struct harkleDirEnt
 {
 	char* hd_Name;				// Should match struct dirent.d_name
 	ino_t hd_inodeNum;			// Should match struct dirent.d_ino
@@ -59,7 +59,7 @@ hdEnt_ptr create_hdEnt_ptr(void);
 		Will call readlink() to resolve any symbolic link "type"s into hd_symName
 		Will likely make multiple calls to Memoroad's copy_a_string()
  */
-bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
+bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
 
 
 /*
