@@ -512,14 +512,15 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		newLen++;
 	}
 
-	// 1.2. Add in joinLen
+	// 1.2. Prepare joinLen by removing preceding slashes
+	while (*join_ptr == '/')
+	{
+		join_ptr++;
+	}	
+
+	// 1.3. Add in joinLen
 	joinLen = strlen(join_ptr);
 	newLen += joinLen;
-
-	if (*(join_ptr) == '/')
-	{
-		newLen--;
-	}
 
 	if ((*(join_ptr + joinLen - 1)) == '/')
 	{
@@ -554,10 +555,10 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		dest_ptr++;
 		srce_ptr++;
 	}
-	if (*dest_ptr != '/')
+	if (*(dest_ptr - 1) != '/')
 	{
-		*dest_ptr = '/';
-		dest_ptr++;
+		*(dest_ptr - 1) = '/';
+		// dest_ptr++;
 	}
 
 	// 3.2. Join
@@ -574,13 +575,13 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 	}
 
 	// 3.3. Verify trailing slash (if applicable)
-	if (*dest_ptr != '/' && isFile == false)
+	if (*(dest_ptr - 1) != '/' && isFile == false)
 	{
-		*dest_ptr = '/';
+		*(dest_ptr - 1) = '/';
 	}
 
 	// 3.4. Verify nul termination
-	dest_ptr++;
+	// dest_ptr++;
 	*dest_ptr = '\0';
 
 	// VERIFY
