@@ -1,4 +1,5 @@
 #include <dirent.h>		// opendir
+#include "Fileroad.h"	// size_a_file
 #include "Harkledir.h"
 #include "Memoroad.h"	// release_a_string
 #include <stdbool.h>	// bool, true, false
@@ -95,7 +96,7 @@ hdEnt_ptr create_hdEnt_ptr(void)
 	// ALLOCATION
 	while (!retVal && numTries < HDIR_MAX_TRIES)
 	{
-		retVal = (hdEntry_ptr)calloc(1, sizeof(hdEnt));
+		retVal = (hdEnt_ptr)calloc(1, sizeof(hdEnt));
 		numTries++;
 	}
 	
@@ -109,7 +110,7 @@ hdEnt_ptr create_hdEnt_ptr(void)
 }
 
 
-bool populate_hdEnt_struct(heEnt_ptr updateThis_ptr, struct dirent* currDirEntry)
+bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
@@ -223,7 +224,7 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;  // Make this false if anything fails
-	hdEntr_ptr freeThis_ptr = NULL;  // Will be assigned *oldStruct_ptr if input validation passes
+	hdEnt_ptr freeThis_ptr = NULL;  // Will be assigned *oldStruct_ptr if input validation passes
 	bool mrRetVal = true;  // Will hold return value form Memoroad function calls
 	
 	// INPUT VALIDATION
@@ -696,10 +697,10 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
 	void* realloc_ptr = NULL;  // Return value from realloc
 	char* temp_ptr = NULL;  // Return value from calloc
-	hdEntr_ptr newStruct = NULL;  // Will temporarily hold new struct pointer allocation
+	hdEnt_ptr newStruct = NULL;  // Will temporarily hold new struct pointer allocation
 	// Abstract dirDetails References
 	int* numEntries_ptr = NULL;  // Pointer to the numThings member of the relevant section
-	hdEntr_ptr** abstractArr_ptr = NULL;  // Pointer to the array member of the relevant section
+	hdEnt_ptr** abstractArr_ptr = NULL;  // Pointer to the array member of the relevant section
 	size_t* arraySize_ptr = NULL;  // Pointer to the arraySize member of the relevant section
 
 
@@ -782,16 +783,16 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	if (retVal == true && numEntries_ptr && abstractArr_ptr && arraySize_ptr)
 	{
 		// 1. Allocate a struct
-		hdEntr_ptr = create_hdEnt_ptr();
+		newStruct = create_hdEnt_ptr();
 
-		if (hdEntr_ptr)
+		if (newStruct)
 		{
 			// 2. Populate that struct
-			if (true == populate_hdEnt_struct(hdEntr_ptr, fileEntry))
+			if (true == populate_hdEnt_struct(newStruct, fileEntry))
 			{
 				// 3. Store that pointer in the struct array
-				*((*abstractArr_ptr) + (*numEntries_ptr)) = hdEntr_ptr;
-				hdEntr_ptr = NULL;
+				*((*abstractArr_ptr) + (*numEntries_ptr)) = newStruct;
+				newStruct = NULL;
 
 				// 4. Increment the file count
 				(*numEntries_ptr)++;
