@@ -627,10 +627,11 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
     // LOCAL VARIABLES
     char** retVal = NULL;  // Return value
     char** temp_ptr = NULL;  // Iterating variable
-    char** tempFN_ptr = NULL;  // Iterating variable for the dirName_arr
+    hdEnt_ptr* tempFN_ptr = NULL;  // Iterating variable for the dirName_arr
     int numTries = 0;  // Tracks attempts to avoid upper end limit of allocation attempts
     int numNames = 0;  // Number of names to add
     int i = 0;  // Loop iterating variable
+    bool success = true;  // Make this false if anything fails
 
     // INPUT VALIDATION
     if (procWalk_ptr)
@@ -652,40 +653,52 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
                 
                 for (i = 0; i < numNames; i++)
                 {
-                    if (true == is_it_a_PID((*tempFN_ptr)))
+                    if (true == is_it_a_PID((*tempFN_ptr)->hd_Name))
                     {
                         // fprintf(stdout, "%s is a PID!\n", *tempFN_ptr);  // DEBUGGING
-                        (*temp_ptr) = copy_a_string(*tempFN_ptr);
+                        (*temp_ptr) = copy_a_string((*tempFN_ptr)->hd_Name);
 
                         if(!(*temp_ptr))
                         {
-                            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - copy_a_string failed!\n");
+                            HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_arr, copy_a_string failed);
+                            success = false;
                         }
                         else
                         {
                             temp_ptr++;
                         }
                     }
-                    // else
-                    // {
-                    //     fprintf(stdout, "%s is not a PID.\n", *tempFN_ptr);  // DEBUGGING
-                    // }
                     tempFN_ptr++;
                 }
             }
             else
             {
-                fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - calloc failed!\n");
+                HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_arr, calloc failed);
+                success = false;
             }
         }
         else
         {
-            fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - invalid dirDetails struct!\n");
+            HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_arr, Invalid dirDetails struct);
+            success = false;
         }
     }
     else
     {
-        fprintf(stderr, "<<<ERROR>>> - Harkleproc - parse_PID_dirs_to_arr() - NULL pointer!\n");
+        HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_arr, NULL pointer);
+        success = false;
+    }
+
+    // CLEAN UP
+    if (success == false)
+    {
+        if (retVal)
+        {
+            if (false == free_char_arr(&retVal))
+            {
+                HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_arr, free_char_arr failed);
+            }
+        }
     }
 
     // DONE
