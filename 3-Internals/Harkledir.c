@@ -1,6 +1,7 @@
 #include <dirent.h>		// opendir
 #include "Fileroad.h"	// size_a_file
 #include "Harkledir.h"
+#include <limits.h>		// UCHAR_MAX
 #include "Memoroad.h"	// release_a_string
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>
@@ -142,7 +143,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		}
 		
 		// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
-		switch (currDirEntry->d_ino)
+		switch (currDirEntry->d_type)
 		{
 			case DT_UNKNOWN:
 				fprintf(stdout, "This file type is unknown.\n");
@@ -226,6 +227,7 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 	bool retVal = true;  // Make this false if anything fails
 	hdEnt_ptr freeThis_ptr = NULL;  // Will be assigned *oldStruct_ptr if input validation passes
 	bool mrRetVal = true;  // Will hold return value form Memoroad function calls
+	char* temp_ptr = NULL;  // Used to assist in free()ing strings
 	
 	// INPUT VALIDATION
 	if (oldStruct_ptr == NULL)
@@ -248,7 +250,10 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 	{
 		// 1. Memset/Free/NULL the struct contents
 		// char* hd_Name;				// Should match struct dirent.d_name
-		mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
+		temp_ptr = freeThis_ptr->hd_Name;
+		fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_Name %s (%p)\n", temp_ptr, temp_ptr);
+		mrRetVal = release_a_string(&temp_ptr);
+		// mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
 		
 		if (mrRetVal == false)
 		{
@@ -262,21 +267,29 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 		// unsigned char hd_type; 		// Should match struct dirent.d_type
 		freeThis_ptr->hd_type = 0;
 		
-		// char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
-		mrRetVal = release_a_string(&(freeThis_ptr->hd_symName));
-		
-		if (mrRetVal == false)
+		if (freeThis_ptr->hd_symName)
 		{
-			HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
-			retVal = false;	
+			// char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
+			temp_ptr = freeThis_ptr->hd_symName;
+			fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_symName %s (%p)\n", temp_ptr, temp_ptr);
+			mrRetVal = release_a_string(&temp_ptr);
+			// mrRetVal = release_a_string(&(freeThis_ptr->hd_symName));
+		
+			if (mrRetVal == false)
+			{
+				HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
+				retVal = false;	
+			}
 		}
 		
 		// 2. Free the struct pointer
-		free(*oldStruct_ptr);
+		fprintf(stdout, "free_hdEnt_ptr() - About to free() %p\n", *oldStruct_ptr);
+		// free(*oldStruct_ptr);
+		
 		
 		// 3. NULL this pointer
 		freeThis_ptr = NULL;
-		*oldStruct_ptr = NULL;
+		// *oldStruct_ptr = NULL;
 	}
 	
 	// DONE
@@ -489,14 +502,17 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 				}
 			}
 
-			// 2. File Array;
+			// 2. File Array
+			puts("2. File Array");  // DEBUGGING
 			// 2.a. fileName_arr and all hdEnt_ptr contained within
+			puts("2.a. fileName_arr and all hdEnt_ptr contained within");  // DEBUGGING
 			if (oldStruct->numFiles > 0)
 			{
 				while (numberOfFiles > 0)
 				{
 					// 2.a.1. hdEnt_ptr	
-					hDE_ptr = (hdEnt*)(*(oldStruct->fileName_arr + numberOfFiles - 1));
+					puts("2.a.1. hdEnt_ptr");  // DEBUGGING
+					hDE_ptr = (hdEnt_ptr)(*(oldStruct->fileName_arr + numberOfFiles - 1));
 
 					if (hDE_ptr)
 					{
@@ -517,11 +533,13 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 					}
 
 					// 2.a.2. Next struct
+					puts("2.a.2. Next struct");  // DEBUGGING
 					numberOfFiles--;
 				}
 			}
 
 			// 2.a.3. fileName_arr
+			puts("2.a.3. fileName_arr");  // DEBUGGING
 			// 2.a.3.i. memset
 			if (oldStruct->fileArrSize > 0)
 			{
@@ -634,6 +652,8 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 	DIR* cwd = NULL;  // Directory stream opened from dirDetails_ptr->dirName
 	struct dirent* currDirEntry = NULL;  // An entry read from directory stream cwd
 	int numTries = 0;  // Used to count allocation attempts
+	unsigned char fileType = 0;  // Return value from get_a_file_type()
+	char* absPath_ptr = NULL;  // Just in case we build an absolute path
 
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -680,9 +700,59 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 
 			if (currDirEntry)
 			{
+				// fprintf(stdout, "currDirEntry->d_name == %s\n", currDirEntry->d_name);  // DEBUGGING
+				// fprintf(stdout, "currDirEntry->d_type == %u\n", currDirEntry->d_type);  // DEBUGGING
+
+				switch (currDirEntry->d_type)
+				{
+					case DT_LNK:
+					case DT_REG:
+					case DT_DIR:
+					case DT_FIFO:
+					case DT_SOCK:
+					case DT_BLK:
+					case DT_CHR:
+						break;
+					case DT_UNKNOWN:
+					default:
+						fprintf(stdout, "populate_dirDetails() found an invalid d_type of %u.\nGetting a second opinion from get_a_file_type().\n", currDirEntry->d_type);  // DEBUGGING
+						absPath_ptr = os_path_join(updateThis_ptr->dirName, currDirEntry->d_name, false);
+
+						if (absPath_ptr)
+						{
+							fileType = get_a_file_type(absPath_ptr);
+
+							if (fileType == UCHAR_MAX)
+							{
+								HARKLE_ERROR(Harkledir, populate_dirDetails, get_a_file_type failed);
+								retVal = false;
+							}
+							else
+							{
+								// SUCCESS!
+								fprintf(stdout, "get_a_file_type() returned %u.\n", fileType);
+								currDirEntry->d_type = fileType;
+							}
+						}
+						else
+						{
+							HARKLE_ERROR(Harkledir, populate_dirDetails, os_path_join failed);
+							retVal = false;
+						}
+						break;
+				}
 				retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry);
 			}
 		} while (currDirEntry && retVal == true);
+	}
+
+	// CLEAN UP
+	if (absPath_ptr)
+	{
+		if (false == release_a_string(&absPath_ptr))
+		{
+			HARKLE_ERROR(Harkledir, populate_dirDetails, release_a_string failed);
+		}
 	}
 
 	// DONE
@@ -724,7 +794,9 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	// DECIDE WHICH ARRAY TO UPDATE
 	if (retVal == true)
 	{
-		switch (fileEntry->d_ino)
+		// fprintf(stdout, "fileEntry->d_name == %s\n", fileEntry->d_name);  // DEBUGGING
+		// fprintf(stdout, "fileEntry->d_ino == %lu\n", fileEntry->d_ino);  // DEBUGGING
+		switch (fileEntry->d_type)
 		{
 			case DT_LNK:
 			case DT_REG:

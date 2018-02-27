@@ -7,6 +7,7 @@
 #ifndef __FILEROAD__
 #define __FILEROAD__
 
+#include <stdbool.h>	// bool, true, false
 #include <sys/types.h>	// off_t
 
 //////////////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ char* read_a_file(char* fileName);
 
 
 /*
-	Purpose - Utilize lstat to size a file
+	Purpose - Utilize stat to size a file
 	Input
         fileName - nul-terminated char array of the file to read
 	Output
@@ -83,6 +84,42 @@ char* read_a_file(char* fileName);
 		The return value is converted from data type off_t	
  */
 off_t size_a_file(char* fileName);
+
+
+/*
+	Purpose - Utilize stat to determine a file's type
+	Input
+        fileName - nul-terminated char array of the file to read
+	Output
+		On success, file's type
+		On failure, UCHAR_MAX
+	Notes:
+		This should be called during those pesky times a dirent struct
+			doesn't have your answer
+ */
+unsigned char get_a_file_type(char* fileName);
+
+
+/*
+	Purpose - Replicate os.path.join (in a very hacky way)
+	Input
+		path_ptr - nul-terminated string presumably representing a path
+		join_ptr - nul-terminate string presumably representing something to add
+			to path_ptr
+		isFile - true if join_ptr is a file, false if join_ptr is a directory
+	Output
+		On success, a heap-allocated, nul-terminated string containing
+			(essentially) a strcat of path_ptr and join_ptr
+		On failure, NULL
+	Notes:
+		It is the caller's responsibility to free the return value
+	Examples:
+		path_ptr == "/proc", join_ptr == "31337", isFile == false, returns "/proc/31337/"
+		path_ptr == "/proc", join_ptr == "31337", isFile == true, returns "/proc/31337"
+		path_ptr == "/proc/", join_ptr == "/31337/", isFile == false, returns "/proc/31337/"
+		path_ptr == "/proc/", join_ptr == "/31337/", isFile == true, returns "/proc/31337"
+ */
+char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -9,9 +9,9 @@
 #define MEMROAD_MAX_TRIES 3
 #endif  // MEMROAD_MAX_TRIES
 
-#ifndef MEMROAD_MEMSET_DEFAULT
-#define MEMROAD_MEMSET_DEFAULT 0x0
-#endif  // MEMROAD_MEMSET_DEFAULT
+#ifndef MEMSET_DEFAULT
+#define MEMSET_DEFAULT 0x0
+#endif  // MEMSET_DEFAULT
 
 #ifndef HARKLE_ERROR
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
@@ -207,15 +207,18 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize)
 		if (buffSize > 0)
 		{
 			// 1. memset
-			temp_ptr = (void*)memset((void*)char_ptr, MEMROAD_MEMSET_DEFAULT, buffSize);
+fprintf(stdout, "release_a_string_len() - About to memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
+			temp_ptr = (void*)memset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
+fprintf(stdout, "release_a_string_len() - Just memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
 
 			if (temp_ptr != char_ptr)
 			{
 				HARKLE_ERROR(Fileroad, release_a_string_len, memset failed);
 			}
 		}
-
+puts("\nHERE\n");
 		// 2. free
+fprintf(stdout, "release_a_string_len() - About to free() char_ptr (%p)\n", char_ptr);
 		free(char_ptr);
 
 		// 3. NULL

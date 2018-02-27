@@ -86,7 +86,7 @@ char** parse_proc_PIDs(void);
 	Input - None
 	Ouput - A NULL-terminated, heap-allocated array of heap-allocated harklePIDDetails structs, one-per-directory
 	Notes:
-		Does all the 'heavy lifting' to walk /proc and filter out <PID> dirs
+		Does all the 'heavy lifting' to walk /proc and filter out non-<PID> dirs
 		This function calls walk_proc() to procure a list of /proc directories
 		This function free()s the dirDetails_ptr resulting from walk_proc() before returning
 		It is your responsibility to free each pidDetails_ptr and the pidDetails_ptr* itself 
