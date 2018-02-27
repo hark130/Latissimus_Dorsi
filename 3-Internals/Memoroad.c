@@ -9,9 +9,9 @@
 #define MEMROAD_MAX_TRIES 3
 #endif  // MEMROAD_MAX_TRIES
 
-#ifndef MEMSET_DEFAULT
-#define MEMSET_DEFAULT 0x0
-#endif  // MEMSET_DEFAULT
+#ifndef MEMROAD_MEMSET_DEFAULT
+#define MEMROAD_MEMSET_DEFAULT 0x0
+#endif  // MEMROAD_MEMSET_DEFAULT
 
 #ifndef HARKLE_ERROR
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
@@ -207,7 +207,7 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize)
 		if (buffSize > 0)
 		{
 			// 1. memset
-			temp_ptr = (void*)memset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
+			temp_ptr = (void*)memset((void*)char_ptr, MEMROAD_MEMSET_DEFAULT, buffSize);
 
 			if (temp_ptr != char_ptr)
 			{
