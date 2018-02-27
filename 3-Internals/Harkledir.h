@@ -18,6 +18,7 @@
 typedef struct harkleDirEnt
 {
 	char* hd_Name;				// Should match struct dirent.d_name
+	char* hd_AbsName;			// Absolute filename of hd_Name
 	ino_t hd_inodeNum;			// Should match struct dirent.d_ino
 	unsigned char hd_type; 		// Should match struct dirent.d_type
 	char* hd_symName;			// If hd_type == DT_LNK, read from readlink()
@@ -54,12 +55,13 @@ hdEnt_ptr create_hdEnt_ptr(void);
 	Input
 		updateThis_ptr - [OUT] harkleDirEnt struct pointer to populate
 		currDirEntry - dirent struct pointer to gather details from
+		absPath - nul-terminated absolute path to the file at *currDirEntry
 	Output - true on success, false on failure
 	Notes:
 		Will call readlink() to resolve any symbolic link "type"s into hd_symName
 		Will likely make multiple calls to Memoroad's copy_a_string()
  */
-bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry);
+bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry, char* absPath);
 
 
 /*

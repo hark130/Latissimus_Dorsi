@@ -556,11 +556,14 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		dest_ptr++;
 		srce_ptr++;
 	}
+	fprintf(stdout, "Last char in retVal == %c\n", (*(dest_ptr - 1)));  // DEBUGGING
+	fprintf(stdout, "Curr char in retVal == %c\n", (*(dest_ptr)));  // DEBUGGING
 	if (*(dest_ptr - 1) != '/')
 	{
 		*(dest_ptr - 1) = '/';
 		// dest_ptr++;
 	}
+	fprintf(stdout, "Current New:\t%s\n", retVal);  // DEBUGGING
 
 	// 3.2. Join
 	srce_ptr = join_ptr;
@@ -591,6 +594,14 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		HARKLE_ERROR(Fileroad, os_path_join, length mismatch);
 		fprintf(stdout, "Path:\t%s\n", path_ptr);  // DEBUGGING
 		fprintf(stdout, "Join:\t%s\n", join_ptr);  // DEBUGGING
+		if (isFile)
+		{
+			fprintf(stdout, "Join is a file.\n");
+		}
+		else
+		{
+			fprintf(stdout, "Join is NOT a file.\n");
+		}
 		success = false;
 	}
 	fprintf(stdout, "New: \t%s\n", retVal);  // DEBUGGING

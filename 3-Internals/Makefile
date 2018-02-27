@@ -20,6 +20,12 @@ CC = gcc
 	$(CC) -c 3-10_Proc_Walk-2_main.c
 	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Proc_Walk-2_main.o
 
+tests:
+	$(CC) -c Memoroad.c
+	$(CC) -c Fileroad.c
+	$(CC) -c 3-10_Fileroad_Tests-2_main.c
+	$(CC) -o 3-10_Fileroad_Tests-2_main.exe Memoroad.o Fileroad.o 3-10_Fileroad_Tests-2_main.o
+
 all:
 	# $(MAKE) 331
 	$(MAKE) 3101

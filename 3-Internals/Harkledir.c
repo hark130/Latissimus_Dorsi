@@ -59,11 +59,12 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr);
 	Input
 		updateThis_ptr - directoryDetails pointer to populate
 		fileEntry - dirent struct pointer of a directory entry identified as a file
+		absPath - nul-terminated absolute path to the file at *currDirEntry
 	Output - true on success, false on failure
 	Notes:
 		The array sizes may be updated as realloc() may be called
  */
-bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry);
+bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry, char* absPath);
 
 
 /*
@@ -111,13 +112,14 @@ hdEnt_ptr create_hdEnt_ptr(void)
 }
 
 
-bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry)
+bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry, char* absPath)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
 	off_t symLinkLength = 0;  // Will be used to allocate an array for any symlinks
 	ssize_t numBytesRead = 0;  // Return
 	char* absPath_ptr = NULL;  // Should hold absolute path for an file passed to size_a_file()
+	bool isThisAFile = true;  // Third parameter for os_path_join()
 	
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -130,11 +132,21 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, NULL pointer);
 		retVal = false;
 	}
+	else if (!absPath)
+	{
+		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, NULL pointer);
+		retVal = false;
+	}
+	else if (!(*absPath))
+	{
+		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Empty path);
+		retVal = false;
+	}
 	
 	// POPULATE STRUCT
+	// char* hd_Name;				// Should match struct dirent.d_name
 	if (retVal == true)
-	{
-		// char* hd_Name;				// Should match struct dirent.d_name
+	{		
 		updateThis_ptr->hd_Name = copy_a_string(currDirEntry->d_name);
 		
 		if (!(updateThis_ptr->hd_Name))
@@ -142,8 +154,41 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, copy_a_string failed);
 			retVal = false;
 		}
-		
-		// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
+	}
+
+	//char* hd_AbsName;			// Absolute filename of hd_Name
+	if (retVal == true && updateThis_ptr->hd_Name)
+	{
+		// Check if file or dir
+		if (currDirEntry->d_type == DT_DIR)
+		{
+			isThisAFile = false;
+		}
+		else
+		{
+			isThisAFile = true;
+		}
+		// Build absolute filename
+		fprintf(stdout, "populate_hdEnt_struct() calls os_path_join(%s, %s, bool)\n", absPath, updateThis_ptr->hd_Name);  // DEBUGGING
+		updateThis_ptr->hd_AbsName = os_path_join(absPath, updateThis_ptr->hd_Name, isThisAFile);
+
+		if (!(updateThis_ptr->hd_AbsName))
+		{
+			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, os_path_join failed);
+			retVal = false;
+		}
+	}
+
+
+	// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
+	if (retVal == true)
+	{
+		updateThis_ptr->hd_inodeNum = currDirEntry->d_ino;
+	}
+	
+	// unsigned char hd_type; 		// Should match struct dirent.d_type
+	if (retVal == true && updateThis_ptr->hd_AbsName)
+	{
 		switch (currDirEntry->d_type)
 		{
 			case DT_UNKNOWN:
@@ -155,25 +200,26 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			case DT_LNK:
 			case DT_REG:
 			case DT_SOCK:
-				updateThis_ptr->hd_inodeNum = currDirEntry->d_ino;
-				// unsigned char hd_type; 		// Should match struct dirent.d_type
 				updateThis_ptr->hd_type = currDirEntry->d_type;
 				break;
 			default:
 				fprintf(stdout, "%s's file type could not be determined.\n", currDirEntry->d_name);
-				fprintf(stdout, "Time to implement lstat()!\n");
-				retVal = false;
+				updateThis_ptr->hd_type = get_a_file_type(updateThis_ptr->hd_AbsName);
+
+				if (updateThis_ptr->hd_type == UCHAR_MAX)
+				{
+					HARKLE_ERROR(Harkledir, populate_hdEnt_struct, get_a_file_type failed);
+					retVal = false;
+				}
 				break;
 		}
-		
-		// unsigned char hd_type; 		// Should match struct dirent.d_type
-		// updateThis_ptr->hd_type = currDirEntry->d_type;
 		
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
-			absPath_ptr = os_path_join()
-			symLinkLength = size_a_file(updateThis_ptr->hd_Name);
+			// absPath_ptr = os_path_join()
+			// symLinkLength = size_a_file(updateThis_ptr->hd_Name);
+			symLinkLength = size_a_file(updateThis_ptr->hd_AbsName);
 			
 			if (symLinkLength == -1)
 			{
@@ -193,7 +239,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 				symLinkLength++;
 				
 				// Allocate a buffer
-				updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength + 1);
+				updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength);
 				
 				if (!(updateThis_ptr->hd_symName))
 				{
@@ -259,21 +305,38 @@ bool free_hdEnt_ptr(hdEnt_ptr* oldStruct_ptr)
 	}
 	
 	// FREE
-	if (retVal == true)
+	if (retVal == true && freeThis_ptr)
 	{
 		// 1. Memset/Free/NULL the struct contents
-		// char* hd_Name;				// Should match struct dirent.d_name
-		temp_ptr = freeThis_ptr->hd_Name;
-		// fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_Name %s (%p)\n", temp_ptr, temp_ptr);
-		mrRetVal = release_a_string(&temp_ptr);
-		// mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
-		
-		if (mrRetVal == false)
+		if (freeThis_ptr->hd_Name)
 		{
-			HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
-			retVal = false;	
+			// char* hd_Name;				// Should match struct dirent.d_name
+			temp_ptr = freeThis_ptr->hd_Name;
+			// fprintf(stdout, "free_hdEnt_ptr() - About to free() hd_Name %s (%p)\n", temp_ptr, temp_ptr);
+			mrRetVal = release_a_string(&temp_ptr);
+			// mrRetVal = release_a_string(&(freeThis_ptr->hd_Name));
+			
+			if (mrRetVal == false)
+			{
+				HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
+				retVal = false;	
+			}
 		}
-		
+
+		if (freeThis_ptr->hd_AbsName)
+		{
+			// char* hd_AbsName;			// Absolute filename of hd_Name
+			temp_ptr = freeThis_ptr->hd_AbsName;
+			mrRetVal = release_a_string(&temp_ptr);
+			// mrRetVal = release_a_string(&(freeThis_ptr->hd_AbsName));
+			
+			if (mrRetVal == false)
+			{
+				HARKLE_ERROR(Harkledir, free_hdEnt_ptr, release_a_string failed);
+				retVal = false;	
+			}
+		}
+			
 		// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
 		freeThis_ptr->hd_inodeNum = 0;
 		
@@ -761,7 +824,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 						}
 						break;
 				}
-				retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry);
+				retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry, updateThis_ptr->dirName);
 			}
 		} while (currDirEntry && retVal == true);
 	}
@@ -780,7 +843,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 }
 
 
-bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry)
+bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fileEntry, char* absPath)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
@@ -798,17 +861,27 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - updateThis_ptr NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, updateThis_ptr NULL pointer);
 		retVal = false;
 	}
 	else if (!fileEntry)
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - fileEntry NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, fileEntry NULL pointer);
 		retVal = false;
 	}
 	else if (!(updateThis_ptr->fileName_arr))
 	{
-		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_arrays() - fileEntry NULL pointer!\n");
+		HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, fileName_arr NULL pointer);
+		retVal = false;
+	}
+	else if (!absPath)
+	{
+		HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, absPath NULL pointer);
+		retVal = false;
+	}
+	else if (!(*absPath))
+	{
+		HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, Empty path);
 		retVal = false;
 	}
 
@@ -902,7 +975,8 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (newStruct)
 		{
 			// 2. Populate that struct
-			if (true == populate_hdEnt_struct(newStruct, fileEntry))
+			fprintf(stdout, "populate_dirDetails_arrays() calls populate_hdEnt_struct(%s, %s, %s)\n", "empty struct", fileEntry->d_name, absPath);  // DEBUGGING
+			if (true == populate_hdEnt_struct(newStruct, fileEntry, absPath))
 			{
 				// 3. Store that pointer in the struct array
 				*((*abstractArr_ptr) + (*numEntries_ptr)) = newStruct;
