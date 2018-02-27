@@ -207,18 +207,18 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize)
 		if (buffSize > 0)
 		{
 			// 1. memset
-fprintf(stdout, "release_a_string_len() - About to memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
+			// fprintf(stdout, "release_a_string_len() - About to memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
 			temp_ptr = (void*)memset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
-fprintf(stdout, "release_a_string_len() - Just memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
+			// fprintf(stdout, "release_a_string_len() - Just memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
 
 			if (temp_ptr != char_ptr)
 			{
 				HARKLE_ERROR(Fileroad, release_a_string_len, memset failed);
 			}
 		}
-puts("\nHERE\n");
+
 		// 2. free
-fprintf(stdout, "release_a_string_len() - About to free() char_ptr (%p)\n", char_ptr);
+		// fprintf(stdout, "release_a_string_len() - About to free() char_ptr (%p)\n", char_ptr);
 		free(char_ptr);
 
 		// 3. NULL
