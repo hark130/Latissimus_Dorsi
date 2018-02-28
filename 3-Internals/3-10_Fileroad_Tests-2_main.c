@@ -85,8 +85,8 @@ int main(void)
 	testStruct bndTest11 = { "Boundary Test 11",  	"a", 			"b/", 			false, 	NULL, "/a/b/" };	// Pass - Barely big enough
 	testStruct bndTest12 = { "Boundary Test 12",  	"a", 			"b/", 			true, 	NULL, "/a/b" };		// Pass - Barely big enough
 
-	testStruct_ptr normTest_arr[] = { &normTest01, &normTest02, &normTest03, &normTest04, &normTest05, &normTest06, &normTest07, &normTest08, &normTest09, &normTest10, &normTest11, &normTest12, NULL };
-	testStruct_ptr errTest_arr[] = { &errTest01, &errTest02, &errTest03, &errTest04, &errTest05, &errTest06, &errTest07, &errTest08, &errTest09, &errTest10, NULL };
+	testStruct_ptr normTest_arr[] = { &normTest01, &normTest02, &normTest03, &normTest04, &normTest05, &normTest06, &normTest07, &normTest08, &normTest09, &normTest10, &normTest11, &normTest12, &normTest13, &normTest14, NULL };
+	testStruct_ptr errTest_arr[] = { &errTest01, &errTest02, &errTest03, &errTest04, &errTest05, &errTest06, &errTest07, &errTest08, &errTest09, &errTest10, &errTest11, &errTest12, NULL };
 	testStruct_ptr bndTest_arr[] = { &bndTest01, &bndTest02, &bndTest03, &bndTest04, &bndTest05, &bndTest06, &bndTest07, &bndTest08, &bndTest09, &bndTest10, &bndTest11, &bndTest12, NULL };
 
 	testStruct_ptr* testArrays_arr[] = { normTest_arr, errTest_arr, bndTest_arr, NULL };
