@@ -165,6 +165,123 @@ char* buff_a_num(void)
 }
 
 
+char** split_lines(char* haystack, char splitChar)
+{
+	// LOCAL VARIABLES
+	char** retVal = NULL;
+	char* temp_ptr = NULL;  // Return value from string.h function calls
+	bool success = true;
+	char splitString[2] = { 0 };
+	int charCount = 0;  // Number of splitChars in haystack (concurrent splitChars count as one)
+	
+	// INPUT VALIDATION
+	if (!haystack)
+	{
+		HARKLE_ERROR(Fileroad, split_lines, NULL haystack pointer);
+		success = false;
+	}
+	else if (*haystack == '\0')
+	{
+		HARKLE_ERROR(Fileroad, split_lines, Empty haystack);
+		success = false;
+	}
+	else if (splitChar == '\0')
+	{
+		HARKLE_ERROR(Fileroad, split_lines, Invalid split character);
+		success = false;
+	}
+	else
+	{
+		*splitString = splitChar;
+		
+		temp_ptr = strstr(haystack, splitString);
+		
+		if (!temp_ptr)
+		{
+			HARKLE_ERROR(Fileroad, split_lines, Split character not found);
+			success = false;
+		}
+	}
+	
+	// PARSE haystack
+	if (success == true)
+	{
+		// 1. Count occurrences of the splitChar
+		temp_ptr = haystack;
+
+		while(*temp_ptr != '\0')
+		{
+			if (*temp_ptr == splitChar)
+			{
+				if (temp_ptr > haystack)
+				{
+					if ((*(temp_ptr - 1)) != splitChar)
+					{
+						charCount++;	
+					}
+				}
+				else
+				{
+					// Don't count splitChar if it's first because that would yield an empty string
+				}
+			}
+		}
+		
+		if (charCount == 0)
+		{
+			success = false;	
+		}
+	}
+	
+	// 2. Allocate the array of char*s into retVal
+	if (success == true)
+	{
+		
+		retVal 
+	}
+	
+	// 3. Parse each substring from the haystack
+	if (success == true)
+	{
+		
+	}	
+	
+	// 3.a. Size the substring
+	if (success == true)
+	{
+		
+	}
+	
+	// 3.b. Allocate a new char* into retVal
+	if (success == true)
+	{
+		
+	}
+	
+	// 3.c. Read the haystack substring into the new char*
+	if (success == true)
+	{
+		
+	}
+	
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_char_arr(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, split_lines, free_char_arr failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+	
+	
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// INPUT FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
