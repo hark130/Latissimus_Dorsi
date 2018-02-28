@@ -52,6 +52,23 @@ int read_a_num(void);
 char* buff_a_num(void);
 
 
+/*
+	Purpose: Split a string by a given character
+	Input
+		haystack - nul-terminated char array
+		splitChar - character to 'split' the haystack on
+	Output - Heap-allocated, NULL terminated, array of heap-allocated char 
+		pointers to each section 'split' string found in haystack
+	Notes:
+		haystack should not be modified
+		The return value will not provide pointers into haystack
+		The caller is responsible for free()ing all of the char pointers
+			in the array in addition to the array itself.
+		Successive occurrences of splitChar will be treated as one
+ */
+char** split_lines(char* haystack, char splitChar);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// INPUT FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
