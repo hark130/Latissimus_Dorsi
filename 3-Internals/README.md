@@ -64,6 +64,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```cat /proc/<PID>/maps | awk '{print $6}' | grep '\.so' | sort | uniq```
 		* Programatically, strstr on "/lib/" or ".so"
 		* UPDATE: It should be enough to strstr /proc/PID/maps for ".so"
+		* UPDATE: **Best Idea** Use the list of filenames from /proc/<PID>/map_files to strstr /proc/<PID>/maps
 	* ```strace CMD.... 2>&1 | grep '^open(".*\.so"'```
 	* ```ltrace```
 	* ```ldd```
@@ -74,6 +75,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 **BUGS:**
 * [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
+* [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
 
 
 ### 3-10-3
