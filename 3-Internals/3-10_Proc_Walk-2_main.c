@@ -20,6 +20,8 @@
  	char* userPID = NULL;  // Will hold char* holding user's choice of PID
  	char* userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
  	char* userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice
+ 	char* userProcPIDMaps = NULL;  // Will hold char* with user's /proc/<PID>/maps choice
+ 	char* pidMapsContents = NULL;  // Contents of user's /proc/<PID>/maps
 
  	// INPUT VALIDATION
  	if (procPIDStructs)
@@ -57,31 +59,34 @@
  	}
 
  	// PROMPT USER FOR PID
- 	fprintf(stdout, "Which PID would you like to investigate?\n");
- 	userPID = buff_a_num();
- 	if (userPID)
+ 	if (success == true)
  	{
- 		fprintf(stdout, "The user chose:\t%s\n", userPID);  // DEBUGGING
+	 	fprintf(stdout, "Which PID would you like to investigate?\n");
+	 	userPID = buff_a_num();
+	 	if (userPID)
+	 	{
+	 		// fprintf(stdout, "The user chose:\t%s\n", userPID);  // DEBUGGING
 
- 		userProcPID = make_PID_into_proc(userPID);
+	 		userProcPID = make_PID_into_proc(userPID);
 
- 		if (userProcPID)
- 		{
- 			fprintf(stdout, "Absolute path:\t%s\n", userProcPID);  // DEBUGGING
+	 		if (userProcPID)
+	 		{
+	 			// fprintf(stdout, "Absolute path:\t%s\n", userProcPID);  // DEBUGGING
 
- 			// Verify the directory actually exists
- 			/////////////////////////////////////// IMPLEMENT THIS LATER ///////////////////////////////////////
- 		}
- 		else
- 		{
- 			fprintf(stderr, "<<<ERROR>>> - main() - make_PID_into_proc has failed!\n");
- 			success = false;
- 		}
- 	}
- 	else
- 	{
- 		fprintf(stderr, "<<<ERROR>>> - main() - buff_a_num has failed!\n");
- 		success = false;
+	 			// Verify the directory actually exists
+	 			/////////////////////////////////////// IMPLEMENT THIS LATER ///////////////////////////////////////
+	 		}
+	 		else
+	 		{
+	 			fprintf(stderr, "<<<ERROR>>> - main() - make_PID_into_proc has failed!\n");
+	 			success = false;
+	 		}
+	 	}
+	 	else
+	 	{
+	 		fprintf(stderr, "<<<ERROR>>> - main() - buff_a_num has failed!\n");
+	 		success = false;
+	 	}
  	}
 
  	// PARSE /proc/<userPID>/map_files
@@ -110,7 +115,7 @@
  	// Print directory contents of /proc/<PID>/map_files/
  	if (success == true && userPIDMapFiles)
  	{
- 		fprintf(stdout, "FILES FOUND IN %s:\n", userPIDMapFiles->dirName);
+ 		// fprintf(stdout, "FILES FOUND IN %s:\n", userPIDMapFiles->dirName);
  		hdEnt_arr = userPIDMapFiles->fileName_arr;
 
  		if (hdEnt_arr)
@@ -121,21 +126,63 @@
 
  				if (hdEntStruct_ptr)
  				{
+ 					if (hdEntStruct_ptr->hd_Name)
+ 					{
+ 						fprintf(stdout, "Name:\t%s", hdEntStruct_ptr->hd_Name);
 
- 					fprintf(stdout, "Name:\t%s", hdEntStruct_ptr->hd_Name);
- 					if (hdEntStruct_ptr->hd_symName)
- 					{
- 						fprintf(stdout, " (%s)\n", hdEntStruct_ptr->hd_symName);
- 					}
- 					else
- 					{
- 						fprintf(stdout, "\n");
- 					}
+	 					if (hdEntStruct_ptr->hd_symName)
+	 					{
+	 						fprintf(stdout, " (%s)\n", hdEntStruct_ptr->hd_symName);
+	 					}
+	 					else
+	 					{
+	 						fprintf(stdout, "\n");
+	 					}
+	 				}
  				}
 
  				// Next struct
  				hdEnt_arr++;
  			}
+ 		}
+ 	}
+
+ 	// Get /proc/<PID>/maps
+ 	if (success == true)
+ 	{
+ 		userProcPIDMaps = os_path_join(userProcPID, "/maps", true);
+
+ 		if (userProcPIDMaps)
+ 		{
+ 			fprintf(stdout, "\nProcessing file %s\n\n", userProcPIDMaps);  // DEBUGGING
+ 			// pidMapsContents = read_a_file(userProcPIDMaps);
+
+ 			// if (!pidMapsContents)
+ 			// {
+	 		// 	fprintf(stderr, "<<<ERROR>>> - main() - read_a_file has failed!\n");
+	 		// 	success = false;
+ 			// }
+ 			// else
+ 			// {
+ 			// 	puts(pidMapsContents);
+ 			// }
+
+ 			pidMapsContents = fread_a_file(userProcPIDMaps);
+
+ 			if (!pidMapsContents)
+ 			{
+	 			fprintf(stderr, "<<<ERROR>>> - main() - fread_a_file has failed!\n");
+	 			success = false;
+ 			}
+ 			else
+ 			{
+ 				puts(pidMapsContents);
+ 			}
+ 		}
+ 		else
+ 		{
+ 			fprintf(stderr, "<<<ERROR>>> - main() - os_path_join has failed!\n");
+ 			success = false;
  		}
  	}
 
@@ -183,6 +230,24 @@
  		if (false == free_dirDetails_ptr(&userPIDMapFiles))
  		{
  			fprintf(stderr, "<<<ERROR>>> - main() - free_dirDetails_ptr has failed!\n");
+ 		}
+ 	}
+
+ 	// 6. userProcPIDMaps
+ 	if (userProcPIDMaps)
+ 	{
+ 		if (false == release_a_string(&userProcPIDMaps))
+ 		{
+ 			fprintf(stderr, "<<<ERROR>>> - main() - release_a_string has failed!\n");
+ 		}
+ 	}
+
+ 	// 7. pidMapsContents
+ 	if (pidMapsContents)
+ 	{
+ 		if (false == release_a_string(&pidMapsContents))
+ 		{
+ 			fprintf(stderr, "<<<ERROR>>> - main() - release_a_string has failed!\n");
  		}
  	}
 
