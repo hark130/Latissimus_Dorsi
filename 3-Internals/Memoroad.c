@@ -94,7 +94,14 @@ char** get_me_a_buffer_array(size_t arraySize, bool nullTerm)
 		// Allocate
 		while (!retVal && numTries < MEMROAD_MAX_TRIES)
 		{
-			retVal = 	
+			retVal = (char**)calloc(actualArrSize, sizeof(char*));
+			numTries++;
+		}
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Memoroad, get_me_a_buffer_array, calloc failed);
+			success = false;
 		}
 	}
 	
