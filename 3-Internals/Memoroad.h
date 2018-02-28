@@ -21,6 +21,22 @@
 char* get_me_a_buffer(size_t length);
 
 
+
+/*
+	Purpose - Allocate an array of char* on the heap
+	Input
+		arraySize - Number of char*s to include in the array
+		nullTerm - true if this array is to be NULL terminated, 
+			false otherwise
+	Ouput - Heap-allocated, memset, char* array
+	Notes:
+        To explain nullTerm another way, if nullTerm is true,
+			the actual number of indices allocated will be
+			arraySize + 1
+ */
+char** get_me_a_buffer_array(size_t arraySize, bool nullTerm);
+
+
 /*
     Purpose - Abstract-away copying char arrays into heap-allocated arrays
     Input
