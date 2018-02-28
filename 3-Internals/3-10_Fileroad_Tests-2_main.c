@@ -2,26 +2,11 @@
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>		// fprintf
-/*
-	Purpose - Replicate os.path.join (in a very hacky way)
-	Input
-		path_ptr - nul-terminated string presumably representing a path
-		join_ptr - nul-terminate string presumably representing something to add
-			to path_ptr
-		isFile - true if join_ptr is a file, false if join_ptr is a directory
-	Output
-		On success, a heap-allocated, nul-terminated string containing
-			(essentially) a strcat of path_ptr and join_ptr
-		On failure, NULL
-	Notes:
-		It is the caller's responsibility to free the return value
-	Examples:
-		path_ptr == "/proc", join_ptr == "31337", isFile == false, returns "/proc/31337/"
-		path_ptr == "/proc", join_ptr == "31337", isFile == true, returns "/proc/31337"
-		path_ptr == "/proc/", join_ptr == "/31337/", isFile == false, returns "/proc/31337/"
-		path_ptr == "/proc/", join_ptr == "/31337/", isFile == true, returns "/proc/31337"
-char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
- */
+#include <string.h>		// strcmp
+
+#ifndef HARKLE_ERROR
+#define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
+#endif  // HARKLE_ERROR
 
 typedef struct opjTestStruct
 {
@@ -33,41 +18,94 @@ typedef struct opjTestStruct
 	char* expectRet;		// Expected return value
 } testStruct, *testStruct_ptr;
 
-typedef testStruct_ptr* testStructPtr_arr;
-typedef testStructPtr_arr* testArr_arr;
-
 int main(void)
 {
 	// LOCAL VARIABLES
-	testStruct_ptr currTest_ptr = NULL;  // Current test being run
+	testStruct_ptr test = NULL;  // Current test being run
+	testStruct_ptr* currTestArr_ptr = NULL;  // Current test array
+	testStruct_ptr** allTests = NULL;  // All the arrays
+	int numTestsRun = 0;
+	int numTestsPassed = 0;
 
 	// Normal Tests
-	testStruct normTest1 = { "Normal Test 1", "/home/", "joe", false, "/home/joe/", NULL };
+	testStruct normTest01 = { "Normal Test 1",  "/home/", "joe", false, NULL, "/home/joe/" };
+	testStruct normTest02 = { "Normal Test 2",  "/home/", "joe", true, NULL, "/home/joe" };
+	testStruct normTest03 = { "Normal Test 3",  "/home", "joe", false, NULL, "/home/joe/" };
+	testStruct normTest04 = { "Normal Test 4",  "/home", "joe", true, NULL, "/home/joe" };
+	testStruct normTest05 = { "Normal Test 5",  "/home/joe/", "Documents", false, NULL, "/home/joe/Documents/" };
+	testStruct normTest06 = { "Normal Test 6",  "/home/joe/", "Documents", true, NULL, "/home/joe/Documents" };
+	testStruct normTest07 = { "Normal Test 7",  "/home/", "/joe/", false, NULL, "/home/joe/" };
+	testStruct normTest08 = { "Normal Test 8",  "/home/", "/joe/", true, NULL, "/home/joe" };
+	testStruct normTest09 = { "Normal Test 9",  "/home", "/joe", false, NULL, "/home/joe/" };
+	testStruct normTest10 = { "Normal Test 10", "/home", "/joe", true, NULL, "/home/joe" };
 
-	testStruct_ptr normTest_arr = { &normTest1, NULL };
-	int numNormTests = sizeof(normTest_arr) / sizeof(*normTest_arr);
+	testStruct_ptr normTest_arr[] = { &normTest01, &normTest02, &normTest03, &normTest04, &normTest05, &normTest06, &normTest07, &normTest08, &normTest09, &normTest10, NULL };
+
+	testStruct_ptr* testArrays_arr[] = { normTest_arr, NULL };
 
 
 	// RUN TESTS
-	// fprintf(stdout, "test_arr ==     %p\n", test_arr);
-	// fprintf(stdout, "allTests_ptr == %p\n", allTests_ptr);
+	allTests = testArrays_arr;
 
-	for (int testNum = 0; testNum < numNormTests; testNum++)
+	while(*allTests)
 	{
-		currTest_ptr = (*(normTest_arr + testNum));
+		currTestArr_ptr = *allTests;
 
-		if (currTest_ptr)
+		while (*currTestArr_ptr)
 		{
-			// EXECUTE TESTS
-			fprintf(stdout, "%s\n\t", currTest_ptr->testName);
+			test = *currTestArr_ptr;
+
+			if (test)
+			{
+				// EXECUTE TESTS
+				fprintf(stdout, "%s\n\t", test->testName);
+				test->actualRet = os_path_join(test->inputPath_ptr, test->inputJoin_ptr, test->isFileInput);
+				numTestsRun++;
+
+				if (test->actualRet && test->expectRet)
+				{
+					if (0 == strcmp(test->actualRet, test->expectRet))
+					{
+						fprintf(stdout, "[X] Success\n");
+						numTestsPassed++;
+					}
+					else
+					{		
+						fprintf(stdout, "[ ] FAIL\n\t\t");
+						fprintf(stdout, "Expect:\t%s\n\t\t", test->expectRet);
+						fprintf(stdout, "Actual:\t%s\n\t\t\n", test->actualRet);
+					}
+				}
+				else if (test->actualRet == test->expectRet)
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expect:\t%s\n\t\t", test->expectRet);
+					fprintf(stdout, "Actual:\t%s\n\t\t\n", test->actualRet);
+				}
+
+				// CLEAN UP THIS TEST
+				if (test->actualRet)
+				{
+					if (false == release_a_string(&(test->actualRet)))
+					{
+						HARKLE_ERROR(Fileroad Tests, main, release_a_string failed);
+					}
+				}
+			}
+
+			currTestArr_ptr++;
 		}
-	}	
 
+		allTests++;
+	}
 
-				
-
-
-
+	// CLEAN UP
+	fprintf(stdout, "\n\n");
 
 	// DONE
 	return 0;
