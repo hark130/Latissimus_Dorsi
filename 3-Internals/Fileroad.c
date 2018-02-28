@@ -1,6 +1,8 @@
 #include <dirent.h>		// d_type MACROs
+#include <errno.h>		// errno
 #include <fcntl.h>	 	// open() flags
 #include "Fileroad.h"
+#include <inttypes.h>	// intmax_t
 #include <limits.h>		// UCHAR_MAX, PATH_MAX
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
@@ -172,16 +174,115 @@ char* buff_a_num(void)
 //////////////////////////////////////////////////////////////////////////////
 
 
+char* fread_a_file(char* fileName)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	bool success = true;
+	FILE* theFile = NULL;
+	size_t fileSize = 0;  // Holds the return value from size_a_file_ptr()
+	size_t bytesRead = 0;  // Bytes read by fread()
+
+	// INPUT VALIDATION
+	if (!fileName)
+	{
+		HARKLE_ERROR(Fileroad, fread_a_file, NULL pointer);
+		success = false;
+	}
+	else if (!(*fileName))
+	{
+		HARKLE_ERROR(Fileroad, fread_a_file, Empty filename);
+		success = false;
+	}
+
+	// READ IT
+	// 1. Open it
+	if (success == true)
+	{
+		theFile = fopen(fileName, "r");
+
+		if (!theFile)
+		{
+			HARKLE_ERROR(Fileroad, fread_a_file, fopen failed);
+			success = false;
+		}
+	}
+
+	// 2. Size it
+	if (success == true)
+	{
+		fileSize = size_a_file_ptr(theFile);
+
+		if (fileSize < 0)
+		{
+			HARKLE_ERROR(Fileroad, fread_a_file, size_a_file_ptr failed);
+			success = false;
+		}
+	}
+
+	// 4. Allocate a buffer
+	if (success == true)
+	{
+		retVal = get_me_a_buffer(fileSize);
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, fread_a_file, get_me_a_buffer failed);
+			success = false;
+		}
+	}
+
+	// 5. fread it in
+	if (success == true)
+	{
+		// size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+		bytesRead = fread(retVal, sizeof(char), fileSize, theFile);
+
+		if (bytesRead != fileSize)
+		{
+			HARKLE_ERROR(Fileroad, fread_a_file, mismatch between size_a_file_ptr and fread);
+		}
+	}
+
+	// CLEAN UP
+	// 1. theFile
+	if (theFile)
+	{
+		if (EOF == fclose(theFile))
+		{
+			HARKLE_ERROR(Fileroad, fread_a_file, fclose failed);
+		}
+	}
+
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, fread_a_file, release_a_string failed);
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 char* read_a_file(char* fileName)
 {
 	// LOCAL VARIABLES
 	char* retVal = NULL;
 	int fileDesc = 0;  // Holds the file descriptor returned by open()
 	bool success = true;  // If anything fails, set this to false
-	char buff[FROAD_BUFF_SIZE + 1] = { 0 };  // Static array to read file contents
 	ssize_t numBytesRead = 0;  // Return value from read()
+	ssize_t prevNumBytesRead = 0;  // Return value from read()
 	int numTries = 0;  // Keeps track of allocation attempts
 	char* temp_ptr = NULL;  // Return values from string.h function calls
+	off_t fileSize = 0;  // File size read from file descriptor
+	int errNum = 0;  // [OUT] parameter for size_a_file_desc()
+	bool guessingSize = false;  // Set this to true if file size comes back 0
 
 	// INPUT VALIDATION
 	if (fileName)
@@ -196,70 +297,115 @@ char* read_a_file(char* fileName)
 
 				if (fileDesc < 0)
 				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - open failed!\n");
 					HARKLE_ERROR(Fileroad, read_a_file, open failed);
 					success = false;
 				}
 			}
 
-			// 2. Read the file
+			// 2. Size the file
 			if (success == true)
 			{
-				numBytesRead = read(fileDesc, buff, FROAD_BUFF_SIZE);
+				fileSize = size_a_file_desc(fileDesc, &errNum);
+
+				if (fileSize == -1)
+				{
+					HARKLE_ERROR(Fileroad, read_a_file, size_a_file_desc failed);
+					fprintf(stderr, "size_a_file_desc() set errNum to %d\n", errNum);
+					success = false;
+				}
+				else if (fileSize == 0)
+				{
+					fileSize = FROAD_BUFF_SIZE + 1;
+					guessingSize = true;
+				}
+			}
+
+			// 3. Allocate a buffer
+			if (success == true)
+			{
+				retVal = get_me_a_buffer(fileSize);
+
+				if (!retVal)
+				{
+					HARKLE_ERROR(Fileroad, read_a_file, get_me_a_buffer failed);
+					success = false;
+				}
+			}
+
+			// 4. Read the file
+			if (success == true)
+			{
+				numBytesRead = read(fileDesc, retVal, fileSize);
 
 				if (numBytesRead < 0)
 				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - read failed!\n");
 					HARKLE_ERROR(Fileroad, read_a_file, read failed);
 					success = false;
 				}
 				else if (numBytesRead == 0)
 				{
 					// It's ok if 0 bytes were read.  Some cmdline files are empty.
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - 0 bytes read!\n");
-					// success = false;
-					temp_ptr = strcpy(buff, "<EMPTY>");
+					temp_ptr = strcpy(retVal, "<EMPTY>");
 
-					if (temp_ptr != buff)
+					if (temp_ptr != retVal)
 					{
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strcpy failed!\n");
 						HARKLE_ERROR(Fileroad, read_a_file, strcpy failed);
 						success = false;
 					}
 					else
 					{
-						numBytesRead = strlen(buff);
+						numBytesRead = strlen(retVal);
 					}
 				}
-			}
-
-			// 3. Allocate an array to store the file contents
-			if (success == true && numBytesRead > 0)
-			{
-				while (!retVal && numTries < FROAD_MAX_TRIES)
+				else if (numBytesRead == fileSize && guessingSize == true)
 				{
-					retVal = (char*)calloc(numBytesRead + 1, sizeof(char));
-					numTries++;
-				}
+					// There may be more to read
+					do
+					{
+						// 0. Record previous number of bytes read
+						prevNumBytesRead = numBytesRead;
 
-				if (!retVal)
-				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - calloc failed!\n");
-					HARKLE_ERROR(Fileroad, read_a_file, calloc failed);
-					success = false;
-				}
-			}
+						// 1. Increase the buffer size
+						temp_ptr = realloc(retVal, fileSize + FROAD_BUFF_SIZE);
 
-			// 4. Read the file contents into the heap-allocated array
-			if (success == true && retVal)
-			{
-				temp_ptr = strncpy(retVal, buff, numBytesRead);
+						if (!temp_ptr)
+						{
+							HARKLE_ERROR(Fileroad, read_a_file, realloc failed);
+							success = false;
+						}
+						else
+						{
+							retVal = temp_ptr;
+							temp_ptr = NULL;
+							fileSize += FROAD_BUFF_SIZE;
+						}
 
-				if (temp_ptr != retVal)
-				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - strncpy failed!\n");
-					HARKLE_ERROR(Fileroad, read_a_file, strncpy failed);
-					success = false;
+						// 2. Rewind the file descriptor
+						if (false == rewind_a_file_desc(fileDesc, &errNum))
+						{
+							HARKLE_ERROR(Fileroad, read_a_file, rewind_a_file_desc failed);
+							fprintf(stderr, "rewind_a_file_desc() set errNum to %d\n", errNum);
+							success = false;
+						}
+						else
+						{
+							// 3. Read the file descriptor again
+							numBytesRead = read(fileDesc, retVal, fileSize);
+
+							if (numBytesRead <= 0)
+							{
+								HARKLE_ERROR(Fileroad, read_a_file, (re)read failed);
+								success = false;
+							}
+							else
+							{
+								// fprintf(stdout, "REread\n\n%s\n\n", retVal);  // DEBUGGING
+								// fprintf(stdout, "File size is currently %jd.\n", fileSize);
+								// fprintf(stdout, "Just read %jd bytes from fd %d.\n", (intmax_t)numBytesRead, fileDesc);  // DEBUGGING
+							}
+						}
+					}
+					while (numBytesRead == fileSize && guessingSize == true && success == true && prevNumBytesRead != numBytesRead);
 				}
 			}
 		}
@@ -299,11 +445,10 @@ char* read_a_file(char* fileName)
 	}
 
 	// Close the file descriptor regardless of the success status
-	if (fileDesc > 2)
+	if (fileDesc >= 0)
 	{
 		if (close(fileDesc) < 0)
 		{
-			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - close failed!\n");
 			HARKLE_ERROR(Fileroad, read_a_file, close failed);
 		}
 	}
@@ -313,7 +458,7 @@ char* read_a_file(char* fileName)
 }
 
 
-off_t size_a_file(char* fileName)
+off_t size_a_file(char* fileName, int* errNum)
 {
 	// LOCAL VARIABLES
 	off_t retVal = 0;  // This will be converted from data type off_t
@@ -332,15 +477,25 @@ off_t size_a_file(char* fileName)
 		HARKLE_ERROR(Fileroad, size_a_file, Empty string);
 		success = false;
 	}
+	else if (!errNum)
+	{
+		HARKLE_ERROR(Fileroad, size_a_file, NULL pointer);
+		success = false;
+	}
+	else
+	{
+		*errNum = 0;
+	}
 	
 	// SIZE IT
 	if (success == true)
 	{
-		fprintf(stdout, "Sizing %s\n", fileName);  // DEBUGGING
-		stRetVal = stat(fileName, &fileStat);
+		// fprintf(stdout, "Sizing %s\n", fileName);  // DEBUGGING
+		stRetVal = lstat(fileName, &fileStat);
 		
 		if (stRetVal == -1)
 		{
+			*errNum = errno;
 			HARKLE_ERROR(Fileroad, size_a_file, stat failed);
 			success = false;
 		}
@@ -362,14 +517,100 @@ off_t size_a_file(char* fileName)
 }
 
 
-/*
-	Purpose - Utilize stat to determine a file's type
-	Input
-		fileName - nul-terminated char array of the file to read
-	Output
-		On success, file's type
-		On failure, UCHAR_MAX
- */
+off_t size_a_file_desc(int fileDesc, int* errNum)
+{
+	// LOCAL VARIABLES
+	off_t retVal = 0;  // This will be converted from data type off_t
+	bool success = true;  // If anything fails, set this to false
+	struct stat fileStat;  // OUT parameter for stat()
+	int stRetVal = 0;  // Return value from stat()
+	
+	// INPUT VALIDATION
+	if (fileDesc < 0)
+	{
+		HARKLE_ERROR(Fileroad, size_a_file_desc, Invalid file descriptor);
+		success = false;
+	}
+	else if (!errNum)
+	{
+		HARKLE_ERROR(Fileroad, size_a_file_desc, NULL pointer);
+		success = false;
+	}
+	else
+	{
+		*errNum = 0;
+	}
+	
+	// SIZE IT
+	if (success == true)
+	{
+		// fprintf(stdout, "Sizing fd %d\n", fileDesc);  // DEBUGGING
+		stRetVal = fstat(fileDesc, &fileStat);
+		
+		if (stRetVal == -1)
+		{
+			*errNum = errno;
+			HARKLE_ERROR(Fileroad, size_a_file_desc, stat failed);
+			success = false;
+		}
+		else
+		{
+			// fprintf(stdout, "fd %d is %jd\n", fileDesc, (intmax_t)fileStat.st_size);  // DEBUGGING
+			retVal = fileStat.st_size;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		retVal = -1;	
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+size_t size_a_file_ptr(FILE* openFile)
+{
+	// LOCAL VARIABLES
+	size_t retVal = 0;
+	bool success = true;
+
+	// INPUT VALIDATION
+	if (!openFile)
+	{
+		HARKLE_ERROR(Fileroad, get_a_file_type, NULL pointer);
+		success = false;
+	}
+
+	if (success == true)
+	{
+		// SIZE THE FILE
+		// 1. Rewind the file
+		rewind(openFile);
+
+		// 2. Read the file byte by tedious byte
+		while (fgetc(openFile) != EOF)
+		{
+			retVal++;
+		}
+
+		// 3. Rewind the file again
+		rewind(openFile);
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		retVal = -1;
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 unsigned char get_a_file_type(char* fileName)
 {
 	// LOCAL VARIABLES
@@ -579,7 +820,41 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 }
 
 
+bool rewind_a_file_desc(int fileDesc, int* errNum)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Set this to false if anything fails
+	
+	// INPUT VALIDATION
+	if (fileDesc < 0)
+	{
+		HARKLE_ERROR(Fileroad, size_a_file_desc, Invalid file descriptor);
+		retVal = false;
+	}
+	else if (!errNum)
+	{
+		HARKLE_ERROR(Fileroad, size_a_file_desc, NULL pointer);
+		retVal = false;
+	}
+	else
+	{
+		*errNum = 0;
+	}
 
+	// REWIND
+	if (retVal == true)
+	{
+		// Seek to start of file
+		if (-1 == lseek(fileDesc, 0x0, SEEK_SET))
+		{
+			*errNum = errno;
+			retVal = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////

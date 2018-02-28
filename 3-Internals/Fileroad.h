@@ -8,6 +8,7 @@
 #define __FILEROAD__
 
 #include <stdbool.h>	// bool, true, false
+#include <stdio.h>		// FILE*
 #include <sys/types.h>	// off_t
 
 //////////////////////////////////////////////////////////////////////////////
@@ -61,6 +62,19 @@ char* buff_a_num(void);
 
 
 /*
+	Purpose - Open a file, read the contents into a buffer, close the file
+    Input
+        fileName - nul-terminated char array of the file to read
+    Ouput - Heap-allocated array containing the contents of fileName
+            on success, NULL on failure
+    Notes:
+        The caller is responsible for free()ing the return value
+        Utilizes fopen()
+ */
+char* fread_a_file(char* fileName);
+
+
+/*
     Purpose - Open a fd, read the contents into a buffer, close the fd
     Input
         fileName - nul-terminated char array of the file to read
@@ -68,6 +82,7 @@ char* buff_a_num(void);
             on success, NULL on failure
     Notes:
         The caller is responsible for free()ing the return value
+        Utilizes read()
  */
 char* read_a_file(char* fileName);
 
@@ -76,15 +91,43 @@ char* read_a_file(char* fileName);
 	Purpose - Utilize stat to size a file
 	Input
         fileName - nul-terminated char array of the file to read
+        errNum - [OUT] Memory location to store errno value
 	Output
 		On success, total size, of fileName, in bytes
-		On failure, -1
+		On failure, returns -1 and stores errno in errNum
 	Notes:
-		This function calls stat()
-		The return value is converted from data type off_t	
+		This function calls stat()	
  */
-off_t size_a_file(char* fileName);
+off_t size_a_file(char* fileName, int* errNum);
 
+
+/*
+	Purpose - Utilize stat to size a file
+	Input
+        fileDesc - File descriptor for an open file
+        errNum - [OUT] Memory location to store errno value
+	Output
+		On success, total size, of file descriptor, in bytes
+		On failure, returns -1 and stores errno in errNum
+	Notes:
+		This function calls fstat()
+ */
+off_t size_a_file_desc(int fileDesc, int* errNum);
+
+
+/*
+	Purpose - Determine the size of a file byte by byte
+	Input
+		openFile - FILE* to an already opened file
+	Output
+		On success, total size in bytes
+		On failure, returns -1
+	Notes:
+		Rewinds the file prior to read
+		Utilizes fgetc() to determine the file size
+		Rewinds the file after the read
+ */
+size_t size_a_file_ptr(FILE* openFile);
 
 /*
 	Purpose - Utilize stat to determine a file's type
@@ -120,6 +163,21 @@ unsigned char get_a_file_type(char* fileName);
 		path_ptr == "/proc/", join_ptr == "/31337/", isFile == true, returns "/proc/31337"
  */
 char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
+
+
+/*
+	Purpose - Rewind a file descriptor
+	Input
+		fileDesc - The file descriptor
+		errNum - A pointer to place the value of errno in on error
+	Output
+		On success, returns true
+		On failure, returns false and places errno in errNum
+	Notes:
+		A simple function, to be certain, but I don't want to write it more
+			than once.
+ */
+bool rewind_a_file_desc(int fileDesc, int* errNum);
 
 
 //////////////////////////////////////////////////////////////////////////////
