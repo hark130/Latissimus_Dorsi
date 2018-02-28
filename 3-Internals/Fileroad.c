@@ -1,7 +1,7 @@
 #include <dirent.h>		// d_type MACROs
 #include <fcntl.h>	 	// open() flags
 #include "Fileroad.h"
-#include <limits.h>		// UCHAR_MAX
+#include <limits.h>		// UCHAR_MAX, PATH_MAX
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>		// fscanf, getchar
@@ -452,23 +452,6 @@ unsigned char get_a_file_type(char* fileName)
 }
 
 
-/*
-	Purpose - Replicate os.path.join (in a very hacky way)
-	Input
-		path_ptr - nul-terminated string presumably representing a path
-		join_ptr - nul-terminate string presumably representing something to add
-			to path_ptr
-		isFile - true if join_ptr is a file, false if join_ptr is a directory
-	Output
-		On success, a heap-allocated, nul-terminated string containing
-			(essentially) a strcat of path_ptr and join_ptr
-		On failure, NULL
-	Notes:
-		It is the caller's responsibility to free the return value
-	Examples:
-		path_ptr == "/proc", join_ptr == "31337", isFile == false, returns "/proc/31337/"
-		path_ptr == "/proc", join_ptr == "31337", isFile == true, returns "/proc/31337"
- */
 char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 {
 	// LOCAL VARIABLES
@@ -479,6 +462,8 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 	size_t pathLen = 0;  // Length of the path
 	size_t joinLen = 0;  // Length of the joining
 	size_t newLen = 0;  // Holds the calculation for the length of the new array
+	char newRetv[PATH_MAX] = { "/" };
+	char* temp_ptr = NULL;  // Temp pointer to iterate through arrays
 
 	// INPUT VALIDATION
 	if (!path_ptr)
@@ -502,109 +487,70 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		success = false;
 	}
 
-	// JOIN
-	// 1. Calculate new length
-	// 1.1. Add in pathLen
-	pathLen = strlen(path_ptr);
-	newLen += pathLen;
-
-	if ((*(path_ptr + pathLen - 1)) != '/')
+	// POPULATE ARRAYS
+	if (success == true)
 	{
-		newLen++;
-	}
+		// newPath
+		srce_ptr = path_ptr;
+		dest_ptr = newRetv + 1;
 
-	// 1.2. Prepare joinLen by removing preceding slashes
-	while (*join_ptr == '/')
-	{
-		join_ptr++;
-	}	
-
-	// 1.3. Add in joinLen
-	joinLen = strlen(join_ptr);
-	newLen += joinLen;
-
-	if ((*(join_ptr + joinLen - 1)) == '/')
-	{
-		if (isFile == true)
+		while (*srce_ptr != '\0')
 		{
-			(*(join_ptr + joinLen - 1)) = '\0';
-			joinLen--;
-			newLen--;
+			if (srce_ptr == path_ptr && *srce_ptr == '/')
+			{
+				srce_ptr++;
+			}
+			else if (*srce_ptr == '/' && *(srce_ptr + 1) == '\0')
+			{
+				srce_ptr++;
+			}
+			else
+			{
+				*dest_ptr = *srce_ptr;
+				dest_ptr++;
+				srce_ptr++;
+			}
 		}
-	}
-	else if (isFile == false)
-	{
-		newLen++;
-	}
-
-	// 2. Allocate the array
-	retVal = get_me_a_buffer(newLen);
-
-	if (!retVal)
-	{
-		HARKLE_ERROR(Fileroad, os_path_join, get_me_a_buffer failed);
-		success = false;
-	}
-
-	// 3. Copy in path & join
-	// 3.1. Path
-	srce_ptr = path_ptr;
-	dest_ptr = retVal;
-	while (*srce_ptr != '\0')
-	{
-		*dest_ptr = *srce_ptr;
+		*dest_ptr = '/';
 		dest_ptr++;
-		srce_ptr++;
-	}
-	fprintf(stdout, "Last char in retVal == %c\n", (*(dest_ptr - 1)));  // DEBUGGING
-	fprintf(stdout, "Curr char in retVal == %c\n", (*(dest_ptr)));  // DEBUGGING
-	if (*(dest_ptr - 1) != '/')
-	{
-		*(dest_ptr - 1) = '/';
-		// dest_ptr++;
-	}
-	fprintf(stdout, "Current New:\t%s\n", retVal);  // DEBUGGING
 
-	// 3.2. Join
-	srce_ptr = join_ptr;
-	if (*srce_ptr == '/')
-	{
-		srce_ptr++;
-	}
-	while (*srce_ptr != '\0')
-	{
-		*dest_ptr = *srce_ptr;
-		dest_ptr++;
-		srce_ptr++;
-	}
+		// newJoin
+		srce_ptr = join_ptr;
 
-	// 3.3. Verify trailing slash (if applicable)
-	if (*(dest_ptr - 1) != '/' && isFile == false)
-	{
-		*(dest_ptr - 1) = '/';
-	}
-
-	// 3.4. Verify nul termination
-	// dest_ptr++;
-	*dest_ptr = '\0';
-
-	// VERIFY
-	if (strlen(retVal) != newLen)
-	{
-		HARKLE_ERROR(Fileroad, os_path_join, length mismatch);
-		fprintf(stdout, "Path:\t%s\n", path_ptr);  // DEBUGGING
-		fprintf(stdout, "Join:\t%s\n", join_ptr);  // DEBUGGING
-		if (isFile)
+		while(*srce_ptr != '\0')
 		{
-			fprintf(stdout, "Join is a file.\n");
+			if (srce_ptr == join_ptr && *srce_ptr == '/')
+			{
+				srce_ptr++;
+			}
+			else if (*srce_ptr == '/' && *(srce_ptr + 1) == '\0')
+			{
+				srce_ptr++;
+			}
+			else
+			{
+				*dest_ptr = *srce_ptr;
+				dest_ptr++;
+				srce_ptr++;
+			}
 		}
-		else
+
+		// Trailing slash
+		if (isFile == false)
 		{
-			fprintf(stdout, "Join is NOT a file.\n");
+			*dest_ptr = '/';
+			dest_ptr++;
 		}
-		success = false;
+
+		// Prepare output
+		retVal = copy_a_string(newRetv);
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, os_path_join, copy_a_string failed);
+			success = false;
+		}
 	}
-	fprintf(stdout, "New: \t%s\n", retVal);  // DEBUGGING
 
 	// CLEAN UP
 	if (success == false)
