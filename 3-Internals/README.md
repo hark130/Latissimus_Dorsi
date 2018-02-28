@@ -54,7 +54,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
 * [X] Prompt the user to choose one
 * [ ] Change <EMPTY> cmdline reads to <ZOMBIE> (or something similar).  [Man page](http://man7.org/linux/man-pages/man5/proc.5.html) says empty cmdline files indicate a zombie process.
-* [ ] Move char** parse_proc_PIDs(void) from Harkleproc to Memoroad where it belongs
+* [ ] Move bool free_char_arr(char*** charArr_ptr) from Harkleproc to Memoroad where it belongs
 * [ ] List the modules loaded in that application
 	* lsof
 		* ```lsof -p <PID>```
