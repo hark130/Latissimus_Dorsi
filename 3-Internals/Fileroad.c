@@ -171,8 +171,10 @@ char** split_lines(char* haystack, char splitChar)
 	char** retVal = NULL;
 	char* temp_ptr = NULL;  // Return value from string.h function calls
 	bool success = true;
-	char splitString[2] = { 0 };
 	int charCount = 0;  // Number of splitChars in haystack (concurrent splitChars count as one)
+	char* hsCopy = NULL;  // A copy of the haystack to aid in parsing
+	size_t hsLen = 0;  // Length of the original haystack
+	char* currNul = NULL;  // Memory address of the current artificial nul terminator in hsCopy
 	
 	// INPUT VALIDATION
 	if (!haystack)
@@ -192,9 +194,7 @@ char** split_lines(char* haystack, char splitChar)
 	}
 	else
 	{
-		*splitString = splitChar;
-		
-		temp_ptr = strstr(haystack, splitString);
+		temp_ptr = strchr(haystack, splitChar);
 		
 		if (!temp_ptr)
 		{
@@ -203,10 +203,41 @@ char** split_lines(char* haystack, char splitChar)
 		}
 	}
 	
+	// Size haystack
+	if (success == true)
+	{
+		hsLen = strlen(haystack);
+			
+		if (hsLen < 1)
+		{
+			HARKLE_ERROR(Fileroad, split_lines, strlen failed);
+			success = false;
+		}
+	}
+	
+	// Copy haystack
+	if (success == true)
+	{
+		hsCopy = copy_a_string(haystack);
+		
+		if (!hsCopy)
+		{
+			HARKLE_ERROR(Fileroad, split_lines, copy_a_string failed);
+			success = false;
+		}
+		else if (strlen(hsCopy) != hsLen)
+		{
+			HARKLE_ERROR(Fileroad, split_lines, String length mismatch between haystack and hsCopy);
+			success = false;
+		}
+	}
+	
 	// PARSE haystack
 	if (success == true)
 	{
 		// 1. Count occurrences of the splitChar
+		// NOTE: Count only the final concurrent splitChar occurrence as long as it does
+		//	not begin or end the string.
 		temp_ptr = haystack;
 
 		while(*temp_ptr != '\0')
@@ -217,7 +248,11 @@ char** split_lines(char* haystack, char splitChar)
 				{
 					if ((*(temp_ptr - 1)) != splitChar)
 					{
-						charCount++;	
+						// Don't count splitChar if it's last because that would yield an empty string
+						if ((*(temp_ptr + 1)) != splitChar && (*(temp_ptr + 1)) != '\0')
+						{
+							charCount++;
+						}
 					}
 				}
 				else
@@ -236,8 +271,15 @@ char** split_lines(char* haystack, char splitChar)
 	// 2. Allocate the array of char*s into retVal
 	if (success == true)
 	{
+		// charCount + 1 because 3 splitChars make 4 strings
+		// SSSScSSSScSSSScSSSS if c == char && S == string
+		retVal = get_me_a_buffer_array(charCount + 1, true);
 		
-		retVal 
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, split_lines, get_me_a_buffer_array failed);
+			success = false;
+		}
 	}
 	
 	// 3. Parse each substring from the haystack
@@ -266,6 +308,14 @@ char** split_lines(char* haystack, char splitChar)
 	
 	
 	// CLEAN UP
+	// hsCopy
+	if (hsCopy)
+	{
+		if (false == release_a_string_len(&hsCopy, hsLen))
+		{
+			HARKLE_ERROR(Fileroad, split_lines, release_a_string_len failed);
+		}
+	}
 	if (success == false)
 	{
 		if (retVal)
