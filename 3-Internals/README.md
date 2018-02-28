@@ -89,8 +89,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 **NOTE:** This is a continuation of 3-10-3
 
-* [ ] Extricate numerous Linux file IO functions into their own header
-* [ ] Write functions to resolve symbolic links, programatically
+* [X] Extricate numerous Linux file IO functions into their own header (Completed in 3-10-2... I couldn't wait)
+* [X] Write functions to resolve symbolic links, programatically (Completed in 3-10-2... doesn't work so well in /proc though)
 * [ ] Draw the complete line of a program's loaded libraries by
 	* [ ] Printing the "NEEDED" libraries from an application's ELF Header
 	* [ ] Use the above file IO functionality to resolve those (inevitably) symbolic links to their destinations
