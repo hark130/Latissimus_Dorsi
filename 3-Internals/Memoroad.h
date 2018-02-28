@@ -85,6 +85,18 @@ bool release_a_string(char** charPtr_ptr);
 bool release_a_string_len(char** charPtr_ptr, size_t buffSize);
 
 
+/*
+	Purpose - Ease the suffering of free()ing a char** from parse_proc_PIDs()
+	Input
+		charArr_ptr - A pointer to an array of char pointers
+	Output - true on success, false on failure
+	Notes:
+		All C-strings will be memset to 0, free()d, and made NULL
+		The array of C-strings will then be free()d and made NULL
+ */
+bool free_char_arr(char*** charArr_ptr);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FREE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -128,18 +128,6 @@ pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr);
 
 
 /*
-	Purpose - Ease the suffering of free()ing a char** from parse_proc_PIDs()
-	Input
-		charArr_ptr - A pointer to an array of char pointers
-	Output - true on success, false on failure
-	Notes:
-		All C-strings will be memset to 0, free()d, and made NULL
-		The array of C-strings will then be free()d and made NULL
- */
-bool free_char_arr(char*** charArr_ptr);
-
-
-/*
 	Purpose - Check a /proc directory name for all numbers
 	Input
 		dirName - nul-terminated char array holding a /proc directory name
