@@ -35,6 +35,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Brief, but good, /proc/PID/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
 * [Zombie process wiki](https://en.wikipedia.org/wiki/Zombie_process)
 * [readlink(2) man page](http://man7.org/linux/man-pages/man2/readlink.2.html) to translate symlinks
+* [sys/capability.h example](https://git.kernel.org/pub/scm/linux/kernel/git/morgan/libcap.git/tree/progs/setcap.c)
 
 ## TO DO
 
@@ -103,3 +104,6 @@ Developers will have an in-depth working knowledge of Linux Internals
               will return 0 characters.**  The command-line arguments appear
               in this file as a set of strings separated by null bytes
               ('\0'), with a further null byte after the last string.
+* ```sudo setcap cap_sys_admin+ep 3-10_Proc_Walk-2_main.exe```
+
+
