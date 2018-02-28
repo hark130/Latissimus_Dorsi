@@ -462,7 +462,7 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 	size_t pathLen = 0;  // Length of the path
 	size_t joinLen = 0;  // Length of the joining
 	size_t newLen = 0;  // Holds the calculation for the length of the new array
-	char newRetv[PATH_MAX] = { "/" };
+	char newRetv[PATH_MAX + 1] = { "/" };
 	char* temp_ptr = NULL;  // Temp pointer to iterate through arrays
 
 	// INPUT VALIDATION
@@ -484,6 +484,11 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 	else if (!(*join_ptr))
 	{
 		HARKLE_ERROR(Fileroad, os_path_join, join_ptr is empty);
+		success = false;
+	}
+	else if (strlen(path_ptr) + strlen(join_ptr) + 3 > PATH_MAX)
+	{
+		HARKLE_ERROR(Fileroad, os_path_join, Strings are too long);
 		success = false;
 	}
 
@@ -511,8 +516,13 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 				srce_ptr++;
 			}
 		}
-		*dest_ptr = '/';
-		dest_ptr++;
+
+		// Check for root directory
+		if (strlen(path_ptr) != 1 || *path_ptr != '/')
+		{
+			*dest_ptr = '/';
+			dest_ptr++;
+		}
 
 		// newJoin
 		srce_ptr = join_ptr;
