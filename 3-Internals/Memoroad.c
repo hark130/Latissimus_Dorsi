@@ -67,6 +67,54 @@ char* get_me_a_buffer(size_t length)
 }
 
 
+char** get_me_a_buffer_array(size_t arraySize, bool nullTerm)
+{
+	// LOCAL VARIABLES
+	char** retVal = NULL;
+	bool success = true;
+	int numTries = 0;  // Count the number of allocation attempts
+	size_t actualArrSize = arraySize;
+	
+	// INPUT VALIDATION
+	if (arraySize < 1)
+	{
+		HARKLE_ERROR(Memoroad, get_me_a_buffer_array, Invalid array size);
+		success = false;
+	}
+	
+	// ALLOCATE
+	if (success == true)
+	{
+		// NULL terminate?
+		if (nullTerm == true)
+		{
+			actualArrSize++;
+		}
+		
+		// Allocate
+		while (!retVal && numTries < MEMROAD_MAX_TRIES)
+		{
+			retVal = 	
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_char_arr(&retVal))
+			{
+				HARKLE_ERROR(Memoroad, get_me_a_buffer_array, free_char_arr failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
 char* copy_a_string(const char* char_ptr)
 {
     // LOCAL VARIABLES
