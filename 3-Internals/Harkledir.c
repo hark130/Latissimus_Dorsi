@@ -70,16 +70,20 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 
 
 /*
-	Purpose - Coordinates array allocation and string copies of directory names 
-		into a directoryDetails pointer
+	Purpose - As a helper function to parse_dirDetails_to_char_arr(), compare
+		a hd_type and typeFlags to determine if this file should be included
 	Input
-		updateThis_ptr - directoryDetails pointer to populate
-		fileEntry - dirent struct pointer of a directory entry identified as a directory
-	Output - true on success, false on failure
+		hdEntryType - harkleDirEnt's hd_type to evaluate for inclusion
+		typeFlags - Reference to Harkledir.h "typeFlags" MACRO FLAGS
+	Output
+		True if it matches
+		False if there's no match
 	Notes:
-		The array sizes may be updated as realloc() may be called
+		This helper function was written expressly for 
+			parse_dirDetails_to_char_arr() and it may never be useful
+			elsewhere
  */
-// bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry);
+bool keep_hdEntry(unsigned char hdEntryType, unsigned int typeFlags);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -192,6 +196,14 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	// unsigned char hd_type; 		// Should match struct dirent.d_type
 	if (retVal == true && updateThis_ptr->hd_AbsName)
 	{
+		// fprintf(stdout, "%s:\t%zd\n", "DT_BLK", (intmax_t)DT_BLK);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_CHR", (intmax_t)DT_CHR);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_DIR", (intmax_t)DT_DIR);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_FIFO", (intmax_t)DT_FIFO);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_LNK", (intmax_t)DT_LNK);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_REG", (intmax_t)DT_REG);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_SOCK", (intmax_t)DT_SOCK);
+		// fprintf(stdout, "%s:\t%zd\n", "DT_UNKNOWN", (intmax_t)DT_UNKNOWN);
 		switch (currDirEntry->d_type)
 		{
 			case DT_UNKNOWN:
@@ -837,6 +849,302 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 }
 
 
+// #define HDIR_DT_BLK			(unsigned int)(1 << 0)
+// #define HDIR_DT_CHR			(unsigned int)(1 << 1)
+// #define HDIR_DT_DIR			(unsigned int)(1 << 2)
+// #define HDIR_DT_FIFO		(unsigned int)(1 << 3)
+// #define HDIR_DT_LNK			(unsigned int)(1 << 4)
+// #define HDIR_DT_REG			(unsigned int)(1 << 5)
+// #define HDIR_DT_SOCK		(unsigned int)(1 << 6)
+// #define HDIR_DT_UNKNOWN		(unsigned int)(1 << 7)
+// #define HDIR_DT_ALL			(unsigned int)(1 << 8)
+/*
+	Purpose - Parse directoryDetails arrays into a unique char* array
+	Input
+		dirStruct_ptr - directoryDetails struct pointer to parse from
+		typeFlags - bitwise OR of "typeFlags" MACRO FLAGS
+		uniqueEntries
+			If true, only unique entries are copied in
+			If false, all entries are copied in
+		resolveLinks
+			If true, hd_symName is used for symbolic link files
+			If false, hd_Name is used for all entries
+ */
+char** parse_dirDetails_to_char_arr(dirDetails_ptr dirStruct_ptr, unsigned int typeFlags, bool uniqueEntries, bool resolveLinks)
+{
+	// LOCAL VARIABLES
+	char** retVal = NULL;
+	char** tempRetVal = NULL;  // Copy the strings here first
+	hdEnt_ptr* structArray = NULL;  // Used for fileName_arr and dirName_arr as appropriate
+	hdEnt_ptr struct_ptr = NULL;  // Used for hdEnt structs in the dirDetails arrays
+	bool success = true;  // Make this false if anything fails
+	int originalEntries = 0;  // Original size of tempRetVal (for free()ing)
+	int totalEntries = 0;  // Size of the tempRetVal
+	char* temp_ptr = NULL;  // Use this to dynamically search for hd_Name or hd_symName as appropriate
+	int i = 0;  // Iterating variable
+
+	// INPUT VALIDATION
+	if (!dirStruct_ptr)
+	{
+		HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, NULL dirStruct_ptr);
+		success = false;
+	}
+	else if (0 == (typeFlags && HDIR_DT_BLK) && \
+			 0 == (typeFlags && HDIR_DT_CHR) && \
+			 0 == (typeFlags && HDIR_DT_DIR) && \
+			 0 == (typeFlags && HDIR_DT_FIFO) && \
+			 0 == (typeFlags && HDIR_DT_LNK) && \
+			 0 == (typeFlags && HDIR_DT_REG) && \
+			 0 == (typeFlags && HDIR_DT_SOCK) && \
+			 0 == (typeFlags && HDIR_DT_UNKNOWN) && \
+			 0 == (typeFlags && HDIR_DT_ALL))
+	{
+		HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, Invalid flags);
+		success = false;
+	}
+
+	// BEGIN PARSING
+	if (success == true)
+	{
+		// 1. How many total entries?
+		// 1.1. Files
+		structArray = dirStruct_ptr->fileName_arr;
+
+		if (structArray)
+		{
+			while (*structArray)
+			{
+				struct_ptr = *structArray;
+
+				if (true == keep_hdEntry(struct_ptr->hd_type, typeFlags))
+				{
+					totalEntries++;
+				}
+
+				structArray++;
+			}
+		}
+
+		// 1.2. Directories
+		structArray = dirStruct_ptr->dirName_arr;
+
+		if (structArray)
+		{
+			while (*structArray)
+			{
+				struct_ptr = *structArray;
+
+				if (true == keep_hdEntry(struct_ptr->hd_type, typeFlags))
+				{
+					totalEntries++;
+				}
+
+				structArray++;
+			}
+		}
+
+		// 2. Allocate the temp array
+		tempRetVal = get_me_a_buffer_array((size_t)totalEntries, true);
+
+		if (!tempRetVal)
+		{
+			HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, get_me_a_buffer_array failed);
+			success = false;
+		}
+		else
+		{
+			// 3. Copy in all the char*s
+			// 3.0. Reset the count in case the unique count is less than the total
+			originalEntries = totalEntries;
+			totalEntries = 0;
+
+			// 3.1. Files
+			structArray = dirStruct_ptr->fileName_arr;
+
+			if (structArray)
+			{
+				while (*structArray)
+				{
+					struct_ptr = *structArray;
+
+					if (true == keep_hdEntry(struct_ptr->hd_type, typeFlags))
+					{
+						// Name or Symlink
+						if (resolveLinks == true && struct_ptr->hd_symName)
+						{
+							temp_ptr = struct_ptr->hd_symName;
+						}
+						else
+						{
+							temp_ptr = struct_ptr->hd_Name;
+						}
+
+						// Does it need to be a unique entry?
+						if (uniqueEntries == true)  // Yes, it needs to be unique
+						{
+							if (-1 == search_char_arr(tempRetVal, temp_ptr))
+							{
+								// Add it (unique)
+								(*(tempRetVal + totalEntries)) = copy_a_string(temp_ptr);
+
+								if (NULL == ((*(tempRetVal + totalEntries))))
+								{
+									HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, get_me_a_buffer_array failed);
+									success = false;
+								}
+								else
+								{
+									totalEntries++;
+								}
+							}
+						}
+						else  // No, it doesn't need to be unique
+						{
+							// Add it (anyway)
+							(*(tempRetVal + totalEntries)) = copy_a_string(temp_ptr);
+
+							if (NULL == ((*(tempRetVal + totalEntries))))
+							{
+								HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, get_me_a_buffer_array failed);
+								success = false;
+							}
+							else
+							{
+								totalEntries++;
+							}
+						}
+					}
+
+					structArray++;
+				}
+			}
+
+			// 3.2. Directories
+			structArray = dirStruct_ptr->dirName_arr;
+
+			if (structArray)
+			{
+				while (*structArray)
+				{
+					struct_ptr = *structArray;
+
+					if (true == keep_hdEntry(struct_ptr->hd_type, typeFlags))
+					{
+						// Name or Symlink
+						if (resolveLinks == true && struct_ptr->hd_symName)
+						{
+							temp_ptr = struct_ptr->hd_symName;
+						}
+						else
+						{
+							temp_ptr = struct_ptr->hd_Name;
+						}
+
+						// Does it need to be a unique entry?
+						if (uniqueEntries == true)  // Yes, it needs to be unique
+						{
+							if (-1 == search_char_arr(tempRetVal, temp_ptr))
+							{
+								// Add it (unique)
+								(*(tempRetVal + totalEntries)) = copy_a_string(temp_ptr);
+
+								if (NULL == ((*(tempRetVal + totalEntries))))
+								{
+									HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, copy_a_string failed);
+									success = false;
+								}
+								else
+								{
+									totalEntries++;
+								}
+							}
+						}
+						else  // No, it doesn't need to be unique
+						{
+							// Add it (anyway)
+							(*(tempRetVal + totalEntries)) = copy_a_string(temp_ptr);
+
+							if (NULL == ((*(tempRetVal + totalEntries))))
+							{
+								HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, copy_a_string failed);
+								success = false;
+							}
+							else
+							{
+								totalEntries++;
+							}
+						}
+					}
+
+					structArray++;
+				}
+			}
+		}
+	}
+
+	// PREPARE THE *REAL* ARRAY
+	if (success == true)
+	{
+		// Allocate the *REAL* array
+		retVal = get_me_a_buffer_array(totalEntries * sizeof(char*), true);
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, get_me_a_buffer_array failed);
+			success = false;
+		}
+		else
+		{
+			// Copy all of the char*s into the *REAL* array
+			for (i = 0; i < totalEntries; i++)
+			{
+				(*(retVal + i)) = (*(tempRetVal + i));
+				(*(tempRetVal + i)) = NULL;
+			}
+		}
+	}
+
+	// CLEAN UP
+	// 1. tempRetVal
+	if (tempRetVal)
+	{
+		if (*tempRetVal && success == false)
+		{
+			if (false == free_char_arr(&tempRetVal))
+			{
+				HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, free_char_arr failed on tempRetVal during error condition);
+			}
+		}
+		else
+		{
+			// 1.1. memset
+			if (tempRetVal != memset(tempRetVal, HDIR_MEMSET_DEFAULT, originalEntries * sizeof(char*)))
+			{
+				HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, memset failed);
+			}
+			// 1.2. free
+			free(tempRetVal);
+			// 1.3. NULL
+			tempRetVal = NULL;
+		}
+	}
+
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_char_arr(&retVal))
+			{
+				HARKLE_ERROR(Harkledir, parse_dirDetails_to_char_arr, free_char_arr failed during error condition);
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////// DIRECTORYDETAILS FUNCTIONS STOP ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -1038,7 +1346,7 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	if (retVal == true && numEntries_ptr && abstractArr_ptr && arraySize_ptr)
 	{
 		// 1. Calculate necessary size
-		necessarySize = (*numEntries_ptr) * sizeof(hdEnt_ptr); 		 	// Total bytes currently stored
+		necessarySize = (*numEntries_ptr) * sizeof(hdEnt_ptr); 			// Total bytes currently stored
 		necessarySize += sizeof(hdEnt_ptr);  							// The new hdEntry to store
 		necessarySize += sizeof(hdEnt_ptr);								// The terminating NULL pointer
 		// 2. Verify the array is large enough
@@ -1121,91 +1429,71 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 }
 
 
-// bool populate_dirDetails_dirs(dirDetails_ptr updateThis_ptr, struct dirent* dirEntry)
-// {
-// 	// LOCAL VARIABLES
-// 	bool retVal = true;
-// 	size_t necessarySize = 0;  // Current size + another entry + NULL terminator
-// 	void* realloc_ptr = NULL;  // Return value from realloc
-// 	char* temp_ptr = NULL;  // Return value from calloc
+bool keep_hdEntry(unsigned char hdEntryType, unsigned int typeFlags)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;
 
-// 	// INPUT VALIDATION
-// 	if (!updateThis_ptr)
-// 	{
-// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - updateThis_ptr NULL pointer!\n");
-// 		retVal = false;
-// 	}
-// 	else if (!dirEntry)
-// 	{
-// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - fileEntry NULL pointer!\n");
-// 		retVal = false;
-// 	}
-// 	else if (!(updateThis_ptr->dirName_arr))
-// 	{
-// 		fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - dirName_arr NULL pointer!\n");
-// 		retVal = false;
-// 	}
+	// INPUT VALIDATION
+	if ((hdEntryType != DT_BLK) && \
+		(hdEntryType != DT_CHR) && \
+		(hdEntryType != DT_DIR) && \
+		(hdEntryType != DT_FIFO) && \
+		(hdEntryType != DT_LNK) && \
+		(hdEntryType != DT_REG) && \
+		(hdEntryType != DT_SOCK) && \
+		(hdEntryType != DT_UNKNOWN))
+	{
+		HARKLE_ERROR(Harkledir, keep_hdEntry, hdEntryType);
+	}
+	else if (0 == (typeFlags & HDIR_DT_BLK) && \
+			 0 == (typeFlags & HDIR_DT_CHR) && \
+			 0 == (typeFlags & HDIR_DT_DIR) && \
+			 0 == (typeFlags & HDIR_DT_FIFO) && \
+			 0 == (typeFlags & HDIR_DT_LNK) && \
+			 0 == (typeFlags & HDIR_DT_REG) && \
+			 0 == (typeFlags & HDIR_DT_SOCK) && \
+			 0 == (typeFlags & HDIR_DT_UNKNOWN) && \
+			 0 == (typeFlags & HDIR_DT_ALL))
+	{
+		HARKLE_ERROR(Harkledir, keep_hdEntry, Invalid typeFlags);
+	}
 
-// 	// VALIDATE ARRAY
-// 	// 1. Calculate necessary size
-// 	necessarySize = updateThis_ptr->numDirs * sizeof(char*);  	// Total bytes currently stored
-// 	necessarySize += sizeof(char*);  							// The new fileEntry to store
-// 	necessarySize += sizeof(char*);								// The terminating NULL pointer
-// 	// 2. Verify the array is large enough
-// 	if (updateThis_ptr->dirArrSize < necessarySize)
-// 	{
-// 		// 2.1. Not enough
-// 		realloc_ptr = realloc(updateThis_ptr->dirName_arr, updateThis_ptr->dirArrSize + HDIR_ARRAY_LEN);
+	// DECIDE
+	switch (hdEntryType)
+	{
+		case DT_BLK:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_BLK) 	{ retVal = true; }
+			break;
+		case DT_CHR:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_CHR) 	{ retVal = true; }
+			break;
+		case DT_DIR:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_DIR) 	{ retVal = true; }
+			break;
+		case DT_FIFO:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_FIFO) 	{ retVal = true; }
+			break;
+		case DT_LNK:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_LNK) 	{ retVal = true; }
+			break;
+		case DT_REG:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_REG) 	{ retVal = true; }
+			break;
+		case DT_SOCK:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_SOCK) 	{ retVal = true; }
+			break;
+		case DT_UNKNOWN:
+			if (typeFlags & HDIR_DT_ALL || typeFlags & HDIR_DT_UNKNOWN)	{ retVal = true; }
+			break;
+		default:
+			HARKLE_ERROR(Harkledir, keep_hdEntry, Invalid typeFlags?!  How did we get here?!);
+			break;
+	}
 
-// 		if (realloc_ptr)
-// 		{
-// 			updateThis_ptr->dirName_arr = realloc_ptr;
-// 			updateThis_ptr->dirArrSize += HDIR_ARRAY_LEN;
-// 			realloc_ptr = NULL;
-// 			// Set the last index to NULL
-// 			(*(updateThis_ptr->dirName_arr + updateThis_ptr->dirArrSize - 1)) = NULL;
-// 		}
-// 		else
-// 		{
-// 			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to realloc the dirName_arr!\n");
-// 			retVal = false;
-// 		}
-// 	}
-
-// 	// COPY THE FILENAME
-// 	if (retVal == true)
-// 	{
-// 		// 1. Allocate an array for the new filename
-// 		temp_ptr = calloc(strlen(dirEntry->d_name), sizeof(char));
-
-// 		if (temp_ptr)
-// 		{
-// 			// 2. Store that pointer in the struct array
-// 			(*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)) = temp_ptr;
-
-// 			// 3. Copy the filename in
-// 			temp_ptr = strcpy((*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)), dirEntry->d_name);
-
-// 			if (temp_ptr != (*(updateThis_ptr->dirName_arr + updateThis_ptr->numDirs)))
-// 			{
-// 				fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to copy the d_name into the array!\n");
-// 				retVal = false;
-// 			}
-// 			else
-// 			{
-// 				updateThis_ptr->numDirs++;  // Increment the file count
-// 			}
-// 		}
-// 		else
-// 		{
-// 			fprintf(stderr, "<<<ERROR>>> - populate_dirDetails_dirs() - failed to calloc an array for the d_name!\n");
-// 			retVal = false;
-// 		}
-// 	}
-
-// 	// DONE
-// 	return retVal;
-// }
+	// DONE
+	return retVal;
+}
 
 	
 //////////////////////////////////////////////////////////////////////////////

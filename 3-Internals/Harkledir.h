@@ -15,6 +15,17 @@
 #include <stdlib.h>		// size_t
 #include <sys/types.h>	// ino_t
 
+/* parse_dirDetails_to_char_arr() "typeFlags" MACRO FLAGS */
+#define HDIR_DT_BLK			(unsigned int)(1 << 0)
+#define HDIR_DT_CHR			(unsigned int)(1 << 1)
+#define HDIR_DT_DIR			(unsigned int)(1 << 2)
+#define HDIR_DT_FIFO		(unsigned int)(1 << 3)
+#define HDIR_DT_LNK			(unsigned int)(1 << 4)
+#define HDIR_DT_REG			(unsigned int)(1 << 5)
+#define HDIR_DT_SOCK		(unsigned int)(1 << 6)
+#define HDIR_DT_UNKNOWN		(unsigned int)(1 << 7)
+#define HDIR_DT_ALL			(unsigned int)(1 << 8)
+
 typedef struct harkleDirEnt
 {
 	char* hd_Name;				// Should match struct dirent.d_name
@@ -116,6 +127,20 @@ dirDetails_ptr open_dir(char* directoryName);
  */
 bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr);
 
+
+/*
+	Purpose - Parse directoryDetails arrays into a unique char* array
+	Input
+		dirStruct_ptr - directoryDetails struct pointer to parse from
+		typeFlags - bitwise OR of "typeFlags" MACRO FLAGS
+		uniqueEntries
+			If true, only unique entries are copied in
+			If false, all entries are copied in
+		resolveLinks
+			If true, hd_symName is used for symbolic link files
+			If false, hd_Name is used for all entries
+ */
+char** parse_dirDetails_to_char_arr(dirDetails_ptr dirStruct_ptr, unsigned int typeFlags, bool uniqueEntries, bool resolveLinks);
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////// DIRECTORYDETAILS FUNCTIONS STOP ///////////////////////
