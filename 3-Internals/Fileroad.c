@@ -169,14 +169,16 @@ char** split_lines(char* haystack, char splitChar)
 {
 	// LOCAL VARIABLES
 	char** retVal = NULL;
+	char** tempArr_ptr = NULL;  // A copy of retVal for the purposes of iterating
 	char* temp_ptr = NULL;  // Return value from string.h function calls
 	bool success = true;
 	int charCount = 0;  // Number of splitChars in haystack (concurrent splitChars count as one)
 	char* hsCopy = NULL;  // A copy of the haystack to aid in parsing
 	size_t hsLen = 0;  // Length of the original haystack
+	char* currStr = NULL;  // Memory address of the current string truncated from hsCopy
 	char* currNul = NULL;  // Memory address of the current artificial nul terminator in hsCopy
 	
-	puts("!!!!!!!!!!!! THIS FUNCTION HAS NOT YET BEEN FULLY IMPLEMENTED !!!!!!!!!!!!");
+	puts("!!!!!!!!!!!! THIS FUNCTION HAS NOT YET BEEN FULLY TESTED !!!!!!!!!!!!");
 
 	// INPUT VALIDATION
 	if (!haystack)
@@ -287,28 +289,63 @@ char** split_lines(char* haystack, char splitChar)
 	// 3. Parse each substring from the haystack
 	if (success == true)
 	{
-		
+		if (!hsCopy)
+		{
+			success = false;	
+		}
+		else
+		{
+			// Copy retVal
+			tempArr_ptr = retVal;
+			// Start parsing hsCopy
+			currStr = hsCopy;
+			
+			while (*currStr && success == true)
+			{
+				// Find the first splitChar
+				temp_ptr = strchr(currStr, splitChar);
+				
+				if (!temp_ptr)
+				{
+					// This is the last string to parse
+					if (*currStr)
+					{
+						(*tempArr_ptr) = copy_a_string(currStr);
+						
+						if (!(*tempArr_ptr))
+						{
+							HARKLE_ERROR(Fileroad, split_lines, copy_a_string failed);
+							success = false;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+				else
+				{
+					currNul = temp_ptr;  // Save the address
+					*currNul = '\0';  // Truncate currStr
+					temp_ptr = currStr;  // Reset temp_ptr to start of string
+					(*tempArr_ptr) = copy_a_string(temp_ptr);
+					
+					if (!(*tempArr_ptr))
+					{
+						HARKLE_ERROR(Fileroad, split_lines, copy_a_string failed);
+						success = false;
+					}
+					else
+					{
+						tempArr_ptr++;  // Next char* index in retVal
+						currStr = currNul + 1;  // Start of the next string
+						temp_ptr = NULL;  // Empty temp_ptr
+					}
+				}
+			}
+		}
 	}	
-	
-	// 3.a. Size the substring
-	if (success == true)
-	{
-		
-	}
-	
-	// 3.b. Allocate a new char* into retVal
-	if (success == true)
-	{
-		
-	}
-	
-	// 3.c. Read the haystack substring into the new char*
-	if (success == true)
-	{
-		
-	}
-	
-	
+
 	// CLEAN UP
 	// hsCopy
 	if (hsCopy)
