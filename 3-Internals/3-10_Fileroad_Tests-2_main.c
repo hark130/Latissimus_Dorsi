@@ -19,8 +19,20 @@ typedef struct opjTestStruct
 	char* expectRet;		// Expected return value
 } testStruct, *testStruct_ptr;
 
+typedef struct slTestStruct
+{
+	char* testName;			// Name and number of test
+	char* inputHS;			// Input haystack
+	char inputSC;			// Input splitChar
+	char** actualRet;		// Actual return value
+	char** expectRet;		// Expected return value
+} slTest, *slTest_ptr;
+
 int main(void)
 {
+	/***************************************************************************************************/
+	/************************************ OS_PATH_JOIN() UNIT TESTS ************************************/
+	/***************************************************************************************************/
 	// LOCAL VARIABLES
 	testStruct_ptr test = NULL;  // Current test being run
 	testStruct_ptr* currTestArr_ptr = NULL;  // Current test array
@@ -140,7 +152,7 @@ int main(void)
 				{
 					if (false == release_a_string(&(test->actualRet)))
 					{
-						HARKLE_ERROR(Fileroad Tests, main, release_a_string failed);
+						HARKLE_ERROR(Fileroad Tests (os_path_join), main, release_a_string failed);
 					}
 				}
 			}
@@ -156,6 +168,151 @@ int main(void)
 	fprintf(stdout, "Tests Run:   \t%d\n", numTestsRun);
 	fprintf(stdout, "Tests Passed:\t%d\n", numTestsPassed);
 	fprintf(stdout, "\n\n");
+	
+	/*
+	typedef struct slTestStruct
+	{
+		char* testName;			// Name and number of test
+		char* inputHS;			// Input haystack
+		char inputSC;			// Input splitChar
+		char** actualRet;		// Actual return value
+		char** expectRet;		// Expected return value
+	} slTest, *slTest_ptr;
+	 */
+	/***************************************************************************************************/
+	/************************************ SPLIT_LINES() UNIT TESTS *************************************/
+	/***************************************************************************************************/
+	// LOCAL VARIABLES
+	slTest_ptr** allSLTests = NULL;  // All of the split_line() test arrays in one array
+	slTest_ptr* currSLTestArr_ptr = NULL;  // Current split_line() test array
+	slTest_ptr slTest = NULL;  // Current split_line() test being run
+	int i = 0;  // Incrementing variable for pointer math
+	int numSLTestsRun = 0;
+	int numSLTestsPassed = 0;
+	bool thisTestPassed = true;  // If one strcmp fails, set this to false
+	char* actChar_ptr = NULL;  // Store one char* from the actualRet array here
+	char* expChar_ptr = NULL;  // Store one char* from the expectRet array here
+	
+	// Normal Tests
+	slTest normTest01 = { "SL Normal Test 1", "One*Two*Three", '*', NULL, { "One", "Two", "Three", NULL }};
+	
+	// Error Tests
+	// Boundary Tests
+	// Special Tests
+	// Test Arrays
+	slTest_ptr normSLTest_arr[] = { &normTest01, NULL };
+	slTest_ptr* slTestArrays_arr[] = { normSLTest_arr, NULL };
+	
+	// RUN TESTS
+	allSLTests = slTestArrays_arr;
+	
+	while (*allSLTests)
+	{
+		currSLTestArr_ptr = *allSLTests;
+		i = 0;
+		
+		while (*currSLTestArr_ptr)
+		{
+			slTest = *currSLTestArr_ptr;
+			thisCharPassed = true;  // Reset temp variable
+			
+			if (slTest)
+			{
+				// EXECUTE SPLIT_LINE() TESTS
+				fprintf(stdout, "%s\n\t", slTest->testName);
+				slTest->actualRet = split_lines(slTest->inputHS, slTest->inputSC);
+				numSLTestsRun++;
+
+				if (slTest->actualRet && slTest->expectRet)
+				{
+					if (*(slTest->actualRet) != NULL && (*(slTest->expectRet) != NULL)
+					{
+						// Walk the char*s in the array, strcmp()ing all the way
+						actChar_ptr = (*(slTest->actualRet));
+						expChar_ptr = (*(slTest->expectRet));
+						
+						while (actChar_ptr && expChar_ptr)
+						{
+							if (0 == strcmp(*actChar_ptr, *expChar_ptr))
+							{
+								actChar_ptr++;
+								expChar_ptr++;
+							}
+							else
+							{
+								thisTestPassed = false;
+								fprintf(stdout, "[ ] FAIL\n\t\t");
+								fprintf(stdout, "Expect: \t%s\n\t\t", *actChar_ptr);
+								fprintf(stdout, "Receive:\t%s\n\t\t", *expChar_ptr);
+								break;
+							}
+						}
+					}
+					else  // At least one is NULL
+					{
+						if (*(slTest->actualRet) == *(slTest->expectRet))
+						{
+							fprintf(stdout, "[X] Success\n");
+							numSLTestsPassed++;
+						}
+						else
+						{
+							thisTestPassed = false;	
+						}
+					}					
+					
+					// Check for pass or fail
+					if (thisTestPassed == true)
+					{
+						fprintf(stdout, "[X] Success\n");
+						numTestsPassed++;
+					}
+					else
+					{		
+						fprintf(stdout, "[ ] FAIL\n\t\t");
+						if ((*((slTest->expectRet) + i)))
+						{
+							fprintf(stdout, "Expect: \t%s\n\t\t", (*((slTest->expectRet) + i)));
+						}
+						else
+						{
+							fprintf(stdout, "Expect: \t%p\n\t\t", (*((slTest->expectRet) + i)));
+						}
+						if ((*((slTest->actualRet) + i)))
+						{
+							fprintf(stdout, "Receive:\t%s\n\t\t", (*((slTest->actualRet) + i)));
+						}
+						else
+						{
+							fprintf(stdout, "Receive:\t%p\n\t\t", (*((slTest->actualRet) + i)));
+						}
+					}
+				}
+				else if (slTest->actualRet != slTest->expectRet)
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expect:\t%p\n\t\t", slTest->actualRet);
+					fprintf(stdout, "Actual:\t%p\n\t\t\n", slTest->expectRet);
+				}
+
+
+				// CLEAN UP THIS TEST
+				if (slTest->actualRet)
+				{
+					if (false == free_char_arr(&(slTest->actualRet)))
+					{
+						HARKLE_ERROR(Fileroad Tests (split_line), main, release_a_string failed);
+					}
+				}
+			}
+			
+			currSLTestArr_ptr++;  // Next test pointer
+		}
+		
+		allSLTests++;  // Next pointer to an array of tests
+	}
+	
+	// CLEAN UP
 
 	// DONE
 	return 0;
