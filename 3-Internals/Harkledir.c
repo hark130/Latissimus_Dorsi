@@ -251,35 +251,35 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 						retVal = false;
 						break;
 					case EBADF:			// fd is bad
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EBADF);
 						retVal = false;
 						break;
 					case EFAULT:		// Bad address
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EFAULT);
 						retVal = false;
 						break;
 					case ELOOP:			// Too many symbolic links encountered while traversing the path
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ELOOP);
 						retVal = false;
 						break;
 					case ENAMETOOLONG:	// path is too long
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENAMETOOLONG);
 						retVal = false;
 						break;
 					case ENOENT:		// A component of path does not exist, or path is an empty string
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOENT);
 						retVal = false;
 						break;
 					case ENOMEM:		// Out of memory (i.e., kernel memory)
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOMEM);
 						retVal = false;
 						break;
 					case ENOTDIR:		// A component of the path prefix of path is not a directory
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOTDIR);
 						retVal = false;
 						break;
 					case EOVERFLOW:		// path or fd refers to a file whose size, inode number, or number of blocks cannot be represented in, respectively, the types off_t, ino_t, or blkcnt_t
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EOVERFLOW);
 						retVal = false;
 						break;
 					default:
@@ -293,6 +293,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 				// Some symlinks (e.g., /proc, /sys) report 'st_size' as zero.
 				// PATH_MAX should be a "good enough" estimate
 				symLinkLength = PATH_MAX;
+				// fprintf(stdout, "We're guessing a symLinkLength here!\n");  // DEBUGGING
 			}
 			
 			if (retVal == true)
@@ -389,7 +390,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 					}
 					else if (numBytesRead == symLinkLength)
 					{
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
+						// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
 					}
 				}				
 			}			
@@ -944,6 +945,7 @@ char** parse_dirDetails_to_char_arr(dirDetails_ptr dirStruct_ptr, unsigned int t
 		}
 
 		// 2. Allocate the temp array
+		// fprintf(stdout, "About to allocate a buffer of %d bytes\n", totalEntries);  // DEBUGGING
 		tempRetVal = get_me_a_buffer_array((size_t)totalEntries, true);
 
 		if (!tempRetVal)
