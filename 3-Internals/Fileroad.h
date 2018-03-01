@@ -69,6 +69,20 @@ char* buff_a_num(void);
 char** split_lines(char* haystack, char splitChar);
 
 
+/*
+	Purpose: Find a needle_ptr in a haystack_arr
+	Input
+		haystack_arr - A NULL-terminated array of char*s
+		needle_ptr - A nul-terminated char*
+	Output
+		haystack_arr index if found
+		-1 otherwise
+	Notes:
+		This function utilizes strcmp()
+ */
+int search_char_arr(char** haystack_arr, char* needle_ptr);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// INPUT FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

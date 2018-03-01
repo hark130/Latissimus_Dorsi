@@ -176,6 +176,8 @@ char** split_lines(char* haystack, char splitChar)
 	size_t hsLen = 0;  // Length of the original haystack
 	char* currNul = NULL;  // Memory address of the current artificial nul terminator in hsCopy
 	
+	puts("!!!!!!!!!!!! THIS FUNCTION HAS NOT YET BEEN FULLY IMPLEMENTED !!!!!!!!!!!!");
+
 	// INPUT VALIDATION
 	if (!haystack)
 	{
@@ -327,6 +329,55 @@ char** split_lines(char* haystack, char splitChar)
 		}
 	}
 	
+	// DONE
+	return retVal;
+}
+
+
+int search_char_arr(char** haystack_arr, char* needle_ptr)
+{
+	// LOCAL VARIABLES
+	int retVal = -1;  // Default status
+	int i = 0;  // Used for pointer arithmetic
+	char** temp_arr = NULL;  // Temp variable to iterate through haystack_arr
+
+	// INPUT VALIDATION
+	if (!haystack_arr)
+	{
+		HARKLE_ERROR(Fileroad, search_char_arr, NULL search_char_arr pointer);
+	}
+	else if (!(*haystack_arr))
+	{
+		// I changed my mind.  I decided that an emtpy array was valid input.
+		//	Obviously, needle_ptr isn't in there anywhere.  It saves the
+		// 	caller from having to validate the state of their own array
+		//	before calling this function.  You're welcome.
+		// HARKLE_ERROR(Fileroad, search_char_arr, Empty array);
+	}
+	else if (!needle_ptr)
+	{
+		HARKLE_ERROR(Fileroad, search_char_arr, NULL needle_ptr pointer);
+	}
+	else if (!(*needle_ptr))
+	{
+		HARKLE_ERROR(Fileroad, search_char_arr, Empty string);
+	}
+
+	// GO LOOKING
+	while ((*(haystack_arr + i)) != NULL)
+	{
+		if (0 == strcmp((*(haystack_arr + i)), needle_ptr))
+		{
+			retVal = i;
+			break;  // FOUND IT!
+		}
+		else
+		{
+			// Next haystack string
+			i++;
+		}
+	}
+
 	// DONE
 	return retVal;
 }
