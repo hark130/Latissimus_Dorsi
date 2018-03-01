@@ -77,6 +77,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 **BUGS:**
 * [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
 * [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
+* [ ] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)
 
 
 ### 3-10-3
