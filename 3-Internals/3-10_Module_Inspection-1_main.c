@@ -43,31 +43,33 @@
  	dirDetails_ptr test2 = NULL;
  	dirDetails_ptr test3 = NULL;
  	dirDetails_ptr test4 = NULL;
+ 	dirDetails_ptr test5 = NULL;
  	char** name_arr = NULL;  // Incrementing variable for the arrays
+ 	hdEnt_ptr* hdEnt_arr = NULL;  // Array of hdEnt_ptrs
  	char** temp_arr = NULL;  // Another incrementing variable for the arrays
  	int fileNum = 0;  // Numbers the file names found in the array
 	int dirNum = 0;  // Numbers the directory names found in the array
 	int num = 0;  // Generic counting variable
 
-	puts("main() is now walking /proc!");
+	// puts("main() is now walking /proc!");
 
-	name_arr = parse_proc_PIDs();
+	// name_arr = parse_proc_PIDs();
 
-	if (name_arr)
-	{
-		temp_arr = name_arr;
+	// if (name_arr)
+	// {
+	// 	temp_arr = name_arr;
 
-		puts("Directories in /proc:");
+	// 	puts("Directories in /proc:");
 
-		while (*temp_arr)
-		{
-			num++;
-			fprintf(stdout, "%d:\t%s\n", num, *temp_arr);
-			temp_arr++;
-		}
+	// 	while (*temp_arr)
+	// 	{
+	// 		num++;
+	// 		fprintf(stdout, "%d:\t%s\n", num, *temp_arr);
+	// 		temp_arr++;
+	// 	}
 
-		free_char_arr(&name_arr);
-	}
+	// 	free_char_arr(&name_arr);
+	// }
 
 	// // TEST 1 - NULL
 	// test1 = open_dir(NULL);
@@ -170,6 +172,64 @@
 	// 	fprintf(stderr, "Test 4: ERROR... struct pointer is NULL!");
 	// }
 	// free_dirDetails_ptr(&test4);
+
+	// TEST 5 - Test symbolic links OUTSIDE of /proc
+	test5 = open_dir("/home/joe/Documents/");
+	if (test5)
+	{
+		// CURRENT WORKING DIRECTORY
+		fprintf(stdout, "NAME:\t%s\n", test5->dirName);\
+		// FILES
+		fprintf(stdout, "FILES:\t%d\n", test5->numFiles);
+		hdEnt_arr = test5->fileName_arr;
+		if (hdEnt_arr)
+		{
+			while (*hdEnt_arr)
+			{
+				fileNum++;
+				fprintf(stdout, "%d:\t%s\n", fileNum, (*hdEnt_arr)->hd_Name);
+				if ((*hdEnt_arr)->hd_type == DT_LNK)
+				{
+					fprintf(stdout, "\t\tThis is a symbolic link to:\t");
+
+					if ((*hdEnt_arr)->hd_symName)
+					{
+						fprintf(stdout, "%s\n", (*hdEnt_arr)->hd_symName);
+					}
+					else
+					{
+						fprintf(stdout, "NULL\n");
+					}
+				}
+				hdEnt_arr++;
+			}
+		}
+		else
+		{
+			fprintf(stdout, "No files found!");
+		}
+		// DIRECTORIES
+		fprintf(stdout, "DIRECTORIES:\t%d\n", test5->numDirs);
+		hdEnt_arr = test5->dirName_arr;
+		if (hdEnt_arr)
+		{
+			while (*hdEnt_arr)
+			{
+				dirNum++;
+				fprintf(stdout, "%d:\t%s\n", dirNum, (*hdEnt_arr)->hd_Name);
+				hdEnt_arr++;
+			}
+		}
+		else
+		{
+			fprintf(stdout, "No directories found!");	
+		}
+	}
+	else
+	{
+		fprintf(stderr, "Test 4: ERROR... struct pointer is NULL!");
+	}
+	free_dirDetails_ptr(&test5);
 
 	return 0;
  }
