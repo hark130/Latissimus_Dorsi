@@ -22,14 +22,9 @@
 	pidDetails_ptr* temp_arr = procPIDStructs;
 	pidDetails_ptr tempStruct_ptr = NULL;  // Single struct from the array
 	dirDetails_ptr userPIDMapFiles = NULL;  // Return value from open_dir()
-	// hdEnt_ptr* hdEnt_arr = NULL;  // Used to print the files that were found
-	// hdEnt_ptr hdEntStruct_ptr = NULL;  // Used to print the struct details from hdEnt_arr
 	int pidNum = 0;  // Tracks PID count
-	// char* userPID = NULL;  // Will hold char* holding user's choice of PID
 	char* userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
 	char* userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice
-	// char* userProcPIDMaps = NULL;  // Will hold char* with user's /proc/<PID>/maps choice
-	// char* pidMapsContents = NULL;  // Contents of user's /proc/<PID>/maps
 	char** uniqueSymNames = NULL;  // Return value from parse_dirDetails_to_char_arr()
 	char** tempChar_arr = NULL;  // Iterating variable for uniqueSymNames
 
@@ -71,9 +66,6 @@
 			success = false;  // Set to true when PID match is found
 			while (*temp_arr && success == false)
 			{
-				// fprintf(stdout, "userProcPID: %s\n", userProcPID);  // DEBUGGING
-				// fprintf(stdout, "pdName:      %s\n", (*temp_arr)->pidName);  // DEBUGGING
-				// fprintf(stdout, "strcmp(%s, %s) == %d\n\n", (*temp_arr)->pidName, userProcPID, strcmp((*temp_arr)->pidName, userProcPID));  // DEBUGGING
 				if (0 == strcmp((*temp_arr)->pidName, userProcPID) && (*temp_arr)->stillExists == true)
 				{
 					success = true;
@@ -98,7 +90,6 @@
 
 		if (userProcPIDMapFiles)
 		{
-			// fprintf(stdout, "\nProcessing directory %s\n\n", userProcPIDMapFiles);  // DEBUGGING
 			userPIDMapFiles = open_dir(userProcPIDMapFiles);
 
 			if (!userPIDMapFiles)
@@ -117,31 +108,6 @@
 	// Print directory contents of /proc/<PID>/map_files/
 	if (success == true && userPIDMapFiles)
 	{
-		// fprintf(stdout, "\nLibraries loaded by %s:\n\n", userProcPID);
-		// hdEnt_arr = userPIDMapFiles->fileName_arr;
-
-		// if (hdEnt_arr)
-		// {
-		//	while (*hdEnt_arr)
-		//	{
-		//		hdEntStruct_ptr = *hdEnt_arr;
-
-		//		if (hdEntStruct_ptr)
-		//		{
-		//			if (hdEntStruct_ptr->hd_type == DT_LNK)  // Symbolic link d_type
-		//			{
-		//				if (hdEntStruct_ptr->hd_symName)  // Resolved symbolic link name
-		//				{
-		//					fprintf(stdout, "\t%s\n", hdEntStruct_ptr->hd_symName);
-		//				}
-		//			}
-		//		}
-
-		//		// Next struct
-		//		hdEnt_arr++;
-		//	}
-		// }
-
 		uniqueSymNames = parse_dirDetails_to_char_arr(userPIDMapFiles, HDIR_DT_LNK, true, true);
 
 		if (!uniqueSymNames)
@@ -159,7 +125,7 @@
 	// Print the unique entries
 	if (success == true && uniqueSymNames)
 	{
-		fprintf(stdout, "\nLibraries loaded by %s:\n\n", userProcPID);
+		fprintf(stdout, "\nFiles loaded by %s:\n\n", userProcPID);
 
 		tempChar_arr = uniqueSymNames;
 
@@ -182,16 +148,7 @@
 	}
 	temp_arr = NULL;
 
-	// // 2. userPID
-	// if (userPID)
-	// {
-	//	if (false == release_a_string(&userPID))
-	//	{
-	//		fprintf(stderr, "<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n");
-	//	}
-	// }
-
-	// 3. userProcPID
+	// 2. userProcPID
 	if (userProcPID)
 	{
 		if (false == release_a_string(&userProcPID))
@@ -200,7 +157,7 @@
 		}
 	}
 
-	// 4. userProcPIDMapFiles
+	// 3. userProcPIDMapFiles
 	if (userProcPIDMapFiles)
 	{
 		if (false == release_a_string(&userProcPIDMapFiles))
@@ -209,7 +166,7 @@
 		}			
 	}
 
-	// 5. userPIDMapFiles
+	// 4. userPIDMapFiles
 	if (userPIDMapFiles)
 	{
 		if (false == free_dirDetails_ptr(&userPIDMapFiles))
@@ -218,25 +175,7 @@
 		}
 	}
 
-	// // 6. userProcPIDMaps
-	// if (userProcPIDMaps)
-	// {
-	//	if (false == release_a_string(&userProcPIDMaps))
-	//	{
-	//		fprintf(stderr, "<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n");
-	//	}
-	// }
-
-	// // 7. pidMapsContents
-	// if (pidMapsContents)
-	// {
-	//	if (false == release_a_string(&pidMapsContents))
-	//	{
-	//		fprintf(stderr, "<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n");
-	//	}
-	// }
-
-	// uniqueSymNames
+	// 5. uniqueSymNames
 	if (uniqueSymNames)
 	{
 		if (false == free_char_arr(&uniqueSymNames))
