@@ -78,7 +78,13 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
 * [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
 * [ ] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)
+* [ ] mount shows me that proc has the following options: (rw,nosuid,nodev,noexec,relatime).  Is this why sudo dies on occassion.  Does my binary actually need to run as root?
+	* [ ] chmod 4770 print_PID_libraries.exe; chown root:joe print_PID_libraries.exe;  (How bad is this?  Pretty bad, right?)
+	* [ ] mount -n -o remount,suid proc as /proc?  (Would this destroy the world?)
+	* [ ] Run print_PID_libraries.exe as root (su -, terminal, etc)
+* [ ] Crashes on too many entries.  (see: segFault01.txt)  Cut out the middle man?  Skip the structs and go straight for the symbolic link name?  Can I just point at existing names returned by lstat into the struct stat (e.g., d_name)?
 
+NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being silenced.
 
 ### 3-10-3
 
