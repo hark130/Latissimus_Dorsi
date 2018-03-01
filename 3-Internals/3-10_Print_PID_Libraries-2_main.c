@@ -108,17 +108,20 @@
 	// Print directory contents of /proc/<PID>/map_files/
 	if (success == true && userPIDMapFiles)
 	{
-		uniqueSymNames = parse_dirDetails_to_char_arr(userPIDMapFiles, HDIR_DT_LNK, true, true);
+		if (userPIDMapFiles->numFiles > 0)
+		{
+			uniqueSymNames = parse_dirDetails_to_char_arr(userPIDMapFiles, HDIR_DT_LNK, true, true);
 
-		if (!uniqueSymNames)
-		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with a NULL pointer!\n");
-			success = false;
-		}
-		else if (!(*uniqueSymNames))
-		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with an empty array!\n");
-			success = false;
+			if (!uniqueSymNames)
+			{
+				fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with a NULL pointer!\n");
+				success = false;
+			}
+			else if (!(*uniqueSymNames))
+			{
+				fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with an empty array!\n");
+				success = false;
+			}
 		}
 	}
 
@@ -135,6 +138,10 @@
 			tempChar_arr++;
 		}
 		fprintf(stdout, "\n\n");
+	}
+	else if (success == true)
+	{
+		fprintf(stdout, "\n%s does not have any files loaded.\n\n", userProcPID);
 	}
 
 	// CLEAN UP
