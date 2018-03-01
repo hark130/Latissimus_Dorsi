@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "Fileroad.h"	// size_a_file
 #include "Harkledir.h"
+#include <inttypes.h>	// intmax_t
 #include <limits.h>		// UCHAR_MAX
 #include "Memoroad.h"	// release_a_string
 #include <stdbool.h>	// bool, true, false
@@ -222,6 +223,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			// absPath_ptr = os_path_join()
 			// symLinkLength = size_a_file(updateThis_ptr->hd_Name);
 			symLinkLength = size_a_file(updateThis_ptr->hd_AbsName, &errNum);
+			// fprintf(stdout, "File %s is a symlink of length %jd\n", updateThis_ptr->hd_AbsName, (intmax_t)symLinkLength);  // DEBUGGING
 			
 			if (symLinkLength == -1)
 			{
@@ -229,7 +231,8 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 				{
 					case 0:
 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with -1 but no errno);
-						retVal = false;
+						symLinkLength = PATH_MAX;
+						// retVal = false;
 						break;
 					case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
@@ -296,7 +299,8 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 				else
 				{
 					// Read into that buffer
-					numBytesRead = readlink(updateThis_ptr->hd_Name, updateThis_ptr->hd_symName, symLinkLength);
+					numBytesRead = readlink(updateThis_ptr->hd_AbsName, updateThis_ptr->hd_symName, symLinkLength);
+					// fprintf(stdout, "readlink(%s, hd_symName, %jd) returned %zd.\n", updateThis_ptr->hd_Name, (intmax_t)symLinkLength, numBytesRead);  // DEBUGGING
 
 					// Validate the read
 					if (numBytesRead == -1)
