@@ -146,4 +146,28 @@ char** parse_dirDetails_to_char_arr(dirDetails_ptr dirStruct_ptr, unsigned int t
 ////////////////////// DIRECTORYDETAILS FUNCTIONS STOP ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS START //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	Purpose - Resolve symbolic links into heap-allocated, minimally-sized, char arrays
+	Input
+		absSymPathName - An absolute path to the filename of a symbolic link
+		errNum - A pointer to an integer variable to store errno on errors
+	Output
+		On success, a heap-allocated, nul-terminated char array holding the resolved symlink
+		On failure, returns NULL, errNum will be populated with the errno value
+	Notes:
+		Essentially, this is a wrapper around readlink
+		It is the caller's responsibility to free the returned pointer
+ */
+char* resolve_symlink(char* absSymPathName, int* errNum);
+
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS STOP ///////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 #endif  // __HARKLEDIR__
