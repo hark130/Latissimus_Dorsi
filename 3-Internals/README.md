@@ -79,7 +79,16 @@ Developers will have an in-depth working knowledge of Linux Internals
 **BUGS:**
 * [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
 * [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
-* [ ] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)  Read the last comment [here](https://stackoverflow.com/questions/5525668/how-to-implement-readlink-to-find-the-path)
+* [ ] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  
+	* (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)  
+	* Read the last comment [here](https://stackoverflow.com/questions/5525668/how-to-implement-readlink-to-find-the-path)
+	* Write a wrapper around readlink that:
+		* Has a static buffer
+		* Reads the symlink into that buffer
+		* strlens() the static buffer
+		* allocates a properly sized dynamic buffer
+		* copies from static to dynamic
+		* returns the pointer to the dynamic buffer
 * [ ] mount shows me that proc has the following options: (rw,nosuid,nodev,noexec,relatime).  Is this why sudo dies on occassion.  Does my binary actually need to run as root?
 	* [ ] chmod 4770 print_PID_libraries.exe; chown root:joe print_PID_libraries.exe;  (How bad is this?  Pretty bad, right?)
 	* [ ] mount -n -o remount,suid proc as /proc?  (Would this destroy the world?)
