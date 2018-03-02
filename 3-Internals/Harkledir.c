@@ -22,6 +22,11 @@
 #define HDIR_ARRAY_LEN 10
 #endif  // HDIR_ARRAY_LEN
 
+#ifndef HDIR_BIG_BUFF_SIZE
+// MACRO to standardize large buffer allocation
+#define HDIR_BIG_BUFF_SIZE 4096
+#endif  // HDIR_BIG_BUFF_SIZE
+
 #ifndef HDIR_MEMSET_DEFAULT
 #define HDIR_MEMSET_DEFAULT 0x0
 #endif  // MEMSET_DEFAULT
@@ -1500,6 +1505,106 @@ bool keep_hdEntry(unsigned char hdEntryType, unsigned int typeFlags)
 	
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////// LOCAL FUNCTION DEFINITIONS STOP ///////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS START //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+char* resolve_symlink(char* absSymPathName, int* errNum)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char buff[HDIR_BIG_BUFF_SIZE + 1] = { 0 };
+	int buffStrLen = 0;  // Length of the string read into buff
+	ssize_t numBytesRead = 0;  // Return value from readlink()
+	bool success = true;  // Make this false if anything fails
+	
+	// INPUT VALIDATION
+	if (!absSymPathName)
+	{
+		HARKLE_ERROR(Harkledir, resolve_symlink, absSymPathName NULL pointer);
+		success = false;
+	}
+	else if (!(*absSymPathName))
+	{
+		HARKLE_ERROR(Harkledir, resolve_symlink, absSymPathName empty string);
+		success = false;
+	}
+	else if (!errNum)
+	{
+		HARKLE_ERROR(Harkledir, resolve_symlink, errNum NULL pointer);
+		success = false;
+	}
+	else
+	{
+		*errNum = 0;	
+	}
+	
+	// RESOLVE SYMLINK
+	// 0. Verify it's a symlink?
+	if (success == true)
+	{	
+		// Implement later?
+	}
+	
+	// 1. readlink()
+	if (success == true)
+	{	
+		numBytesRead = readlink(absSymPathName, buff, HDIR_BIG_BUFF_SIZE);
+		
+		if (numBytesRead == -1)
+		{
+			*errNum = errno;
+			HARKLE_ERROR(Harkledir, resolve_symlink, readlink failed);
+			success = false;
+		}
+	}
+	
+	// 2. Size buff[]
+	if (success == true)
+	{	
+		buffStrLen = strlen(buff);
+		
+		if (numBytesRead != buffStrLen)
+		{
+			HARKLE_ERROR(Harkledir, resolve_symlink, readlink and strlen mismatch);
+			success = false;	
+		}
+	}
+	
+	// 3. Allocate and copy
+	if (success == true)
+	{	
+		retVal = copy_a_string(buff);
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Harkledir, resolve_symlink, copy_a_string failed);
+			success = false;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{	
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Harkledir, resolve_symlink, release_a_string failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS STOP ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 
