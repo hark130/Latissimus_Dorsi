@@ -1395,6 +1395,7 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 				// realloc_ptr = realloc_ptr + ((*arraySize_ptr) / sizeof(hdEnt_ptr));  // Advance past old array
 				realloc_ptr = realloc_ptr + *arraySize_ptr;  // Advance past old array
 				fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
+				///////////////////////////////////// SEG FAULT /////////////////////////////////////
 				temp_ptr = memset(realloc_ptr, HDIR_MEMSET_DEFAULT, (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
 				if (temp_ptr != realloc_ptr)
 				{
