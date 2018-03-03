@@ -392,11 +392,13 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 			// 1. char* pidName;		  // Absolute path of PID
 			if (tmpStruct_ptr->pidName)
 			{
+				// fprintf(stdout, "BEFORE release_a_string(&pidName), (*currStruct_arr)->pidName == %p\n", tmpStruct_ptr->pidName);  // DEBUGGING
 				if (false == release_a_string(&(tmpStruct_ptr->pidName)))
 				{
 					HARKLE_ERROR(Harkleproc, free_PID_struct, release_a_string failed);
 					retVal = false;
 				}
+				// fprintf(stdout, "AFTER  release_a_string(&pidName), (*currStruct_arr)->pidName == %p\n", tmpStruct_ptr->pidName);  // DEBUGGING
 				// temp_ptr = tmpStruct_ptr->pidName;
 
 				// if (*temp_ptr)
@@ -462,8 +464,11 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 			// 3. bool stillExists;	   // False if PID ever disappears
 			// Just in case someone would think about accessing this
 			tmpStruct_ptr->stillExists = false;
+
+			// 4. Free pidDetailsStruct_ptr
+			free(*pidDetailsStruct_ptr);
 			
-			// 4. NULL pidDetailsStruct_ptr
+			// 5. NULL pidDetailsStruct_ptr
 			*pidDetailsStruct_ptr = NULL;
 		}
 		else
@@ -498,7 +503,7 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
-	bool freeReturn = true;
+	bool freeReturn = true;  // Indicates success or failure of free_PID_struct()
 	// pidDetails_ptr currStruct_ptr = NULL;  // Will hold each struct pointer in the array
 	pidDetails_ptr* currStruct_arr = NULL;  // Will hold the pointer to the array
 
@@ -510,28 +515,34 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 			currStruct_arr = *pidDetails_arr;
 
 			// 1. Free each struct pointer
-			while (*currStruct_arr)
+			while (*currStruct_arr && freeReturn == true)
 			{
 				// currStruct_ptr = *currStruct_arr;
 
 				// fprintf(stdout, "BEFORE currStruct_arr:\t%p\n", currStruct_arr);  // DEBUGGING
 				// fprintf(stdout, "BEFORE *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+				// fprintf(stdout, "BEFORE free_PID_struct(currStruct_arr), (*currStruct_arr)->pidName == %p\n", (*currStruct_arr)->pidName);  // DEBUGGING
 				freeReturn = free_PID_struct(currStruct_arr);
 				// fprintf(stdout, "AFTER currStruct_arr:\t%p\n", currStruct_arr);  // DEBUGGING
 				// fprintf(stdout, "AFTER *currStruct_arr:\t%p\n", *currStruct_arr);  // DEBUGGING
+
 
 				if (freeReturn == false)
 				{
 					fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - free_PID_struct failed!\n");
 					retVal = false;
 				}
-
-				// Next struct pointer
-				currStruct_arr++;
+				else
+				{
+					// Next struct pointer
+					currStruct_arr++;
+				}
 			}
 
+			// fprintf(stdout, "BEFORE free()\tpidDetails_arr == %p\t*pidDetails_arr == %p\n", pidDetails_arr, *pidDetails_arr);  // DEBUGGING
 			// 2. Free the struct array
 			free(*pidDetails_arr);
+			// fprintf(stdout, "AFTER  free()\tpidDetails_arr == %p\t*pidDetails_arr == %p\n", pidDetails_arr, *pidDetails_arr);  // DEBUGGING
 
 			// 3. NULL the struct array
 			*pidDetails_arr = NULL;
