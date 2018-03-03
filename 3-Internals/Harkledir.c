@@ -166,7 +166,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, copy_a_string failed);
 			retVal = false;
 		}
-		fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_Name, updateThis_ptr->hd_Name);  // DEBUGGING
+		// fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_Name, updateThis_ptr->hd_Name);  // DEBUGGING
 	}
 
 	//char* hd_AbsName;			// Absolute filename of hd_Name
@@ -182,7 +182,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			isThisAFile = true;
 		}
 		// Build absolute filename
-		fprintf(stdout, "populate_hdEnt_struct() calls os_path_join(%s, %s, bool)\n", absPath, updateThis_ptr->hd_Name);  // DEBUGGING
+		// fprintf(stdout, "populate_hdEnt_struct() calls os_path_join(%s, %s, bool)\n", absPath, updateThis_ptr->hd_Name);  // DEBUGGING
 		updateThis_ptr->hd_AbsName = os_path_join(absPath, updateThis_ptr->hd_Name, isThisAFile);
 
 		if (!(updateThis_ptr->hd_AbsName))
@@ -190,7 +190,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, os_path_join failed);
 			retVal = false;
 		}
-		fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName);  // DEBUGGING
+		// fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName);  // DEBUGGING
 	}
 
 	// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
@@ -238,9 +238,9 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
-			fprintf(stdout, "Calling resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
+			// fprintf(stdout, "Calling resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
 			updateThis_ptr->hd_symName = resolve_symlink(updateThis_ptr->hd_AbsName, &errNum);
-			fprintf(stdout, "Called  resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
+			// fprintf(stdout, "Called  resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
 
 			if (!(updateThis_ptr->hd_symName))
 			{
@@ -1286,12 +1286,12 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 
 	if (absPath_ptr)
 	{
-		fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
+		// fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
 		if (false == release_a_string(&absPath_ptr))
 		{
 			HARKLE_ERROR(Harkledir, populate_dirDetails, release_a_string failed);
 		}		
-		fprintf(stdout, "Called  release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
+		// fprintf(stdout, "Called  release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
 	}
 
 	// DONE
@@ -1383,17 +1383,9 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (*arraySize_ptr < necessarySize)
 		{
 			// 2.1. Not enough
-			// fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
-			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
-			// /* DEBUGGING */
-			// debug_ptr = abstractArr_ptr;
-			// puts("BEFORE:");
-			// while (*debug_ptr != NULL)
-			// {
-			// 	fprintf(stdout, "%p, ", *debug_ptr);
-			// 	debug_ptr++;
-			// }
-			// putchar(0xA);
+			fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
+			// realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
+			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt*)));
 
 			if (realloc_ptr)
 			{
@@ -1401,8 +1393,9 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 				*arraySize_ptr += (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr));
 				realloc_ptr = NULL;
 				// Set the last index to NULL
-				(*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;
-				// fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
+				// (*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;  // BUG?!?!
+				(*abstractArr_ptr)[(*arraySize_ptr) / sizeof(hdEnt_ptr) - 1] = NULL;
+				fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			}
 			else
 			{
@@ -1431,10 +1424,10 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (newStruct)
 		{
 			// 2. Populate that struct
-			fprintf(stdout, "populate_dirDetails_arrays() calls  populate_hdEnt_struct(%s, %s, %s)\n", "empty struct", fileEntry->d_name, absPath);  // DEBUGGING
+			// fprintf(stdout, "populate_dirDetails_arrays() calls  populate_hdEnt_struct(%s, %s, %s)\n", "empty struct", fileEntry->d_name, absPath);  // DEBUGGING
 			if (true == populate_hdEnt_struct(newStruct, fileEntry, absPath))
 			{
-				fprintf(stdout, "populate_dirDetails_arrays() called populate_hdEnt_struct(%s, %s, %s)\n", newStruct->hd_AbsName, fileEntry->d_name, absPath);  // DEBUGGING
+				// fprintf(stdout, "populate_dirDetails_arrays() called populate_hdEnt_struct(%s, %s, %s)\n", newStruct->hd_AbsName, fileEntry->d_name, absPath);  // DEBUGGING
 				// 3. Store that pointer in the struct array
 				*((*abstractArr_ptr) + (*numEntries_ptr)) = newStruct;
 				newStruct = NULL;
@@ -1544,7 +1537,7 @@ char* resolve_symlink(char* absSymPathName, int* errNum)
 	int buffStrLen = 0;  // Length of the string read into buff
 	ssize_t numBytesRead = 0;  // Return value from readlink()
 	bool success = true;  // Make this false if anything fails
-	puts("HERE");
+	
 	// INPUT VALIDATION
 	if (!absSymPathName)
 	{
