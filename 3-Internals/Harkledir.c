@@ -191,7 +191,6 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		}
 	}
 
-
 	// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
 	if (retVal == true)
 	{
@@ -237,168 +236,176 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
-			// absPath_ptr = os_path_join()
-			// symLinkLength = size_a_file(updateThis_ptr->hd_Name);
-			symLinkLength = size_a_file(updateThis_ptr->hd_AbsName, &errNum);
-			// fprintf(stdout, "File %s is a symlink of length %jd\n", updateThis_ptr->hd_AbsName, (intmax_t)symLinkLength);  // DEBUGGING
-			
-			if (symLinkLength == -1)
-			{
-				switch (errNum)
-				{
-					case 0:
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with -1 but no errno);
-						symLinkLength = PATH_MAX;
-						// retVal = false;
-						break;
-					case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
-						retVal = false;
-						break;
-					case EBADF:			// fd is bad
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EBADF);
-						retVal = false;
-						break;
-					case EFAULT:		// Bad address
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EFAULT);
-						retVal = false;
-						break;
-					case ELOOP:			// Too many symbolic links encountered while traversing the path
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ELOOP);
-						retVal = false;
-						break;
-					case ENAMETOOLONG:	// path is too long
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENAMETOOLONG);
-						retVal = false;
-						break;
-					case ENOENT:		// A component of path does not exist, or path is an empty string
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOENT);
-						retVal = false;
-						break;
-					case ENOMEM:		// Out of memory (i.e., kernel memory)
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOMEM);
-						retVal = false;
-						break;
-					case ENOTDIR:		// A component of the path prefix of path is not a directory
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOTDIR);
-						retVal = false;
-						break;
-					case EOVERFLOW:		// path or fd refers to a file whose size, inode number, or number of blocks cannot be represented in, respectively, the types off_t, ino_t, or blkcnt_t
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EOVERFLOW);
-						retVal = false;
-						break;
-					default:
-						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with unknown ERRNO value);
-						retVal = false;
-						break;
-				}
-			}
-			else if (symLinkLength == 0)
-			{
-				// Some symlinks (e.g., /proc, /sys) report 'st_size' as zero.
-				// PATH_MAX should be a "good enough" estimate
-				symLinkLength = PATH_MAX;
-				// fprintf(stdout, "We're guessing a symLinkLength here!\n");  // DEBUGGING
-			}
-			
-			if (retVal == true)
-			{
-				// Increase the size by one to look for truncation
-				symLinkLength++;
-				
-				// Allocate a buffer
-				updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength);
-				
-				if (!(updateThis_ptr->hd_symName))
-				{
-					HARKLE_ERROR(Harkledir, populate_hdEnt_struct, get_me_a_buffer failed);
-					retVal = false;
-				}
-				else
-				{
-					// Read into that buffer
-					numBytesRead = readlink(updateThis_ptr->hd_AbsName, updateThis_ptr->hd_symName, symLinkLength);
-					// fprintf(stdout, "readlink(%s, hd_symName, %jd) returned %zd.\n", updateThis_ptr->hd_Name, (intmax_t)symLinkLength, numBytesRead);  // DEBUGGING
+			updateThis_ptr->hd_symName = resolve_symlink(updateThis_ptr->hd_Name, &errNum);
 
-					// Validate the read
-					if (numBytesRead == -1)
-					{
-						errNum = errno;
+			if (!(updateThis_ptr->hd_symName))
+			{
+				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, resolve_symlink failed);
+				perror(strerror(errNum));  // DEBUGGING
+				retVal = false;
+			}
+		// 	// absPath_ptr = os_path_join()
+		// 	// symLinkLength = size_a_file(updateThis_ptr->hd_Name);
+		// 	symLinkLength = size_a_file(updateThis_ptr->hd_AbsName, &errNum);
+		// 	// fprintf(stdout, "File %s is a symlink of length %jd\n", updateThis_ptr->hd_AbsName, (intmax_t)symLinkLength);  // DEBUGGING
+			
+		// 	if (symLinkLength == -1)
+		// 	{
+		// 		switch (errNum)
+		// 		{
+		// 			case 0:
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with -1 but no errno);
+		// 				symLinkLength = PATH_MAX;
+		// 				// retVal = false;
+		// 				break;
+		// 			case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
+		// 				retVal = false;
+		// 				break;
+		// 			case EBADF:			// fd is bad
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EBADF);
+		// 				retVal = false;
+		// 				break;
+		// 			case EFAULT:		// Bad address
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EFAULT);
+		// 				retVal = false;
+		// 				break;
+		// 			case ELOOP:			// Too many symbolic links encountered while traversing the path
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ELOOP);
+		// 				retVal = false;
+		// 				break;
+		// 			case ENAMETOOLONG:	// path is too long
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENAMETOOLONG);
+		// 				retVal = false;
+		// 				break;
+		// 			case ENOENT:		// A component of path does not exist, or path is an empty string
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOENT);
+		// 				retVal = false;
+		// 				break;
+		// 			case ENOMEM:		// Out of memory (i.e., kernel memory)
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOMEM);
+		// 				retVal = false;
+		// 				break;
+		// 			case ENOTDIR:		// A component of the path prefix of path is not a directory
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOTDIR);
+		// 				retVal = false;
+		// 				break;
+		// 			case EOVERFLOW:		// path or fd refers to a file whose size, inode number, or number of blocks cannot be represented in, respectively, the types off_t, ino_t, or blkcnt_t
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EOVERFLOW);
+		// 				retVal = false;
+		// 				break;
+		// 			default:
+		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with unknown ERRNO value);
+		// 				retVal = false;
+		// 				break;
+		// 		}
+		// 	}
+		// 	else if (symLinkLength == 0)
+		// 	{
+		// 		// Some symlinks (e.g., /proc, /sys) report 'st_size' as zero.
+		// 		// PATH_MAX should be a "good enough" estimate
+		// 		symLinkLength = PATH_MAX;
+		// 		// fprintf(stdout, "We're guessing a symLinkLength here!\n");  // DEBUGGING
+		// 	}
+			
+		// 	if (retVal == true)
+		// 	{
+		// 		// Increase the size by one to look for truncation
+		// 		symLinkLength++;
+				
+		// 		// Allocate a buffer
+		// 		updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength);
+				
+		// 		if (!(updateThis_ptr->hd_symName))
+		// 		{
+		// 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, get_me_a_buffer failed);
+		// 			retVal = false;
+		// 		}
+		// 		else
+		// 		{
+		// 			// Read into that buffer
+		// 			numBytesRead = readlink(updateThis_ptr->hd_AbsName, updateThis_ptr->hd_symName, symLinkLength);
+		// 			// fprintf(stdout, "readlink(%s, hd_symName, %jd) returned %zd.\n", updateThis_ptr->hd_Name, (intmax_t)symLinkLength, numBytesRead);  // DEBUGGING
 
-						switch (errNum)
-						{
-							case 0:
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with -1 but no errno);
-								retVal = false;
-								break;
-							case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EACCES);
-								// retVal = false;  // Sometimes you can't access /proc
-								if (updateThis_ptr->hd_symName)
-								{
-									if (false == release_a_string(&(updateThis_ptr->hd_symName)))
-									{
-										HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
-										retVal = false;
-									}
-								}
-								break;
-							case EFAULT:		// Bad address
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EFAULT);
-								retVal = false;
-								break;
-							case EINVAL:		// bufsiz is not positive or the named file is not a symbolic link
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EINVAL);
-								retVal = false;
-								break;
-							case EIO:			// An I/O error occurred while reading from the filesystem
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EIO);
-								retVal = false;
-								break;
-							case ELOOP:			// Too many symbolic links encountered while traversing the path
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ELOOP);
-								retVal = false;
-								break;
-							case ENAMETOOLONG:	// path is too long
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENAMETOOLONG);
-								retVal = false;
-								break;
-							case ENOENT:		// A component of path does not exist, or path is an empty string
-								// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOENT);
-								// retVal = false;  // Weird
-								if (updateThis_ptr->hd_symName)
-								{
-									if (false == release_a_string(&(updateThis_ptr->hd_symName)))
-									{
-										HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
-										retVal = false;
-									}
-								}
-								break;
-							case ENOMEM:		// Out of memory (i.e., kernel memory)
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOMEM);
-								retVal = false;
-								break;
-							case ENOTDIR:		// A component of the path prefix of path is not a directory
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOTDIR);
-								retVal = false;
-								break;
-							case EBADF:			// fd is bad
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EBADF);
-								retVal = false;
-								break;
-							default:
-								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with unknown ERRNO value);
-								retVal = false;
-								break;
-						}
-					}
-					else if (numBytesRead == symLinkLength)
-					{
-						// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
-					}
-				}				
-			}			
+		// 			// Validate the read
+		// 			if (numBytesRead == -1)
+		// 			{
+		// 				errNum = errno;
+
+		// 				switch (errNum)
+		// 				{
+		// 					case 0:
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with -1 but no errno);
+		// 						retVal = false;
+		// 						break;
+		// 					case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EACCES);
+		// 						// retVal = false;  // Sometimes you can't access /proc
+		// 						if (updateThis_ptr->hd_symName)
+		// 						{
+		// 							if (false == release_a_string(&(updateThis_ptr->hd_symName)))
+		// 							{
+		// 								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
+		// 								retVal = false;
+		// 							}
+		// 						}
+		// 						break;
+		// 					case EFAULT:		// Bad address
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EFAULT);
+		// 						retVal = false;
+		// 						break;
+		// 					case EINVAL:		// bufsiz is not positive or the named file is not a symbolic link
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EINVAL);
+		// 						retVal = false;
+		// 						break;
+		// 					case EIO:			// An I/O error occurred while reading from the filesystem
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EIO);
+		// 						retVal = false;
+		// 						break;
+		// 					case ELOOP:			// Too many symbolic links encountered while traversing the path
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ELOOP);
+		// 						retVal = false;
+		// 						break;
+		// 					case ENAMETOOLONG:	// path is too long
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENAMETOOLONG);
+		// 						retVal = false;
+		// 						break;
+		// 					case ENOENT:		// A component of path does not exist, or path is an empty string
+		// 						// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOENT);
+		// 						// retVal = false;  // Weird
+		// 						if (updateThis_ptr->hd_symName)
+		// 						{
+		// 							if (false == release_a_string(&(updateThis_ptr->hd_symName)))
+		// 							{
+		// 								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
+		// 								retVal = false;
+		// 							}
+		// 						}
+		// 						break;
+		// 					case ENOMEM:		// Out of memory (i.e., kernel memory)
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOMEM);
+		// 						retVal = false;
+		// 						break;
+		// 					case ENOTDIR:		// A component of the path prefix of path is not a directory
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOTDIR);
+		// 						retVal = false;
+		// 						break;
+		// 					case EBADF:			// fd is bad
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EBADF);
+		// 						retVal = false;
+		// 						break;
+		// 					default:
+		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with unknown ERRNO value);
+		// 						retVal = false;
+		// 						break;
+		// 				}
+		// 			}
+		// 			else if (numBytesRead == symLinkLength)
+		// 			{
+		// 				// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
+		// 			}
+		// 		}				
+		// 	}			
 		}
 	}
 
@@ -1558,6 +1565,8 @@ char* resolve_symlink(char* absSymPathName, int* errNum)
 		{
 			*errNum = errno;
 			HARKLE_ERROR(Harkledir, resolve_symlink, readlink failed);
+			// fprintf(stderr, "Failed to open:\t%s\n", absSymPathName);  // DEBUGGING
+			// perror(strerror(*errNum));  // DEBUGGING
 			success = false;
 		}
 	}
