@@ -1205,6 +1205,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 	int numTries = 0;  // Used to count allocation attempts
 	unsigned char fileType = 0;  // Return value from get_a_file_type()
 	char* absPath_ptr = NULL;  // Just in case we build an absolute path
+	int errNum = 0;  // Immediately store errno in case of error
 
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -1244,57 +1245,79 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 		// 1. Open the directory stream
 		cwd = opendir(updateThis_ptr->dirName);
 
-		// 2. Read all of the directory entries
-		do
+		if (!cwd)
 		{
-			currDirEntry = readdir(cwd);
-
-			if (currDirEntry)
+			errNum = errno;
+			fprintf(stderr, "Unable to open %s:\t%s\n", updateThis_ptr->dirName, strerror(errNum));
+			retVal = false;
+		}
+		else
+		{
+			// 2. Read all of the directory entries
+			do
 			{
-				// fprintf(stdout, "currDirEntry->d_name == %s\n", currDirEntry->d_name);  // DEBUGGING
-				// fprintf(stdout, "currDirEntry->d_type == %u\n", currDirEntry->d_type);  // DEBUGGING
+				currDirEntry = readdir(cwd);
 
-				switch (currDirEntry->d_type)
+				if (currDirEntry)
 				{
-					case DT_LNK:
-					case DT_REG:
-					case DT_DIR:
-					case DT_FIFO:
-					case DT_SOCK:
-					case DT_BLK:
-					case DT_CHR:
-						break;
-					case DT_UNKNOWN:
-					default:
-						// fprintf(stdout, "populate_dirDetails() found an invalid d_type of %u.\nGetting a second opinion from get_a_file_type().\n", currDirEntry->d_type);  // DEBUGGING
-						absPath_ptr = os_path_join(updateThis_ptr->dirName, currDirEntry->d_name, false);
+					// fprintf(stdout, "currDirEntry->d_name == %s\n", currDirEntry->d_name);  // DEBUGGING
+					// fprintf(stdout, "currDirEntry->d_type == %u\n", currDirEntry->d_type);  // DEBUGGING
 
-						if (absPath_ptr)
-						{
-							fileType = get_a_file_type(absPath_ptr);
+					switch (currDirEntry->d_type)
+					{
+						case DT_LNK:
+						case DT_REG:
+						case DT_DIR:
+						case DT_FIFO:
+						case DT_SOCK:
+						case DT_BLK:
+						case DT_CHR:
+							break;
+						case DT_UNKNOWN:
+						default:
+							// fprintf(stdout, "populate_dirDetails() found an invalid d_type of %u.\nGetting a second opinion from get_a_file_type().\n", currDirEntry->d_type);  // DEBUGGING
+							absPath_ptr = os_path_join(updateThis_ptr->dirName, currDirEntry->d_name, false);
 
-							if (fileType == UCHAR_MAX)
+							if (absPath_ptr)
 							{
-								HARKLE_ERROR(Harkledir, populate_dirDetails, get_a_file_type failed);
-								retVal = false;
+								fileType = get_a_file_type(absPath_ptr);
+
+								if (fileType == UCHAR_MAX)
+								{
+									HARKLE_ERROR(Harkledir, populate_dirDetails, get_a_file_type failed);
+									retVal = false;
+								}
+								else
+								{
+									// SUCCESS!
+									// fprintf(stdout, "get_a_file_type() returned %u.\n", fileType);
+									currDirEntry->d_type = fileType;
+								}
 							}
 							else
 							{
-								// SUCCESS!
-								// fprintf(stdout, "get_a_file_type() returned %u.\n", fileType);
-								currDirEntry->d_type = fileType;
+								HARKLE_ERROR(Harkledir, populate_dirDetails, os_path_join failed);
+								retVal = false;
 							}
-						}
-						else
-						{
-							HARKLE_ERROR(Harkledir, populate_dirDetails, os_path_join failed);
-							retVal = false;
-						}
-						break;
+							break;
+					}
+					retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry, updateThis_ptr->dirName);
 				}
-				retVal = populate_dirDetails_arrays(updateThis_ptr, currDirEntry, updateThis_ptr->dirName);
-			}
-		} while (currDirEntry && retVal == true);
+				else
+				{
+					errNum = errno;
+					if (errNum)
+					{
+						fprintf(stderr, "Unable to read directories in %s:\t%s\n", updateThis_ptr->dirName, strerror(errNum));
+						retVal = false;
+					}
+					else
+					{
+						fprintf(stdout, "Done reading directories in %s.\n", updateThis_ptr->dirName);  // DEBUGGING
+					}					
+				}
+			} while (currDirEntry && retVal == true);
+		}
 	}
 
 	// CLEAN UP
