@@ -94,9 +94,10 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [ ] chmod 4770 print_PID_libraries.exe; chown root:joe print_PID_libraries.exe;  (How bad is this?  Pretty bad, right?)
 	* [ ] mount -n -o remount,suid proc as /proc?  (Would this destroy the world?)
 	* [ ] Run print_PID_libraries.exe as root (su -, terminal, etc)
-* [ ] Crashes on too many entries.  (see: segFault01.txt)  Cut out the middle man?  Skip the structs and go straight for the symbolic link name?  Can I just point at existing names returned by lstat into the struct stat (e.g., d_name)?  realpath(3)?  [MAXSYMLINKS](https://www.gnu.org/software/libc/manual/html_node/Symbolic-Links.html)?
+* [X] Crashes on too many entries.  (see: segFault01.txt)  Cut out the middle man?  Skip the structs and go straight for the symbolic link name?  Can I just point at existing names returned by lstat into the struct stat (e.g., d_name)?  realpath(3)?  [MAXSYMLINKS](https://www.gnu.org/software/libc/manual/html_node/Symbolic-Links.html)?
+* ```valgrind -v --leak-check=full --track-origins=yes ./print_PID_libraries.exe 3549```
 
-NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being silenced.
+NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being silenced and ```valgrind``` for bringing to light my memory leaks.
 
 ### 3-10-3
 
