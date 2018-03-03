@@ -226,7 +226,8 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
 					if (temp_ptr != pidCommandline)
 					{
-						fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - stcpy failed!\n");
+						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - stcpy failed!\n");
+						HARKLE_ERROR(Harkleproc, populate_PID_struct, strcpy failed);
 						success = false;
 					}
 					// Concatenate "cmdline" to the end
@@ -234,7 +235,8 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
 					if (temp_ptr != pidCommandline)
 					{
-						fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - strcat failed!\n");
+						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - strcat failed!\n");
+						HARKLE_ERROR(Harkleproc, populate_PID_struct, strcat failed);
 						success = false;
 					}
 					cmdlineLen = strlen(pidCommandline);  // ...for safety
@@ -277,32 +279,37 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 						}
 						else
 						{
-							fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - read_a_file failed!\n");
+							// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - read_a_file failed!\n");
+							HARKLE_ERROR(Harkleproc, populate_PID_struct, read_a_file failed);
 							// success = false;
 							retVal->stillExists = false;
 						}
 					}
 					else
 					{
-						fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array too short!\n");
+						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array too short!\n");
+						HARKLE_ERROR(Harkleproc, populate_PID_struct, /proc/<PID>/cmdline array too short);
 						success = false;
 					}
 				}
 				else
 				{
-					fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array allocation failed!\n");
+					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array allocation failed!\n");
+					HARKLE_ERROR(Harkleproc, populate_PID_struct, /proc/<PID>/cmdline array allocation failed);
 					success = false;
 				}
 			}
 			else
 			{
-				fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
+				// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
+				HARKLE_ERROR(Harkleproc, populate_PID_struct, copy_a_string failed);
 				success = false;
 			}
 		}
 		else
 		{
-			fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - create_PID_struct failed!\n");
+			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - create_PID_struct failed!\n");
+			HARKLE_ERROR(Harkleproc, populate_PID_struct, create_PID_struct failed);
 			success = false;
 		}
 	}
@@ -313,7 +320,8 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 	{
 		if (false == free_PID_struct(&retVal))
 		{
-			fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - free_PID_struct failed!\n");
+			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - free_PID_struct failed!\n");
+			HARKLE_ERROR(Harkleproc, populate_PID_struct, free_PID_struct failed);
 		}
 	}
 
@@ -331,29 +339,33 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 	// Clean up this temporary char array regardless of success or failure
 	if (pidCommandline)
 	{
-		if (*pidCommandline)
+		if (false == release_a_string(&pidCommandline))
 		{
-			if (cmdlineLen <= 0)
-			{
-				cmdlineLen = strlen(pidCommandline);
-			}
-
-			if (cmdlineLen > 0)
-			{
-				// memset pidCommandline
-				temp_ptr = memset(pidCommandline, 0x0, cmdlineLen);
-
-				if (temp_ptr != pidCommandline)
-				{
-					fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - pidCommandline memset failed!\n");
-				}
-			}
+			HARKLE_ERROR(Harkleproc, populate_PID_struct, release_a_string failed);
 		}
-		// free pidCommandline
-		free(pidCommandline);
+		// if (*pidCommandline)
+		// {
+		// 	if (cmdlineLen <= 0)
+		// 	{
+		// 		cmdlineLen = strlen(pidCommandline);
+		// 	}
 
-		// NULL pidCommandline
-		pidCommandline = NULL;
+		// 	if (cmdlineLen > 0)
+		// 	{
+		// 		// memset pidCommandline
+		// 		temp_ptr = memset(pidCommandline, 0x0, cmdlineLen);
+
+		// 		if (temp_ptr != pidCommandline)
+		// 		{
+		// 			fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - pidCommandline memset failed!\n");
+		// 		}
+		// 	}
+		// }
+		// // free pidCommandline
+		// free(pidCommandline);
+
+		// // NULL pidCommandline
+		// pidCommandline = NULL;
 	}
 
 	// DONE
@@ -382,7 +394,7 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 			{
 				if (false == release_a_string(&(tmpStruct_ptr->pidName)))
 				{
-					HARKLE_ERROR(Harkledir, free_PID_struct, release_a_string failed);
+					HARKLE_ERROR(Harkleproc, free_PID_struct, release_a_string failed);
 					retVal = false;
 				}
 				// temp_ptr = tmpStruct_ptr->pidName;
@@ -417,7 +429,7 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 			{
 				if (false == release_a_string(&(tmpStruct_ptr->pidCmdline)))
 				{
-					HARKLE_ERROR(Harkledir, free_PID_struct, release_a_string failed);
+					HARKLE_ERROR(Harkleproc, free_PID_struct, release_a_string failed);
 					retVal = false;
 				}
 				// temp_ptr = tmpStruct_ptr->pidCmdline;
@@ -456,13 +468,13 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 		}
 		else
 		{
-			HARKLE_ERROR(Harkledir, free_PID_struct, NULL pointer);
+			HARKLE_ERROR(Harkleproc, free_PID_struct, NULL pointer);
 			retVal = false;
 		}
 	}
 	else
 	{
-		HARKLE_ERROR(Harkledir, free_PID_struct, NULL pointer);
+		HARKLE_ERROR(Harkleproc, free_PID_struct, NULL pointer);
 		retVal = false;
 	}
 
