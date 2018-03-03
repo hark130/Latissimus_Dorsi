@@ -38,6 +38,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [sys/capability.h example](https://git.kernel.org/pub/scm/linux/kernel/git/morgan/libcap.git/tree/progs/setcap.c)
 * [realpath(3)][http://man7.org/linux/man-pages/man3/realpath.3.html]
 * [differences in resolving symlinks between ls, stat, and readlink](https://unix.stackexchange.com/questions/22128/how-to-get-full-path-of-original-file-of-a-soft-symbolic-link)
+* [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
 
 ## TO DO
 
@@ -79,7 +80,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 **BUGS:**
 * [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
 * [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
-* [ ] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  
+* [X] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  
 	* (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)  
 	* Read the last comment [here](https://stackoverflow.com/questions/5525668/how-to-implement-readlink-to-find-the-path)
 	* Write a wrapper around readlink that:
