@@ -732,6 +732,11 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 						retVal = false;
 					}
 				}
+				else
+				{
+					HARKLE_ERROR(Harkledir, free_dirDetails_ptr, dirName was empty);  // DEBUGGING
+					retVal = false;
+				}
 			}
 
 			// 2. File Array
@@ -783,11 +788,16 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 					retVal = false;
 				}
 			}
-			// 2.a.3.ii. free
-			free(oldStruct->fileName_arr);
-			// 2.a.3.iii. NULL
 			temp_ptr = NULL;
-			oldStruct->fileName_arr = NULL;
+			
+			// 2.a.3.ii. free
+			if (oldStruct->fileName_arr)
+			{			
+				free(oldStruct->fileName_arr);
+
+				// 2.a.3.iii. NULL				
+				oldStruct->fileName_arr = NULL;
+			}
 
 			// 2.b. int numFiles;
 			if (numberOfFiles > 0)
@@ -844,11 +854,16 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 					retVal = false;
 				}
 			}
-			// 3.a.3.ii. free
-			free(oldStruct->dirName_arr);
-			// 3.a.3.iii. NULL
 			temp_ptr = NULL;
-			oldStruct->dirName_arr = NULL;
+			
+			// 3.a.3.ii. free
+			if (oldStruct->dirName_arr)
+			{				
+				free(oldStruct->dirName_arr);
+
+				// 3.a.3.iii. NULL				
+				oldStruct->dirName_arr = NULL;
+			}
 
 			// 3.b. int numDirs;
 			if (numberOfDirs > 0)
@@ -860,6 +875,13 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 
 			// 3.c. size_t dirArrSize;		// Allocated bytes for fileName_arr
 			oldStruct->dirArrSize = 0;
+
+			// 4. *oldStruct_ptr
+			// 4.1. free *oldStruct_ptr
+			free(*oldStruct_ptr);
+
+			// 4.2. NULL *oldStruct_ptr
+			*oldStruct_ptr = NULL;
 		}
 	}
 
@@ -1383,7 +1405,7 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (*arraySize_ptr < necessarySize)
 		{
 			// 2.1. Not enough
-			fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
+			// fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
 			// realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt*)));
 
@@ -1391,10 +1413,10 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 			{
 				*abstractArr_ptr = realloc_ptr;
 				// NULL the newly allocated buffer
-				fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
+				// fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
 				// realloc_ptr = realloc_ptr + ((*arraySize_ptr) / sizeof(hdEnt_ptr));  // Advance past old array
 				realloc_ptr = realloc_ptr + *arraySize_ptr;  // Advance past old array
-				fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
+				// fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
 				///////////////////////////////////// SEG FAULT /////////////////////////////////////
 				temp_ptr = memset(realloc_ptr, HDIR_MEMSET_DEFAULT, (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
 				if (temp_ptr != realloc_ptr)
