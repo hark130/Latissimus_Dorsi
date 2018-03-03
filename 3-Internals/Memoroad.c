@@ -308,6 +308,7 @@ bool free_char_arr(char*** charArr_ptr)
 
 				if (currChar_ptr)
 				{
+					// fprintf(stdout, "About to memset (%p):\t%s\n", currChar_ptr, currChar_ptr);  // DEBUGGING
 					// memset char*
 					if (*currChar_ptr)
 					{
@@ -319,7 +320,7 @@ bool free_char_arr(char*** charArr_ptr)
 
 							if (temp_ptr != currChar_ptr)
 							{
-								fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - memset failed!\n");
+								HARKLE_ERROR(Memoroad, free_char_arr, memset failed);
 								retVal = false;
 							}
 							else
@@ -330,6 +331,7 @@ bool free_char_arr(char*** charArr_ptr)
 					}
 
 					// free char*
+					// free(*currChar_arr);
 					free(currChar_ptr);
 
 					// NULL char*
@@ -337,7 +339,7 @@ bool free_char_arr(char*** charArr_ptr)
 					*currChar_arr = NULL;
 				}
 				// Next char*
-				currChar_ptr++;
+				currChar_arr++;
 			}
 
 			// free char**
@@ -348,13 +350,13 @@ bool free_char_arr(char*** charArr_ptr)
 		}
 		else
 		{
-			fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - NULL pointer!\n");
+			HARKLE_ERROR(Memoroad, free_char_arr, NULL pointer);
 			retVal = false;
 		}
 	}
 	else
 	{
-		fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_char_arr() - NULL pointer!\n");
+		HARKLE_ERROR(Memoroad, free_char_arr, NULL pointer);
 		retVal = false;
 	}
 
