@@ -1,8 +1,0 @@
-
-Files loaded by /proc/28987/:
-
-	/home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Inter
-	/lib/x86_64-linux-gnu/libc-2.23.so
-	/lib/x86_64-linux-gnu/ld-2.23.so
-
-
