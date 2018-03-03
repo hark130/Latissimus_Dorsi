@@ -2,6 +2,7 @@
 #include "Harkleproc.h"
 // #include <fcntl.h>	  // open() flags
 #include "Fileroad.h"   // read_a_file
+#include "Harklerror.h"	// HARKLE_ERROR
 // #include "Map_Memory.h"
 #include "Memoroad.h"   // copy_a_string
 #include <stdbool.h>	// bool, true, false

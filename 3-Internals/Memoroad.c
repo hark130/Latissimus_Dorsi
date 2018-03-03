@@ -1,3 +1,4 @@
+#include "Harklerror.h"	// HARKLE_ERROR
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>		// fprintf

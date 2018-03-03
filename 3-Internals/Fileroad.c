@@ -2,6 +2,7 @@
 #include <errno.h>		// errno
 #include <fcntl.h>	 	// open() flags
 #include "Fileroad.h"
+#include "Harklerror.h"	// HARKLE_ERROR
 #include <inttypes.h>	// intmax_t
 #include <limits.h>		// UCHAR_MAX, PATH_MAX
 #include "Memoroad.h"

@@ -8,6 +8,7 @@
 #include "Fileroad.h"
 #include "Harkledir.h"
 #include "Harkleproc.h"
+#include "Harklerror.h"	// HARKLE_ERROR
 #include "Memoroad.h"
 #include <stdio.h>
 #include <stdbool.h>	// bool, true, false
@@ -32,7 +33,8 @@
 	// procPIDStructs
 	if (!procPIDStructs)
 	{
-		puts("<<<ERROR>>> - print_PID_libraries - parse_proc_PID_structs has failed!\n\n");
+		HARKLE_ERROR(print_PID_libraries, main, parse_proc_PID_structs has failed);
+		// puts("<<<ERROR>>> - print_PID_libraries - parse_proc_PID_structs has failed!\n\n");
 		success = false;
 	}
 
@@ -58,7 +60,8 @@
 
 		if (!userProcPID)
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - make_PID_into_proc has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, make_PID_into_proc has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - make_PID_into_proc has failed!\n\n");
 			success = false;
 		}
 		else
@@ -95,13 +98,15 @@
 
 			if (!userPIDMapFiles)
 			{
-				fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - open_dir has failed!\n");
+				HARKLE_ERROR(print_PID_libraries, main, open_dir has failed);
+				// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - open_dir has failed!\n");
 				success = false;
 			}
 		}
 		else
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - os_path_join has failed!\n");
+			HARKLE_ERROR(print_PID_libraries, main, os_path_join has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - os_path_join has failed!\n");
 			success = false;
 		}
 	}
@@ -115,12 +120,14 @@
 
 			if (!uniqueSymNames)
 			{
-				fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with a NULL pointer!\n");
+				HARKLE_ERROR(print_PID_libraries, main, parse_dirDetails_to_char_arr has failed with a NULL pointer);
+				// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with a NULL pointer!\n");
 				success = false;
 			}
 			else if (!(*uniqueSymNames))
 			{
-				fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with an empty array!\n");
+				HARKLE_ERROR(print_PID_libraries, main, parse_dirDetails_to_char_arr has failed with an empty array);
+				// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - parse_dirDetails_to_char_arr has failed with an empty array!\n");
 				success = false;
 			}
 		}
@@ -151,7 +158,8 @@
 	{
 		if (false == free_PID_struct_arr(&procPIDStructs))
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_PID_struct_arr has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, free_PID_struct_arr has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_PID_struct_arr has failed!\n\n");
 		}
 	}
 	temp_arr = NULL;
@@ -161,7 +169,8 @@
 	{
 		if (false == release_a_string(&userProcPID))
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, release_a_string has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n\n");
 		}
 	}
 
@@ -170,7 +179,8 @@
 	{
 		if (false == release_a_string(&userProcPIDMapFiles))
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, release_a_string has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - release_a_string has failed!\n\n");
 		}			
 	}
 
@@ -179,7 +189,8 @@
 	{
 		if (false == free_dirDetails_ptr(&userPIDMapFiles))
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_dirDetails_ptr has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, free_dirDetails_ptr has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_dirDetails_ptr has failed!\n\n");
 		}
 	}
 
@@ -188,9 +199,12 @@
 	{
 		if (false == free_char_arr(&uniqueSymNames))
 		{
-			fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_char_arr has failed!\n\n");
+			HARKLE_ERROR(print_PID_libraries, main, free_char_arr has failed);
+			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_char_arr has failed!\n\n");
 		}
 	}
+
+	fprintf(stdout, "\n");
 
 	// DONE
 	return 0;

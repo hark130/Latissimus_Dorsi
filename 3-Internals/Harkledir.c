@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "Fileroad.h"	// size_a_file
 #include "Harkledir.h"
+#include "Harklerror.h"	// HARKLE_ERROR
 #include <inttypes.h>	// intmax_t
 #include <limits.h>		// UCHAR_MAX
 #include "Memoroad.h"	// release_a_string
@@ -1249,6 +1250,10 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 		{
 			errNum = errno;
 			fprintf(stderr, "Unable to open %s:\t%s\n", updateThis_ptr->dirName, strerror(errNum));
+			if (errNum == EACCES)
+			{
+				fprintf(stderr, "Consider using 'sudo print_PID_libraries.exe <PID>'.\n");
+			}
 			retVal = false;
 		}
 		else
