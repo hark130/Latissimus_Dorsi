@@ -129,7 +129,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	bool retVal = true;
 	off_t symLinkLength = 0;  // Will be used to allocate an array for any symlinks
 	ssize_t numBytesRead = 0;  // Return
-	char* absPath_ptr = NULL;  // Should hold absolute path for an file passed to size_a_file()
+	// char* absPath_ptr = NULL;  // Should hold absolute path for an file passed to size_a_file()
 	bool isThisAFile = true;  // Third parameter for os_path_join()
 	int errNum = 0;  // Pass as an [OUT] parameter to size_a_file() to get errno
 	
@@ -157,7 +157,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	
 	// POPULATE STRUCT
 	// char* hd_Name;				// Should match struct dirent.d_name
-	if (retVal == true)
+	if (retVal == true && currDirEntry->d_name)
 	{		
 		updateThis_ptr->hd_Name = copy_a_string(currDirEntry->d_name);
 		
@@ -166,6 +166,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, copy_a_string failed);
 			retVal = false;
 		}
+		fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_Name, updateThis_ptr->hd_Name);  // DEBUGGING
 	}
 
 	//char* hd_AbsName;			// Absolute filename of hd_Name
@@ -181,7 +182,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			isThisAFile = true;
 		}
 		// Build absolute filename
-		// fprintf(stdout, "populate_hdEnt_struct() calls os_path_join(%s, %s, bool)\n", absPath, updateThis_ptr->hd_Name);  // DEBUGGING
+		fprintf(stdout, "populate_hdEnt_struct() calls os_path_join(%s, %s, bool)\n", absPath, updateThis_ptr->hd_Name);  // DEBUGGING
 		updateThis_ptr->hd_AbsName = os_path_join(absPath, updateThis_ptr->hd_Name, isThisAFile);
 
 		if (!(updateThis_ptr->hd_AbsName))
@@ -189,6 +190,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, os_path_join failed);
 			retVal = false;
 		}
+		fprintf(stdout, "hd_Name (%p):\t%s\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName);  // DEBUGGING
 	}
 
 	// ino_t hd_inodeNum;			// Should match struct dirent.d_ino
@@ -236,7 +238,9 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
+			fprintf(stdout, "Calling resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
 			updateThis_ptr->hd_symName = resolve_symlink(updateThis_ptr->hd_AbsName, &errNum);
+			fprintf(stdout, "Called  resolve_symlink(absName == %s (%p), errNum == %d (%p))\n", updateThis_ptr->hd_AbsName, updateThis_ptr->hd_AbsName, errNum, &errNum);  // DEBUGGING
 
 			if (!(updateThis_ptr->hd_symName))
 			{
@@ -410,13 +414,15 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	}
 
 	// CLEAN UP
-	if (absPath_ptr)
-	{
-		if (false == release_a_string(&absPath_ptr))
-		{
-			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string has failed);
-		}
-	}
+	// if (absPath_ptr)
+	// {
+	// 	fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
+	// 	if (false == release_a_string(&absPath_ptr))
+	// 	{
+	// 		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string has failed);
+	// 	}
+	// 	fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
+	// }
 	
 	// DONE
 	return retVal;
@@ -1270,12 +1276,22 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 	}
 
 	// CLEAN UP
+	if (cwd)
+	{
+		if (-1 == closedir(cwd))
+		{
+			HARKLE_ERROR(Harkledir, populate_dirDetails, closedir failed);
+		}
+	}
+
 	if (absPath_ptr)
 	{
+		fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
 		if (false == release_a_string(&absPath_ptr))
 		{
 			HARKLE_ERROR(Harkledir, populate_dirDetails, release_a_string failed);
-		}
+		}		
+		fprintf(stdout, "Called  release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
 	}
 
 	// DONE
@@ -1415,9 +1431,10 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		if (newStruct)
 		{
 			// 2. Populate that struct
-			// fprintf(stdout, "populate_dirDetails_arrays() calls populate_hdEnt_struct(%s, %s, %s)\n", "empty struct", fileEntry->d_name, absPath);  // DEBUGGING
+			fprintf(stdout, "populate_dirDetails_arrays() calls  populate_hdEnt_struct(%s, %s, %s)\n", "empty struct", fileEntry->d_name, absPath);  // DEBUGGING
 			if (true == populate_hdEnt_struct(newStruct, fileEntry, absPath))
 			{
+				fprintf(stdout, "populate_dirDetails_arrays() called populate_hdEnt_struct(%s, %s, %s)\n", newStruct->hd_AbsName, fileEntry->d_name, absPath);  // DEBUGGING
 				// 3. Store that pointer in the struct array
 				*((*abstractArr_ptr) + (*numEntries_ptr)) = newStruct;
 				newStruct = NULL;
@@ -1527,7 +1544,7 @@ char* resolve_symlink(char* absSymPathName, int* errNum)
 	int buffStrLen = 0;  // Length of the string read into buff
 	ssize_t numBytesRead = 0;  // Return value from readlink()
 	bool success = true;  // Make this false if anything fails
-	
+	puts("HERE");
 	// INPUT VALIDATION
 	if (!absSymPathName)
 	{
