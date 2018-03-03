@@ -69,6 +69,7 @@
 				if (0 == strcmp((*temp_arr)->pidName, userProcPID) && (*temp_arr)->stillExists == true)
 				{
 					success = true;
+					fprintf(stdout, "\nParsing %s (%s)\n", (*temp_arr)->pidName, (*temp_arr)->pidCmdline);
 				}
 				else
 				{
@@ -128,7 +129,7 @@
 	// Print the unique entries
 	if (success == true && uniqueSymNames)
 	{
-		fprintf(stdout, "\nFiles loaded by %s:\n\n", userProcPID);
+		fprintf(stdout, "Files loaded by %s:\n\n", userProcPID);
 
 		tempChar_arr = uniqueSymNames;
 
