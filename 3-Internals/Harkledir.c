@@ -1313,7 +1313,7 @@ bool populate_dirDetails(dirDetails_ptr updateThis_ptr)
 					}
 					else
 					{
-						fprintf(stdout, "Done reading directories in %s.\n", updateThis_ptr->dirName);  // DEBUGGING
+						// fprintf(stdout, "Done reading directories in %s.\n", updateThis_ptr->dirName);  // DEBUGGING
 					}					
 				}
 			} while (currDirEntry && retVal == true);
