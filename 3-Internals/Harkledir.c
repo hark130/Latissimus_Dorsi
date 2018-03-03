@@ -236,7 +236,7 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 		// char* hd_symName; 			// If hd_type == DT_LNK, read from readlink()
 		if (retVal == true && updateThis_ptr->hd_type == DT_LNK)
 		{
-			updateThis_ptr->hd_symName = resolve_symlink(updateThis_ptr->hd_Name, &errNum);
+			updateThis_ptr->hd_symName = resolve_symlink(updateThis_ptr->hd_AbsName, &errNum);
 
 			if (!(updateThis_ptr->hd_symName))
 			{
@@ -1565,8 +1565,8 @@ char* resolve_symlink(char* absSymPathName, int* errNum)
 		{
 			*errNum = errno;
 			HARKLE_ERROR(Harkledir, resolve_symlink, readlink failed);
-			// fprintf(stderr, "Failed to open:\t%s\n", absSymPathName);  // DEBUGGING
-			// perror(strerror(*errNum));  // DEBUGGING
+			fprintf(stderr, "Failed to open:\t%s\n", absSymPathName);  // DEBUGGING
+			perror(strerror(*errNum));  // DEBUGGING
 			success = false;
 		}
 	}
