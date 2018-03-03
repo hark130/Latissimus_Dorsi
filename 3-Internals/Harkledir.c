@@ -1384,18 +1384,34 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 		{
 			// 2.1. Not enough
 			fprintf(stdout, "\n\npopulate_dirDetails_arrays() - Array %p not big enough at %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
-			// realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
-			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt*)));
+			realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
+			// realloc_ptr = realloc(*abstractArr_ptr, (*arraySize_ptr) + (HDIR_ARRAY_LEN * sizeof(hdEnt*)));
 
 			if (realloc_ptr)
 			{
 				*abstractArr_ptr = realloc_ptr;
+				// NULL the newly allocated buffer
+				fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
+				// realloc_ptr = realloc_ptr + ((*arraySize_ptr) / sizeof(hdEnt_ptr));  // Advance past old array
+				realloc_ptr = realloc_ptr + *arraySize_ptr;  // Advance past old array
+				fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
+				temp_ptr = memset(realloc_ptr, HDIR_MEMSET_DEFAULT, (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
+				if (temp_ptr != realloc_ptr)
+				{
+					HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, memset failed on realloc()d buffer);
+					retVal = false;
+				}
+				else
+				{
+					temp_ptr = NULL;
+					realloc_ptr = NULL;
+				}
+
 				*arraySize_ptr += (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr));
-				realloc_ptr = NULL;
 				// Set the last index to NULL
 				// (*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;  // BUG?!?!
-				(*abstractArr_ptr)[(*arraySize_ptr) / sizeof(hdEnt_ptr) - 1] = NULL;
-				fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
+				(*abstractArr_ptr)[(*arraySize_ptr) / sizeof(hdEnt_ptr) - 1] = NULL;  // Superseded by memset
+				// fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			}
 			else
 			{
