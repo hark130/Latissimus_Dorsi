@@ -568,13 +568,23 @@ char** parse_proc_PIDs(void)
 	if (procDetails_ptr)
 	{
 		retVal = parse_PID_dirs_to_arr(procDetails_ptr);
+
+		if (retVal == false)
+		{
+			HARKLE_ERROR(Harkleproc, parse_proc_PIDs, parse_PID_dirs_to_arr failed);
+			retVal = false;
+		}
 	}
 
 	// 3. free_dirDetails_ptr()
 	// puts("3. free_dirDetails_ptr()");  // DEBUGGING
 	if (procDetails_ptr)
 	{
-		free_dirDetails_ptr(&procDetails_ptr);
+		if (false == free_dirDetails_ptr(&procDetails_ptr))
+		{
+			HARKLE_ERROR(Harkleproc, parse_proc_PIDs, free_dirDetails_ptr failed);
+			retVal = false;
+		}
 	}
 
 	// DONE
@@ -598,23 +608,55 @@ pidDetails_ptr* parse_proc_PID_structs(void)
 	// LOCAL VARIABLES
 	pidDetails_ptr* retVal = NULL;
 	dirDetails_ptr procDetails_ptr = NULL;
+	bool success = true;  // Change this to false if anything fails
 
 	// 1. walk_proc()
 	// puts("1. parse_proc_PID_structs() calls walk_proc()");  // DEBUGGING
-	procDetails_ptr = walk_proc();
+	if (success == true)
+	{
+		procDetails_ptr = walk_proc();
+
+		if (!procDetails_ptr)
+		{
+			HARKLE_ERROR(Harkleproc, parse_proc_PID_structs, walk_proc failed);
+			success = false;
+		}
+	}
 
 	// 2. parse_PID_dirs_to_struct_arr()
 	// puts("2. parse_proc_PID_structs() calls parse_PID_dirs_to_struct_arr()");  // DEBUGGING
-	if (procDetails_ptr)
+	if (success == true && procDetails_ptr)
 	{
 		retVal = parse_PID_dirs_to_struct_arr(procDetails_ptr);
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Harkleproc, parse_proc_PID_structs, parse_PID_dirs_to_struct_arr failed);
+			success = false;
+		}
 	}
 
 	// 3. free_dirDetails_ptr()
 	// puts("3. parse_proc_PID_structs() calls free_dirDetails_ptr()");  // DEBUGGING
 	if (procDetails_ptr)
 	{
-		free_dirDetails_ptr(&procDetails_ptr);
+		if (false == free_dirDetails_ptr(&procDetails_ptr))
+		{
+			HARKLE_ERROR(Harkleproc, parse_proc_PID_structs, free_dirDetails_ptr failed);
+			success = false;
+		}
+	}
+
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_PID_struct_arr(&retVal))
+			{
+				HARKLE_ERROR(Harkleproc, parse_proc_PID_structs, free_PID_struct_arr failed);
+			}
+		}
 	}
 
 	// DONE
@@ -747,6 +789,7 @@ pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
 	int i = 0;  // Loop iterating variable
 	char templateProc[32] = { "/proc/4194303/" };  // Array to utilize as /proc/<PID>/ absolute template
 	int templateSize = sizeof(templateProc) / sizeof(*templateProc);
+	bool success = true;  // If anything fails, make this false
 
 	// INPUT VALIDATION
 	if (procWalk_ptr)
@@ -778,6 +821,7 @@ pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
 							if(!(*temp_ptr))
 							{
 								HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, populate_PID_struct failed);
+								success = false;
 							}
 							else
 							{
@@ -787,6 +831,7 @@ pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
 						else
 						{
 							HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, proc_builder failed);
+							success = false;
 						}
 					}
 					tempFN_ptr++;
@@ -795,16 +840,31 @@ pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
 			else
 			{
 				HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, calloc failed);
+				success = false;
 			}
 		}
 		else
 		{
 			HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, invalid dirDetails struct);
+			success = false;
 		}
 	}
 	else
 	{
 		HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, NULL pointer);
+		success = false;
+	}
+
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == free_PID_struct_arr(&retVal))
+			{
+				HARKLE_ERROR(Harkleproc, parse_PID_dirs_to_struct_arr, free_PID_struct_arr failed);
+			}
+		}
 	}
 
 	// DONE
