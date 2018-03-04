@@ -32,3 +32,42 @@ In my free time.
 3. Linux Internals
 4. Linux User Mode Development
 5. Linux Kernel Development
+
+# Releasable Products
+
+## print_PID_libraries
+
+### NAME
+
+	print_PID_libraries.exe - list files loaded into memory by a PID
+
+### SYNOPSIS
+
+	print_PID_libraries.exe <PID>
+
+### DESCRIPTION
+
+	print_PID_libraries.exe will resolve the symbolic links, if any, found in /proc/<PID>/map_files/ to determine what files <PID> has mapped into memory.
+
+	If you don't pass an argument to print_PID_libraries.exe, you'll know.  If you don't pass a number, you'll know.  If the PID you choose doesn't exist, you'll know.  If there are no files, you'll know.  If you don't have permissions to access a file, print_PID_libraries.exe will suggest you use 'sudo'.
+
+	Output will resolve the PID into its cmdline argument.  It will also list a unique list of files that have been mapped into memory.
+
+	If you experience errors and wish to see more <<<ERROR>>> output, uncomment the "HARKLE_DEBUG" MACRO in "./3-Internals/Harklerror.h", build with Make, and run it again.
+
+### COMPILATION
+
+```make print_PID_libraries```
+
+### EXAMPLE
+
+```$ sudo ./print_PID_libraries.exe 4476```
+
+Parsing /proc/4476/ (/usr/sbin/cupsd)
+Files loaded by /proc/4476/:
+
+	/usr/sbin/cupsd
+	/lib/x86_64-linux-gnu/libnss_files-2.23.so
+	[...snip...]
+	/lib/x86_64-linux-gnu/ld-2.23.so
+	/lib/x86_64-linux-gnu/libsystemd.so.0.14.0
