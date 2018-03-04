@@ -23,15 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	Purpose - Allocate a buffer of size length + 1
-	Input
-		length - The length of what you want to store
-	Ouput - Heap-allocated, memset, buffer of size length + 1
-	Notes:
-        It is the caller's responsibility to free the char* returned by 
-        	this function
- */
 char* get_me_a_buffer(size_t length)
 {
     // LOCAL VARIABLES
@@ -180,16 +171,6 @@ char* copy_a_string(const char* char_ptr)
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	Purpose - Abstract-away the act of free()ing a heap-allocated char array
-	Input
-		charPtr_ptr - A pointer to a char array
-	Output - On success, true. Otherwise, false.
-	Notes:
-		Will attempt to memset, free, and NULL "&char_ptr"
-		Call this function like this:
-			release_a_string(&myCharArray);
- */
 bool release_a_string(char** charPtr_ptr)
 {
 	// LOCAL VARIABLES
@@ -220,17 +201,6 @@ bool release_a_string(char** charPtr_ptr)
 }
 
 
-/*
-	Purpose - Abstract-away the act of free()ing a heap-allocated char array
-	Input
-		charPtr_ptr - A pointer to a heap-allocated char array
-		buffSize - The size, in memory, of *charPtr_ptr
-	Output - On success, true. Otherwise, false.
-	Notes:
-		Will memset buffSize byptes, free, and NULL "&char_ptr"
-		Call this function like this:
-			release_a_string(&myCharArray, buffSize);
- */
 bool release_a_string_len(char** charPtr_ptr, size_t buffSize)
 {
 	// LOCAL VARIABLES

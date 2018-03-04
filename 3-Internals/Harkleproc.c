@@ -56,19 +56,6 @@ pidDetails_ptr create_PID_struct(void)
 }
 
 
-/*
-	Purpose - Populate a harklePIDDetails struct with PID information
-	Input
-		pidPath - Absolute path to /proc/<PID>
-	Output
-		A pointer to a heap-allocated harklePIDDetails struct complete
-			with information about the PID found at pidPath on success.
-			NULL on failure.
-	Notes:
-		Returns NULL if pidPath does not begin with /proc
-		Returns NULL if the directory following /proc is not a PID (non-number)
-		Returns a pointer if pidPath is missing but stillExists is False
- */
 pidDetails_ptr populate_PID_struct(char* pidPath)
 {
 	// LOCAL VARIABLES
@@ -80,7 +67,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 	size_t cmdlineLen = 0;  // The strlen of pidCommandline
 	int numTries = 0;  // Check this against nax number calloc attempts
 	bool success = true;  // If this is false prior to return, clean up
-	// mapMem_ptr cmdlineContents = NULL;  // This will hold the contents of /proc/<PID>/cmdline
 
 	// 1. INPUT VALIDATION
 	if (pidPath)
@@ -123,14 +109,12 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 						else
 						{
 							HARKLE_ERROR(Harkleproc, populate_PID_struct, strncpy failed);
-							// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - strncpy failed!\n");
 							success = false;
 						}
 					}
 					else
 					{
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, calloc failed);
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - calloc failed!\n");
 						success = false;
 					}
 				}
@@ -142,7 +126,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 			else
 			{
 				HARKLE_ERROR(Harkleproc, populate_PID_struct, Path too short);
-				// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Path too short!\n");
 				success = false;
 			}
 
@@ -154,7 +137,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 				if (temp_ptr != newPIDPath)
 				{
 					HARKLE_ERROR(Harkleproc, populate_PID_struct, Not a /proc path);
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc path!\n");
 					success = false;
 				}
 			}
@@ -171,14 +153,12 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 					{
 						// Found a non-number
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, Not a /proc/<PID> path);
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc/<PID> path!\n");
 						success = false;
 					}
 					else if (*temp_ptr == '\0')
 					{
 						// Missed the trailing slash?!
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, Not a /proc/<PID> path);
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Not a /proc/<PID>/ path!\n");
 						success = false;
 					}
 					else
@@ -191,14 +171,12 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 		else
 		{
 			HARKLE_ERROR(Harkleproc, populate_PID_struct, Empty string);
-			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - Empty string!\n");
 			success = false;
 		}
 	}
 	else
 	{
 		HARKLE_ERROR(Harkleproc, populate_PID_struct, NULL pointer);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - NULL pointer!\n");
 		success = false;
 	}
 
@@ -236,7 +214,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
 					if (temp_ptr != pidCommandline)
 					{
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - stcpy failed!\n");
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, strcpy failed);
 						success = false;
 					}
@@ -245,7 +222,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
 					if (temp_ptr != pidCommandline)
 					{
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - strcat failed!\n");
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, strcat failed);
 						success = false;
 					}
@@ -255,31 +231,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 
 					if (cmdlineLen >= strlen("/proc/1/cmdline") && success == true)  // Minimum length
 					{
-						/****************** MAP_MEMORY DOESN'T SEEM TO BE CUTTING THE MUSTARD FOR /proc/<PID>/cmdline ******************/
-						// cmdlineContents = map_file_mode(pidCommandline, O_RDONLY);
-
-						// if (cmdlineContents)
-						// {
-						//	 retVal->pidCmdline = copy_a_string(cmdlineContents->fileMem_ptr);
-
-						//	 if (retVal->pidCmdline)
-						//	 {
-						//		 // 2.4. bool stillExists
-						//		 retVal->stillExists = true;
-						//	 }
-						//	 else
-						//	 {
-						//		 fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
-						//		 success = false;
-						//	 }
-						// }
-						// else
-						// {
-						//	 fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - map_file_mode failed!\n");
-						//	 retVal->stillExists = false;
-						// }
-
-						/****************** LET'S TRY A NORMAL open()/read() ON /proc/<PID>/cmdline ******************/
 						retVal->pidCmdline = read_a_file(pidCommandline);
 
 						if (retVal->pidCmdline)
@@ -289,7 +240,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 						}
 						else
 						{
-							// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - read_a_file failed!\n");
 							HARKLE_ERROR(Harkleproc, populate_PID_struct, read_a_file failed);
 							// success = false;
 							retVal->stillExists = false;
@@ -297,28 +247,24 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 					}
 					else
 					{
-						// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array too short!\n");
 						HARKLE_ERROR(Harkleproc, populate_PID_struct, /proc/<PID>/cmdline array too short);
 						success = false;
 					}
 				}
 				else
 				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - /proc/<PID>/cmdline array allocation failed!\n");
 					HARKLE_ERROR(Harkleproc, populate_PID_struct, /proc/<PID>/cmdline array allocation failed);
 					success = false;
 				}
 			}
 			else
 			{
-				// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - copy_a_string failed!\n");
 				HARKLE_ERROR(Harkleproc, populate_PID_struct, copy_a_string failed);
 				success = false;
 			}
 		}
 		else
 		{
-			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - create_PID_struct failed!\n");
 			HARKLE_ERROR(Harkleproc, populate_PID_struct, create_PID_struct failed);
 			success = false;
 		}
@@ -335,17 +281,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 		}
 	}
 
-	// Clean up this mapMem struct pointer regardless of success or failure
-	// if (cmdlineContents)
-	// {
-	//	 if (false == unmap_file(cmdlineContents, false))
-	//	 {
-	//		 fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - unmap_file failed!\n");
-	//	 }
-
-	//	 free_struct(&cmdlineContents);
-	// }
-
 	// Clean up this temporary char array regardless of success or failure
 	if (pidCommandline)
 	{
@@ -353,29 +288,6 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 		{
 			HARKLE_ERROR(Harkleproc, populate_PID_struct, release_a_string failed);
 		}
-		// if (*pidCommandline)
-		// {
-		// 	if (cmdlineLen <= 0)
-		// 	{
-		// 		cmdlineLen = strlen(pidCommandline);
-		// 	}
-
-		// 	if (cmdlineLen > 0)
-		// 	{
-		// 		// memset pidCommandline
-		// 		temp_ptr = memset(pidCommandline, 0x0, cmdlineLen);
-
-		// 		if (temp_ptr != pidCommandline)
-		// 		{
-		// 			fprintf(stderr, "<<<ERROR>>> - Harkleproc - populate_PID_struct() - pidCommandline memset failed!\n");
-		// 		}
-		// 	}
-		// }
-		// // free pidCommandline
-		// free(pidCommandline);
-
-		// // NULL pidCommandline
-		// pidCommandline = NULL;
 	}
 
 	// DONE
@@ -388,9 +300,6 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 	// LOCAL VARIABLES
 	bool retVal = true;
 	pidDetails_ptr tmpStruct_ptr = NULL;  // Easier to deal with this way
-	// char* temp_ptr = NULL;  // Easier to deal with char array pointers this way
-	// char* mem_ptr = NULL;  // Return value from memset function calls
-	// size_t length = 0;  // Length of a char array
 
 	// INPUT VALIDATION
 	if (pidDetailsStruct_ptr)
@@ -409,31 +318,6 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 					retVal = false;
 				}
 				// fprintf(stdout, "AFTER  release_a_string(&pidName), (*currStruct_arr)->pidName == %p\n", tmpStruct_ptr->pidName);  // DEBUGGING
-				// temp_ptr = tmpStruct_ptr->pidName;
-
-				// if (*temp_ptr)
-				// {
-				// 	// 1.1. memset pidName
-				// 	length = strlen(temp_ptr);
-
-				// 	if (length > 0)
-				// 	{
-				// 		mem_ptr = memset(temp_ptr, 0x0, length);
-
-				// 		if (mem_ptr != temp_ptr)
-				// 		{							
-				// 			fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
-				// 			retVal = false;
-				// 		}
-				// 	}
-
-				// 	// 1.2. free pidName
-				// 	free(temp_ptr);
-
-				// 	// 1.3. NULL pidName
-				// 	temp_ptr = NULL;
-				// 	tmpStruct_ptr->pidName = NULL;
-				// }
 			}
 
 			// 2. char* pidCmdline;	   // Complete cmdline used to execute the PID
@@ -444,31 +328,6 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 					HARKLE_ERROR(Harkleproc, free_PID_struct, release_a_string failed);
 					retVal = false;
 				}
-				// temp_ptr = tmpStruct_ptr->pidCmdline;
-
-				// if (*temp_ptr)
-				// {
-				// 	// 1.1. memset pidCmdline
-				// 	length = strlen(temp_ptr);
-
-				// 	if (length > 0)
-				// 	{
-				// 		mem_ptr = memset(temp_ptr, 0x0, length);
-
-				// 		if (mem_ptr != temp_ptr)
-				// 		{
-				// 			fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct() - memset failed!\n");
-				// 			retVal = false;
-				// 		}
-				// 	}
-				// }
-
-				// // 1.2. free pidCmdline
-				// free(temp_ptr);
-
-				// // 1.3. NULL pidCmdline
-				// temp_ptr = NULL;
-				// tmpStruct_ptr->pidCmdline = NULL;
 			}
 
 			// 3. bool stillExists;	   // False if PID ever disappears
@@ -498,23 +357,11 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 }
 
 
-/*
-	Purpose - To memset, free, and NULL all harklePIDDetails pointers
-		in an array, to include the array itself
-	Input
-		pidDetails_arr - Pointer to a NULL-terminated array of harklePIDDetails pointers
-	Output - True on success, False on failure
-	Notes:
-		Calls free_PID_struct() to free each pidDetails_ptr in the array
-		Will free the array itself
-		Will NULL the array pointer
- */
 bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
 	bool freeReturn = true;  // Indicates success or failure of free_PID_struct()
-	// pidDetails_ptr currStruct_ptr = NULL;  // Will hold each struct pointer in the array
 	pidDetails_ptr* currStruct_arr = NULL;  // Will hold the pointer to the array
 
 	// INPUT VALIDATION
@@ -540,7 +387,6 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 				if (freeReturn == false)
 				{
 					HARKLE_ERROR(Harkleproc, free_PID_struct_arr, free_PID_struct failed);
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - free_PID_struct failed!\n");
 					retVal = false;
 				}
 				else
@@ -561,14 +407,12 @@ bool free_PID_struct_arr(pidDetails_ptr** pidDetails_arr)
 		else
 		{
 			HARKLE_ERROR(Harkleproc, free_PID_struct_arr, NULL pointer);
-			// fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - NULL pointer!\n");
 			retVal = false;
 		}
 	}
 	else
 	{
 		HARKLE_ERROR(Harkleproc, free_PID_struct_arr, NULL pointer);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - free_PID_struct_arr() - NULL pointer!\n");
 		retVal = false;
 	}
 
@@ -616,17 +460,6 @@ char** parse_proc_PIDs(void)
 }
 
 
-/*
-	Purpose - Provide a 'list' of running PIDs based on /proc
-	Input - None
-	Ouput - A NULL-terminated, heap-allocated array of heap-allocated harklePIDDetails structs, one-per-directory
-	Notes:
-		Does all the 'heavy lifting' to walk /proc and filter out <PID> dirs
-		This function calls walk_proc() to procure a list of /proc directories
-		This function free()s the dirDetails_ptr resulting from walk_proc() before returning
-		It is your responsibility to free each pidDetails_ptr and the pidDetails_ptr* itself 
-			(or call free_PID_struct_arr())
- */
 pidDetails_ptr* parse_proc_PID_structs(void)
 {
 	// LOCAL VARIABLES
@@ -688,13 +521,6 @@ pidDetails_ptr* parse_proc_PID_structs(void)
 }
 
 
-/*
-	Purpose - Walk the /proc directory for a list of files and dirs
-	Input - None
-	Output - A pointer to a dirDetails struct as defined in Harkledir.h
-	Notes:
-		It is your responsibility to call free_dirDetails_ptr(&dirDetails_ptr)
- */
 dirDetails_ptr walk_proc(void)
 {
 	// LOCAL VARIABLES
@@ -703,7 +529,6 @@ dirDetails_ptr walk_proc(void)
 	if (!retVal)
 	{
 		HARKLE_ERROR(Harkleproc, walk_proc, open_dir failed);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - walk_proc() - open_dir failed!\n");
 	}
 
 	// DONE
@@ -795,14 +620,6 @@ char** parse_PID_dirs_to_arr(dirDetails_ptr procWalk_ptr)
 }
 
 
-/*
-	Purpose - Abstract-away the translation of a dirDetail array of directories into an array of pidDetails struct pointers
-	Input
-		procWalk_ptr - A dirDetails_ptr of /proc
-	Output - A NULL-terminated, heap-allocated array of heap-allocated pidDetails struct pointers, one-per-directory
-	Notes:
-		This function will ignore files and filter out non-<PID> directories in /proc
- */
 pidDetails_ptr* parse_PID_dirs_to_struct_arr(dirDetails_ptr procWalk_ptr)
 {
 	// LOCAL VARIABLES
@@ -937,16 +754,6 @@ bool is_it_a_PID(char* dirName)
 }
 
 
-/*
-	Purpose - Create /proc/<PID>/ from <PID>
-	Input
-		pidNum - nul-terminate char array holding just a PID number
-	Output
-		On success, heap-allocated array holding /proc/<pidNum>/
-		On failure, NULL
-	Notes:
-		It is the caller's responsibility to free the returned pointer
- */
 char* make_PID_into_proc(char* pidNum)
 {
 	// LOCAL VARIABLES
@@ -1042,31 +849,26 @@ bool proc_builder(char* buf, char* PID, size_t bufSize)
 	if (!buf)
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, NULL pointer);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - NULL pointer!\n");
 		retVal = false;
 	}
 	else if (!PID)
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, NULL pointer);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - NULL pointer!\n");
 		retVal = false;
 	}
 	else if (!(*PID))
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, empty PID);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - empty PID!\n");
 		retVal = false;
 	}
 	else if (bufSize < 0)
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, Invalid buf size);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - invalid buf size!\n");
 		retVal = false;
 	}
 	else if (bufSize < (strlen(PID) + strlen("/proc//" + 1)))
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, buf too small);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - buf too small!\n");
 		retVal = false;
 	}
 
@@ -1107,7 +909,6 @@ bool proc_builder(char* buf, char* PID, size_t bufSize)
 	else
 	{
 		HARKLE_ERROR(Harkleproc, proc_builder, memset failed);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - proc_builder() - memset failed!\n");
 		retVal = false;
 	}
 

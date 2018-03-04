@@ -95,14 +95,12 @@ char* buff_a_num(void)
 	if (numBytesRead > FROAD_SML_BUFF_SIZE)
 	{
 		// This should never happen
-		// fprintf(stderr, "<<<ERROR>>> - Fileroad - buff_a_num() - How did read get too many bytes?!\n");
 		HARKLE_ERROR(Fileroad, buff_a_num, How did read get too many bytes);
 		success = false;
 	}
 	else if (numBytesRead <= 0)
 	{
 		// This should never happen
-		// fprintf(stderr, "<<<ERROR>>> - Fileroad - buff_a_num() - 0 bytes read?!\n");
 		HARKLE_ERROR(Fileroad, buff_a_num, 0 bytes read?);
 		success = false;
 	}
@@ -154,7 +152,6 @@ char* buff_a_num(void)
 
 			if (!retVal)
 			{
-				// fprintf(stderr, "<<<ERROR>>> - Fileroad - buff_a_num() - copy_a_string failed!\n");
 				HARKLE_ERROR(Fileroad, buff_a_num, copy_a_string failed);
 				success = false;
 			}
@@ -178,8 +175,6 @@ char** split_lines(char* haystack, char splitChar)
 	size_t hsLen = 0;  // Length of the original haystack
 	char* currStr = NULL;  // Memory address of the current string truncated from hsCopy
 	char* currNul = NULL;  // Memory address of the current artificial nul terminator in hsCopy
-	
-	puts("!!!!!!!!!!!! THIS FUNCTION HAS NOT YET BEEN FULLY TESTED !!!!!!!!!!!!");
 
 	// INPUT VALIDATION
 	if (!haystack)
@@ -668,7 +663,6 @@ char* read_a_file(char* fileName)
 	}
 	else
 	{
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - NULL fileName!\n");
 		HARKLE_ERROR(Fileroad, read_a_file, NULL fileName);
 		success = false;
 	}
@@ -685,7 +679,6 @@ char* read_a_file(char* fileName)
 
 				if (temp_ptr != retVal)
 				{
-					// fprintf(stderr, "<<<ERROR>>> - Harkleproc - read_a_file() - memset failed!\n");
 					HARKLE_ERROR(Fileroad, read_a_file, memset failed);
 				}
 

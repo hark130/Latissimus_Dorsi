@@ -21,7 +21,6 @@
 char* get_me_a_buffer(size_t length);
 
 
-
 /*
 	Purpose - Allocate an array of char* on the heap
 	Input

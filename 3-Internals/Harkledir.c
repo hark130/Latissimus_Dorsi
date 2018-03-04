@@ -130,7 +130,6 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	bool retVal = true;
 	off_t symLinkLength = 0;  // Will be used to allocate an array for any symlinks
 	ssize_t numBytesRead = 0;  // Return
-	// char* absPath_ptr = NULL;  // Should hold absolute path for an file passed to size_a_file()
 	bool isThisAFile = true;  // Third parameter for os_path_join()
 	int errNum = 0;  // Pass as an [OUT] parameter to size_a_file() to get errno
 	
@@ -203,14 +202,6 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 	// unsigned char hd_type; 		// Should match struct dirent.d_type
 	if (retVal == true && updateThis_ptr->hd_AbsName)
 	{
-		// fprintf(stdout, "%s:\t%zd\n", "DT_BLK", (intmax_t)DT_BLK);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_CHR", (intmax_t)DT_CHR);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_DIR", (intmax_t)DT_DIR);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_FIFO", (intmax_t)DT_FIFO);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_LNK", (intmax_t)DT_LNK);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_REG", (intmax_t)DT_REG);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_SOCK", (intmax_t)DT_SOCK);
-		// fprintf(stdout, "%s:\t%zd\n", "DT_UNKNOWN", (intmax_t)DT_UNKNOWN);
 		switch (currDirEntry->d_type)
 		{
 			case DT_UNKNOWN:
@@ -249,181 +240,11 @@ bool populate_hdEnt_struct(hdEnt_ptr updateThis_ptr, struct dirent* currDirEntry
 				perror(strerror(errNum));  // DEBUGGING
 				retVal = false;
 			}
-		// 	// absPath_ptr = os_path_join()
-		// 	// symLinkLength = size_a_file(updateThis_ptr->hd_Name);
-		// 	symLinkLength = size_a_file(updateThis_ptr->hd_AbsName, &errNum);
-		// 	// fprintf(stdout, "File %s is a symlink of length %jd\n", updateThis_ptr->hd_AbsName, (intmax_t)symLinkLength);  // DEBUGGING
-			
-		// 	if (symLinkLength == -1)
-		// 	{
-		// 		switch (errNum)
-		// 		{
-		// 			case 0:
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with -1 but no errno);
-		// 				symLinkLength = PATH_MAX;
-		// 				// retVal = false;
-		// 				break;
-		// 			case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EACCES);
-		// 				retVal = false;
-		// 				break;
-		// 			case EBADF:			// fd is bad
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EBADF);
-		// 				retVal = false;
-		// 				break;
-		// 			case EFAULT:		// Bad address
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EFAULT);
-		// 				retVal = false;
-		// 				break;
-		// 			case ELOOP:			// Too many symbolic links encountered while traversing the path
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ELOOP);
-		// 				retVal = false;
-		// 				break;
-		// 			case ENAMETOOLONG:	// path is too long
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENAMETOOLONG);
-		// 				retVal = false;
-		// 				break;
-		// 			case ENOENT:		// A component of path does not exist, or path is an empty string
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOENT);
-		// 				retVal = false;
-		// 				break;
-		// 			case ENOMEM:		// Out of memory (i.e., kernel memory)
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOMEM);
-		// 				retVal = false;
-		// 				break;
-		// 			case ENOTDIR:		// A component of the path prefix of path is not a directory
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with ENOTDIR);
-		// 				retVal = false;
-		// 				break;
-		// 			case EOVERFLOW:		// path or fd refers to a file whose size, inode number, or number of blocks cannot be represented in, respectively, the types off_t, ino_t, or blkcnt_t
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with EOVERFLOW);
-		// 				retVal = false;
-		// 				break;
-		// 			default:
-		// 				HARKLE_ERROR(Harkledir, populate_hdEnt_struct, size_a_file failed with unknown ERRNO value);
-		// 				retVal = false;
-		// 				break;
-		// 		}
-		// 	}
-		// 	else if (symLinkLength == 0)
-		// 	{
-		// 		// Some symlinks (e.g., /proc, /sys) report 'st_size' as zero.
-		// 		// PATH_MAX should be a "good enough" estimate
-		// 		symLinkLength = PATH_MAX;
-		// 		// fprintf(stdout, "We're guessing a symLinkLength here!\n");  // DEBUGGING
-		// 	}
-			
-		// 	if (retVal == true)
-		// 	{
-		// 		// Increase the size by one to look for truncation
-		// 		symLinkLength++;
-				
-		// 		// Allocate a buffer
-		// 		updateThis_ptr->hd_symName = get_me_a_buffer(symLinkLength);
-				
-		// 		if (!(updateThis_ptr->hd_symName))
-		// 		{
-		// 			HARKLE_ERROR(Harkledir, populate_hdEnt_struct, get_me_a_buffer failed);
-		// 			retVal = false;
-		// 		}
-		// 		else
-		// 		{
-		// 			// Read into that buffer
-		// 			numBytesRead = readlink(updateThis_ptr->hd_AbsName, updateThis_ptr->hd_symName, symLinkLength);
-		// 			// fprintf(stdout, "readlink(%s, hd_symName, %jd) returned %zd.\n", updateThis_ptr->hd_Name, (intmax_t)symLinkLength, numBytesRead);  // DEBUGGING
-
-		// 			// Validate the read
-		// 			if (numBytesRead == -1)
-		// 			{
-		// 				errNum = errno;
-
-		// 				switch (errNum)
-		// 				{
-		// 					case 0:
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with -1 but no errno);
-		// 						retVal = false;
-		// 						break;
-		// 					case EACCES:		// Search permission is denied for one of the directories in the path prefix of path
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EACCES);
-		// 						// retVal = false;  // Sometimes you can't access /proc
-		// 						if (updateThis_ptr->hd_symName)
-		// 						{
-		// 							if (false == release_a_string(&(updateThis_ptr->hd_symName)))
-		// 							{
-		// 								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
-		// 								retVal = false;
-		// 							}
-		// 						}
-		// 						break;
-		// 					case EFAULT:		// Bad address
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EFAULT);
-		// 						retVal = false;
-		// 						break;
-		// 					case EINVAL:		// bufsiz is not positive or the named file is not a symbolic link
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EINVAL);
-		// 						retVal = false;
-		// 						break;
-		// 					case EIO:			// An I/O error occurred while reading from the filesystem
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EIO);
-		// 						retVal = false;
-		// 						break;
-		// 					case ELOOP:			// Too many symbolic links encountered while traversing the path
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ELOOP);
-		// 						retVal = false;
-		// 						break;
-		// 					case ENAMETOOLONG:	// path is too long
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENAMETOOLONG);
-		// 						retVal = false;
-		// 						break;
-		// 					case ENOENT:		// A component of path does not exist, or path is an empty string
-		// 						// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOENT);
-		// 						// retVal = false;  // Weird
-		// 						if (updateThis_ptr->hd_symName)
-		// 						{
-		// 							if (false == release_a_string(&(updateThis_ptr->hd_symName)))
-		// 							{
-		// 								HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string failed);
-		// 								retVal = false;
-		// 							}
-		// 						}
-		// 						break;
-		// 					case ENOMEM:		// Out of memory (i.e., kernel memory)
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOMEM);
-		// 						retVal = false;
-		// 						break;
-		// 					case ENOTDIR:		// A component of the path prefix of path is not a directory
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with ENOTDIR);
-		// 						retVal = false;
-		// 						break;
-		// 					case EBADF:			// fd is bad
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with EBADF);
-		// 						retVal = false;
-		// 						break;
-		// 					default:
-		// 						HARKLE_ERROR(Harkledir, populate_hdEnt_struct, readlink failed with unknown ERRNO value);
-		// 						retVal = false;
-		// 						break;
-		// 				}
-		// 			}
-		// 			else if (numBytesRead == symLinkLength)
-		// 			{
-		// 				// HARKLE_ERROR(Harkledir, populate_hdEnt_struct, Buffer read may have been truncated);
-		// 			}
-		// 		}				
-		// 	}			
 		}
 	}
 
 	// CLEAN UP
-	// if (absPath_ptr)
-	// {
-	// 	fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
-	// 	if (false == release_a_string(&absPath_ptr))
-	// 	{
-	// 		HARKLE_ERROR(Harkledir, populate_hdEnt_struct, release_a_string has failed);
-	// 	}
-	// 	fprintf(stdout, "Calling release_a_string(absPath_ptr == %s (%p))\n", absPath_ptr, absPath_ptr);  // DEBUGGING
-	// }
+
 	
 	// DONE
 	return retVal;
@@ -640,24 +461,6 @@ dirDetails_ptr open_dir(char* directoryName)
 		}
 
 		// 1.2. Allocate a char array
-		// nameLen = strlen(directoryName);
-		// retVal->dirName = (char*)calloc(nameLen + 1, sizeof(char));
-
-		// if (!(retVal->dirName))
-		// {
-		// 	HARKLE_ERROR(Harkledir, open_dir, dirName calloc failed);
-		// 	success = false;
-		// }
-		// else
-		// {
-		// 	temp_ptr = strncpy(retVal->dirName, directoryName, nameLen);
-
-		// 	if (temp_ptr != retVal->dirName)
-		// 	{
-		// 		HARKLE_ERROR(Harkledir, open_dir, dirName strncpy failed);
-		// 		success = false;
-		// 	}
-		// }
 		retVal->dirName = copy_a_string(directoryName);
 
 		if (!(retVal->dirName))
@@ -891,27 +694,6 @@ bool free_dirDetails_ptr(dirDetails_ptr* oldStruct_ptr)
 }
 
 
-// #define HDIR_DT_BLK			(unsigned int)(1 << 0)
-// #define HDIR_DT_CHR			(unsigned int)(1 << 1)
-// #define HDIR_DT_DIR			(unsigned int)(1 << 2)
-// #define HDIR_DT_FIFO		(unsigned int)(1 << 3)
-// #define HDIR_DT_LNK			(unsigned int)(1 << 4)
-// #define HDIR_DT_REG			(unsigned int)(1 << 5)
-// #define HDIR_DT_SOCK		(unsigned int)(1 << 6)
-// #define HDIR_DT_UNKNOWN		(unsigned int)(1 << 7)
-// #define HDIR_DT_ALL			(unsigned int)(1 << 8)
-/*
-	Purpose - Parse directoryDetails arrays into a unique char* array
-	Input
-		dirStruct_ptr - directoryDetails struct pointer to parse from
-		typeFlags - bitwise OR of "typeFlags" MACRO FLAGS
-		uniqueEntries
-			If true, only unique entries are copied in
-			If false, all entries are copied in
-		resolveLinks
-			If true, hd_symName is used for symbolic link files
-			If false, hd_Name is used for all entries
- */
 char** parse_dirDetails_to_char_arr(dirDetails_ptr dirStruct_ptr, unsigned int typeFlags, bool uniqueEntries, bool resolveLinks)
 {
 	// LOCAL VARIABLES
@@ -1361,8 +1143,6 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 	int* numEntries_ptr = NULL;  // Pointer to the numThings member of the relevant section
 	hdEnt_ptr** abstractArr_ptr = NULL;  // Pointer to the array member of the relevant section
 	size_t* arraySize_ptr = NULL;  // Pointer to the arraySize member of the relevant section
-	// hdEnt_ptr** debug_ptr = NULL;  // Pointer to the array member of the relevant section
-
 
 	// INPUT VALIDATION
 	if (!updateThis_ptr)
@@ -1442,10 +1222,8 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 				*abstractArr_ptr = realloc_ptr;
 				// NULL the newly allocated buffer
 				// fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
-				// realloc_ptr = realloc_ptr + ((*arraySize_ptr) / sizeof(hdEnt_ptr));  // Advance past old array
 				realloc_ptr = realloc_ptr + *arraySize_ptr;  // Advance past old array
 				// fprintf(stdout, "populate_dirDetails_arrays() - Realloc_ptr ==  %p\n", realloc_ptr);  // DEBUGGING
-				///////////////////////////////////// SEG FAULT /////////////////////////////////////
 				temp_ptr = memset(realloc_ptr, HDIR_MEMSET_DEFAULT, (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr)));
 				if (temp_ptr != realloc_ptr)
 				{
@@ -1460,7 +1238,6 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 
 				*arraySize_ptr += (HDIR_ARRAY_LEN * sizeof(hdEnt_ptr));
 				// Set the last index to NULL
-				// (*((*abstractArr_ptr) + (*arraySize_ptr) - 1)) = NULL;  // BUG?!?!
 				(*abstractArr_ptr)[(*arraySize_ptr) / sizeof(hdEnt_ptr) - 1] = NULL;  // Superseded by memset
 				// fprintf(stdout, "populate_dirDetails_arrays() - Array %p now big enough with %zu bytes.\n", *abstractArr_ptr, (*arraySize_ptr));  // DEBUGGING
 			}
@@ -1469,16 +1246,6 @@ bool populate_dirDetails_arrays(dirDetails_ptr updateThis_ptr, struct dirent* fi
 				HARKLE_ERROR(Harkledir, populate_dirDetails_arrays, Failed to realloc the fileName_arr);
 				retVal = false;
 			}
-
-			// /* DEBUGGING */
-			// debug_ptr = abstractArr_ptr;
-			// puts("AFTER:");
-			// while (*debug_ptr != NULL)
-			// {
-			// 	fprintf(stdout, "%p, ", *debug_ptr);
-			// 	debug_ptr++;
-			// }
-			// putchar(0xA);
 		}
 	}
 
