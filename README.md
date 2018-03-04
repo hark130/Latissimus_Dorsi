@@ -53,7 +53,7 @@ If you don't pass an argument to print_PID_libraries.exe, you'll know.  If you d
 
 Output will resolve the PID into its cmdline argument.  It will also list a unique list of files that have been mapped into memory.
 
-If you experience errors and wish to see more <<<ERROR>>> output, uncomment the "HARKLE_DEBUG" MACRO in "./3-Internals/Harklerror.h", build with Make, and run it again.
+If you experience errors and wish to see more ERROR output, uncomment the "HARKLE_DEBUG" MACRO in "./3-Internals/Harklerror.h", build with Make, and run it again.
 
 ### COMPILATION
 
