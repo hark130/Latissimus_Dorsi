@@ -63,11 +63,11 @@ If you experience errors and wish to see more <<<ERROR>>> output, uncomment the 
 
 ```$ sudo ./print_PID_libraries.exe 4476```
 
-Parsing /proc/4476/ (/usr/sbin/cupsd)
-Files loaded by /proc/4476/:
+	Parsing /proc/4476/ (/usr/sbin/cupsd)
+	Files loaded by /proc/4476/:
 
-	/usr/sbin/cupsd
-	/lib/x86_64-linux-gnu/libnss_files-2.23.so
-	[...snip...]
-	/lib/x86_64-linux-gnu/ld-2.23.so
-	/lib/x86_64-linux-gnu/libsystemd.so.0.14.0
+		/usr/sbin/cupsd
+		/lib/x86_64-linux-gnu/libnss_files-2.23.so
+		[...snip...]
+		/lib/x86_64-linux-gnu/ld-2.23.so
+		/lib/x86_64-linux-gnu/libsystemd.so.0.14.0
