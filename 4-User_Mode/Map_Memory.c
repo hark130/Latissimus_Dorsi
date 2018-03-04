@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/mman.h>		// mmap, msync, munmap
 #include <sys/stat.h>		// fstat
+#include <inttypes.h>		// intmax_t
 #include <fcntl.h>			// open
 #include <unistd.h>			// close
 
@@ -32,30 +33,43 @@ mapMem_ptr create_mapMem_ptr(void)
 }
 
 
-/*
-	Purpose - Map a file's contents to memory
-	Input - Filename to map into memory
-	Output - Pointer to a struct mappedMemory
-	Notes:
-		mapMem_ptr must be free()'d by the calling function
-		mapMem_ptr->fileMem_ptr must be free()'d by the calling function
- */
 mapMem_ptr map_file(const char* filename)
+{
+	// LOCAL VARIABLES
+	mapMem_ptr retVal = NULL;
+
+	// FUNCTION CALL
+	retVal = map_file_mode(filename, O_RDWR);
+
+	// DONE
+	return retVal;
+}
+
+
+mapMem_ptr map_file_mode(const char* filename, int flags)
 {	
 	// LOCAL VARIABLES
 	mapMem_ptr retVal = NULL;
 	int fileDesc = -1;  // Set to error value by default for the purposes of clean-up
 	struct stat fileStat;
-	
+	int minFlags = O_RDONLY | O_WRONLY | O_RDWR;
+
+	// fprintf(stdout, "Min Flags:\t%d\n", minFlags);  // DEBUGGING
+	// fprintf(stdout, "int flags:\t%d\n", flags);  // DEBUGGING	
 	// INPUT VALIDATION
 	if (NULL == filename)
 	{
-		fprintf(stderr, "map_file() - filename is NULL\n");
+		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is NULL!\n");
 		return retVal;
 	}
 	else if (0 == strlen(filename))
 	{
-		fprintf(stderr, "map_file() - filename is empty\n");
+		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is empty!\n");
+		return retVal;
+	}
+	else if (!(flags & minFlags) && flags != 0)
+	{
+		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file_mode() - minimum flags missing!\n");
 		return retVal;
 	}
 	else
@@ -65,7 +79,7 @@ mapMem_ptr map_file(const char* filename)
 		retVal = create_mapMem_ptr();
 		if (NULL == retVal)
 		{
-			fprintf(stderr, "map_file() - create_mapMem_ptr() returned NULL\n");
+			fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - create_mapMem_ptr() returned NULL!\n");
 		}
 		else
 		{
@@ -73,7 +87,7 @@ mapMem_ptr map_file(const char* filename)
 			fileDesc = open(filename, O_RDWR);
 			if (0 > fileDesc)
 			{
-				fprintf(stderr, "map_file() - unable to open '%s'\n", filename);
+				fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to open '%s'!\n", filename);
 			}
 			else
 			{
@@ -81,20 +95,20 @@ mapMem_ptr map_file(const char* filename)
 				// 3.1. Get the file status
 				if (0 != fstat(fileDesc, &fileStat))
 				{
-					fprintf(stderr, "map_file() - unable to fstat '%s'\n", filename);
+					fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to fstat '%s'!\n", filename);
 				}
 				else
 				{
 					// 3.2. Verify the file status indicates this is a regular file
 					if (!S_ISREG(fileStat.st_mode))
 					{
-						fprintf(stderr, "map_file() - '%s' is not a regular file\n", filename);
+						fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - '%s' is not a regular file!\n", filename);
 					}
 					else
 					{
 						if (0 >= fileStat.st_size)
 						{
-							fprintf(stderr, "map_file() - Invalid size for '%s'\n", filename);
+							fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - Invalid size of %jd for '%s'!\n", (intmax_t)fileStat.st_size, filename);
 						}
 						else
 						{
@@ -110,18 +124,18 @@ mapMem_ptr map_file(const char* filename)
 											 off_t offset);
 							 */
 							retVal->fileMem_ptr = mmap(NULL, \
-														   retVal->memSize, \
-														   PROT_READ | PROT_WRITE | PROT_EXEC, \
-														   MAP_SHARED, \
-														   fileDesc, \
-														   0);
+													   retVal->memSize, \
+													   PROT_READ | PROT_WRITE | PROT_EXEC, \
+													   MAP_SHARED, \
+													   fileDesc, \
+													   0);
 							if (NULL == retVal->fileMem_ptr)
 							{
-								fprintf(stderr, "map_file() - mmap failed to map file descriptor %d into memory\n", fileDesc);
+								fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - mmap failed to map file descriptor %d into memory!\n", fileDesc);
 							}
 							else
 							{
-								fprintf(stdout, "map_file() appears to have succeeded!\n");
+								// fprintf(stdout, "<<<SUCCESS>>> - Map_Memory - map_file() appears to have succeeded!\n");  // DEBUGGING
 								retVal->memType = MM_TYPE_MMAP;
 							}
 						}

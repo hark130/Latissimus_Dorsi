@@ -45,8 +45,28 @@ mapMem_ptr create_mapMem_ptr(void);
 	Notes:
 		mapMem_ptr must be free()'d by the calling function
 		mapMem_ptr->fileMem_ptr must be free()'d by the calling function
+		This function is now is a 'wrapper' around 
+			map_file_mode(filename, O_RDWR) for the sake of backwards
+			compatibility
  */
 mapMem_ptr map_file(const char* filename);
+
+
+/*
+	Purpose - Map a file's contents to memory
+	Input
+		filename - Filename to map into memory
+		flags - Bitwise OR of access modes, zero or more file creation flags 
+			and file status flags 
+			(see: http://man7.org/linux/man-pages/man2/open.2.html)
+	Output - Pointer to a struct mappedMemory
+	Notes:
+		mapMem_ptr must be free()'d by the calling function
+		mapMem_ptr->fileMem_ptr must be free()'d by the calling function
+		The argument flags must include one of the following access modes:
+       		O_RDONLY, O_WRONLY, or O_RDWR.
+ */
+mapMem_ptr map_file_mode(const char* filename, int flags);
 
 
 /*
