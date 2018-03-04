@@ -13,9 +13,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] 7. Use process creation APIs to launch and clone processes (3c)
 * [ ] 8. Demonstrate understanding of internal structures and purpose of ELF Files (3c)
 * [ ] 9. Understand the role and use Shared Objects at runtime (3c)
-* [ ] 10. Inspect which modules are loaded in a running application (3c)
-* [ ] 11. Allocate, access, and manipulate virtual memory functions using the POSIX API (malloc, ... etc.) (2c)
-* [ ] 12. Allocate, access, and manipulate memory-mapped files (2c)
+* [X] 10. Inspect which modules are loaded in a running application (3c)
+* [X] 11. Allocate, access, and manipulate virtual memory functions using the POSIX API (malloc, ... etc.) (2c)
+* [X] 12. Allocate, access, and manipulate memory-mapped files (2c)
 * [ ] 13. Read and manipulate DAC, xattr, and ACL file permissions (2c)
 * [ ] 14. Understand and implement the UNIX unique role of files for synchronization and IPC (3c)
 * [ ] 15. Demonstrate and understanding of the difference between virtual and physical File Systems (2c)
@@ -56,9 +56,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* ```cat /proc/<PID>/cmdline```
 		* ```for I in /proc/*/cmdline; do echo $I; cat $I | tr '\000' ' '; echo; done```
 * [X] Prompt the user to choose one
-* [ ] Change <EMPTY> cmdline reads to <ZOMBIE> (or something similar).  [Man page](http://man7.org/linux/man-pages/man5/proc.5.html) says empty cmdline files indicate a zombie process.
-* [ ] Move bool free_char_arr(char*** charArr_ptr) from Harkleproc to Memoroad where it belongs
-* [ ] List the modules loaded in that application
+* [X] Move bool free_char_arr(char*** charArr_ptr) from Harkleproc to Memoroad where it belongs
+* [X] List the modules loaded in that application
 	* lsof
 		* ```lsof -p <PID>```
 		* ```lsof /path/to/lib.so```
@@ -78,26 +77,11 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* ```nm```
 
 **BUGS:**
-* [ ] Which PID would you like to investigate? asd Segmentation fault (core dumped)
-* [ ] Seemingly random Segmentation Faults when attempting to access file without elevated permissions
-* [X] Harkledir - populate_hdEnt_struct() - readlink(absPath, symBuf, symBufSize) doesn't seem to like to read more than 64 bytes?!  
-	* (strstr truncated buff in /proc/<PID>/maps?  Fix(?) readlink()?)  
-	* Read the last comment [here](https://stackoverflow.com/questions/5525668/how-to-implement-readlink-to-find-the-path)
-	* Write a wrapper around readlink that:
-		* Has a static buffer
-		* Reads the symlink into that buffer
-		* strlens() the static buffer
-		* allocates a properly sized dynamic buffer
-		* copies from static to dynamic
-		* returns the pointer to the dynamic buffer
-* [ ] mount shows me that proc has the following options: (rw,nosuid,nodev,noexec,relatime).  Is this why sudo dies on occassion.  Does my binary actually need to run as root?
-	* [ ] chmod 4770 print_PID_libraries.exe; chown root:joe print_PID_libraries.exe;  (How bad is this?  Pretty bad, right?)
-	* [ ] mount -n -o remount,suid proc as /proc?  (Would this destroy the world?)
-	* [ ] Run print_PID_libraries.exe as root (su -, terminal, etc)
-* [X] Crashes on too many entries.  (see: segFault01.txt)  Cut out the middle man?  Skip the structs and go straight for the symbolic link name?  Can I just point at existing names returned by lstat into the struct stat (e.g., d_name)?  realpath(3)?  [MAXSYMLINKS](https://www.gnu.org/software/libc/manual/html_node/Symbolic-Links.html)?
-* ```valgrind -v --leak-check=full --track-origins=yes ./print_PID_libraries.exe 3549```
+
+* [X] All closed
 
 NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being silenced and ```valgrind``` for bringing to light my memory leaks.
+```valgrind -v --leak-check=full --track-origins=yes ./print_PID_libraries.exe 3549```
 
 ### 3-10-3
 
@@ -116,6 +100,14 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 	* [ ] Printing the "NEEDED" libraries from an application's ELF Header
 	* [ ] Use the above file IO functionality to resolve those (inevitably) symbolic links to their destinations
 	* [ ] Print the actual libraries loaded in /proc/<PID>/mem
+
+### 3-11
+
+* [X] See Memoroad.h
+
+### 3-12
+
+* [X] See 4-User_Mode/Map_Memory.h 
 
 ### NOTES
 
