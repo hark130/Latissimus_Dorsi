@@ -47,13 +47,13 @@ In my free time.
 
 ### DESCRIPTION
 
-	print_PID_libraries.exe will resolve the symbolic links, if any, found in /proc/<PID>/map_files/ to determine what files <PID> has mapped into memory.
+print_PID_libraries.exe will resolve the symbolic links, if any, found in /proc/<PID>/map_files/ to determine what files <PID> has mapped into memory.
 
-	If you don't pass an argument to print_PID_libraries.exe, you'll know.  If you don't pass a number, you'll know.  If the PID you choose doesn't exist, you'll know.  If there are no files, you'll know.  If you don't have permissions to access a file, print_PID_libraries.exe will suggest you use 'sudo'.
+If you don't pass an argument to print_PID_libraries.exe, you'll know.  If you don't pass a number, you'll know.  If the PID you choose doesn't exist, you'll know.  If there are no files, you'll know.  If you don't have permissions to access a file, print_PID_libraries.exe will suggest you use 'sudo'.
 
-	Output will resolve the PID into its cmdline argument.  It will also list a unique list of files that have been mapped into memory.
+Output will resolve the PID into its cmdline argument.  It will also list a unique list of files that have been mapped into memory.
 
-	If you experience errors and wish to see more <<<ERROR>>> output, uncomment the "HARKLE_DEBUG" MACRO in "./3-Internals/Harklerror.h", build with Make, and run it again.
+If you experience errors and wish to see more <<<ERROR>>> output, uncomment the "HARKLE_DEBUG" MACRO in "./3-Internals/Harklerror.h", build with Make, and run it again.
 
 ### COMPILATION
 
