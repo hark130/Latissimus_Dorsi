@@ -51,10 +51,19 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* fork() and wait()
 		* Child exits with 8 bits (e.g., if (childPID == 0) { exit(func(arg)); })
 		* Any other interprocess communication method
-	* Non-related processes
-		* file
-		* pipe
-		* Signals(?)
+	* Non-forked processes
+		* files
+		* file locks
+		* semaphores
+		* pipes
+		* signals
+			* sigemptyset() - Initializes the signal set given by set to empty, with all signals excluded from the set.
+			* sigaddset() - Add and delete respectively signal signum from set.
+			* sigprocmask() - Used to fetch and/or change the signal mask of the calling thread. The signal mask is the set of signals whose delivery is currently blocked for the caller.
+			* sigsuspend() - Temporarily replaces the signal mask of the calling process with the mask given by mask and then suspends the process until delivery of a signal whose action is to invoke a signal handler or to terminate a process.
+			* sigaction() - Allows the calling process to examine and/or specify the action to be associated with a specific signal.
+			* kill() - Used to send any signal to any process group or process.
+		* message passing(?)
 
 ### 3-10-1
 
