@@ -55,6 +55,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
 * Write a "plug-in" function that would prompt the user for verification if ever the [program received a SIGINT](http://www.csl.mtu.edu/cs4411.choi/www/Resource/signal.pdf) (see: Ctrl-C)
 * "Global" signal handler?
+* Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
 
 #### NOTES:
 
