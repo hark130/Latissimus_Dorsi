@@ -41,6 +41,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
 * [github.com/torvalds/linux/signal.h](https://github.com/torvalds/linux/blob/master/include/linux/signal.h)
 * [Open Group signal.h](http://pubs.opengroup.org/onlinepubs/009696699/basedefs/signal.h.html)
+* [Interesting comments on executing the default signal handler](https://stackoverflow.com/questions/6015498/executing-default-signal-handler)
+* [Signal handling primer for glibc 2.2.3](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_24.html)
 
 ## TO DO
 
