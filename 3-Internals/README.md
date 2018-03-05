@@ -46,6 +46,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [signal(7) man page](http://man7.org/linux/man-pages/man7/signal.7.html)
 * [libc termination signals](https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html)
 * [Signal handling quiz](http://www.sanfoundry.com/linux-debugging-questions-answers-signal-handling/)
+* [How to Write Advanced Signal Handlers in UNIX](http://www.oracle.com/technetwork/articles/servers-storage-dev/signal-handlers-studio-2282526.html)
 
 ## TO DO
 
