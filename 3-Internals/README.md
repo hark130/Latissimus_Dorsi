@@ -43,6 +43,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Open Group signal.h](http://pubs.opengroup.org/onlinepubs/009696699/basedefs/signal.h.html)
 * [Interesting comments on executing the default signal handler](https://stackoverflow.com/questions/6015498/executing-default-signal-handler)
 * [Signal handling primer for glibc 2.2.3](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_24.html)
+* [signal(7) man page](http://man7.org/linux/man-pages/man7/signal.7.html)
 
 ## TO DO
 
@@ -71,6 +72,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 			* sigsuspend() - Temporarily replaces the signal mask of the calling process with the mask given by mask and then suspends the process until delivery of a signal whose action is to invoke a signal handler or to terminate a process.
 			* sigaction() - Allows the calling process to examine and/or specify the action to be associated with a specific signal.
 			* kill() - Used to send any signal to any process group or process.
+			* raise() - Sends a signal to the calling process or thread.
+			* signal() - Use sigaction() instead.
+			
 		* message passing(?)
 
 ### 3-10-1
