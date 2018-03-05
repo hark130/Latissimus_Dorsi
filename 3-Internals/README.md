@@ -45,6 +45,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Signal handling primer for glibc 2.2.3](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_24.html)
 * [signal(7) man page](http://man7.org/linux/man-pages/man7/signal.7.html)
 * [libc termination signals](https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html)
+* [Signal handling quiz](http://www.sanfoundry.com/linux-debugging-questions-answers-signal-handling/)
 
 ## TO DO
 
@@ -58,6 +59,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * "Global" signal handler?
 * Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
 * If a child process makes the call exit(–1), what exit status will be seen by the parent?
+* [The Producer / Consumer Problem](https://users.cs.cf.ac.uk/Dave.Marshall/C/node32.html#SECTION003240000000000000000) - Control access of (consumer) reads and (producer) writes to a buffer
 
 #### NOTES:
 
