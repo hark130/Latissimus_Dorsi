@@ -53,7 +53,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 * Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
 * Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
-* Write a "plug-in" function that would prompt the user for verification if ever the program received a SIGINT (see: Ctrl-C)
+* Write a "plug-in" function that would prompt the user for verification if ever the [program received a SIGINT](http://www.csl.mtu.edu/cs4411.choi/www/Resource/signal.pdf) (see: Ctrl-C)
 
 #### NOTES:
 
