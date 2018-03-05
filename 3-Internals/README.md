@@ -44,6 +44,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Interesting comments on executing the default signal handler](https://stackoverflow.com/questions/6015498/executing-default-signal-handler)
 * [Signal handling primer for glibc 2.2.3](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_24.html)
 * [signal(7) man page](http://man7.org/linux/man-pages/man7/signal.7.html)
+* [libc termination signals](https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html)
 
 ## TO DO
 
