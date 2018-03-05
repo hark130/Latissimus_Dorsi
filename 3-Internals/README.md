@@ -39,6 +39,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [realpath(3)](http://man7.org/linux/man-pages/man3/realpath.3.html)
 * [differences in resolving symlinks between ls, stat, and readlink](https://unix.stackexchange.com/questions/22128/how-to-get-full-path-of-original-file-of-a-soft-symbolic-link)
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
+* [github.com/torvalds/linux/signal.h](https://github.com/torvalds/linux/blob/master/include/linux/signal.h)
+* [Open Group signal.h](http://pubs.opengroup.org/onlinepubs/009696699/basedefs/signal.h.html)
 
 ## TO DO
 
