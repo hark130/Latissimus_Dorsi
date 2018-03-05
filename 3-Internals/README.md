@@ -49,6 +49,11 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ### 3-4-1
 
+#### IDEAS:
+
+* Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
+* Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
+
 #### NOTES:
 
 * Methods of synchronization between:
