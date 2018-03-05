@@ -63,6 +63,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 			* sigaddset() - Add signal signum from set.
 			* sigdelset() - Delete signal signum from set.
 			* sigprocmask() - Used to fetch and/or change the signal mask of the calling thread. The signal mask is the set of signals whose delivery is currently blocked for the caller.
+				* SIG_BLOCK - The set of blocked signals is the union of the current set and the set argument.
+				* SIG_UNBLOCK - The signals in set are removed from the current set of blocked signals. It is permissible to attempt to unblock a signal which is not blocked.
+				* SIG_SETMASK - The set of blocked signals is set to the argument set.
 			* sigsuspend() - Temporarily replaces the signal mask of the calling process with the mask given by mask and then suspends the process until delivery of a signal whose action is to invoke a signal handler or to terminate a process.
 			* sigaction() - Allows the calling process to examine and/or specify the action to be associated with a specific signal.
 			* kill() - Used to send any signal to any process group or process.
