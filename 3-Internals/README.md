@@ -42,6 +42,20 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## TO DO
 
+### 3-4-1
+
+#### NOTES:
+
+* Methods of synchronization between:
+	* Parent and child processes
+		* fork() and wait()
+		* Child exits with 8 bits (e.g., if (childPID == 0) { exit(func(arg)); })
+		* Any other interprocess communication method
+	* Non-related processes
+		* file
+		* pipe
+		* Signals(?)
+
 ### 3-10-1
 
 * [X] Create the framework to facilitate successful completion of 3-10
