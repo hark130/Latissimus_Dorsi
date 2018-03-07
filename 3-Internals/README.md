@@ -52,6 +52,12 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ### 3-4-1
 
+* [ ] Validate argument input
+* [ ] Verify the file exists?
+* [ ] Verify it's a binary?
+* [ ] Call exec*
+* [ ] Write a signal handler
+
 #### IDEAS:
 
 * Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
