@@ -1,13 +1,54 @@
-#include <errno.h>		// errno
+#include <errno.h>			// errno
 #include "Harklerror.h"
-#include <signal.h>		// signals
-#include <stdbool.h>	// bool, true, false
-#include <stdio.h>		// fprintf
-#include <string.h>		// strerror
-#include <sys/stat.h>	// stat
+#include "Memoroad.h"		// release_a_string
+#include <signal.h>			// signals
+#include "Signaleroad.h"	// str_signaleroad
+#include <stdbool.h>		// bool, true, false
+#include <stdio.h>			// fprintf
+#include <stdlib.h>			// EXIT_SUCCESS
+#include <string.h>			// strerror
+#include <sys/stat.h>		// stat
 #include <sys/types.h>
-#include <sys/wait.h>	// wait
-#include <unistd.h>		// exec*(), fork
+#include <sys/wait.h>		// wait
+#include <unistd.h>			// exec*(), fork
+
+
+static void tester(int sig)
+{
+	// LOCAL VARIABLES
+	char* temp_ptr = NULL;
+
+	// RESOLVE SIGNAL
+	temp_ptr = str_signaleroad(sig);
+
+	if (temp_ptr)
+	{
+		fprintf(stdout, "SIGNAL %d CAUGHT!\n%s\n", sig, temp_ptr);
+	}
+	else
+	{
+		HARKLE_ERROR(nosig, tester, str_signaleroad failed);
+	}
+
+	// CLEAN UP
+	if (temp_ptr)
+	{
+		if (false == release_a_string(&temp_ptr))
+		{
+			HARKLE_ERROR(nosig, tester, release_a_string failed);
+		}
+	}
+
+	// DONE
+	return;
+}
+
+
+static void silencer(int sig)
+{
+	fprintf(stdout, "signal %d silenced", sig);
+	return;
+}
 
 
 int main(int argc, char* argv[])
@@ -21,6 +62,8 @@ int main(int argc, char* argv[])
 	pid_t forkPID = 0;  // Store the return value from fork() here
 	pid_t tempPID = 0;  // Return value for wait()
 	int statLoc = 0;  // [OUT] parameter for wait()
+	struct sigaction sigact;  // Used to specify actions for specific signals
+	int sigNum = 1;  // Signal numbers to iterate through
 
 	// 1. INPUT VALIDATION
 	fprintf(stdout, "\n");
@@ -72,7 +115,33 @@ int main(int argc, char* argv[])
 	char* argList[] = { nosigFname, NULL };  // Temporary solution
 
 	// 3. SIGNAL HANDLER
-	////////////////////////////// IMPLEMENT LATER //////////////////////////////
+	if (success == true)
+	{
+		sigemptyset(&sigact.sa_mask);  // Zeroize the mask of signals which should be blocked
+		sigact.sa_flags = 0;  // Can't think of any good flags to add for what I'm doing
+		sigact.sa_handler = tester;  // I want to see the signals go through first
+		// sigact.sa_handler = silencer;  // This is the real handler for this program
+
+		// Set all the actions
+		for (sigNum = 1; sigNum <= 64; sigNum++)
+		{
+			if (sigNum == SIGKILL || sigNum == SIGSTOP || sigNum == SIGCHLD || sigNum == 32 || sigNum == 33)
+			{
+				// Skipping SIGKILL == 9
+				// Skipping SIGSTOP == 19
+			}
+			else
+			{
+				if (-1 == sigaction(sigNum, &sigact, NULL))
+				{			
+					HARKLE_ERROR(nosig, main, sigaction failed);
+					fprintf(stderr, "sigaction(%d, &sigact, NULL) failed\n", sigNum);
+					success = false;
+					break;
+				}
+			}
+		}
+	}
 
 	// 4. CALL IT
 	if (success == true)
@@ -90,6 +159,10 @@ int main(int argc, char* argv[])
 					errNum = errno;
 					retVal = errNum;
 					fprintf(stderr, "ERROR: execv() returned %s\n\n", strerror(errNum));
+				}
+				else
+				{
+					_exit(EXIT_SUCCESS);
 				}
 				break;
 			default:  // Parent
@@ -124,7 +197,7 @@ int main(int argc, char* argv[])
 
 				if (WTERMSIG(statLoc))
 				{
-					fprintf(stdout, "%s terminated with signal number %d.\n", nosigFname, WTERMSIG(statLoc));
+					fprintf(stdout, "%s terminated with signal number %d - %s.\n", nosigFname, WTERMSIG(statLoc), strsignal(WTERMSIG(statLoc)));
 				}
 
 				if (WIFSTOPPED(statLoc))
