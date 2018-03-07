@@ -4,6 +4,9 @@ CC = gcc
 # 	$(CC) -c Fileroad_Descriptors.c
 # 	$(CC) -o 3-3_File_Descriptor_Practice-1_main.exe Fileroad_Descriptors.o 3-3_File_Descriptor_Practice-1_main.c
 
+341:
+	$(CC) -o nosig.exe 3-4_Signal_Handling-1_nosig.c
+
 3101:
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
