@@ -2,8 +2,11 @@
 #include "Harklerror.h"
 #include <signal.h>		// signals
 #include <stdbool.h>	// bool, true, false
-#include <sys/types.h>
+#include <stdio.h>		// fprintf
+#include <string.h>		// strerror
 #include <sys/stat.h>	// stat
+#include <sys/types.h>
+#include <sys/wait.h>	// wait
 #include <unistd.h>		// exec*(), fork
 
 
@@ -20,6 +23,7 @@ int main(int argc, char* argv[])
 	int statLoc = 0;  // [OUT] parameter for wait()
 
 	// 1. INPUT VALIDATION
+	fprintf(stdout, "\n");
 	// 1.1. Command Line Arguments
 	if (argc < 2)
 	{
@@ -55,7 +59,7 @@ int main(int argc, char* argv[])
 			fprintf(stderr, "ERROR: stat(%s) returned %s\n\n", nosigFname, strerror(errNum));
 			success = false;
 		}
-		else if (!(S_ISREG(sb.st_mode)))
+		else if (!(S_ISREG(nosigFile.st_mode)))
 		{
 			fprintf(stderr, "ERROR: %s is not a regular file.\n\n", nosigFname);
 			success = false;
@@ -65,73 +69,81 @@ int main(int argc, char* argv[])
 	// 2. CREATE ARGUMENT LIST
 	////////////////////////////// IMPLEMENT LATER //////////////////////////////
 	/* TEMP */
-	char* argList[] { nosigFname, NULL };
+	char* argList[] = { nosigFname, NULL };  // Temporary solution
 
 	// 3. SIGNAL HANDLER
 	////////////////////////////// IMPLEMENT LATER //////////////////////////////
 
 	// 4. CALL IT
-	switch (forkPID = fork())
+	if (success == true)
 	{
-		case (-1):
-			errNum = errno;
-			HARKLE_ERROR(nosig, main, fork failed);
-			fprintf(stderr, "ERROR: fork() returned %s\n\n", strerror(errNum));
-			success = false;
-		case (0):  // Child
-			execv(nosigFname, argList);
-			break;
-		default:  // Parent
-			tempPID = wait(&statLoc);
-
-			if (forkPID != tempPID)
-			{
-				HARKLE_ERROR(nosig, main, wait caught the wrong PID);
+		switch (forkPID = fork())
+		{
+			case (-1):
+				errNum = errno;
+				HARKLE_ERROR(nosig, main, fork failed);
+				fprintf(stderr, "ERROR: fork() returned %s\n\n", strerror(errNum));
 				success = false;
-			}
+			case (0):  // Child
+				if (-1 == execv(nosigFname, argList))
+				{
+					errNum = errno;
+					retVal = errNum;
+					fprintf(stderr, "ERROR: execv() returned %s\n\n", strerror(errNum));
+				}
+				break;
+			default:  // Parent
+				tempPID = wait(&statLoc);
 
-			fprintf(stdout, "%s returned %d.\n", statLoc);
-	
-			if (WIFEXITED(statLoc))
-			{
-				fprintf(stdout, "%s returned normally.\n", nosigFname);
-			}
-			else
-			{
-				fprintf(stdout, "%s did not return normally.\n", nosigFname);
-			}
+				if (forkPID != tempPID)
+				{
+					HARKLE_ERROR(nosig, main, wait caught the wrong PID);
+					success = false;
+				}
 
-			if (WEXITSTATUS(statLoc))
-			{
-				fprintf(stdout, "%s returned %d from main().\n", nosigFname, WEXITSTATUS(statLoc));
-			}
+				fprintf(stdout, "%s returned %d.\n", nosigFname, statLoc);
+		
+				if (WIFEXITED(statLoc))
+				{
+					fprintf(stdout, "%s returned normally.\n", nosigFname);
+				}
+				else
+				{
+					fprintf(stdout, "%s did not return normally.\n", nosigFname);
+				}
 
-			if (WIFSIGNALED(statLoc))
-			{
-				fprintf(stdout, "%s terminated due to the receipt of a signal that was not caught.\n", nosigFname);
-			}
+				if (WEXITSTATUS(statLoc))
+				{
+					fprintf(stdout, "%s returned %d from main().\n", nosigFname, WEXITSTATUS(statLoc));
+				}
 
-			if (WTERMSIG(statLoc))
-			{
-				fprintf(stdout, "%s terminated with signal number %d.\n", nosigFname, WTERMSIG(statLoc));
-			}
+				if (WIFSIGNALED(statLoc))
+				{
+					fprintf(stdout, "%s terminated due to the receipt of a signal that was not caught.\n", nosigFname);
+				}
 
-			if (WIFSTOPPED(statLoc))
-			{
-				fprintf(stdout, "%s is currently stopped.\n", nosigFname);
-			}
+				if (WTERMSIG(statLoc))
+				{
+					fprintf(stdout, "%s terminated with signal number %d.\n", nosigFname, WTERMSIG(statLoc));
+				}
 
-			if (WSTOPSIG(statLoc))
-			{
-				fprintf(stdout, "%d is the number of the signal that caused the %s to stop.\n", WSTOPSIG(statLoc), nosigFname);
-			}
+				if (WIFSTOPPED(statLoc))
+				{
+					fprintf(stdout, "%s is currently stopped.\n", nosigFname);
+				}
 
-			if (WIFCONTINUED(statLoc))
-			{
-				fprintf(stdout, "%s continued from a job control stop.\n", nosigFname);
-			}
+				if (WSTOPSIG(statLoc))
+				{
+					fprintf(stdout, "%d is the number of the signal that caused the %s to stop.\n", WSTOPSIG(statLoc), nosigFname);
+				}
 
-			fprintf(stdout, "\n");
+				if (WIFCONTINUED(statLoc))
+				{
+					fprintf(stdout, "%s continued from a job control stop.\n", nosigFname);
+				}
+
+				fprintf(stdout, "\n");
+		}
 	}
 
 	// 5. DONE
