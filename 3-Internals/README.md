@@ -37,7 +37,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [GNU C Library: File Status Flags](https://www.gnu.org/software/libc/manual/html_node/File-Status-Flags.html)
 * [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
 * [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
-* [libc Ch 13 - Low-Level Input/Output](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_13.html)
+* [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
 
 ## TO DO
 
