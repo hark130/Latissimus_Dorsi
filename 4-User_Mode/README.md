@@ -19,8 +19,28 @@ Developers will apply standard ___ techniques to Linux system programming
 * [Wrap a libc system call](http://samanbarghi.com/blog/2014/09/05/how-to-wrap-a-system-call-libc-function-in-linux/)
 * [Function Hooking - Part I](https://blog.netspi.com/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/) then...
 * [Dynamic Linker Tricks](https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/)
+* 4.5. - [Code caves](https://en.wikipedia.org/wiki/Code_cave)
 * 4.6. - [Test a binary for PIC](https://unix.stackexchange.com/questions/89211/test-whether-linux-binary-is-compiled-as-position-independent-code)
 * 4.6. - [Mitigate ptrace attacks](https://blog.netspi.com/using-strace-to-monitor-ssh-connections-on-linux/)
+* [Yale ELF Format](http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf)
+* [ELF Rundown](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
+* [Code Injection into Running Linux Application](https://www.codeproject.com/Articles/33340/Code-Injection-into-Running-Linux-Application)
+* [LD_PRELOAD Function Hooking](https://www.technovelty.org/c/using-ld_preload-to-override-a-function.html)
+* [Modifying a Dynamic Library Without Changing the Source Code](http://www.linuxjournal.com/article/7795)
+* [Magic of LD_PRELOAD for Userland Rootkits](http://fluxius.handgrep.se/2011/10/31/the-magic-of-ld_preload-for-userland-rootkits/)
 
 ## TO DO
 
+### 4-5-2
+* [X] Load a file into mapped memory
+* [X] Determine if that file is an ELF binary
+* [X] Determine the file's entry point
+* [X] Determine the file's "ELF base address"
+* [X] Find the largest 'empty' location to inject code
+* [X] Determine the section that holds that 'empty' location
+* [X] Make that section executable
+* [X] Add some Assembly
+* [ ] Dynamically build Assembly
+* [X] Execute the new binary
+
+### 4-5-3 (Inject into a running ELF)
