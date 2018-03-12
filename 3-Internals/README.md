@@ -39,6 +39,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
 * [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
 * [Low Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)... scroll down to [Duplicating Descriptors](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_toc.html#TOC139)
+* [Inter-Process Pipe-based Communication w/ example](https://linux.die.net/man/2/pipe)
 
 ## TO DO
 
