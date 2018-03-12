@@ -65,7 +65,7 @@ rBinDat_ptr build_rBinDat_ptr(const char* binaryName);
 		Will memset(0x0), free, and NULL all char pointer members
 		Will zeroize all other members
  */
-bool free_rBinDat_ptr(&rBinDat_ptr);
+bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr);
 
 
 //////////////////////////////////////////////////////////////////////////////
