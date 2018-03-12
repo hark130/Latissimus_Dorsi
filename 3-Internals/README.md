@@ -49,6 +49,18 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [X] Close a File Descriptor
 * [X] Modify a File Descriptor
 * [ ] Duplicate a File Descriptor
+	* [ ] Duplicate a file desc and write to it twice, once for each file descriptor
+	* [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
+	* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
+	* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
+	* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec*()
+	* [ ] Write a binary wrapper that automatically redirects certain output to certain places
+		* command > output.txt
+		* command >> output.txt
+		* command 2> output.txt
+		* command 2>> output.txt
+		* command &> output.txt
+		* command &>> output.txt
 
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
