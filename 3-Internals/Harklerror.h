@@ -8,7 +8,7 @@
 #ifndef __HARKLERROR__
 #define __HARKLERROR__
 
-// #define HARKLE_DEBUG  // Comment this out to turn off DEBUGGING
+#define HARKLE_DEBUG  // Comment this out to turn off DEBUGGING
 
 #ifdef HARKLE_DEBUG
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
