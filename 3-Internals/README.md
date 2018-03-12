@@ -30,6 +30,18 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## RESEARCH SOURCES
 
+* [File Descriptor Wiki](https://en.wikipedia.org/wiki/File_descriptor)
+* [Chapter 1. General Unix and Advanced C - File Descriptors](https://www.bottomupcs.com/file_descriptors.xhtml)
+* [nixCraft: Find Out How Many File Descriptors Are Being Used](https://www.cyberciti.biz/tips/linux-procfs-file-descriptors.html)
+* [File Descriptors Explained](https://linuxmeerkat.wordpress.com/2011/12/02/file-descriptors-explained/)
+* [GNU C Library: File Descriptor Flags](https://www.gnu.org/software/libc/manual/html_node/Descriptor-Flags.html)
+* [GNU C Library: File Status Flags](https://www.gnu.org/software/libc/manual/html_node/File-Status-Flags.html)
+* [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
+* [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
+* [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
+* [Low Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)... scroll down to [Duplicating Descriptors](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_toc.html#TOC139)
+* [Inter-Process Pipe-based Communication w/ example](https://linux.die.net/man/2/pipe)
+* [Creating Pipes in C](http://tldp.org/LDP/lpg/node11.html)
 * [procps - The /proc file system utilities](http://procps.sourceforge.net/)
 * [proc(5) man page](http://man7.org/linux/man-pages/man5/proc.5.html)
 * [Brief, but good, /proc/PID/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
@@ -41,6 +53,47 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
 
 ## TO DO
+
+### 3-3-1
+* [X] Open a File Descriptor
+* [X] Close a File Descriptor
+* [X] Modify a File Descriptor
+
+### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
+**NOTE:**  This is a continuation of 3-3-2
+* [ ] Take a CLI command, with flags/options, as an argument
+* [ ] Fork()
+* [ ] Based on the binary name and current time, create stdout, stderr log names (changing periods to underscores) as appropriate
+* [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
+* [ ] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
+* [ ] Populate "out" struct with filenames for stdout and stderr
+* [ ] Exec*()
+* [ ] Parent reports on the status of the child
+
+### 3-3-3 
+* [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
+* [ ] Allow input to pass from redirect_bin_output.exe along that pipe
+
+#### IDEAS:
+* [ ] Duplicate a file desc and write to it twice, once for each file descriptor
+* [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
+* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
+* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
+* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec*()
+* [ ] Write a binary wrapper that automatically redirects certain output to certain places
+	* command > output.txt
+	* command >> output.txt
+	* command 2> output.txt
+	* command 2>> output.txt
+	* command &> output.txt
+	* command &>> output.txt
+* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
+
+## NOTES
+* File descriptor ranges from 0 to OPEN_MAX
+* [/dev/null](https://www.networkworld.com/article/3025497/linux/sending-data-into-the-void-with-dev-null.html)
+* Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" /* try PRIuMAX if %ju unsupported */
+* Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
 
 ### 3-10-1
 
@@ -120,5 +173,3 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
               in this file as a set of strings separated by null bytes
               ('\0'), with a further null byte after the last string.
 * ```sudo setcap cap_sys_admin+ep 3-10_Proc_Walk-2_main.exe```
-
-
