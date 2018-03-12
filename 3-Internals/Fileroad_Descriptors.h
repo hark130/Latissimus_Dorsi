@@ -21,7 +21,7 @@ typedef struct fileDescriptorDetails
 typedef struct redirectBinOutput
 {
 	char* binName;			// Just the binary name
-	//char* binPath;  // Implement later?
+	char* binPath;  		// NOT IMPLEMENTED... Path to the binary
 	char* outputFile;		// File capturing binary's stdout
 	char* errorsFile;		// File capturing binary's stderr
 	int readPipe;			// Implement later... Binary (child) reads stdin from here
@@ -54,7 +54,7 @@ rBinDat_ptr create_rBinDat_ptr(void);
 		Caller is responsible for free()ing all char pointer members and the 
 			struct itself
  */
-rBinDat_ptr build_rBinDat_ptr(const char* binaryName);
+rBinDat_ptr build_rBinDat_ptr(char* binaryName);
 
 
 /*
