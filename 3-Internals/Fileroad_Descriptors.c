@@ -1,5 +1,7 @@
 #include "Fileroad_Descriptors.h"
 #include <fcntl.h>			// open, open flags
+#include "Harklerror.h"		// HARKLE_ERROR
+#include "Memoroad.h"		// release_a_string, copy_a_string
 #include <stdio.h>          // fprintf
 #include <stdlib.h>			// calloc
 #include <string.h>         // memset
@@ -62,7 +64,75 @@ rBinDat_ptr create_rBinDat_ptr(void)
 		Caller is responsible for free()ing all char pointer members and the 
 			struct itself
  */
-rBinDat_ptr build_rBinDat_ptr(const char* binaryName);
+rBinDat_ptr build_rBinDat_ptr(const char* binaryName)
+{
+	// LOCAL VARIABLES
+	rBinDat_ptr retVal = NULL;
+	char* justBinName = NULL;  // Pointer to the beginning of the binary name
+	bool success = true;  // Make this false if anything fails
+	
+	// INPUT VALIDATION	
+	if (!binaryName)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, NULL pointer);
+		success = false;
+	}
+	else if (!(*binaryName))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, Empty binary filename);
+		success = false;
+	}
+	
+	// ALLOCATE STRUCT
+	if (success == true)
+	{
+		retVal = create_rBinDat_ptr();
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, create_rBinDat_ptr failed);
+			success = false;
+		}
+	}
+	
+	// PARSE NAME
+	///////////////////////////////// IMPLEMENT LATER /////////////////////////////////
+	justBinName = binaryName;  // This is just a placeholder
+	
+	// POPULATE BINARY NAME
+	if (success = true)
+	{
+		// 1. char* binName; // Just the binary name
+		retVal->binName = copy_a_string(justBinName);
+		
+		if (!(retVal->binName))
+		{
+			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+			success = false;
+		}
+		
+		// 2. char* binPath; // NOT YET IMPLEMENTED
+		
+		// NOTE: Other struct members are populated later
+		// 3. char* outputFile; // File capturing binary's stdout		
+		// 4. char* errorsFile; // File capturing binary's stderr
+	}
+	
+	// CLEAN UP
+	if (success = false)
+	{
+		if (retVal)
+		{
+			if (false == free_rBinDat_ptr(&retVal))
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, free_rBinDat_ptr failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
 /*
