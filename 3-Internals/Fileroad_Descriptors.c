@@ -13,16 +13,6 @@
 #define FD_MAX_TRIES 3
 #endif  // FD_MAX_TRIES
 
-typedef struct redirectBinOutput
-{
-	char* binName;			// Just the binary name
-	//char* binPath;  // Implement later?
-	char* outputFile;		// File capturing binary's stdout
-	char* errorsFile;		// File capturing binary's stderr
-	int readPipe;			// Implement later... Binary (child) reads stdin from here
-	int writePipe;			// Implement later... redirect_bin_output.exe (parent) writes binary's input here
-} rBinDat, *rBinDat_ptr;
-
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// rBinDat FUNCTIONS START //////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -64,7 +54,7 @@ rBinDat_ptr create_rBinDat_ptr(void)
 		Caller is responsible for free()ing all char pointer members and the 
 			struct itself
  */
-rBinDat_ptr build_rBinDat_ptr(const char* binaryName)
+rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 {
 	// LOCAL VARIABLES
 	rBinDat_ptr retVal = NULL;
