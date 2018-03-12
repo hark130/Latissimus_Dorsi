@@ -48,20 +48,38 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [X] Open a File Descriptor
 * [X] Close a File Descriptor
 * [X] Modify a File Descriptor
-* [ ] Duplicate a File Descriptor
-	* [ ] Duplicate a file desc and write to it twice, once for each file descriptor
-	* [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
-	* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
-	* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
-	* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec*()
-	* [ ] Write a binary wrapper that automatically redirects certain output to certain places
-		* command > output.txt
-		* command >> output.txt
-		* command 2> output.txt
-		* command 2>> output.txt
-		* command &> output.txt
-		* command &>> output.txt
-	* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
+
+### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
+**NOTE:**  This is a continuation of 3-3-2
+* [ ] Take a CLI command, with flags/options, as an argument
+* [ ] Fork()
+* [ ] Based on the binary name and current time, create stdout, stderr log names (changing periods to underscores) as appropriate
+* [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
+* [ ] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
+* [ ] Populate "out" struct with filenames for stdout and stderr
+* [ ] Exec*()
+* [ ] Parent reports on the status of the child
+
+### 3-3-3 
+* [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
+* [ ] Allow input to pass from redirect_bin_output.exe along that pipe
+
+
+
+#### IDEAS:
+* [ ] Duplicate a file desc and write to it twice, once for each file descriptor
+* [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
+* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
+* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
+* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec*()
+* [ ] Write a binary wrapper that automatically redirects certain output to certain places
+	* command > output.txt
+	* command >> output.txt
+	* command 2> output.txt
+	* command 2>> output.txt
+	* command &> output.txt
+	* command &>> output.txt
+* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
 
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
