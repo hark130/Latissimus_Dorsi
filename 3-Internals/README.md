@@ -61,6 +61,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* command 2>> output.txt
 		* command &> output.txt
 		* command &>> output.txt
+	* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
 
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
