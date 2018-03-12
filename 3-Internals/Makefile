@@ -6,6 +6,7 @@ CC = gcc
 
 332: 
 	$(CC) -c Fileroad_Descriptors.c
+	$(CC) -c Memoroad.c
 	
 3101:
 	$(CC) -c Harkledir.c
