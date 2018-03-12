@@ -73,7 +73,107 @@ rBinDat_ptr build_rBinDat_ptr(const char* binaryName);
 		Will memset(0x0), free, and NULL all char pointer members
 		Will zeroize all other members
  */
-bool free_rBinDat_ptr(&rBinDat_ptr);
+bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Make this false if anything fails
+	bool memoRetVal = true;  // Return value from calls to Memoroad functions
+	rBinDat_ptr tempStruct_ptr = NULL;
+	
+	// INPUT VALIDATION
+	if (oldStruct_ptr)
+	{
+		if (*oldStruct_ptr)
+		{
+			tempStruct_ptr = *oldStruct_ptr;
+		}
+		else
+		{
+			HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, NULL pointer);
+			retVal = false;
+		}
+	}
+	else
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, NULL pointer);
+		retVal = false;
+	}
+	
+	// CLEAR STRUCT MEMBERS
+	if (retVal == true)
+	{
+		// 1. char* binName; // Just the binary name
+		if (tempStruct_ptr->binName)
+		{
+			memoRetVal = release_a_string(&(tempStruct_ptr->binName));
+			
+			if (memoRetVal == false)
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, release_a_string failed on binName);
+				retVal = false;
+			}
+		}
+		
+		// 2. char* binPath; // NOT YET IMPLEMENTED
+		if (tempStruct_ptr->binPath)
+		{
+			memoRetVal = release_a_string(&(tempStruct_ptr->binPath));
+			
+			if (memoRetVal == false)
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, release_a_string failed on binPath);
+				retVal = false;
+			}
+		}
+
+		// 3. char* outputFile; // File capturing binary's stdout
+		if (tempStruct_ptr->outputFile)
+		{
+			memoRetVal = release_a_string(&(tempStruct_ptr->outputFile));
+			
+			if (memoRetVal == false)
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, release_a_string failed on outputFile);
+				retVal = false;
+			}
+		}
+		
+		// 4. char* errorsFile; // File capturing binary's stderr
+		if (tempStruct_ptr->errorsFile)
+		{
+			memoRetVal = release_a_string(&(tempStruct_ptr->errorsFile));
+			
+			if (memoRetVal == false)
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, release_a_string failed on errorsFile);
+				retVal = false;
+			}
+		}
+		
+		// 5. int readPipe; // Implement later... Binary (child) reads stdin from here
+		tempStruct_ptr->readPipe = 0x0;
+
+		// 6. int writePipe; // Implement later... redirect_bin_output.exe (parent) writes binary's input here
+		tempStruct_ptr->writePipe = 0x0;
+	}
+	
+	// FREE STRUCT
+	if (oldStruct_ptr)
+	{
+		if (*oldStruct_ptr)
+		{
+			// 1. Free the struct pointer
+			free(*oldStruct_ptr);
+			
+			// 2. NULL the struct pointer
+			*oldStruct_ptr = NULL;
+			tempStruct_ptr = NULL;
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
