@@ -40,6 +40,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
 * [Low Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)... scroll down to [Duplicating Descriptors](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_toc.html#TOC139)
 * [Inter-Process Pipe-based Communication w/ example](https://linux.die.net/man/2/pipe)
+* [Creating Pipes in C](http://tldp.org/LDP/lpg/node11.html)
 
 ## TO DO
 
