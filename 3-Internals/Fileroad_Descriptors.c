@@ -33,7 +33,22 @@ typedef struct redirectBinOutput
 	Notes:
 		rBinDat_ptr must be free()'d by the calling function
  */
-rBinDat_ptr create_rBinDat_ptr(void);
+rBinDat_ptr create_rBinDat_ptr(void)
+{
+    // LOCAL VARIABLES
+    rBinDat_ptr retVal = NULL;
+	int numTries = 0;
+
+	// ALLOCATE MEMORY
+	while(numTries < FD_MAX_TRIES && retVal == NULL)
+	{
+		retVal = (rBinDat_ptr)calloc(1, sizeof(rBinDat));
+		numTries++;
+    }
+    
+    // DONE
+    return retVal;
+}
 
 
 /*
