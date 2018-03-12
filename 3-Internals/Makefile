@@ -7,6 +7,8 @@ CC = gcc
 332: 
 	$(CC) -c Fileroad_Descriptors.c
 	$(CC) -c Memoroad.c
+	$(CC) -c 3-3_File_Descriptors_Practice-2_redirect_bin_output.c
+	$(CC) -o redirect_bin_output.exe Fileroad_Descriptors.o Memoroad.o 3-3_File_Descriptors_Practice-2_redirect_bin_output.o
 	
 3101:
 	$(CC) -c Harkledir.c
