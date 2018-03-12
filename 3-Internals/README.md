@@ -38,13 +38,14 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
 * [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
 * [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
+* [Low Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)... scroll down to [Duplicating Descriptors](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_toc.html#TOC139)
 
 ## TO DO
 
 ### 3-3-1
 * [X] Open a File Descriptor
 * [X] Close a File Descriptor
-* [ ] Modify a File Descriptor
+* [X] Modify a File Descriptor
 * [ ] Duplicate a File Descriptor
 
 ## NOTES
