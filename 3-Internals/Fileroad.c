@@ -942,6 +942,43 @@ unsigned char get_a_file_type(char* fileName)
 }
 
 
+bool os_path_isfile(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	unsigned char fileType = 0;  // Holds return value from get_a_file_type()
+
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		retVal = false;
+	}
+	else if (!(*path_ptr))
+	{
+		retVal = false;
+	}
+	else
+	{
+		// FILE EXISTS?
+		retVal = os_path_exists(path_ptr);
+
+		if (retVal == true)
+		{
+			// FILE IS A REGULAR FILE?
+			fileType = get_a_file_type(path_ptr);
+
+			if (fileType != DT_REG)
+			{
+				retVal = false;		
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 bool os_path_exists(char* path_ptr)
 {
 	// LOCAL VARIABLES
