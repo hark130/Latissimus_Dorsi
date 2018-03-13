@@ -184,6 +184,8 @@ unsigned char get_a_file_type(char* fileName);
 		This function should not raise any errors
 		This function will take care to 'zeroize' errno before returning
 		This function calls os_path_exists()
+		Currently, only regular files (DT_REG) are treated as "files"
+		Symbolic links (DT_LNK) are not treated as "files"
  */
 bool os_path_isfile(char* path_ptr);
 
