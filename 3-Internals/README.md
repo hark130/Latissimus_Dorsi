@@ -62,8 +62,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 ### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
 **NOTE:**  This is a continuation of 3-3-2
 * [X] Take a CLI command, with flags/options, as an argument
-* [ ] Based on the binary name and current time, create log names (changing invalid characters to underscores)
-	* [ ] Parse binary name
+* [X] Based on the binary name and current time, create log names (changing invalid characters to underscores)
+	* [X] Parse binary name
 	* [X] Get timestamp
 	* [X] Create log file name
 	* [X] BUG: What if name is all garbage (e.g. %^&)
