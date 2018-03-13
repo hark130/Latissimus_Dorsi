@@ -225,6 +225,40 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 
 
 /*
+	Purpose - Extract the base filename from a relative or absolute filename
+	Input
+		path_ptr - Nul-terminated relative or absolute filename to parse
+	Output
+		On success, heap-allocated string containing the base filename
+		On failure, NULL
+	Notes:
+		This function is essentially a wrapper around libgen.h's basename()
+		This function heap-allocates responses instead of dealing with shady
+			"somewhere" pointers that may or may not need to be free()d in some
+			fashion or another
+		It is the caller's responsibility to free() the return value of this function
+ */
+char* os_path_basename(char* path_ptr);
+
+
+/*
+	Purpose - Extract the directory path from a relative or absolute filename
+	Input
+		path_ptr - Nul-terminated relative or absolute filename to parse
+	Output
+		On success, heap-allocated string containing the directory path
+		On failure, NULL
+	Notes:
+		This function is essentially a wrapper around libgen.h's dirname()
+		This function heap-allocates responses instead of dealing with shady
+			"somewhere" pointers that may or may not need to be free()d in some
+			fashion or another
+		It is the caller's responsibility to free() the return value of this function
+ */
+char* os_path_dirname(char* path_ptr);
+
+
+/*
 	Purpose - Rewind a file descriptor
 	Input
 		fileDesc - The file descriptor
