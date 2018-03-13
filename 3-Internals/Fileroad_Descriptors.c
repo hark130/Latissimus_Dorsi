@@ -277,45 +277,77 @@ int wrap_bin(rBinDat_ptr binToWrap)
 		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
 		success = false;
 	}
+	else if (!(binToWrap->outputFile))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
+		success = false;
+	}
+	else if (!(binToWrap->errorsFile))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
+		success = false;
+	}
 
 	// OPEN FILES
-// 	outFileDesc
-// 	errFileDesc
+	// 1. outputFile
+ 	outFileDesc = open(binToWrap->outputFile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	
+	if (outFileDesc == -1)
+	{
+		errNum = errno;
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, open failed);
+		fprintf(stderr, "open(%s) failed with an errno of %d:\t%s\n", binToWrap->outputFile, errNum, strerror(errNum));
+		success = false;
+	}
+	
+	// 2. errorsFile
+	errFileDesc = open(binToWrap->errorsFile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	
+	if (errFileDesc == -1)
+	{
+		errNum = errno;
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, open failed);
+		fprintf(stderr, "open(%s) failed with an errno of %d:\t%s\n", binToWrap->errorsFile, errNum, strerror(errNum));
+		success = false;
+	}
 	
 	// FORK
-	forkPID = fork();
-	
-	switch (forkPID)
+	if (success == true)
 	{
-		case(-1): 	// Failure
-			errNum = errno;
-			HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, fork failed);
-			fprintf(stderr, "fork() failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
-			success = false;
-			retVal = -1;
-			break;
-		case(0):	// Child
-			// Do things
-		default:	// Parent
-			fprintf(stdout, "Waiting for %s to terminate...", binToWrap->binName);  // DEBUGGING
-			while (wait(&wStatus) != -1)
-			{
-				fprintf(stdout, ".");
-			}
-			fprintf(stdout, "Complete.\n");
-			// Investigate child process' status
-			if (WIFEXITED(wStatus))
-			{
-				retVal = WEXITSTATUS(wStatus);
-				fprintf(stdout, "The child process running %s exited with status %d.\n", binToWrap->binName, retVal);  // DEBUGGING
-			}
-			else
-			{
-				retVal = -1;
-				fprintf(stderr, "The child process running %s did NOT terminate normally!\n", binToWrap->binName);  // DEBUGGING
+		forkPID = fork();
+
+		switch (forkPID)
+		{
+			case(-1): 	// Failure
+				errNum = errno;
+				HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, fork failed);
+				fprintf(stderr, "fork() failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
 				success = false;
-			}
-			break;
+				retVal = -1;
+				break;
+			case(0):	// Child
+				// Do things
+			default:	// Parent
+				fprintf(stdout, "Waiting for %s to terminate...", binToWrap->binName);  // DEBUGGING
+				while (wait(&wStatus) != -1)
+				{
+					fprintf(stdout, ".");
+				}
+				fprintf(stdout, "Complete.\n");
+				// Investigate child process' status
+				if (WIFEXITED(wStatus))
+				{
+					retVal = WEXITSTATUS(wStatus);
+					fprintf(stdout, "The child process running %s exited with status %d.\n", binToWrap->binName, retVal);  // DEBUGGING
+				}
+				else
+				{
+					retVal = -1;
+					fprintf(stderr, "The child process running %s did NOT terminate normally!\n", binToWrap->binName);  // DEBUGGING
+					success = false;
+				}
+				break;
+		}
 	}
 	
 	// CLEAN UP
