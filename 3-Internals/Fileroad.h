@@ -176,6 +176,19 @@ unsigned char get_a_file_type(char* fileName);
 
 
 /*
+	Purpose - Quick, safe, "handled" way of determining if a path is a file
+	Input
+		path_ptr - nul-terminated string presumably representing a path
+	Output - True if path_ptr is a file that exists, false otherwise
+	Notes:
+		This function should not raise any errors
+		This function will take care to 'zeroize' errno before returning
+		This function calls os_path_exists()
+ */
+bool os_path_isfile(char* path_ptr);
+
+
+/*
 	Purpose - Quick, safe, "handled" way of determining if a path or file exists
 	Input
 		path_ptr - nul-terminated string presumably representing a path
