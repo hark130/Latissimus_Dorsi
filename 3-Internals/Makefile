@@ -4,11 +4,13 @@ CC = gcc
 	$(CC) -c Fileroad_Descriptors.c
 	$(CC) -o 3-3_File_Descriptor_Practice-1_main.exe Fileroad_Descriptors.o 3-3_File_Descriptor_Practice-1_main.c
 
-332: 
+332:
+	$(CC) -c Fileroad.c
 	$(CC) -c Fileroad_Descriptors.c
 	$(CC) -c Memoroad.c
+	$(CC) -c Timeroad.c
 	$(CC) -c 3-3_File_Descriptors_Practice-2_redirect_bin_output.c
-	$(CC) -o redirect_bin_output.exe Fileroad_Descriptors.o Memoroad.o 3-3_File_Descriptors_Practice-2_redirect_bin_output.o
+	$(CC) -o redirect_bin_output.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o Timeroad.o 3-3_File_Descriptors_Practice-2_redirect_bin_output.o
 	
 3101:
 	$(CC) -c Harkledir.c
