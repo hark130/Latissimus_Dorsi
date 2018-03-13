@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
 	char* timestamp = NULL;  // Return value from build_timestamp() goes here
 	char* temp_ptr = NULL;  // Iterating pointer variable
 	int fullLogLen = 0;  // Calculated necessary length of the outputFile and errorsFile string lengths
+	char* binOutResults = NULL;  // Read the contents of outputFile here
+	char* binErrResults = NULL;  // Read the contents of errorsFile here
 
 	// INPUT VALIDATION
 	// 1. Verify number of arguments
@@ -134,18 +136,59 @@ int main(int argc, char* argv[])
 					HARKLE_ERROR(redirect_bin_output, main, build_filename failed);
 					success = false;
 				}
-				
-				fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
-				fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
-				fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
-				fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
 			}
 		}
 	}
 
 	// FORK IT
-
+	if (success == true)
+	{
+		retVal = wrap_bin(silentBin);
+		
+		if (retVal)
+		{
+			HARKLE_ERROR(redirect_bin_output, main, wrap_bin failed);
+			success = false;
+		}
+	}
+	
+	// READ THE FILES
+	if (success == true)
+	{
+		// 1. outputFile
+		binOutResults = read_a_file(silentBin->outputFile);
+		
+		if (!binOutResults)
+		{
+			HARKLE_ERROR(redirect_bin_output, main, read_a_file failed);
+			success = false;
+		}
+	
+		// 2. errorsFile
+		binErrResults = read_a_file(silentBin->errorsFile);
+		
+		if (!binErrResults)
+		{
+			HARKLE_ERROR(redirect_bin_output, main, read_a_file failed);
+			success = false;
+		}		
+	}
+	
+	// PRINT THE RESULTS
+	if (success == true)
+	{
+		fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
+		fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
+		fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
+		fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
+		
+		fprintf(stdout, "%s was run and its output was captured.\n", argv[1]);
+		fprintf(stdout, "STDOUT (%s):\n%s\n", silentBin->outputFile, binOutResults);
+		fprintf(stdout, "STDERR (%s):\n%s\n", silentBin->errorsFile, binErrResults);
+	}
+	
 	// CLEAN UP
+	// 1. rBinDat_ptr silentBin = NULL;  // Return value from build_rBinDat_ptr()
 	if (silentBin)
 	{
 		if (false == free_rBinDat_ptr(&silentBin))
@@ -154,9 +197,28 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// 2. char* timestamp = NULL;  // Return value from build_timestamp() goes here
 	if (timestamp)
 	{
 		if (false == release_a_string(&timestamp))
+		{
+			HARKLE_ERROR(redirect_bin_output, main, release_a_string failed);
+		}
+	}
+	
+	// 3. char* binOutResults = NULL;  // Read the contents of outputFile here
+	if (binOutResults)
+	{
+		if (false == release_a_string(&binOutResults))
+		{
+			HARKLE_ERROR(redirect_bin_output, main, release_a_string failed);
+		}
+	}
+	
+	// 4. char* binErrResults = NULL;  // Read the contents of errorsFile here
+	if (binErrResults)
+	{
+		if (false == release_a_string(&errOutResults))
 		{
 			HARKLE_ERROR(redirect_bin_output, main, release_a_string failed);
 		}
