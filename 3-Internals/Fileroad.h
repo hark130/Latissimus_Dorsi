@@ -224,6 +224,24 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 bool rewind_a_file_desc(int fileDesc, int* errNum);
 
 
+/*
+	Purpose - Clean a potential filename
+	Input
+		dirtyFile - C string representing a potential filename
+		inPlace - If true, modified in place.  Otherwise, a copy
+			is returned.
+	Output
+		On success:
+			inPlace == true, returns dirtyFile
+			inPlace == false, heap-allocated string with the modified filename
+		On failure, NULL
+	Notes:
+		It is the caller's responsiblity to free() the return value if
+			inPlace was true
+ */
+char* clean_filename(char* dirtyFile, bool inPlace);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FILE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

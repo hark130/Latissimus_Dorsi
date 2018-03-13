@@ -1150,6 +1150,171 @@ bool rewind_a_file_desc(int fileDesc, int* errNum)
 }
 
 
+/*
+	Purpose - Clean a potential filename
+	Input
+		dirtyFile - C string representing a potential filename
+		inPlace - If true, modified in place.  Otherwise, a copy
+			is returned.
+	Output
+		On success:
+			inPlace == true, returns dirtyFile
+			inPlace == false, heap-allocated string with the modified filename
+		On failure, NULL
+	Notes:
+		It is the caller's responsiblity to free() the return value if
+			inPlace was true
+		Bad chars are replaced with an underscore (_)
+ */
+char* clean_filename(char* dirtyFile, bool inPlace)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	bool success = true;  // Make this false if anything fails
+	char currChar = 0;  // One character to switch on
+	// char badChar = 0;  // Temp var to hold bad chars
+	char* temp_ptr = NULL;  // Iterating pointer variable
+	char badChars[33] = { 0 };  // Bad characters to replace
+	size_t dirtStrLen = 0;  // strlen() of dirtyFile
+	int i = 0;  // Iterating variable
+
+	// INPUT VALIDATION
+	if (!dirtyFile)
+	{
+		HARKLE_ERROR(Fileroad, clean_filename, NULL pointer);
+		success = false;
+	}
+	else if (!(*dirtyFile))
+	{
+		HARKLE_ERROR(Fileroad, clean_filename, Empty string);
+		success = false;
+	}
+	else
+	{
+		if (inPlace == true)
+		{
+			retVal = dirtyFile;
+		}
+		else
+		{
+			retVal = copy_a_string(dirtyFile);
+
+			if (!retVal)
+			{
+				HARKLE_ERROR(Fileroad, clean_filename, copy_a_string failed);
+				success = false;
+			}
+			else
+			{
+				dirtStrLen = strlen(retVal);
+			}
+		}
+	}
+
+	// BUILD BAD CHAR ARRAY
+	// 1. 0x01 - 0x1F
+	for (i = 0; i < 31; i++)
+	{
+		(*(badChars + i)) = i + 1;
+	}
+	// 2. 0x7F
+	(*(badChars + i)) = 0x7F;
+	i++;
+
+	// CLEAN
+	// 1. Check first character for non-alpha && non-numeric
+	for (i = 0; i < dirtStrLen; i++)
+	{
+		currChar = (*(retVal + i));
+
+		// Edge case
+		if ((*(retVal + i)) == 0x2F)								// 0x2F == '/'
+		{
+			(*(retVal + i)) = 0x0;
+		}
+		// Wide swaths
+		else if ((*(retVal + i)) < 0x2E)  							// 0x2E == '.'
+		{
+			(*(retVal + i)) = 0x0;
+		}
+		else if ((*(retVal + i)) > 0x39 && (*(retVal + i)) < 0x41)	// 0x39 == '9', 0x41 == 'A'
+		{
+			(*(retVal + i)) = 0x0;	
+		}
+		else if ((*(retVal + i)) > 0x5A && (*(retVal + i)) < 0x61)	// 0x5A == 'Z', 0x61 == 'a'
+		{
+			(*(retVal + i)) = 0x0;
+		}
+		else if ((*(retVal + i)) > 0x7A)  							// 0x7A == 'z'
+		{
+			(*(retVal + i)) = 0x0;	
+		}
+
+		// Did we find a leading "bad char"?
+		if ((*(retVal + i)) != 0x0)
+		{
+			break;
+		}
+	}
+	// 2. Fill in the 'new' nul-terminator (if any)
+	if (*retVal == 0x0)
+	{
+		i = 0;  // Reset temp var
+		// 2.1. Find the first non-nul
+		while ((*(retVal + i)) == 0x0)
+		{
+			i++;
+		}
+
+		// 2.2. Copy left
+		temp_ptr = retVal;  // Reset temp var
+		while ((*(retVal + i)) != 0x0)
+		{
+			*temp_ptr = (*(retVal + i));
+			temp_ptr++;
+			i++;
+		}
+
+		// 2.3. Resize dirtStrLen
+		dirtStrLen = strlen(retVal);
+
+		if (dirtStrLen < 1)
+		{
+			HARKLE_ERROR(Fileroad, clean_filename, copy left algorithm appears to have failed);
+			success = false;
+		}
+	}
+	// 3. Start replacing *ALL* bad chars
+	temp_ptr = badChars;  // Reset temp var
+	for (i = 0; i < dirtStrLen; i++)
+	{
+		while (*temp_ptr != 0x0)
+		{
+			if ((*(retVal + i)) == *temp_ptr)
+			{
+				(*(retVal + i)) = '_';
+			}
+
+			temp_ptr++;  // Next badChar
+		}
+
+		temp_ptr = badChars;  // Reset temp var
+	}
+
+	// CLEAN UP
+	if (success == false && inPlace == false && retVal)
+	{
+		if (false == release_a_string(&retVal))
+		{
+			HARKLE_ERROR(Fileroad, clean_filename, release_a_string failed);
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FILE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
