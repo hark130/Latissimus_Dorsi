@@ -1,7 +1,9 @@
 #include "Fileroad.h"
 #include "Fileroad_Descriptors.h"
 #include "Harklerror.h"
+#include "Memoroad.h"			// get_me_a_buffer
 #include <stdio.h>
+#include <string.h>				// strlen
 #include "Timeroad.h"
 
 
@@ -102,43 +104,39 @@ int main(int argc, char* argv[])
 			}
 			else
 			{				
-				fprintf(stdout, "Timestamp is %s\n", timestamp);  // DEBUGGING
+				// fprintf(stdout, "Timestamp is %s\n", timestamp);  // DEBUGGING
 
 				// 3. Build the output/errors filenames
-				// 3.1. Determine necessary string length
-				// YYYYMMDD-HHMMSS-strlen(binary)-output.txt
-				// 1234567890123456 + strlen() + 12345678901
-				fullLogLen = 15 + 1 + strlen(argv[1]) + 11;
-				// 3.2. Allocate arrays for both filenames
-				silentBin->outputFile = get_me_a_buffer(fullLogLen);
-				silentBin->errorsFile = get_me_a_buffer(fullLogLen);
-
-				if (!(silentBin->outputFile) || !(silentBin->errorsFile))
+				// 3.1. outputFile
+				if (success == true && silentBin->outputFile)
 				{
-					HARKLE_ERROR(redirect_bin_output, main, get_me_a_buffer failed);
+					HARKLE_ERROR(redirect_bin_output, main, silentBin->outputFile already exists?);
 					success = false;
 				}
 				else
 				{
-					// 3.3. Copy the timestamp in
-					// 3.3.1. outputFile
-					temp_ptr = strncmp(silentBin->outputFile, timestamp, 15);
-
-					if (temp_ptr != silentBin->outputFile)
-					{
-						HARKLE_ERROR(redirect_bin_output, main, strncmp failed);
-						success = false;
-					}
-
-					// 3.3.2. errorsFile
-					temp_ptr = strncmp(silentBin->errorsFile, timestamp, 15);
-
-					if (temp_ptr != silentBin->errorsFile)
-					{
-						HARKLE_ERROR(redirect_bin_output, main, strncmp failed);
-						success = false;
-					}
+					silentBin->outputFile = build_filename(timestamp, silentBin->binName, true);
 				}
+				// 3.2. errorsFile
+				if (success == true && silentBin->errorsFile)
+				{
+					HARKLE_ERROR(redirect_bin_output, main, silentBin->errorsFile already exists?);
+					success = false;
+				}
+				else
+				{
+					silentBin->errorsFile = build_filename(timestamp, silentBin->binName, false);
+				}
+
+				// 3.3. Verify
+				if (success == true && (!(silentBin->outputFile) || !(silentBin->errorsFile)))
+				{
+					HARKLE_ERROR(redirect_bin_output, main, build_filename failed);
+					success = false;
+				}
+				
+				fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
+				fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
 			}
 		}
 	}
@@ -176,6 +174,8 @@ char* build_filename(char* timestamp, char* properName, bool output)
 {
 	// LOCAL VARIABLES
 	char* retVal = NULL;
+	char* temp_ptr = NULL;  // Return values from string.h function calls
+	// char* curr_ptr = NULL;  // Iterate the way through retVal
 	bool success = true;  // Make this false if anything fails
 	int fullLogLen = 0;  // Calculated string length of the return value
 
@@ -192,11 +192,98 @@ char* build_filename(char* timestamp, char* properName, bool output)
 	}
 
 	// BUILD FILENAME
-	// 1. Determine necessary length
-	fullLogLen = strlen(timestamp) + 1 + strlen(properName) + 1
+	if (success == true)
+	{
+		// 1. Determine necessary length
+		//             YYYYMMDD-HHMMSS + - +        properName  + - + output.txt
+		fullLogLen = strlen(timestamp) + 1 + strlen(properName) + 1 + 10;
 
+		// 2. Allocate a buffer
+		retVal = get_me_a_buffer(fullLogLen);
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(redirect_bin_output, build_filename, get_me_a_buffer failed);
+			success = false;
+		}
+		else
+		{
+			// 3. Build the output string
+			// 3.1. Timestamp
+			temp_ptr = strcpy(retVal, timestamp);
+
+			if (temp_ptr != retVal)
+			{
+				HARKLE_ERROR(redirect_bin_output, build_filename, strncpy failed);
+				success = false;
+			}
+			else
+			{
+				// 3.2. Dash
+				temp_ptr = strcat(retVal, "-");
+
+				if (temp_ptr != retVal)
+				{
+					HARKLE_ERROR(redirect_bin_output, build_filename, strcat failed);
+					success = false;
+				}
+				else
+				{
+					// 3.3. properName
+					temp_ptr = strcat(retVal, properName);
+
+					if (temp_ptr != retVal)
+					{
+						HARKLE_ERROR(redirect_bin_output, build_filename, strcat failed);
+						success = false;
+					}
+					else
+					{
+						// 3.4. Filename suffix
+						if (output == true)
+						{
+							temp_ptr = strcat(retVal, "-output.txt");
+						}
+						else
+						{
+							temp_ptr = strcat(retVal, "-errors.txt");
+						}
+
+						if (temp_ptr != retVal)
+						{
+							HARKLE_ERROR(redirect_bin_output, build_filename, strcat failed);
+							success = false;
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	// CLEAN FILENAME
+	if (success == true)
+	{
+		temp_ptr = clean_filename(retVal, true);
+
+		if (temp_ptr != retVal)
+		{
+			HARKLE_ERROR(redirect_bin_output, build_filename, clean_filename failed);
+			success = false;
+		}
+	}
 
 	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(redirect_bin_output, build_filename, release_a_string failed);
+			}
+		}
+	}
 
 	// DONE
 	return retVal;
