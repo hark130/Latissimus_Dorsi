@@ -1,3 +1,4 @@
+#include <errno.h>			// errno
 #include "Fileroad.h"		// os_path_basename, os_path_dirname
 #include "Fileroad_Descriptors.h"
 #include <fcntl.h>			// open, open flags
