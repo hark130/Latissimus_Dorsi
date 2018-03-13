@@ -260,6 +260,7 @@ int wrap_bin(rBinDat_ptr binToWrap)
 	int wStatus = 0;  // Information regarding the child process
 	int outFileDesc = 0;  // File descriptor for binToWrap's outputFile file descriptor
 	int errFileDesc = 0;  // File descriptor for binToWrap's errorsFile file descriptor
+	int dupRetVal = 0;  // Return value from dup2() function call
 	
 	// INPUT VALIDATION
 	if (!binToWrap)
@@ -290,7 +291,8 @@ int wrap_bin(rBinDat_ptr binToWrap)
 
 	// OPEN FILES
 	// 1. outputFile
- 	outFileDesc = open(binToWrap->outputFile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+ 	// outFileDesc = open(binToWrap->outputFile, O_WRONLY | O_CREAT | O_CLOEXEC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	outFileDesc = open(binToWrap->outputFile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	
 	if (outFileDesc == -1)
 	{
@@ -301,6 +303,7 @@ int wrap_bin(rBinDat_ptr binToWrap)
 	}
 	
 	// 2. errorsFile
+	// errFileDesc = open(binToWrap->errorsFile, O_WRONLY | O_CREAT | O_CLOEXEC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	errFileDesc = open(binToWrap->errorsFile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	
 	if (errFileDesc == -1)
@@ -326,7 +329,40 @@ int wrap_bin(rBinDat_ptr binToWrap)
 				retVal = -1;
 				break;
 			case(0):	// Child
-				// Do things
+				// Redirect stdout to outputFile
+				dupRetVal = dup2(outFileDesc, STDOUT_FILENO);
+				
+				if (dupRetVal == -1)
+				{
+					errNum = errno;
+					HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, dup2 failed);
+					fprintf(stderr, "dup2(outFD, stdout) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+					success = false;
+				}
+				
+				// Redirect stderr to errorsFile
+				dupRetVal = dup2(errFileDesc, STDERR_FILENO);
+				
+				if (dupRetVal == -1)
+				{
+					errNum = errno;
+					HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, dup2 failed);
+					fprintf(stderr, "dup2(errFD, stderr) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+					success = false;
+				}
+				
+				// Execvp()
+				if (success == true)
+				{
+					if (-1 == execvp(binToWrap->fullCmd[0], binToWrap->fullCmd))
+					{
+						errNum = errno;
+						HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, execvp failed);
+						fprintf(stderr, "execvp(argv[1], argv + 1) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+						success = false;
+					}
+				}
+				break;
 			default:	// Parent
 				fprintf(stdout, "Waiting for %s to terminate...", binToWrap->binName);  // DEBUGGING
 				while (wait(&wStatus) != -1)
@@ -351,7 +387,30 @@ int wrap_bin(rBinDat_ptr binToWrap)
 	}
 	
 	// CLEAN UP
-	// Nothing to clean up yet
+	// If we made it here, one of the following cases is true:
+	//	A. We're the parent and the child terminated, normally or otherwise.
+	//	B. We're the child and execvp() failed
+	//	C. We have no children because fork() failed
+	// 1. outputFile file descriptor
+	if (outFileDesc > -1)
+	{
+		if (-1 == close(outFileDesc))
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, close failed);
+			fprintf(stderr, "close(outFileDesc) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+		}
+	}
+	// 2. errorsFile file descriptor
+	if (errFileDesc > -1)
+	{
+		if (-1 == close(errFileDesc))
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, close failed);
+			fprintf(stderr, "close(errFileDesc) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+		}
+	}
 	
 	// DONE
 	return retVal;
