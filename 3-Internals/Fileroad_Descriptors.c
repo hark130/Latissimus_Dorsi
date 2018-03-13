@@ -194,6 +194,11 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 		}
 		
 		// 3. char** fullCmd; // argv[1]... do NOT free()!
+		if (tempStruct_ptr->fullCmd)
+		{
+			// NULL but do not free()
+			tempStruct_ptr->fullCmd = NULL;
+		}
 
 		// 4. char* outputFile; // File capturing binary's stdout
 		if (tempStruct_ptr->outputFile)
