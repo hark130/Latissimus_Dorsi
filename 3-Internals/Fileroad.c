@@ -4,12 +4,13 @@
 #include "Fileroad.h"
 #include "Harklerror.h"	// HARKLE_ERROR
 #include <inttypes.h>	// intmax_t
+#include <libgen.h>		// basename, dirname
 #include <limits.h>		// UCHAR_MAX, PATH_MAX
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>		// fscanf, getchar
 #include <stdlib.h>	 	// calloc
-#include <string.h>	 	// strlen, strstr
+#include <string.h>	 	// strlen, strstr, strerror
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>		// read, stream macros
@@ -1145,6 +1146,144 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 		}
 	}
 
+	// DONE
+	return retVal;
+}
+
+
+char* os_path_basename(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char* temp_ptr = NULL;  // Return value from basename() call
+	bool success = true;  // Make this false if anything fails
+	int errNum = 0;  // Catch errno
+	
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		HARKLE_ERROR(Fileroad, os_path_basename, NULL pointer);
+		success = false;
+	}
+	else if (!(*path_ptr))
+	{
+		HARKLE_ERROR(Fileroad, os_path_basename, Empty string);
+		success = false;	
+	}
+	
+	// DETERMINE BASENAME
+	if (success == true)
+	{
+		temp_ptr = basename(path_ptr);
+		
+		if (!temp_ptr)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad, os_path_basename, basename failed);
+			fprintf(stderr, "basename(%s) set errno to %d:\t%s\n", path_ptr, errNum, strerror(errNum));
+			success = false;
+		}
+		else if (!(*temp_ptr))
+		{
+			HARKLE_ERROR(Fileroad, os_path_basename, basename failed);
+			fprintf(stderr, "basename(%s) returned an empty string!\n", path_ptr);
+			success = false;
+		}
+	}
+	
+	// ALLOCATE BUFFER
+	if (success == true)
+	{
+		retVal = copy_a_string(temp_ptr);
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, os_path_basename, copy_a_string failed);
+			success = false;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, os_path_basename, release_a_string failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+char* os_path_dirname(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char* temp_ptr = NULL;  // Return value from basename() call
+	bool success = true;  // Make this false if anything fails
+	int errNum = 0;  // Catch errno
+	
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		HARKLE_ERROR(Fileroad, os_path_dirname, NULL pointer);
+		success = false;
+	}
+	else if (!(*path_ptr))
+	{
+		HARKLE_ERROR(Fileroad, os_path_dirname, Empty string);
+		success = false;	
+	}
+	
+	// DETERMINE BASENAME
+	if (success == true)
+	{
+		temp_ptr = dirname(path_ptr);
+		
+		if (!temp_ptr)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad, os_path_dirname, dirname failed);
+			fprintf(stderr, "dirname(%s) set errno to %d:\t%s\n", path_ptr, errNum, strerror(errNum));
+			success = false;
+		}
+		else if (!(*temp_ptr))
+		{
+			HARKLE_ERROR(Fileroad, os_path_dirname, dirname failed);
+			fprintf(stderr, "dirname(%s) returned an empty string!\n", path_ptr);
+			success = false;
+		}
+	}
+	
+	// ALLOCATE BUFFER
+	if (success == true)
+	{
+		retVal = copy_a_string(temp_ptr);
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, os_path_dirname, copy_a_string failed);
+			success = false;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, os_path_dirname, release_a_string failed);
+			}
+		}
+	}
+	
 	// DONE
 	return retVal;
 }
