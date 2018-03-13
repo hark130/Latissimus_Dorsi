@@ -135,6 +135,8 @@ int main(int argc, char* argv[])
 					success = false;
 				}
 				
+				fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
+				fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
 				fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
 				fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
 			}
