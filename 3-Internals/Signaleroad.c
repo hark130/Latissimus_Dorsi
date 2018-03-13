@@ -370,7 +370,7 @@ char* str_signaleroad(int sigRoad)
 			success = false;
 	}
 
-	fprintf(stdout, "tempBuf is currently == %s\n", tempBuf);  // DEBUGGING
+	// fprintf(stdout, "tempBuf is currently == %s\n", tempBuf);  // DEBUGGING
 
 	// ALLOCATE A BUFFER
 	if (success == true)

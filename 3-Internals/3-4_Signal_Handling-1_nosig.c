@@ -12,32 +12,38 @@
 #include <sys/wait.h>		// wait
 #include <unistd.h>			// exec*(), fork
 
+// GLOBAL VARIALBES
+int signalCaught = 0;
+
 
 static void tester(int sig)
 {
-	// LOCAL VARIABLES
-	char* temp_ptr = NULL;
+	// // LOCAL VARIABLES
+	// char* temp_ptr = NULL;
 
-	// RESOLVE SIGNAL
-	temp_ptr = str_signaleroad(sig);
+	// // RESOLVE SIGNAL
+	// temp_ptr = str_signaleroad(sig);
 
-	if (temp_ptr)
-	{
-		fprintf(stdout, "SIGNAL %d CAUGHT!\n%s\n", sig, temp_ptr);
-	}
-	else
-	{
-		HARKLE_ERROR(nosig, tester, str_signaleroad failed);
-	}
+	// if (temp_ptr)
+	// {
+	// 	fprintf(stdout, "SIGNAL %d CAUGHT!\n%s\n", sig, temp_ptr);
+	// }
+	// else
+	// {
+	// 	HARKLE_ERROR(nosig, tester, str_signaleroad failed);
+	// }
 
-	// CLEAN UP
-	if (temp_ptr)
-	{
-		if (false == release_a_string(&temp_ptr))
-		{
-			HARKLE_ERROR(nosig, tester, release_a_string failed);
-		}
-	}
+	// // CLEAN UP
+	// if (temp_ptr)
+	// {
+	// 	if (false == release_a_string(&temp_ptr))
+	// 	{
+	// 		HARKLE_ERROR(nosig, tester, release_a_string failed);
+	// 	}
+	// }
+
+	// Save the signal caught
+	signalCaught = sig;
 
 	// DONE
 	return;
@@ -64,6 +70,7 @@ int main(int argc, char* argv[])
 	int statLoc = 0;  // [OUT] parameter for wait()
 	struct sigaction sigact;  // Used to specify actions for specific signals
 	int sigNum = 1;  // Signal numbers to iterate through
+	char* signal_ptr = NULL;  // Allocate a description of the signal caught
 
 	// 1. INPUT VALIDATION
 	fprintf(stdout, "\n");
@@ -175,7 +182,23 @@ int main(int argc, char* argv[])
 				}
 
 				fprintf(stdout, "%s returned %d.\n", nosigFname, statLoc);
-		
+
+				// RESOLVE SIGNAL CAUGHT
+				if (signalCaught)
+				{
+					signal_ptr = str_signaleroad(signalCaught);
+
+					if (signal_ptr)
+					{
+						fprintf(stdout, "SIGNAL %d CAUGHT!\n%s\n", signalCaught, signal_ptr);
+					}
+					else
+					{
+						HARKLE_ERROR(nosig, main, str_signaleroad failed);
+					}
+				}
+
+				// RESOLVE CHILD STATUS
 				if (WIFEXITED(statLoc))
 				{
 					fprintf(stdout, "%s returned normally.\n", nosigFname);
@@ -216,6 +239,15 @@ int main(int argc, char* argv[])
 				}
 
 				fprintf(stdout, "\n");
+		}
+	}
+
+	// 5. CLEAN UP
+	if (signal_ptr)
+	{
+		if (false == release_a_string(&signal_ptr))
+		{
+			HARKLE_ERROR(nosig, main, release_a_string failed);
 		}
 	}
 

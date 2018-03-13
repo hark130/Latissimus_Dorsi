@@ -47,15 +47,17 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [libc termination signals](https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html)
 * [Signal handling quiz](http://www.sanfoundry.com/linux-debugging-questions-answers-signal-handling/)
 * [How to Write Advanced Signal Handlers in UNIX](http://www.oracle.com/technetwork/articles/servers-storage-dev/signal-handlers-studio-2282526.html)
+* [Signal Handling and Nonreentrant Functions](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
 
 ## TO DO
 
 ### 3-4-1
 
-* [ ] Validate argument input
-* [ ] Verify the file exists?
+* [X] Validate argument input
+* [X] Verify the file exists?
 * [ ] Verify it's a binary?
-* [ ] Call exec*
+* [X] Fork
+* [X] Call exec*
 * [ ] Write a signal handler
 
 #### IDEAS:
