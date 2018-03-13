@@ -19,13 +19,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	Purpose - Dynamically allocate a struct pointer
-	Input - None
-	Output - Pointer to a redirectBinOutput struct on the heap
-	Notes:
-		rBinDat_ptr must be free()'d by the calling function
- */
 rBinDat_ptr create_rBinDat_ptr(void)
 {
     // LOCAL VARIABLES
@@ -44,18 +37,7 @@ rBinDat_ptr create_rBinDat_ptr(void)
 }
 
 
-/*
-	Purpose - Populate a redirectBinOutput struct
-	Input
-		binaryName - Relative or absolute path string to the binary being redirected
-	Output - Pointer to a redirectBinOutput struct on the heap whose binName is
-		populated
-	Notes:
-		Calls create_rBinDat_ptr() to allocate the struct
-		Caller is responsible for free()ing all char pointer members and the 
-			struct itself
- */
-rBinDat_ptr build_rBinDat_ptr(char* binaryName)
+rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 {
 	// LOCAL VARIABLES
 	rBinDat_ptr retVal = NULL;
@@ -71,6 +53,16 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 	else if (!(*binaryName))
 	{
 		HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, Empty binary filename);
+		success = false;
+	}
+	else if (!binArgs)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, NULL pointer);
+		success = false;
+	}
+	else if (!(*binArgs))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, NULL pointer);
 		success = false;
 	}
 	
@@ -91,7 +83,7 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 // 	justBinName = binaryName;  // This is just a placeholder
 	
 	// POPULATE BINARY NAME
-	if (success = true)
+	if (success == true)
 	{
 		// 1. char* binName; // Just the binary name
 // 		retVal->binName = copy_a_string(justBinName);
@@ -114,15 +106,25 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_dirname failed);
 				success = false;
 			}
+			else
+			{
+				// 3. char** fullCmd; // argv[1]... do NOT free()!
+				retVal->fullCmd = binArgs;
+			}
 		}		
 		
 		// NOTE: Other struct members are populated later
-		// 3. char* outputFile; // File capturing binary's stdout		
-		// 4. char* errorsFile; // File capturing binary's stderr
+		// 4. char* outputFile; 	// File capturing binary's stdout		
+		// 5. char* errorsFile; 	// File capturing binary's stderr
+		// 6. int readPipe;			// Implement later... Binary (child) reads stdin from here
+		retVal->readPipe = -1;  	// Set to an invalid file descriptor so they're not used
+		
+		// 7. int writePipe; 		// Implement later... redirect_bin_output.exe (parent) writes binary's input here
+		retVal->writePipe = -1;  	// Set to an invalid file descriptor so they're not used
 	}
 	
 	// CLEAN UP
-	if (success = false)
+	if (success == false)
 	{
 		if (retVal)
 		{
@@ -138,14 +140,6 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 }
 
 
-/*
-	Purpose - Free a redirectBinOutput struct on the heap
-	Input - Pointer to a redirectBinOutput pointer to free
-	Output - None
-	Notes:
-		Will memset(0x0), free, and NULL all char pointer members
-		Will zeroize all other members
- */
 bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
@@ -198,8 +192,10 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 				retVal = false;
 			}
 		}
+		
+		// 3. char** fullCmd; // argv[1]... do NOT free()!
 
-		// 3. char* outputFile; // File capturing binary's stdout
+		// 4. char* outputFile; // File capturing binary's stdout
 		if (tempStruct_ptr->outputFile)
 		{
 			memoRetVal = release_a_string(&(tempStruct_ptr->outputFile));
@@ -211,7 +207,7 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 			}
 		}
 		
-		// 4. char* errorsFile; // File capturing binary's stderr
+		// 5. char* errorsFile; // File capturing binary's stderr
 		if (tempStruct_ptr->errorsFile)
 		{
 			memoRetVal = release_a_string(&(tempStruct_ptr->errorsFile));
@@ -223,10 +219,10 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 			}
 		}
 		
-		// 5. int readPipe; // Implement later... Binary (child) reads stdin from here
+		// 6. int readPipe; // Implement later... Binary (child) reads stdin from here
 		tempStruct_ptr->readPipe = 0x0;
 
-		// 6. int writePipe; // Implement later... redirect_bin_output.exe (parent) writes binary's input here
+		// 7. int writePipe; // Implement later... redirect_bin_output.exe (parent) writes binary's input here
 		tempStruct_ptr->writePipe = 0x0;
 	}
 	
