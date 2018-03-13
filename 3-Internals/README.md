@@ -62,11 +62,16 @@ Developers will have an in-depth working knowledge of Linux Internals
 ### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
 **NOTE:**  This is a continuation of 3-3-2
 * [X] Take a CLI command, with flags/options, as an argument
-* [ ] Based on the binary name and current time, create log names (changing periods to underscores)
+* [ ] Based on the binary name and current time, create log names (changing invalid characters to underscores)
+	* [ ] Parse binary name
+	* [X] Get timestamp
+	* [X] Create log file name
+	* [ ] BUG: What if name is all garbage (e.g. %^&)
+	* [ ] BUG: What if name is a directory (where's os_path_isfile()?)
+* [X] Populate struct with filenames for stdout and stderr
 * [ ] Fork()
 * [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
 * [ ] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
-* [ ] Populate "out" struct with filenames for stdout and stderr
 * [ ] Exec()
 * [ ] Parent reports on the status of the child
 
