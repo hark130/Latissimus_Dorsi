@@ -1,5 +1,9 @@
 #include <errno.h>			// errno
 #include "Harklerror.h"		// HARKLE_ERROR
+#include <inttypes.h>		// uintmax_t
+#include "Memoroad.h"		// get_me_a_buffer
+#include <stdbool.h>		// bool, true, false
+#include <stdio.h>			// fprintf
 #include <string.h>			// strerror
 #include <time.h>			// time, localtime
 
@@ -11,12 +15,12 @@ struct tm* get_localtime(void)
 	bool success = true;
 	time_t lTime = 0;  // Holds return value from time()
 
-	// INPUT VALIDATION
-	if (!timeDateStruct)
-	{
-		HARKLE_ERROR(Timeroad, get_localtime, NULL pointer);
-		success = false;
-	}
+	// // INPUT VALIDATION
+	// if (!timeDateStruct)
+	// {
+	// 	HARKLE_ERROR(Timeroad, get_localtime, NULL pointer);
+	// 	success = false;
+	// }
 
 	// TIME
 	// 1. Get the number of seconds since Epoch
@@ -43,7 +47,7 @@ struct tm* get_localtime(void)
 		}
 		else
 		{
-			fprintf(stdout, "%s\n%ju secs since the Epoch\n", asctime(retVal), (uintmax_t)lTime);
+			// fprintf(stdout, "%s\n%ju secs since the Epoch\n", asctime(retVal), (uintmax_t)lTime);  // DEBUGGING
 		}		
 	}
 
@@ -97,7 +101,7 @@ char* build_timestamp(void)
 			}
 			else
 			{
-				fprintf(stdout, "Timestamp is %s\n", retVal);  // DEBUGGING
+				// fprintf(stdout, "Timestamp is %s\n", retVal);  // DEBUGGING
 			}
 		}
 	}
