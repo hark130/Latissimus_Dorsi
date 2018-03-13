@@ -160,6 +160,7 @@ off_t size_a_file_desc(int fileDesc, int* errNum);
  */
 size_t size_a_file_ptr(FILE* openFile);
 
+
 /*
 	Purpose - Utilize stat to determine a file's type
 	Input
@@ -172,6 +173,18 @@ size_t size_a_file_ptr(FILE* openFile);
 			doesn't have your answer
  */
 unsigned char get_a_file_type(char* fileName);
+
+
+/*
+	Purpose - Quick, safe, "handled" way of determining if a path or file exists
+	Input
+		path_ptr - nul-terminated string presumably representing a path
+	Ouput - True if file exists, false otherwise
+	Notes:
+		This function should not raise any errors
+		This function will take care to 'zeroize' errno before returning
+ */
+bool os_path_exists(char* path_ptr);
 
 
 /*

@@ -942,6 +942,50 @@ unsigned char get_a_file_type(char* fileName)
 }
 
 
+bool os_path_exists(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int fileDesc = -1;  // Holds return value from open()
+
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		retVal = false;
+	}
+	else if (!(*path_ptr))
+	{
+		retVal = false;
+	}
+	else
+	{
+		// FILE EXISTS?
+		fileDesc = open(path_ptr, O_RDONLY);
+
+		if (fileDesc < 0)
+		{
+			retVal = false;
+			errno = 0;
+		}
+		else
+		{
+			close(fileDesc);
+			fileDesc = -1;
+		}		
+	}
+
+	// CLEAN UP
+	if (fileDesc > -1)
+	{
+		close(fileDesc);
+		fileDesc = -1;
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 {
 	// LOCAL VARIABLES
