@@ -69,11 +69,12 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [X] BUG: What if name is all garbage (e.g. %^&)
 	* [X] BUG: What if name is a directory (where's os_path_isfile()?)
 * [X] Populate struct with filenames for stdout and stderr
-* [ ] Fork()
-* [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
-* [ ] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
-* [ ] Exec()
-* [ ] Parent reports on the status of the child
+* [X] Fork()
+* [X] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Exec()
+* [X] Parent reports on the status of the child
+* [ ] Glue it all together in redirect_bin_output main()
 
 ### 3-3-3 
 * [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
