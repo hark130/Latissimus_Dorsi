@@ -182,7 +182,20 @@ int main(int argc, char* argv[])
 		fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
 		fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
 		
-		fprintf(stdout, "%s was run and its output was captured.\n", argv[1]);
+		
+		temp_ptr = silentBin->fullCmd;		
+		if (temp_ptr)
+		{
+			fprintf(stdout, "%s was run with the following syntax:\n\t", silentBin->binName);
+			
+			while (*temp_ptr)
+			{
+				fprintf(stdout, "%s ", *temp_ptr);
+				temp_ptr++;
+			}
+			fprintf(stdout, "\n");
+		}
+		fprintf(stdout, "%s's output was captured in the following files:\n", silentBin->binName);
 		fprintf(stdout, "STDOUT (%s):\n%s\n", silentBin->outputFile, binOutResults);
 		fprintf(stdout, "STDERR (%s):\n%s\n", silentBin->errorsFile, binErrResults);
 	}
