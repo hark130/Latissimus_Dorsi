@@ -48,6 +48,7 @@ rBinDat_ptr create_rBinDat_ptr(void);
 	Purpose - Populate a redirectBinOutput struct
 	Input
 		binaryName - Relative or absolute path string to the binary being redirected
+		binArgs - A copy of main()'s argv starting at index 1
 	Output - Pointer to a redirectBinOutput struct on the heap whose binName is
 		populated
 	Notes:
@@ -55,7 +56,7 @@ rBinDat_ptr create_rBinDat_ptr(void);
 		Caller is responsible for free()ing all char pointer members and the 
 			struct itself
  */
-rBinDat_ptr build_rBinDat_ptr(char* binaryName);
+rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs);
 
 
 /*
