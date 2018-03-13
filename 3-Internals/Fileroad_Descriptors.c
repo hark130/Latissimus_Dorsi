@@ -1,3 +1,4 @@
+#include "Fileroad.h"		// os_path_basename, os_path_dirname
 #include "Fileroad_Descriptors.h"
 #include <fcntl.h>			// open, open flags
 #include "Harklerror.h"		// HARKLE_ERROR
@@ -85,23 +86,35 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName)
 		}
 	}
 	
-	// PARSE NAME
-	///////////////////////////////// IMPLEMENT LATER /////////////////////////////////
-	justBinName = binaryName;  // This is just a placeholder
+// 	// PARSE NAME
+// 	///////////////////////////////// IMPLEMENT LATER /////////////////////////////////
+// 	justBinName = binaryName;  // This is just a placeholder
 	
 	// POPULATE BINARY NAME
 	if (success = true)
 	{
 		// 1. char* binName; // Just the binary name
-		retVal->binName = copy_a_string(justBinName);
+// 		retVal->binName = copy_a_string(justBinName);
+		retVal->binName = os_path_basename(binaryName);
 		
 		if (!(retVal->binName))
 		{
-			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+// 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_basename failed);
 			success = false;
 		}
-		
-		// 2. char* binPath; // NOT YET IMPLEMENTED
+		else
+		{
+			// 2. char* binPath;
+			retVal->dirName = os_path_dirname(binaryName);
+			
+			if (!(retVal->dirName))
+			{
+// 				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_dirname failed);
+				success = false;
+			}
+		}		
 		
 		// NOTE: Other struct members are populated later
 		// 3. char* outputFile; // File capturing binary's stdout		
