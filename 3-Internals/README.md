@@ -67,7 +67,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [X] Get timestamp
 	* [X] Create log file name
 	* [X] BUG: What if name is all garbage (e.g. %^&)
-	* [ ] BUG: What if name is a directory (where's os_path_isfile()?)
+	* [X] BUG: What if name is a directory (where's os_path_isfile()?)
 * [X] Populate struct with filenames for stdout and stderr
 * [ ] Fork()
 * [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
