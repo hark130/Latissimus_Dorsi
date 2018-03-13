@@ -7,7 +7,7 @@
 #include <stdlib.h>			// calloc
 #include <string.h>         // memset
 #include <sys/stat.h>		// mode_t
-#include <unistd.h>			// close
+#include <unistd.h>			// close, pid_t
 
 #ifndef FD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -244,6 +244,82 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 			tempStruct_ptr = NULL;
 		}
 	}
+	
+	// DONE
+	return retVal;
+}
+
+
+int wrap_bin(rBinDat_ptr binToWrap)
+{
+	// LOCAL VARIABLES
+	int retVal = -2;  // Default return value; Change after fork() call
+	bool success = true;  // If anything fails, make this false
+	pid_t forkPID = 0;  // Return value from fork()
+	int errNum = 0;  // Store errno here on error
+	int wStatus = 0;  // Information regarding the child process
+	int outFileDesc = 0;  // File descriptor for binToWrap's outputFile file descriptor
+	int errFileDesc = 0;  // File descriptor for binToWrap's errorsFile file descriptor
+	
+	// INPUT VALIDATION
+	if (!binToWrap)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
+		success = false;
+	}
+	else if (!(binToWrap->fullCmd))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
+		success = false;
+	}
+	else if (!(*(binToWrap->fullCmd)))
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, NULL pointer);
+		success = false;
+	}
+
+	// OPEN FILES
+// 	outFileDesc
+// 	errFileDesc
+	
+	// FORK
+	forkPID = fork();
+	
+	switch (forkPID)
+	{
+		case(-1): 	// Failure
+			errNum = errno;
+			HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, fork failed);
+			fprintf(stderr, "fork() failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+			success = false;
+			retVal = -1;
+			break;
+		case(0):	// Child
+			// Do things
+		default:	// Parent
+			fprintf(stdout, "Waiting for %s to terminate...", binToWrap->binName);  // DEBUGGING
+			while (wait(&wStatus) != -1)
+			{
+				fprintf(stdout, ".");
+			}
+			fprintf(stdout, "Complete.\n");
+			// Investigate child process' status
+			if (WIFEXITED(wStatus))
+			{
+				retVal = WEXITSTATUS(wStatus);
+				fprintf(stdout, "The child process running %s exited with status %d.\n", binToWrap->binName, retVal);  // DEBUGGING
+			}
+			else
+			{
+				retVal = -1;
+				fprintf(stderr, "The child process running %s did NOT terminate normally!\n", binToWrap->binName);  // DEBUGGING
+				success = false;
+			}
+			break;
+	}
+	
+	// CLEAN UP
+	// Nothing to clean up yet
 	
 	// DONE
 	return retVal;
