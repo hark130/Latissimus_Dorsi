@@ -11,11 +11,11 @@
 
 typedef struct fileDescriptorDetails
 {
-    char* filename_ptr;     // Path to file
-    int fileDesc;           // File descriptor
-    off_t fileSize;     	// Actual size of file
-    int fileDescFlags;		// File descriptor flags
-    int fileStatFlags;		// File status flags
+	char* filename_ptr;     // Path to file
+	int fileDesc;           // File descriptor
+	off_t fileSize;     	// Actual size of file
+	int fileDescFlags;		// File descriptor flags
+	int fileStatFlags;		// File status flags
 } fdDetails, *fdDetails_ptr;
 
 typedef struct redirectBinOutput
@@ -68,6 +68,27 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs);
 		Will zeroize all other members
  */
 bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr);
+
+
+/*
+	Purpose
+		The details inside the binToWrap struct pointer should all point to
+			a binary file (and arguments, if necessary) in order to redirect
+			it's output.  The stdout of binName will be redirected to
+			outputFile and the stderr will be redirected to errorsFile.
+			The binary itself will be executed with all of the parameters
+			found in fullCmd.
+	Input
+		binToWrap - Pointer to a redirectBinOutput struct with details about
+			the binary to wrap
+	Output
+		_exit() code of the child process fork()ed
+		-1 if an error is encountered during fork()ing
+		-2 if an error is encountered prior to fork()ing
+	Notes:
+		This function call fork() and execvp()
+ */
+int wrap_bin(rBinDat_ptr binToWrap);
 
 
 //////////////////////////////////////////////////////////////////////////////
