@@ -22,7 +22,7 @@ typedef struct redirectBinOutput
 {
 	char* binName;			// Just the binary name
 	char* binPath;  		// NOT IMPLEMENTED... Path to the binary
-	char** fullCmd;			// argv[1]... do NOT free()!
+	char** fullCmd;			// Heap-allocated copies of argv + 1 and on
 	char* outputFile;		// File capturing binary's stdout
 	char* errorsFile;		// File capturing binary's stderr
 	int readPipe;			// Implement later... Binary (child) reads stdin from here
