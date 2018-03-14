@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
 	rBinDat_ptr silentBin = NULL;  // Return value from build_rBinDat_ptr()
 	char* timestamp = NULL;  // Return value from build_timestamp() goes here
 	char* temp_ptr = NULL;  // Iterating pointer variable
+	char** temp_arr = NULL;  // Iterating pointer variable
 	int fullLogLen = 0;  // Calculated necessary length of the outputFile and errorsFile string lengths
 	char* binOutResults = NULL;  // Read the contents of outputFile here
 	char* binErrResults = NULL;  // Read the contents of errorsFile here
@@ -67,6 +68,21 @@ int main(int argc, char* argv[])
 		// fprintf(stdout, "silentBin->binName == %s\n", argv[1]);  // DEBUGGING
 	}
 
+	// // DEBUGGING
+	// if (success == true)
+	// {
+	// 	temp_arr = argv + 1;		
+	// 	if (temp_arr)
+	// 	{			
+	// 		while (*temp_arr)
+	// 		{
+	// 			fprintf(stdout, "\t%s\n", *temp_arr);
+	// 			temp_arr++;
+	// 		}
+	// 		fprintf(stdout, "\n");
+	// 	}
+	// }
+
 	// 3. Verify it actually exists
 	if (success == true)
 	{
@@ -81,8 +97,41 @@ int main(int argc, char* argv[])
 	// ALLOCATE AND POPULATE THE STRUCT
 	if (success == true)
 	{
+		// // DEBUGGING
+		// if (success == true)
+		// {
+		// 	// puts("Pre  build() call");
+		// 	temp_arr = argv + 1;
+		// 	if (temp_arr)
+		// 	{			
+		// 		while (*temp_arr)
+		// 		{
+		// 			fprintf(stdout, "\t%s\n", *temp_arr);
+		// 			temp_arr++;
+		// 		}
+		// 		fprintf(stdout, "\n");
+		// 	}
+		// }
 		// 1. Allocate and populate the struct
-		silentBin = build_rBinDat_ptr(argv[1]);
+		silentBin = build_rBinDat_ptr(argv[1], argv + 1);
+		// fprintf(stdout, "post-build() silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
+		// fprintf(stdout, "post-build() silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
+		// // DEBUGGING
+		// if (success == true)
+		// {
+		// 	// puts("Post build() call");
+		// 	// temp_arr = silentBin->fullCmd;
+		// 	temp_arr = argv + 1;
+		// 	if (temp_arr)
+		// 	{			
+		// 		while (*temp_arr)
+		// 		{
+		// 			fprintf(stdout, "\t%s\n", *temp_arr);
+		// 			temp_arr++;
+		// 		}
+		// 		fprintf(stdout, "\n");
+		// 	}
+		// }
 
 		if (!silentBin)
 		{
@@ -143,6 +192,20 @@ int main(int argc, char* argv[])
 	// FORK IT
 	if (success == true)
 	{
+		// // DEBUGGING
+		// if (success == true)
+		// {
+		// 	temp_arr = silentBin->fullCmd;		
+		// 	if (temp_arr)
+		// 	{			
+		// 		while (*temp_arr)
+		// 		{
+		// 			fprintf(stdout, "\t%s\n", *temp_arr);
+		// 			temp_arr++;
+		// 		}
+		// 		fprintf(stdout, "\n");
+		// 	}
+		// }
 		retVal = wrap_bin(silentBin);
 		
 		if (retVal)
@@ -177,27 +240,26 @@ int main(int argc, char* argv[])
 	// PRINT THE RESULTS
 	if (success == true)
 	{
-		fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
-		fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
-		fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
-		fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING
+		// fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
+		// fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
+		// fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
+		// fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING		
 		
-		
-		temp_ptr = silentBin->fullCmd;		
-		if (temp_ptr)
+		temp_arr = silentBin->fullCmd;		
+		if (temp_arr)
 		{
 			fprintf(stdout, "%s was run with the following syntax:\n\t", silentBin->binName);
 			
-			while (*temp_ptr)
+			while (*temp_arr)
 			{
-				fprintf(stdout, "%s ", *temp_ptr);
-				temp_ptr++;
+				fprintf(stdout, "%s ", *temp_arr);
+				temp_arr++;
 			}
 			fprintf(stdout, "\n");
 		}
-		fprintf(stdout, "%s's output was captured in the following files:\n", silentBin->binName);
-		fprintf(stdout, "STDOUT (%s):\n%s\n", silentBin->outputFile, binOutResults);
-		fprintf(stdout, "STDERR (%s):\n%s\n", silentBin->errorsFile, binErrResults);
+		fprintf(stdout, "%s's output was captured in the following files:\n\n", silentBin->binName);
+		fprintf(stdout, "**************\n*** STDOUT ***\n**************\n(%s)\n%s\n", silentBin->outputFile, binOutResults);
+		fprintf(stdout, "**************\n*** STDERR ***\n**************\n(%s)\n%s\n\n\n", silentBin->errorsFile, binErrResults);
 	}
 	
 	// CLEAN UP
@@ -231,7 +293,7 @@ int main(int argc, char* argv[])
 	// 4. char* binErrResults = NULL;  // Read the contents of errorsFile here
 	if (binErrResults)
 	{
-		if (false == release_a_string(&errOutResults))
+		if (false == release_a_string(&binErrResults))
 		{
 			HARKLE_ERROR(redirect_bin_output, main, release_a_string failed);
 		}
