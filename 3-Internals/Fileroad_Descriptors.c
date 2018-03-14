@@ -46,7 +46,6 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 	char** temp_arr = NULL;  // Iterating variable for binArgs
 	char* temp_ptr = NULL;  // Iterating variable for char*s within binArgs
 	int numArgs = 0;  // Keep count of the number of char*s within binArgs
-	// char* justBinName = NULL;  // Pointer to the beginning of the binary name
 	bool success = true;  // Make this false if anything fails
 	int i = 0;  // Iterating variable
 	
@@ -84,21 +83,14 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 		}
 	}
 	
-// 	// PARSE NAME
-// 	///////////////////////////////// IMPLEMENT LATER /////////////////////////////////
-// 	justBinName = binaryName;  // This is just a placeholder
-	
 	// POPULATE STRUCT
 	// 1. char* binName; // Just the binary name
 	if (success == true)
-	{		
-// 		retVal->binName = copy_a_string(justBinName);
+	{
 		retVal->binName = os_path_basename(binaryName);
-		// fprintf(stdout, "os_path_basename() returned %s\n", retVal->binName);  // DEBUGGING
 
 		if (!(retVal->binName))
 		{
-// 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_basename failed);
 			success = false;
 		}
@@ -106,8 +98,7 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 
 	// 3. char** fullCmd;
 	if (success == true)
-	{		
-		// retVal->fullCmd = binArgs;  // BUG: Can't just copy in binArgs apparently
+	{
 		// 3.1. Count the args
 		temp_arr = binArgs;
 		while (*temp_arr)
@@ -137,7 +128,6 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 				for (i = 0; i < numArgs; i++)
 				{
 					(*(temp_arr + i)) = copy_a_string((*(binArgs + i)));
-					// fprintf(stdout, "binArgs %s got copied to temp_arr %s\n", (*(binArgs + i)), (*(temp_arr + i)));  // DEBUGGING
 					if (!(*(temp_arr + i)))
 					{
 						HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
@@ -176,7 +166,6 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 		
 		if (!(retVal->binPath))
 		{
-// 				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_dirname failed);
 			success = false;
 		}
@@ -434,22 +423,8 @@ int wrap_bin(rBinDat_ptr binToWrap)
 					{
 						errNum = errno;
 						HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, execvp failed);
-						fprintf(stderr, "execvp(argv[1], argv + 1) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
-						fprintf(stderr, "Call was execvp(%s, %s)\n", binToWrap->fullCmd[0], *binToWrap->fullCmd);
+						fprintf(stderr, "execvp(fullCmd[1], fullCmd) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
 						success = false;
-
-char** temp_arr = binToWrap->fullCmd;		
-if (temp_arr)
-{
-	fprintf(stdout, "%s was run with the following syntax:\n\t", binToWrap->binName);
-	
-	while (*temp_arr)
-	{
-		fprintf(stdout, "%s ", *temp_arr);
-		temp_arr++;
-	}
-	fprintf(stdout, "\n");
-}
 					}
 				}
 				break;
