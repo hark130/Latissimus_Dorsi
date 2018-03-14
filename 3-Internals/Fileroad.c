@@ -1476,6 +1476,14 @@ char* clean_filename(char* dirtyFile, bool inPlace)
 	}
 
 	// CLEAN UP
+	if (backUp)
+	{
+		if (false == release_a_string(&backUp))
+		{
+			HARKLE_ERROR(Fileroad, clean_filename, release_a_string failed);
+		}
+	}
+
 	if (success == false && inPlace == false && retVal)
 	{
 		if (false == release_a_string(&retVal))
