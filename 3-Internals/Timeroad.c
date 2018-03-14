@@ -36,7 +36,7 @@ struct tm* get_localtime(void)
 	}
 
 	// 2. Convert Epoch to time date strucct
-	if (success = true)
+	if (success == true)
 	{
 		retVal = localtime(&lTime);
 
