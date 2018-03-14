@@ -1189,6 +1189,8 @@ char* os_path_basename(char* path_ptr)
 			fprintf(stderr, "basename(%s) returned an empty string!\n", path_ptr);
 			success = false;
 		}
+
+		// fprintf(stdout, "path_ptr == %s\nbasename() returned %s\n", path_ptr, temp_ptr);  // DEBUGGING
 	}
 	
 	// ALLOCATE BUFFER
