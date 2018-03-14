@@ -4,7 +4,7 @@ CC = gcc
 	$(CC) -c Fileroad.c
 	$(CC) -c Fileroad_Descriptors.c
 	$(CC) -c Memoroad.c
-	$(CC) -o 3-3_File_Descriptor_Practice-1_main.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o 3-03_File_Descriptor_Practice-1_main.c
+	$(CC) -o 3-03_File_Descriptor_Practice-1_main.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o 3-03_File_Descriptor_Practice-1_main.c
 
 332:
 	$(CC) -c Fileroad.c
