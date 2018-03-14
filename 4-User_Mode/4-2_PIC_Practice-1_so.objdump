@@ -1,0 +1,130 @@
+
+lib421PICpractice.so:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+0000000000000550 <_init>:
+ 550:	48 83 ec 08          	sub    rsp,0x8
+ 554:	48 8b 05 85 0a 20 00 	mov    rax,QWORD PTR [rip+0x200a85]        # 200fe0 <_DYNAMIC+0x1a0>
+ 55b:	48 85 c0             	test   rax,rax
+ 55e:	74 05                	je     565 <_init+0x15>
+ 560:	e8 1b 00 00 00       	call   580 <_init+0x30>
+ 565:	48 83 c4 08          	add    rsp,0x8
+ 569:	c3                   	ret    
+
+Disassembly of section .plt:
+
+0000000000000570 <.plt>:
+ 570:	ff 35 92 0a 20 00    	push   QWORD PTR [rip+0x200a92]        # 201008 <_GLOBAL_OFFSET_TABLE_+0x8>
+ 576:	ff 25 94 0a 20 00    	jmp    QWORD PTR [rip+0x200a94]        # 201010 <_GLOBAL_OFFSET_TABLE_+0x10>
+ 57c:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
+
+Disassembly of section .plt.got:
+
+0000000000000580 <.plt.got>:
+ 580:	ff 25 5a 0a 20 00    	jmp    QWORD PTR [rip+0x200a5a]        # 200fe0 <_DYNAMIC+0x1a0>
+ 586:	66 90                	xchg   ax,ax
+ 588:	ff 25 6a 0a 20 00    	jmp    QWORD PTR [rip+0x200a6a]        # 200ff8 <_DYNAMIC+0x1b8>
+ 58e:	66 90                	xchg   ax,ax
+
+Disassembly of section .text:
+
+0000000000000590 <deregister_tm_clones>:
+ 590:	48 8d 3d 91 0a 20 00 	lea    rdi,[rip+0x200a91]        # 201028 <__TMC_END__>
+ 597:	48 8d 05 91 0a 20 00 	lea    rax,[rip+0x200a91]        # 20102f <__TMC_END__+0x7>
+ 59e:	55                   	push   rbp
+ 59f:	48 29 f8             	sub    rax,rdi
+ 5a2:	48 89 e5             	mov    rbp,rsp
+ 5a5:	48 83 f8 0e          	cmp    rax,0xe
+ 5a9:	76 15                	jbe    5c0 <deregister_tm_clones+0x30>
+ 5ab:	48 8b 05 26 0a 20 00 	mov    rax,QWORD PTR [rip+0x200a26]        # 200fd8 <_DYNAMIC+0x198>
+ 5b2:	48 85 c0             	test   rax,rax
+ 5b5:	74 09                	je     5c0 <deregister_tm_clones+0x30>
+ 5b7:	5d                   	pop    rbp
+ 5b8:	ff e0                	jmp    rax
+ 5ba:	66 0f 1f 44 00 00    	nop    WORD PTR [rax+rax*1+0x0]
+ 5c0:	5d                   	pop    rbp
+ 5c1:	c3                   	ret    
+ 5c2:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
+ 5c6:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+ 5cd:	00 00 00 
+
+00000000000005d0 <register_tm_clones>:
+ 5d0:	48 8d 3d 51 0a 20 00 	lea    rdi,[rip+0x200a51]        # 201028 <__TMC_END__>
+ 5d7:	48 8d 35 4a 0a 20 00 	lea    rsi,[rip+0x200a4a]        # 201028 <__TMC_END__>
+ 5de:	55                   	push   rbp
+ 5df:	48 29 fe             	sub    rsi,rdi
+ 5e2:	48 89 e5             	mov    rbp,rsp
+ 5e5:	48 c1 fe 03          	sar    rsi,0x3
+ 5e9:	48 89 f0             	mov    rax,rsi
+ 5ec:	48 c1 e8 3f          	shr    rax,0x3f
+ 5f0:	48 01 c6             	add    rsi,rax
+ 5f3:	48 d1 fe             	sar    rsi,1
+ 5f6:	74 18                	je     610 <register_tm_clones+0x40>
+ 5f8:	48 8b 05 f1 09 20 00 	mov    rax,QWORD PTR [rip+0x2009f1]        # 200ff0 <_DYNAMIC+0x1b0>
+ 5ff:	48 85 c0             	test   rax,rax
+ 602:	74 0c                	je     610 <register_tm_clones+0x40>
+ 604:	5d                   	pop    rbp
+ 605:	ff e0                	jmp    rax
+ 607:	66 0f 1f 84 00 00 00 	nop    WORD PTR [rax+rax*1+0x0]
+ 60e:	00 00 
+ 610:	5d                   	pop    rbp
+ 611:	c3                   	ret    
+ 612:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
+ 616:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+ 61d:	00 00 00 
+
+0000000000000620 <__do_global_dtors_aux>:
+ 620:	80 3d fd 09 20 00 00 	cmp    BYTE PTR [rip+0x2009fd],0x0        # 201024 <_edata>
+ 627:	75 27                	jne    650 <__do_global_dtors_aux+0x30>
+ 629:	48 83 3d c7 09 20 00 	cmp    QWORD PTR [rip+0x2009c7],0x0        # 200ff8 <_DYNAMIC+0x1b8>
+ 630:	00 
+ 631:	55                   	push   rbp
+ 632:	48 89 e5             	mov    rbp,rsp
+ 635:	74 0c                	je     643 <__do_global_dtors_aux+0x23>
+ 637:	48 8b 3d da 09 20 00 	mov    rdi,QWORD PTR [rip+0x2009da]        # 201018 <__dso_handle>
+ 63e:	e8 45 ff ff ff       	call   588 <_init+0x38>
+ 643:	e8 48 ff ff ff       	call   590 <deregister_tm_clones>
+ 648:	5d                   	pop    rbp
+ 649:	c6 05 d4 09 20 00 01 	mov    BYTE PTR [rip+0x2009d4],0x1        # 201024 <_edata>
+ 650:	f3 c3                	repz ret 
+ 652:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
+ 656:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+ 65d:	00 00 00 
+
+0000000000000660 <frame_dummy>:
+ 660:	48 8d 3d d1 07 20 00 	lea    rdi,[rip+0x2007d1]        # 200e38 <__JCR_END__>
+ 667:	48 83 3f 00          	cmp    QWORD PTR [rdi],0x0
+ 66b:	75 0b                	jne    678 <frame_dummy+0x18>
+ 66d:	e9 5e ff ff ff       	jmp    5d0 <register_tm_clones>
+ 672:	66 0f 1f 44 00 00    	nop    WORD PTR [rax+rax*1+0x0]
+ 678:	48 8b 05 69 09 20 00 	mov    rax,QWORD PTR [rip+0x200969]        # 200fe8 <_DYNAMIC+0x1a8>
+ 67f:	48 85 c0             	test   rax,rax
+ 682:	74 e9                	je     66d <frame_dummy+0xd>
+ 684:	55                   	push   rbp
+ 685:	48 89 e5             	mov    rbp,rsp
+ 688:	ff d0                	call   rax
+ 68a:	5d                   	pop    rbp
+ 68b:	e9 40 ff ff ff       	jmp    5d0 <register_tm_clones>
+
+0000000000000690 <func_4_2_1>:
+ 690:	55                   	push   rbp
+ 691:	48 89 e5             	mov    rbp,rsp
+ 694:	89 7d fc             	mov    DWORD PTR [rbp-0x4],edi
+ 697:	89 75 f8             	mov    DWORD PTR [rbp-0x8],esi
+ 69a:	48 8b 05 2f 09 20 00 	mov    rax,QWORD PTR [rip+0x20092f]        # 200fd0 <_DYNAMIC+0x190> ...An address into the GOT
+ 6a1:	8b 10                	mov    edx,DWORD PTR [rax]
+ 6a3:	8b 45 fc             	mov    eax,DWORD PTR [rbp-0x4]
+ 6a6:	01 c2                	add    edx,eax
+ 6a8:	8b 45 f8             	mov    eax,DWORD PTR [rbp-0x8]
+ 6ab:	01 d0                	add    eax,edx
+ 6ad:	5d                   	pop    rbp
+ 6ae:	c3                   	ret    
+
+Disassembly of section .fini:
+
+00000000000006b0 <_fini>:
+ 6b0:	48 83 ec 08          	sub    rsp,0x8
+ 6b4:	48 83 c4 08          	add    rsp,0x8
+ 6b8:	c3                   	ret    

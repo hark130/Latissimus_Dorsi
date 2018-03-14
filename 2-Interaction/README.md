@@ -24,6 +24,7 @@ Developers will demonstrate a comprehensive knowledge and ability to correctly i
 
 ## RESEARCH SOURCES
 
+* [Special Devices and File Systems](https://www.cs.rutgers.edu/~pxk/416/notes/14-specialfs.html)
 
 ## TO DO
 

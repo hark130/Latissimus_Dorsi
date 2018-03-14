@@ -1,0 +1,29 @@
+Commands:
+	objdump -M intel -d lib421PICpractice.so >> 4-2_PIC_Practice-1_so.objdump
+	readelf -S lib421PICpractice.so >> 4-2_PIC_Practice-1_so.readelf
+	readelf -r lib421PICpractice.so >> 4-2_PIC_Practice-1_so.relocate
+
+Files:
+	4-2_PIC_Practice-1_so.objdump
+	4-2_PIC_Practice-1_so.readelf
+	4-2_PIC_Practice-1_so.relocate
+
+Ref:
+	https://eli.thegreenplace.net/2011/11/03/position-independent-code-pic-in-shared-libraries/
+
+Analysis:
+	- Find <func_4_2_1> in 4-2_PIC_Practice-1_so.objdump
+	- Find relative address "69a:""
+	- "69a:" loads an offset into the Global Offset Table (GOT)
+	- From the persepctive of "69a:", RIP is "6a1"
+	- "6a1" + 0x20092f == 0x200fd0
+	- In 4-2_PIC_Practice-1_so.readelf, we see that 0000000000200fd0 is the address of the .got (see: GOT)
+	- "69a:" loads an address found in the GOT into rax
+	- This should be the absolute address to the global variable "globInt"
+	- The instruction at "6a1:" then dereferences that absolute address to load the "globInt" value into edx
+	- The rest is elementary
+
+NOTE: How did the address of "globInt" get into the GOT slot at 0x200fd0?
+	- SHORT ANSWER: It was 'relocated'.
+	- MEDIUM ANSWER: Looking in 4-2_PIC_Practice-1_so.relocate, we see a R_X86_64_GLOB_DAT entry for globInt
+	- LONGER ANSWERS: The relocation entry for globInt tells the dynamic loader "put the actual value of the symbol (i.e. its address) into that offset".  That offset would be the GOT.  The "Type" field for the relocation section entry, R_X86_64_GLOB_DAT, equates to the value of 6 in the Info field's ones place.  The only thing I'm having trouble calculating is the relationship between the Sym. Value and the Offset.  I know there's a relationship but I can't work out the math.

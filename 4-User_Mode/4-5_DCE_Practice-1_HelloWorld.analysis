@@ -1,0 +1,54 @@
+Commands:
+##### BEFORE #####
+objdump -M intel -d 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.objdump
+readelf -S 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.readelf
+readelf -r 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.relocate
+ldd ./4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-before.ldd
+##### HIJACK THE LIBRARY #####
+export LD_PRELOAD=$PWD/lib451DCE_evil_puts.so
+##### AFTER #####
+objdump -M intel -d 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.objdump
+readelf -S 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.readelf
+readelf -r 4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.relocate
+ldd ./4-5_DCE_Practice-1_HelloWorld.exe > 4-5_DCE_Practice-1_HelloWorld-after.ldd
+##### RESET #####
+export LD_PRELOAD=""
+
+Files:
+	4-5_DCE_Practice-1_HelloWorld-before.objdump
+	4-5_DCE_Practice-1_HelloWorld-before.readelf
+	4-5_DCE_Practice-1_HelloWorld-before.relocate
+	4-5_DCE_Practice-1_HelloWorld-before.ldd
+	4-5_DCE_Practice-1_HelloWorld-after.objdump
+	4-5_DCE_Practice-1_HelloWorld-after.readelf
+	4-5_DCE_Practice-1_HelloWorld-after.relocate
+	4-5_DCE_Practice-1_HelloWorld-after.ldd
+
+Ref:
+	https://blog.netspi.com/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/
+	https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/
+
+Analysis:
+	- objdump unchanged (binaries don't recompile just because shared libraries change)
+	- readelf unchanged (binaries don't recompile just because shared libraries change)
+	- relocate unchanged (binaries don't recompile just because shared libraries change)
+	- ldd noted the change in shared library reference
+
+Notes - Possible uses of Function Hooking:
+    - Gain root privileges
+    - Cheat games: Unrandomize
+    - Cheat games: Bullet time
+    - Investigate apps: List accessed files
+    - Investigate apps: Monitor internet access
+    - Investigate apps: Inspect GTK structures
+    - Sandbox unsafe applications
+    - Implement features. zlibc is an actual library which is run this precise way; it uncompresses files on the go as they are accessed, so that any application can work on compressed data without even realizing it.
+    - Fix bugs
+    - Manually access application’s own memory
+    - Intercept calls to the calls to SSL_write in the OpenSSL library
+
+From [How do I add functionality to an existing binary executable](https://reverseengineering.stackexchange.com/questions/185/how-do-i-add-functionality-to-an-existing-binary-executable)
+3. Dynamic loading:
+
+You can use LD_PRELOAD to override functions that are going to be dynamically linked. This is a nice option when you want to change the behavior of a library function. Naturally, it does not work on statically linked binaries, or for static functions.
+
