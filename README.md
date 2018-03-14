@@ -35,6 +35,6 @@ In my free time.
 
 # [Releasable Products](https://github.com/hark130/Latissimus_Dorsi/wiki/Releasable-Products)
 
-[print_PID_libraries.exe](https://github.com/hark130/Latissimus_Dorsi/wiki/print_PID_libraries) - list files loaded into memory by a PID
+[print_PID_libraries](https://github.com/hark130/Latissimus_Dorsi/wiki/print_PID_libraries) - list files loaded into memory by a PID
 
 [redirect_bin_output](https://github.com/hark130/Latissimus_Dorsi/wiki/redirect_bin_output) - redirect the output of a binary into files
