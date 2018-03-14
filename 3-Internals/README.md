@@ -6,7 +6,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 ## TASK LIST
 * [ ] 1. Use POSIX system calls using GNU libc (3c)
 * [ ] 2. Understand the difference between System Calls and Library Functions (C)
-* [ ] 3. Open, close, modify, and duplicate File Descriptors (3c)
+* [X] 3. Open, close, modify, and duplicate File Descriptors (3c)
 * [ ] 4. Implement synchronization, memory protection, and shared memory using POSIX primitives and \*nix concepts (3c)
 * [ ] 5. Demonstrate Interprocess Communication knowledge by communicating between multiple applications (3c)
 * [ ] 6. Handle and send signals between applications (3c)
@@ -74,7 +74,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [X] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
 * [X] Exec()
 * [X] Parent reports on the status of the child
-* [ ] Glue it all together in redirect_bin_output main()
+* [X] Glue it all together in redirect_bin_output main()
 
 ### 3-3-3 
 * [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
