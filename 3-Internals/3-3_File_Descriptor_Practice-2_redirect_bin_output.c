@@ -68,21 +68,6 @@ int main(int argc, char* argv[])
 		// fprintf(stdout, "silentBin->binName == %s\n", argv[1]);  // DEBUGGING
 	}
 
-	// // DEBUGGING
-	// if (success == true)
-	// {
-	// 	temp_arr = argv + 1;		
-	// 	if (temp_arr)
-	// 	{			
-	// 		while (*temp_arr)
-	// 		{
-	// 			fprintf(stdout, "\t%s\n", *temp_arr);
-	// 			temp_arr++;
-	// 		}
-	// 		fprintf(stdout, "\n");
-	// 	}
-	// }
-
 	// 3. Verify it actually exists
 	if (success == true)
 	{
@@ -97,41 +82,8 @@ int main(int argc, char* argv[])
 	// ALLOCATE AND POPULATE THE STRUCT
 	if (success == true)
 	{
-		// // DEBUGGING
-		// if (success == true)
-		// {
-		// 	// puts("Pre  build() call");
-		// 	temp_arr = argv + 1;
-		// 	if (temp_arr)
-		// 	{			
-		// 		while (*temp_arr)
-		// 		{
-		// 			fprintf(stdout, "\t%s\n", *temp_arr);
-		// 			temp_arr++;
-		// 		}
-		// 		fprintf(stdout, "\n");
-		// 	}
-		// }
 		// 1. Allocate and populate the struct
 		silentBin = build_rBinDat_ptr(argv[1], argv + 1);
-		// fprintf(stdout, "post-build() silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
-		// fprintf(stdout, "post-build() silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
-		// // DEBUGGING
-		// if (success == true)
-		// {
-		// 	// puts("Post build() call");
-		// 	// temp_arr = silentBin->fullCmd;
-		// 	temp_arr = argv + 1;
-		// 	if (temp_arr)
-		// 	{			
-		// 		while (*temp_arr)
-		// 		{
-		// 			fprintf(stdout, "\t%s\n", *temp_arr);
-		// 			temp_arr++;
-		// 		}
-		// 		fprintf(stdout, "\n");
-		// 	}
-		// }
 
 		if (!silentBin)
 		{
@@ -154,9 +106,7 @@ int main(int argc, char* argv[])
 				success = false;
 			}
 			else
-			{				
-				// fprintf(stdout, "Timestamp is %s\n", timestamp);  // DEBUGGING
-
+			{
 				// 3. Build the output/errors filenames
 				// 3.1. outputFile
 				if (success == true && silentBin->outputFile)
@@ -192,20 +142,6 @@ int main(int argc, char* argv[])
 	// FORK IT
 	if (success == true)
 	{
-		// // DEBUGGING
-		// if (success == true)
-		// {
-		// 	temp_arr = silentBin->fullCmd;		
-		// 	if (temp_arr)
-		// 	{			
-		// 		while (*temp_arr)
-		// 		{
-		// 			fprintf(stdout, "\t%s\n", *temp_arr);
-		// 			temp_arr++;
-		// 		}
-		// 		fprintf(stdout, "\n");
-		// 	}
-		// }
 		retVal = wrap_bin(silentBin);
 		
 		if (retVal)
@@ -240,11 +176,6 @@ int main(int argc, char* argv[])
 	// PRINT THE RESULTS
 	if (success == true)
 	{
-		// fprintf(stdout, "silentBin->binName == %s\n", silentBin->binName);  // DEBUGGING
-		// fprintf(stdout, "silentBin->binPath == %s\n", silentBin->binPath);  // DEBUGGING
-		// fprintf(stdout, "silentBin->outputFile == %s\n", silentBin->outputFile);  // DEBUGGING
-		// fprintf(stdout, "silentBin->errorsFile == %s\n", silentBin->errorsFile);  // DEBUGGING		
-		
 		temp_arr = silentBin->fullCmd;		
 		if (temp_arr)
 		{
@@ -314,7 +245,6 @@ char* build_filename(char* timestamp, char* properName, bool output)
 	// LOCAL VARIABLES
 	char* retVal = NULL;
 	char* temp_ptr = NULL;  // Return values from string.h function calls
-	// char* curr_ptr = NULL;  // Iterate the way through retVal
 	bool success = true;  // Make this false if anything fails
 	int fullLogLen = 0;  // Calculated string length of the return value
 
