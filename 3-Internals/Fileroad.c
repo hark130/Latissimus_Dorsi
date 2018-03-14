@@ -90,8 +90,6 @@ char* buff_a_num(void)
 
 	// READ
 	numBytesRead = read(STDIN_FILENO, localBuff, FROAD_SML_BUFF_SIZE);
-	// fprintf(stdout, "numBytesRead == %zu\n", numBytesRead);  // DEBUGGING
-	// fprintf(stdout, "localBuff == %s\n", localBuff);  // DEBUGGING
 
 	if (numBytesRead > FROAD_SML_BUFF_SIZE)
 	{
@@ -108,7 +106,6 @@ char* buff_a_num(void)
 	else  // "Just write." -Goldilocks(?)
 	{
 		// REMOVE ANY NEWLINES
-		// puts("Entering buff_a_num() removing newlines");  // DEBUGGING
 		i = 0;  // Reset temp variable
 		while (i < FROAD_SML_BUFF_SIZE && (*(localBuff + i)) != '\0' && success == true)
 		{
@@ -126,13 +123,11 @@ char* buff_a_num(void)
 			}
 		}
 
-		// puts("Entering buff_a_num() read");  // DEBUGGING
 		// VALIDATE READ
 		// Look for non-numbers
 		i = 0;  // Reset temp variable
 		while (i < FROAD_SML_BUFF_SIZE && (*(localBuff + i)) != '\0' && success == true)
 		{
-			// fprintf(stdout, "Looking at:\t%c (0x%X)\n", (*(localBuff + i)), (*(localBuff + i)));  // DEBUGGING
 			if ((*(localBuff + i)) < 48 || (*(localBuff + i)) > 57)
 			{
 				success = false;
@@ -146,10 +141,7 @@ char* buff_a_num(void)
 		// Copy it onto the heap
 		if (success == true)
 		{
-			// puts("Entering buff_a_num() heap allocation");  // DEBUGGING
-			// fprintf(stdout, "localBuff == %s\n", localBuff);  // DEBUGGING
 			retVal = copy_a_string(localBuff);
-			// fprintf(stdout, "retVal == %s\n", retVal);  // DEBUGGING
 
 			if (!retVal)
 			{
@@ -651,9 +643,7 @@ char* read_a_file(char* fileName)
 							}
 							else
 							{
-								// fprintf(stdout, "REread\n\n%s\n\n", retVal);  // DEBUGGING
-								// fprintf(stdout, "File size is currently %jd.\n", fileSize);
-								// fprintf(stdout, "Just read %jd bytes from fd %d.\n", (intmax_t)numBytesRead, fileDesc);  // DEBUGGING
+
 							}
 						}
 					}
@@ -751,7 +741,6 @@ off_t size_a_file(char* fileName, int* errNum)
 		}
 		else
 		{
-			// printf("File size:\t%lld bytes\n", (long long)fileStat.st_size);  // DEBUGGING
 			retVal = fileStat.st_size;
 		}
 	}
@@ -794,7 +783,6 @@ off_t size_a_file_desc(int fileDesc, int* errNum)
 	// SIZE IT
 	if (success == true)
 	{
-		// fprintf(stdout, "Sizing fd %d\n", fileDesc);  // DEBUGGING
 		stRetVal = fstat(fileDesc, &fileStat);
 		
 		if (stRetVal == -1)
@@ -805,7 +793,6 @@ off_t size_a_file_desc(int fileDesc, int* errNum)
 		}
 		else
 		{
-			// fprintf(stdout, "fd %d is %jd\n", fileDesc, (intmax_t)fileStat.st_size);  // DEBUGGING
 			retVal = fileStat.st_size;
 		}
 	}
@@ -1189,8 +1176,6 @@ char* os_path_basename(char* path_ptr)
 			fprintf(stderr, "basename(%s) returned an empty string!\n", path_ptr);
 			success = false;
 		}
-
-		// fprintf(stdout, "path_ptr == %s\nbasename() returned %s\n", path_ptr, temp_ptr);  // DEBUGGING
 	}
 	
 	// ALLOCATE BUFFER
@@ -1328,22 +1313,6 @@ bool rewind_a_file_desc(int fileDesc, int* errNum)
 }
 
 
-/*
-	Purpose - Clean a potential filename
-	Input
-		dirtyFile - C string representing a potential filename
-		inPlace - If true, modified in place.  Otherwise, a copy
-			is returned.
-	Output
-		On success:
-			inPlace == true, returns dirtyFile
-			inPlace == false, heap-allocated string with the modified filename
-		On failure, NULL
-	Notes:
-		It is the caller's responsiblity to free() the return value if
-			inPlace was true
-		Bad chars are replaced with an underscore (_)
- */
 char* clean_filename(char* dirtyFile, bool inPlace)
 {
 	// LOCAL VARIABLES
