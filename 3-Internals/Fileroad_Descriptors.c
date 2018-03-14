@@ -8,6 +8,7 @@
 #include <stdlib.h>			// calloc
 #include <string.h>         // memset
 #include <sys/stat.h>		// mode_t
+#include <sys/wait.h>		// wait
 #include <unistd.h>			// close, pid_t
 
 #ifndef FD_MAX_TRIES
@@ -42,8 +43,12 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 {
 	// LOCAL VARIABLES
 	rBinDat_ptr retVal = NULL;
-	char* justBinName = NULL;  // Pointer to the beginning of the binary name
+	char** temp_arr = NULL;  // Iterating variable for binArgs
+	char* temp_ptr = NULL;  // Iterating variable for char*s within binArgs
+	int numArgs = 0;  // Keep count of the number of char*s within binArgs
+	// char* justBinName = NULL;  // Pointer to the beginning of the binary name
 	bool success = true;  // Make this false if anything fails
+	int i = 0;  // Iterating variable
 	
 	// INPUT VALIDATION	
 	if (!binaryName)
@@ -83,37 +88,103 @@ rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs)
 // 	///////////////////////////////// IMPLEMENT LATER /////////////////////////////////
 // 	justBinName = binaryName;  // This is just a placeholder
 	
-	// POPULATE BINARY NAME
+	// POPULATE STRUCT
+	// 1. char* binName; // Just the binary name
 	if (success == true)
-	{
-		// 1. char* binName; // Just the binary name
+	{		
 // 		retVal->binName = copy_a_string(justBinName);
 		retVal->binName = os_path_basename(binaryName);
-		
+		// fprintf(stdout, "os_path_basename() returned %s\n", retVal->binName);  // DEBUGGING
+
 		if (!(retVal->binName))
 		{
 // 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
 			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_basename failed);
 			success = false;
 		}
+	}
+
+	// 3. char** fullCmd;
+	if (success == true)
+	{		
+		// retVal->fullCmd = binArgs;  // BUG: Can't just copy in binArgs apparently
+		// 3.1. Count the args
+		temp_arr = binArgs;
+		while (*temp_arr)
+		{
+			numArgs++;
+			temp_arr++;
+		}
+
+		if (numArgs < 1)
+		{
+			success = false;
+		}
 		else
 		{
-			// 2. char* binPath;
-			retVal->dirName = os_path_dirname(binaryName);
-			
-			if (!(retVal->dirName))
+			// 3.2. Allocate a buffer
+			retVal->fullCmd = get_me_a_buffer_array(numArgs, true);
+
+			if (!(retVal->fullCmd))
 			{
-// 				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
-				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_dirname failed);
+				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, get_me_a_buffer_array failed);
 				success = false;
 			}
 			else
 			{
-				// 3. char** fullCmd; // argv[1]... do NOT free()!
-				retVal->fullCmd = binArgs;
+				// 3.3. Copy all the strings in
+				temp_arr = retVal->fullCmd;  // Reset temp variable
+				for (i = 0; i < numArgs; i++)
+				{
+					(*(temp_arr + i)) = copy_a_string((*(binArgs + i)));
+					// fprintf(stdout, "binArgs %s got copied to temp_arr %s\n", (*(binArgs + i)), (*(temp_arr + i)));  // DEBUGGING
+					if (!(*(temp_arr + i)))
+					{
+						HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+						success = false;
+						break;
+					}
+				}
 			}
-		}		
+		}
+	}
+
+	// 2. char* binPath;
+	if (success == true)
+	{
+		// fprintf(stdout, "\n\nPre-os_path_dirname().... binArgs[0] == %s\n", (*(binArgs)));  // DEBUGGING
+		//////////////////////////////////////////////////////////////////
+		/////////////////////////////// BUG //////////////////////////////
+		//////////////////////////////////////////////////////////////////
+		// BLUF:  Something about os_path_dirname() monkeys with argv[0]
+		// REPRODUCE THE BUG:
+		// 0. binArgs[0] == ./print_PID_libraries.exe
+		// 1. Print binArgs[0]
+		// 2. Call os_path_dirname()
+		// 3. Print binArgs[0] 
+		// 4. binArgs[0] == "."
+		// 5. ?!?!?!
+		// CONJECTURE:  dirname(), called by os_path_dirname(), does
+		//	something to the arguments.
+		// FIX:  Change the order.  Copy the arguments before calling
+		// 	os_path_dirname().
+		//////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////
+
+		retVal->binPath = os_path_dirname(binaryName);
 		
+		if (!(retVal->binPath))
+		{
+// 				HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, copy_a_string failed);
+			HARKLE_ERROR(Fileroad_Descriptors, build_rBinDat_ptr, os_path_dirname failed);
+			success = false;
+		}
+		// fprintf(stdout, "Post-os_path_dirname()... binArgs[0] == %s\n\n\n", (*(binArgs)));  // DEBUGGING
+	}
+
+	if (success == true)
+	{
 		// NOTE: Other struct members are populated later
 		// 4. char* outputFile; 	// File capturing binary's stdout		
 		// 5. char* errorsFile; 	// File capturing binary's stderr
@@ -197,8 +268,11 @@ bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr)
 		// 3. char** fullCmd; // argv[1]... do NOT free()!
 		if (tempStruct_ptr->fullCmd)
 		{
-			// NULL but do not free()
-			tempStruct_ptr->fullCmd = NULL;
+			if (false == free_char_arr(&(tempStruct_ptr->fullCmd)))
+			{
+				HARKLE_ERROR(Fileroad_Descriptors, free_rBinDat_ptr, free_char_arr failed);
+				retVal = false;
+			}
 		}
 
 		// 4. char* outputFile; // File capturing binary's stdout
@@ -355,12 +429,27 @@ int wrap_bin(rBinDat_ptr binToWrap)
 				// Execvp()
 				if (success == true)
 				{
+					// if (-1 == execvp(binToWrap->binName, binToWrap->fullCmd))
 					if (-1 == execvp(binToWrap->fullCmd[0], binToWrap->fullCmd))
 					{
 						errNum = errno;
 						HARKLE_ERROR(Fileroad_Descriptors, wrap_bin, execvp failed);
 						fprintf(stderr, "execvp(argv[1], argv + 1) failed with an errno of %d:\t%s\n", errNum, strerror(errNum));
+						fprintf(stderr, "Call was execvp(%s, %s)\n", binToWrap->fullCmd[0], *binToWrap->fullCmd);
 						success = false;
+
+char** temp_arr = binToWrap->fullCmd;		
+if (temp_arr)
+{
+	fprintf(stdout, "%s was run with the following syntax:\n\t", binToWrap->binName);
+	
+	while (*temp_arr)
+	{
+		fprintf(stdout, "%s ", *temp_arr);
+		temp_arr++;
+	}
+	fprintf(stdout, "\n");
+}
 					}
 				}
 				break;
