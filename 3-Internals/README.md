@@ -51,6 +51,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [realpath(3)](http://man7.org/linux/man-pages/man3/realpath.3.html)
 * [differences in resolving symlinks between ls, stat, and readlink](https://unix.stackexchange.com/questions/22128/how-to-get-full-path-of-original-file-of-a-soft-symbolic-link)
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
+* [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
 
 ## TO DO
 
