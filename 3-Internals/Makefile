@@ -7,8 +7,8 @@ CC = gcc
 341:
 	$(CC) -c Memoroad.c
 	$(CC) -c Signaleroad.c
-	$(CC) -c 3-4_Signal_Handling-1_nosig.c
-	$(CC) -o nosig.exe Memoroad.o Signaleroad.o 3-4_Signal_Handling-1_nosig.o
+	$(CC) -c 3-04_Signal_Handling-1_nosig.c
+	$(CC) -o nosig.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_nosig.o
 
 3101:
 	$(CC) -c Harkledir.c
