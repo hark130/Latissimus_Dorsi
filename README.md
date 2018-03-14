@@ -4,17 +4,17 @@ la·tis·si·mus läˈtisəməs/ nounAnatomy noun: latissimus dorsi
 2.  Latin word for "Lat" or "LAT", an acronym meaning Linux Apprentice Test (LAT).
 
 # 6 Ws 
-**What** This is me preparing for an upcoming Linux Apprenctice Test in my relatively near future.  In short, I'm trying to exercise my lats.
+**What:** This is me preparing for an upcoming Linux Apprenctice Test in my relatively near future.  In short, I'm trying to exercise my lats.
 
-**Why** I like to over-prepare, if that's even possible, for tests.  Besides, I like to learn.
+**Why:** I like to over-prepare, if that's even possible, for tests.  Besides, I like to learn.
 
-**Who** I'm not the only one who would like to prepare, practice, and pontificate.
+**Who:** I'm not the only one who would like to prepare, practice, and pontificate.
 
-**Where** I've done work towards this goal before, [Peke Ito](https://github.com/hark130/Peke_Ito), but I wanted all of my effort in one location, organized according to the topic list I have.
+**Where:** I've done work towards this goal before, [Peke Ito](https://github.com/hark130/Peke_Ito), but I wanted all of my effort in one location, organized according to the topic list I have.
 
-**When** In my free time.
+**When:** In my free time.
 
-**How**
+**How:**
 * Proof of concept code
 * Exercises (overhead pulldown, seated row, pull up, etc)
 * Writing tests (What better way to understand material than to write tests for it?)
