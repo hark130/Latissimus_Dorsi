@@ -84,17 +84,17 @@ Developers will have an in-depth working knowledge of Linux Internals
 #### IDEAS:
 * [ ] Duplicate a file desc and write to it twice, once for each file descriptor
 * [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
-* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
-* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
+* [X] Replace stdout with a different file descriptor (e.g., an actual open() file)
+* [X] Replace stderr with a different file descriptor (e.g., an actual open() file)
 * [ ] fork() a process to utilize a pipe as the input for a program/command called by exec()
-* [ ] Write a binary wrapper that automatically redirects certain output to certain places
+* [X] Write a binary wrapper that automatically redirects certain output to certain places
 	* ```command > output.txt```
 	* ```command >> output.txt```
 	* ```command 2> output.txt```
 	* ```command 2>> output.txt```
 	* ```command &> output.txt```
 	* ```command &>> output.txt```
-* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
+* [X] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
 
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
@@ -168,6 +168,16 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 ### 3-12
 
 * [X] See 4-User_Mode/Map_Memory.h 
+
+### 3-18 IDEAS
+
+* Kentucky Derby Process Racing
+	* Spawn a bunch of processes (horses)
+	* Send a signal to the process group to start (starting gun)
+	* Wait for the first process to finish (winner)
+	* Send a signal to the process group to stop (race is over) -or-
+	* Wait for the rest to finish (race is over)
+	* Visually report on the status of each horse (Mario Kart)
 
 ### NOTES
 
