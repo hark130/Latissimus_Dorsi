@@ -102,6 +102,16 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" // try PRIuMAX if %ju unsupported
 * Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
 
+### 3-4 IDEAS:
+* Create an API for a virtual filesystem in memory
+	* Calling the entry level function of this library would create a shared pipe with a fork()ed fs manager
+	* Back and forth communication could be facilitated across this pipe
+	* Control codes indicate certain commands
+	* Sample Communication:
+		* Are you there?  Go.
+		* How many files?  3.
+		* Receive a file.  Go.  Transmits file.  Recvd X bytes.
+
 ### 3-10-1
 
 * [X] Create the framework to facilitate successful completion of 3-10
