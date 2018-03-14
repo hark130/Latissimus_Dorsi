@@ -430,10 +430,10 @@ int wrap_bin(rBinDat_ptr binToWrap)
 				break;
 			default:	// Parent
 				// fprintf(stdout, "Waiting for %s to terminate...", binToWrap->binName);  // DEBUGGING
-				while (wait(&wStatus) != -1)
-				{
-					fprintf(stdout, ".");
-				}
+				// while (wait(&wStatus) != -1)
+				// {
+				// 	fprintf(stdout, ".");
+				// }
 				// fprintf(stdout, "Complete.\n");  // DEBUGGING
 				// Investigate child process' status
 				if (WIFEXITED(wStatus))
