@@ -173,25 +173,27 @@ int main(int argc, char* argv[])
 		}		
 	}
 	
+#ifdef HARKLE_DEBUG
 	// PRINT THE RESULTS
-	// if (success == true)
-	// {
-	// 	temp_arr = silentBin->fullCmd;		
-	// 	if (temp_arr)
-	// 	{
-	// 		fprintf(stdout, "%s was run with the following syntax:\n\t", silentBin->binName);
+	if (success == true)
+	{
+		temp_arr = silentBin->fullCmd;		
+		if (temp_arr)
+		{
+			fprintf(stdout, "%s was run with the following syntax:\n\t", silentBin->binName);
 			
-	// 		while (*temp_arr)
-	// 		{
-	// 			fprintf(stdout, "%s ", *temp_arr);
-	// 			temp_arr++;
-	// 		}
-	// 		fprintf(stdout, "\n");
-	// 	}
-	// 	fprintf(stdout, "%s's output was captured in the following files:\n\n", silentBin->binName);  // DEBUGGING
-	// 	fprintf(stdout, "**************\n*** STDOUT ***\n**************\n(%s)\n%s\n", silentBin->outputFile, binOutResults);  // DEBUGGING
-	// 	fprintf(stdout, "**************\n*** STDERR ***\n**************\n(%s)\n%s\n\n\n", silentBin->errorsFile, binErrResults);  // DEBUGGING
-	// }
+			while (*temp_arr)
+			{
+				fprintf(stdout, "%s ", *temp_arr);
+				temp_arr++;
+			}
+			fprintf(stdout, "\n");
+		}
+		fprintf(stdout, "%s's output was captured in the following files:\n\n", silentBin->binName);  // DEBUGGING
+		fprintf(stdout, "**************\n*** STDOUT ***\n**************\n(%s)\n%s\n", silentBin->outputFile, binOutResults);  // DEBUGGING
+		fprintf(stdout, "**************\n*** STDERR ***\n**************\n(%s)\n%s\n\n\n", silentBin->errorsFile, binErrResults);  // DEBUGGING
+	}
+#endif  // HARKLE_DEBUG
 	
 	// CLEAN UP
 	// 1. rBinDat_ptr silentBin = NULL;  // Return value from build_rBinDat_ptr()
@@ -325,7 +327,6 @@ char* build_filename(char* timestamp, char* properName, bool output)
 						}
 					}
 				}
-
 			}
 		}
 	}
