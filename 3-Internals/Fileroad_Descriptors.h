@@ -11,20 +11,93 @@
 
 typedef struct fileDescriptorDetails
 {
-    char* filename_ptr;     // Path to file
-    int fileDesc;           // File descriptor
-    off_t fileSize;     	// Actual size of file
-    int fileDescFlags;		// File descriptor flags
-    int fileStatFlags;		// File status flags
+	char* filename_ptr;     // Path to file
+	int fileDesc;           // File descriptor
+	off_t fileSize;     	// Actual size of file
+	int fileDescFlags;		// File descriptor flags
+	int fileStatFlags;		// File status flags
 } fdDetails, *fdDetails_ptr;
+
+typedef struct redirectBinOutput
+{
+	char* binName;			// Just the binary name
+	char* binPath;  		// NOT IMPLEMENTED... Path to the binary
+	char** fullCmd;			// Heap-allocated copies of argv + 1 and on
+	char* outputFile;		// File capturing binary's stdout
+	char* errorsFile;		// File capturing binary's stderr
+	int readPipe;			// Implement later... Binary (child) reads stdin from here
+	int writePipe;			// Implement later... redirect_bin_output.exe (parent) writes binary's input here
+} rBinDat, *rBinDat_ptr;
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// rBinDat FUNCTIONS START //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
 /*
-	NOTE: Updates to the fileDetails struct 
-		constitutes a change to the following functions:
-	- free_fdDetails()
-	- open_fd()
-	- validate_fdDetails()
-	- update_fdDetails()
+	Purpose - Dynamically allocate a struct pointer
+	Input - None
+	Output - Pointer to a redirectBinOutput struct on the heap
+	Notes:
+		rBinDat_ptr must be free()'d by the calling function
  */
+rBinDat_ptr create_rBinDat_ptr(void);
+
+
+/*
+	Purpose - Populate a redirectBinOutput struct
+	Input
+		binaryName - Relative or absolute path string to the binary being redirected
+		binArgs - A copy of main()'s argv starting at index 1
+	Output - Pointer to a redirectBinOutput struct on the heap whose binName is
+		populated
+	Notes:
+		Calls create_rBinDat_ptr() to allocate the struct
+		Caller is responsible for free()ing all char pointer members and the 
+			struct itself
+ */
+rBinDat_ptr build_rBinDat_ptr(char* binaryName, char** binArgs);
+
+
+/*
+	Purpose - Free a redirectBinOutput struct on the heap
+	Input - Pointer to a redirectBinOutput pointer to free
+	Output - None
+	Notes:
+		Will memset(0x0), free, and NULL all char pointer members
+		Will zeroize all other members
+ */
+bool free_rBinDat_ptr(rBinDat_ptr* oldStruct_ptr);
+
+
+/*
+	Purpose
+		The details inside the binToWrap struct pointer should all point to
+			a binary file (and arguments, if necessary) in order to redirect
+			it's output.  The stdout of binName will be redirected to
+			outputFile and the stderr will be redirected to errorsFile.
+			The binary itself will be executed with all of the parameters
+			found in fullCmd.
+	Input
+		binToWrap - Pointer to a redirectBinOutput struct with details about
+			the binary to wrap
+	Output
+		_exit() code of the child process fork()ed
+		-1 if an error is encountered during fork()ing
+		-2 if an error is encountered prior to fork()ing
+	Notes:
+		This function call fork() and execvp()
+ */
+int wrap_bin(rBinDat_ptr binToWrap);
+
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// rBinDat FUNCTIONS STOP ///////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// fdDetails FUNCTIONS START /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 
 /*
@@ -123,6 +196,15 @@ bool clear_oper_mode_flag(fdDetails_ptr updateThis_ptr, int clrThisFlag);
 bool write_oper_mode_flags(fdDetails_ptr updateThis_ptr, int setTheseFlags);
 
 
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// fdDetails FUNCTIONS STOP //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS START //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
 /*
 	Purpose - Determine the file size of a file descriptor
 	Input - An open file descriptor
@@ -132,5 +214,9 @@ bool write_oper_mode_flags(fdDetails_ptr updateThis_ptr, int setTheseFlags);
  */
 long get_file_len(int fileDesc);
 
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// GENERAL FUNCTIONS STOP ///////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 #endif  // __FILEROAD_DESCRIPTORS__

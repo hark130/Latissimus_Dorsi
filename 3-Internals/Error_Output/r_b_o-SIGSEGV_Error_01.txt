@@ -1,0 +1,27 @@
+execve("./redirect_bin_output.exe", ["./redirect_bin_output.exe", "print_PID_libraries.exe"], ["XDG_VTNR=7", "XDG_SESSION_ID=c2", "CLUTTER_IM_MODULE=xim", "XDG_GREETER_DATA_DIR=/var/lib/li"..., "GPG_AGENT_INFO=/home/joe/.gnupg/"..., "SHELL=/bin/bash", "TERM=xterm-256color", "VTE_VERSION=4205", "QT_LINUX_ACCESSIBILITY_ALWAYS_ON"..., "WINDOWID=65011722", "UPSTART_SESSION=unix:abstract=/c"..., "GNOME_KEYRING_CONTROL=", "GTK_MODULES=gail:atk-bridge:unit"..., "USER=joe", "LS_COLORS=rs=0:di=01;34:ln=01;36"..., "QT_ACCESSIBILITY=1", "XDG_SESSION_PATH=/org/freedeskto"..., "XDG_SEAT_PATH=/org/freedesktop/D"..., "SSH_AUTH_SOCK=/run/user/1000/key"..., "DEFAULTS_PATH=/usr/share/gconf/u"..., "XDG_CONFIG_DIRS=/etc/xdg/xdg-ubu"..., "PATH=/usr/local/sbin:/usr/local/"..., "DESKTOP_SESSION=ubuntu", "QT_IM_MODULE=ibus", "QT_QPA_PLATFORMTHEME=appmenu-qt5", "XDG_SESSION_TYPE=x11", "PWD=/home/joe/Documents/Personal"..., "JOB=gnome-session", "XMODIFIERS=@im=ibus", "GNOME_KEYRING_PID=", "LANG=en_US.UTF-8", "GDM_LANG=en_US", "MANDATORY_PATH=/usr/share/gconf/"..., "IM_CONFIG_PHASE=1", "COMPIZ_CONFIG_PROFILE=ubuntu", "GDMSESSION=ubuntu", "SESSIONTYPE=gnome-session", "GTK2_MODULES=overlay-scrollbar", "HOME=/home/joe", "XDG_SEAT=seat0", "SHLVL=1", "LANGUAGE=en_US", "GNOME_DESKTOP_SESSION_ID=this-is"..., "UPSTART_INSTANCE=", "UPSTART_EVENTS=started starting", "XDG_SESSION_DESKTOP=ubuntu", "LOGNAME=joe", "QT4_IM_MODULE=xim", "XDG_DATA_DIRS=/usr/share/ubuntu:"..., "DBUS_SESSION_BUS_ADDRESS=unix:ab"..., "LESSOPEN=| /usr/bin/lesspipe %s", "INSTANCE=Unity", "UPSTART_JOB=unity-settings-daemo"..., "XDG_RUNTIME_DIR=/run/user/1000", "DISPLAY=:0", "XDG_CURRENT_DESKTOP=Unity", "GTK_IM_MODULE=ibus", "LESSCLOSE=/usr/bin/lesspipe %s %"..., "XAUTHORITY=/home/joe/.Xauthority", "_=/usr/bin/strace", "OLDPWD=/home/joe/Documents/Perso"...]) = 0
+brk(NULL)                               = 0x14fd000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_dev=makedev(8, 18), st_ino=13765349, st_mode=S_IFREG|0644, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=296, st_size=149411, st_atime=2018/03/10-08:48:27.246573355, st_mtime=2018/03/10-08:48:27.246573355, st_ctime=2018/03/10-08:48:27.250573396}) = 0
+mmap(NULL, 149411, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f4fdb6ad000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\t\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_dev=makedev(8, 18), st_ino=2229551, st_mode=S_IFREG|0755, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=3656, st_size=1868984, st_atime=2018/01/30-19:05:52, st_mtime=2018/01/14-20:51:31, st_ctime=2018/01/30-19:05:55.528733068}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f4fdb6ac000
+mmap(NULL, 3971488, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f4fdb0e3000
+mprotect(0x7f4fdb2a3000, 2097152, PROT_NONE) = 0
+mmap(0x7f4fdb4a3000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c0000) = 0x7f4fdb4a3000
+mmap(0x7f4fdb4a9000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f4fdb4a9000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f4fdb6ab000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f4fdb6aa000
+arch_prctl(ARCH_SET_FS, 0x7f4fdb6ab700) = 0
+mprotect(0x7f4fdb4a3000, 16384, PROT_READ) = 0
+mprotect(0x602000, 4096, PROT_READ)     = 0
+mprotect(0x7f4fdb6d2000, 4096, PROT_READ) = 0
+munmap(0x7f4fdb6ad000, 149411)          = 0
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0} ---
++++ killed by SIGSEGV +++

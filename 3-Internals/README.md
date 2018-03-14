@@ -6,7 +6,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 ## TASK LIST
 * [ ] 1. Use POSIX system calls using GNU libc (3c)
 * [ ] 2. Understand the difference between System Calls and Library Functions (C)
-* [ ] 3. Open, close, modify, and duplicate File Descriptors (3c)
+* [X] 3. Open, close, modify, and duplicate File Descriptors (3c)
 * [ ] 4. Implement synchronization, memory protection, and shared memory using POSIX primitives and \*nix concepts (3c)
 * [ ] 5. Demonstrate Interprocess Communication knowledge by communicating between multiple applications (3c)
 * [ ] 6. Handle and send signals between applications (3c)
@@ -51,6 +51,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [realpath(3)](http://man7.org/linux/man-pages/man3/realpath.3.html)
 * [differences in resolving symlinks between ls, stat, and readlink](https://unix.stackexchange.com/questions/22128/how-to-get-full-path-of-original-file-of-a-soft-symbolic-link)
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
+* [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
 
 ## TO DO
 
@@ -61,14 +62,20 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
 **NOTE:**  This is a continuation of 3-3-2
-* [ ] Take a CLI command, with flags/options, as an argument
-* [ ] Fork()
-* [ ] Based on the binary name and current time, create stdout, stderr log names (changing periods to underscores) as appropriate
-* [ ] Open() YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
-* [ ] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-<output/errors>.txt
-* [ ] Populate "out" struct with filenames for stdout and stderr
-* [ ] Exec*()
-* [ ] Parent reports on the status of the child
+* [X] Take a CLI command, with flags/options, as an argument
+* [X] Based on the binary name and current time, create log names (changing invalid characters to underscores)
+	* [X] Parse binary name
+	* [X] Get timestamp
+	* [X] Create log file name
+	* [X] BUG: What if name is all garbage (e.g. %^&)
+	* [X] BUG: What if name is a directory (where's os_path_isfile()?)
+* [X] Populate struct with filenames for stdout and stderr
+* [X] Fork()
+* [X] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Exec()
+* [X] Parent reports on the status of the child
+* [X] Glue it all together in redirect_bin_output main()
 
 ### 3-3-3 
 * [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
@@ -77,22 +84,22 @@ Developers will have an in-depth working knowledge of Linux Internals
 #### IDEAS:
 * [ ] Duplicate a file desc and write to it twice, once for each file descriptor
 * [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
-* [ ] Replace stdout with a different file descriptor (e.g., an actual open() file)
-* [ ] Replace stderr with a different file descriptor (e.g., an actual open() file)
-* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec*()
-* [ ] Write a binary wrapper that automatically redirects certain output to certain places
-	* command > output.txt
-	* command >> output.txt
-	* command 2> output.txt
-	* command 2>> output.txt
-	* command &> output.txt
-	* command &>> output.txt
-* [ ] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
+* [X] Replace stdout with a different file descriptor (e.g., an actual open() file)
+* [X] Replace stderr with a different file descriptor (e.g., an actual open() file)
+* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec()
+* [X] Write a binary wrapper that automatically redirects certain output to certain places
+	* ```command > output.txt```
+	* ```command >> output.txt```
+	* ```command 2> output.txt```
+	* ```command 2>> output.txt```
+	* ```command &> output.txt```
+	* ```command &>> output.txt```
+* [X] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
 
 ## NOTES
 * File descriptor ranges from 0 to OPEN_MAX
 * [/dev/null](https://www.networkworld.com/article/3025497/linux/sending-data-into-the-void-with-dev-null.html)
-* Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" /* try PRIuMAX if %ju unsupported */
+* Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" // try PRIuMAX if %ju unsupported
 * Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
 
 ### 3-4 IDEAS:
@@ -171,6 +178,16 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 ### 3-12
 
 * [X] See 4-User_Mode/Map_Memory.h 
+
+### 3-18 IDEAS
+
+* Kentucky Derby Process Racing
+	* Spawn a bunch of processes (horses)
+	* Send a signal to the process group to start (starting gun)
+	* Wait for the first process to finish (winner)
+	* Send a signal to the process group to stop (race is over) -or-
+	* Wait for the rest to finish (race is over)
+	* Visually report on the status of each horse (Mario Kart)
 
 ### NOTES
 

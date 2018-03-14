@@ -160,6 +160,7 @@ off_t size_a_file_desc(int fileDesc, int* errNum);
  */
 size_t size_a_file_ptr(FILE* openFile);
 
+
 /*
 	Purpose - Utilize stat to determine a file's type
 	Input
@@ -172,6 +173,33 @@ size_t size_a_file_ptr(FILE* openFile);
 			doesn't have your answer
  */
 unsigned char get_a_file_type(char* fileName);
+
+
+/*
+	Purpose - Quick, safe, "handled" way of determining if a path is a file
+	Input
+		path_ptr - nul-terminated string presumably representing a path
+	Output - True if path_ptr is a file that exists, false otherwise
+	Notes:
+		This function should not raise any errors
+		This function will take care to 'zeroize' errno before returning
+		This function calls os_path_exists()
+		Currently, only regular files (DT_REG) are treated as "files"
+		Symbolic links (DT_LNK) are not treated as "files"
+ */
+bool os_path_isfile(char* path_ptr);
+
+
+/*
+	Purpose - Quick, safe, "handled" way of determining if a path or file exists
+	Input
+		path_ptr - nul-terminated string presumably representing a path
+	Ouput - True if file exists, false otherwise
+	Notes:
+		This function should not raise any errors
+		This function will take care to 'zeroize' errno before returning
+ */
+bool os_path_exists(char* path_ptr);
 
 
 /*
@@ -197,6 +225,40 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 
 
 /*
+	Purpose - Extract the base filename from a relative or absolute filename
+	Input
+		path_ptr - Nul-terminated relative or absolute filename to parse
+	Output
+		On success, heap-allocated string containing the base filename
+		On failure, NULL
+	Notes:
+		This function is essentially a wrapper around libgen.h's basename()
+		This function heap-allocates responses instead of dealing with shady
+			"somewhere" pointers that may or may not need to be free()d in some
+			fashion or another
+		It is the caller's responsibility to free() the return value of this function
+ */
+char* os_path_basename(char* path_ptr);
+
+
+/*
+	Purpose - Extract the directory path from a relative or absolute filename
+	Input
+		path_ptr - Nul-terminated relative or absolute filename to parse
+	Output
+		On success, heap-allocated string containing the directory path
+		On failure, NULL
+	Notes:
+		This function is essentially a wrapper around libgen.h's dirname()
+		This function heap-allocates responses instead of dealing with shady
+			"somewhere" pointers that may or may not need to be free()d in some
+			fashion or another
+		It is the caller's responsibility to free() the return value of this function
+ */
+char* os_path_dirname(char* path_ptr);
+
+
+/*
 	Purpose - Rewind a file descriptor
 	Input
 		fileDesc - The file descriptor
@@ -209,6 +271,24 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 			than once.
  */
 bool rewind_a_file_desc(int fileDesc, int* errNum);
+
+
+/*
+	Purpose - Clean a potential filename
+	Input
+		dirtyFile - C string representing a potential filename
+		inPlace - If true, modified in place.  Otherwise, a copy
+			is returned.
+	Output
+		On success:
+			inPlace == true, returns dirtyFile
+			inPlace == false, heap-allocated string with the modified filename
+		On failure, NULL
+	Notes:
+		It is the caller's responsiblity to free() the return value if
+			inPlace was true
+ */
+char* clean_filename(char* dirtyFile, bool inPlace);
 
 
 //////////////////////////////////////////////////////////////////////////////
