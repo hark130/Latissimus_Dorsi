@@ -1,10 +1,11 @@
 #include "Harklerror.h"
 #include "Memoroad.h"
 #include "Signaleroad.h"
-#include <stdbool.h>	// bool, true, false
+#include <stdbool.h>		// bool, true, false
 #include <stdio.h>
 #include <signal.h>
-#include <unistd.h>
+#include <string.h>			// strsignal
+#include <unistd.h>			// sleep
 
 // GLOBAL VARIABLE
 int signalCaught = 0;
@@ -20,6 +21,7 @@ int main(void)
 	int sigNum = 0;
 	bool success = true;
 	struct sigaction sigact;  // Used to specify actions for specific signals
+	char* signal_ptr = NULL;  // Holds the human-readable translation of signal numbers
 
 	// 3. SIGNAL HANDLER
 	if (success == true)
@@ -70,13 +72,18 @@ int main(void)
 			}
 			else
 			{
-				HARKLE_ERROR(nosig, main, str_signaleroad failed);
+				// HARKLE_ERROR(nosig, main, str_signaleroad failed);				
+				// fprintf(stdout, "\n%s (%d) SIGNAL CAUGHT!\n", strsignal(signalCaught), signalCaught);
 			}
 
 			// 4. Set signalCaught back to 0
 			signalCaught = 0;
 		}
     	sleep(1);
+    	// if (getchar() == '\n')
+    	// {
+    	// 	break;
+    	// }
   	}
 
   	return 0;
