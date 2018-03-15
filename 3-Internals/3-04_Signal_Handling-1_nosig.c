@@ -52,7 +52,9 @@ static void tester(int sig)
 
 static void silencer(int sig)
 {
-	fprintf(stdout, "signal %d silenced", sig);
+	// fprintf(stdout, "signal %d silenced", sig);
+	// Save the signal caught
+	signalCaught = sig;
 	return;
 }
 
@@ -126,8 +128,8 @@ int main(int argc, char* argv[])
 	{
 		sigemptyset(&sigact.sa_mask);  // Zeroize the mask of signals which should be blocked
 		sigact.sa_flags = 0;  // Can't think of any good flags to add for what I'm doing
-		sigact.sa_handler = tester;  // I want to see the signals go through first
-		// sigact.sa_handler = silencer;  // This is the real handler for this program
+		// sigact.sa_handler = tester;  // I want to see the signals go through first
+		sigact.sa_handler = silencer;  // This is the real handler for this program
 
 		// Set all the actions
 		for (sigNum = 1; sigNum <= 64; sigNum++)
@@ -176,9 +178,14 @@ int main(int argc, char* argv[])
 				// tempPID = wait(&statLoc);
 				tempPID = waitpid(forkPID, &statLoc, 0);
 
-				if (forkPID != tempPID)
+				if (tempPID == -1)
 				{
-					HARKLE_ERROR(nosig, main, wait caught the wrong PID);
+					HARKLE_ERROR(nosig, main, waitpid failed);
+					success = false;
+				}
+				else if (forkPID != tempPID)
+				{
+					HARKLE_ERROR(nosig, main, waitpid caught the wrong PID);
 					fprintf(stderr, "Expecting PID %d but wait() caught PID %d\n", forkPID, tempPID);  // DEBUGGING
 					success = false;
 				}
