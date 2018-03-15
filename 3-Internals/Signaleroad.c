@@ -4,7 +4,7 @@
 #include <stdbool.h>	// bool, true, false
 #include <string.h>		// strncpy
 
-#define SR_BUFF_SIZE 64
+#define SR_BUFF_SIZE 128
 
 #ifndef SR_WRAP_IT
 #define SR_WRAP_IT(str) #str
@@ -58,7 +58,7 @@ char* str_signaleroad(int sigRoad)
 	bool success = true;
 	size_t retValLen = 0;  // Length of the return value
 	char tempBuf[SR_BUFF_SIZE + 1] = { 0 };  // Temporarily hold the signal name
-	char* temp_ptr = NULL;  // Return value from strin.h function calls
+	char* temp_ptr = NULL;  // Return value from string.h function calls
 	int sigRtMin = SIGRTMIN;  // Resolving the macro
 	int sigRtMax = SIGRTMAX;  // Resolving the macro
 
@@ -368,6 +368,7 @@ char* str_signaleroad(int sigRoad)
 		default:
 			HARKLE_ERROR(Signaleroad, str_signaleroad, Signal Number Unknown);
 			success = false;
+			break;
 	}
 
 	// fprintf(stdout, "tempBuf is currently == %s\n", tempBuf);  // DEBUGGING
@@ -410,7 +411,8 @@ char* str_signaleroad(int sigRoad)
 				}
 
 				// 5. Copy the description in
-				if (retVal != strncpy(retVal, temp_ptr, SR_BUFF_SIZE - retValLen))
+				if (retVal != strcpy(retVal, temp_ptr))
+				// if (retVal != strncpy(retVal, temp_ptr, SR_BUFF_SIZE - retValLen))
 				{
 					HARKLE_ERROR(Signaleroad, str_signaleroad, strncpy failed);
 					success = false;
