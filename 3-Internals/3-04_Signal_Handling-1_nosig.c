@@ -173,11 +173,13 @@ int main(int argc, char* argv[])
 				}
 				break;
 			default:  // Parent
-				tempPID = wait(&statLoc);
+				// tempPID = wait(&statLoc);
+				tempPID = waitpid(forkPID, &statLoc, 0);
 
 				if (forkPID != tempPID)
 				{
 					HARKLE_ERROR(nosig, main, wait caught the wrong PID);
+					fprintf(stderr, "Expecting PID %d but wait() caught PID %d\n", forkPID, tempPID);  // DEBUGGING
 					success = false;
 				}
 
@@ -190,7 +192,7 @@ int main(int argc, char* argv[])
 
 					if (signal_ptr)
 					{
-						fprintf(stdout, "SIGNAL %d CAUGHT!\n%s\n", signalCaught, signal_ptr);
+						fprintf(stdout, "%s (%d) SIGNAL CAUGHT!\n", signal_ptr, signalCaught);
 					}
 					else
 					{
