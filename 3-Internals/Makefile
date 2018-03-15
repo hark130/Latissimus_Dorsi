@@ -9,6 +9,10 @@ CC = gcc
 	$(CC) -c Signaleroad.c
 	$(CC) -c 3-04_Signal_Handling-1_nosig.c
 	$(CC) -o nosig.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_nosig.o
+	# Comment these proof of concepts source files out later
+	$(CC) -o 3-04_Signal_Handling-1_PoC.exe 3-04_Signal_Handling-1_PoC.c
+	$(CC) -c 3-04_Signal_Handling-1_PoC2.c
+	$(CC) -o 3-04_Signal_Handling-1_PoC2.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_PoC2.o
 
 3101:
 	$(CC) -c Harkledir.c
