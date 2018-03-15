@@ -50,6 +50,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Signal Handling and Nonreentrant Functions](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
 * [5.4 Blocking signals](https://www.win.tue.nl/~aeb/linux/lk/lk-5.html) may have the solution to a problem with nosig (see: block signals instead of catching them)
 * [Fork and how signals are delivered to processes](https://unix.stackexchange.com/questions/176235/fork-and-how-signals-are-delivered-to-processes)
+* [nohup](https://en.wikipedia.org/wiki/Nohup) ([also here](https://www.computerhope.com/unix/unohup.htm))... the inspiration for nosig
+* [CLI Alternatives to nohup](https://askubuntu.com/questions/600956/alternatives-to-nohup)
 
 ## TO DO
 
