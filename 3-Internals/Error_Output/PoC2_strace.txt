@@ -1,0 +1,111 @@
+execve("./3-04_Signal_Handling-1_PoC2.exe", ["./3-04_Signal_Handling-1_PoC2.ex"...], ["XDG_VTNR=7", "XDG_SESSION_ID=c2", "CLUTTER_IM_MODULE=xim", "XDG_GREETER_DATA_DIR=/var/lib/li"..., "TERM=xterm-256color", "SHELL=/bin/bash", "VTE_VERSION=4205", "QT_LINUX_ACCESSIBILITY_ALWAYS_ON"..., "WINDOWID=69206026", "UPSTART_SESSION=unix:abstract=/c"..., "GNOME_KEYRING_CONTROL=", "GTK_MODULES=gail:atk-bridge:unit"..., "USER=joe", "LS_COLORS=rs=0:di=01;34:ln=01;36"..., "QT_ACCESSIBILITY=1", "XDG_SESSION_PATH=/org/freedeskto"..., "XDG_SEAT_PATH=/org/freedesktop/D"..., "SSH_AUTH_SOCK=/run/user/1000/key"..., "DEFAULTS_PATH=/usr/share/gconf/u"..., "XDG_CONFIG_DIRS=/etc/xdg/xdg-ubu"..., "PATH=/usr/local/sbin:/usr/local/"..., "DESKTOP_SESSION=ubuntu", "QT_IM_MODULE=ibus", "QT_QPA_PLATFORMTHEME=appmenu-qt5", "PWD=/home/joe/Documents/Personal"..., "XDG_SESSION_TYPE=x11", "JOB=gnome-session", "XMODIFIERS=@im=ibus", "GNOME_KEYRING_PID=", "LANG=en_US.UTF-8", "GDM_LANG=en_US", "MANDATORY_PATH=/usr/share/gconf/"..., "IM_CONFIG_PHASE=1", "COMPIZ_CONFIG_PROFILE=ubuntu", "GDMSESSION=ubuntu", "SESSIONTYPE=gnome-session", "GTK2_MODULES=overlay-scrollbar", "HOME=/home/joe", "XDG_SEAT=seat0", "SHLVL=1", "LANGUAGE=en_US", "GNOME_DESKTOP_SESSION_ID=this-is"..., "UPSTART_INSTANCE=", "UPSTART_EVENTS=started starting", "XDG_SESSION_DESKTOP=ubuntu", "LOGNAME=joe", "QT4_IM_MODULE=xim", "XDG_DATA_DIRS=/usr/share/ubuntu:"..., "DBUS_SESSION_BUS_ADDRESS=unix:ab"..., "LESSOPEN=| /usr/bin/lesspipe %s", "INSTANCE=Unity", "UPSTART_JOB=unity-settings-daemo"..., "XDG_RUNTIME_DIR=/run/user/1000", "DISPLAY=:0", "XDG_CURRENT_DESKTOP=Unity", "GTK_IM_MODULE=ibus", "LESSCLOSE=/usr/bin/lesspipe %s %"..., "XAUTHORITY=/home/joe/.Xauthority", "OLDPWD=/home/joe/Documents/Perso"..., "_=/usr/bin/strace"]) = 0
+brk(NULL)                               = 0x21f4000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_dev=makedev(8, 1), st_ino=2753323, st_mode=S_IFREG|0644, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=280, st_size=142181, st_atime=2018/03/14-18:01:25.120151198, st_mtime=2018/03/13-17:57:32.314813960, st_ctime=2018/03/13-17:57:32.342813714}) = 0
+mmap(NULL, 142181, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f3173f30000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\t\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_dev=makedev(8, 1), st_ino=6029587, st_mode=S_IFREG|0755, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=3656, st_size=1868984, st_atime=2018/03/14-18:17:01.531877952, st_mtime=2018/01/14-20:51:31, st_ctime=2018/01/18-21:15:09.996849864}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f3173f2f000
+mmap(NULL, 3971488, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f3173964000
+mprotect(0x7f3173b24000, 2097152, PROT_NONE) = 0
+mmap(0x7f3173d24000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c0000) = 0x7f3173d24000
+mmap(0x7f3173d2a000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f3173d2a000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f3173f2e000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f3173f2d000
+arch_prctl(ARCH_SET_FS, 0x7f3173f2e700) = 0
+mprotect(0x7f3173d24000, 16384, PROT_READ) = 0
+mprotect(0x602000, 4096, PROT_READ)     = 0
+mprotect(0x7f3173f53000, 4096, PROT_READ) = 0
+munmap(0x7f3173f30000, 142181)          = 0
+rt_sigaction(SIGHUP, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGINT, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGQUIT, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGILL, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGTRAP, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGABRT, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGBUS, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGFPE, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGUSR1, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGSEGV, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGUSR2, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGPIPE, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGALRM, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGTERM, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGSTKFLT, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGCONT, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGTSTP, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGTTIN, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGTTOU, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGURG, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGXCPU, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGXFSZ, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGVTALRM, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGPROF, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGWINCH, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGIO, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGPWR, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGSYS, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_2, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_3, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_4, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_5, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_6, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_7, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_8, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_9, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_10, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_11, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_12, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_13, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_14, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_15, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_16, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_17, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_18, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_19, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_20, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_21, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_22, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_23, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_24, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_25, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_26, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_27, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_28, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_29, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_30, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_31, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+rt_sigaction(SIGRT_32, {0x401e8a, [], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, 0x7ffd7a502160)       = 0
+nanosleep({1, 0}, {0, 131611462})       = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+--- SIGUSR1 {si_signo=SIGUSR1, si_code=SI_USER, si_pid=14672, si_uid=1000} ---
+rt_sigreturn({mask=[]})                 = -1 EINTR (Interrupted system call)
+brk(NULL)                               = 0x21f4000
+brk(0x2215000)                          = 0x2215000
+fstat(1, {st_dev=makedev(0, 14), st_ino=4, st_mode=S_IFCHR|0620, st_nlink=1, st_uid=1000, st_gid=5, st_blksize=1024, st_blocks=0, st_rdev=makedev(136, 1), st_atime=2018/03/14-20:31:52.245230392, st_mtime=2018/03/14-20:31:52.245230392, st_ctime=2018/03/14-17:25:49.245230392}) = 0
+write(2, "3-04_Signal_Handling-1_PoC2.exe:"..., 244) = 244
+rt_sigprocmask(SIG_UNBLOCK, [ABRT], NULL, 8) = 0
+gettid()                                = 16177
+tgkill(16177, 16177, SIGABRT)           = 0
+--- SIGABRT {si_signo=SIGABRT, si_code=SI_TKILL, si_pid=16177, si_uid=1000} ---
+rt_sigreturn({mask=[]})                 = 0
+rt_sigaction(SIGABRT, {SIG_DFL, ~[], SA_RESTORER, 0x7f31739994b0}, NULL, 8) = 0
+tgkill(16177, 16177, SIGABRT)           = 0
+--- SIGABRT {si_signo=SIGABRT, si_code=SI_TKILL, si_pid=16177, si_uid=1000} ---
++++ killed by SIGABRT (core dumped) +++

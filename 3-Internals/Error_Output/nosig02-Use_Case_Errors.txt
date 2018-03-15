@@ -1,0 +1,30 @@
+KILL ./WAITING.EXE
+
+1. ./nosig.exe Waiting.exe
+2. Waiting...............
+3. kill -2 Waiting.exe
+4. 
+	Waiting..................Waiting.exe returned 2.
+	Waiting.exe did not return normally.
+	Waiting.exe terminated due to the receipt of a signal that was not caught.
+	Waiting.exe terminated with signal number 2 - Interrupt.
+
+
+KILL ./NOSIG.EXE WAITING.EXE
+
+1. ./nosig.exe Waiting.exe
+2. Waiting...............
+3. kill -2 ./nosig.exe Waiting.exe
+4. 
+	Waiting...............<<<ERROR>>> - nosig - main() - waitpid failed!
+	Waiting.exe returned 0.
+	Interrupt (2) SIGNAL CAUGHT!
+	Waiting.exe returned normally.
+5. But then...!
+	Waiting...............<<<ERROR>>> - nosig - main() - waitpid failed!
+	Waiting.exe returned 0.
+	Interrupt (2) SIGNAL CAUGHT!
+	Waiting.exe returned normally.
+
+	joe@Sistemang-Lobo:~/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals$ ...................................................
+
