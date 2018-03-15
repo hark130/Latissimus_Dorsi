@@ -41,8 +41,12 @@ tests:
 hello:
 	$(CC) -o HelloWorld.exe 3-10_Proc_Walk-2_Hello_World.c
 
+waiting:
+	$(CC) -o Waiting.exe 3-04_Signal_Handling-1_Waiting.c
+
 all:
 	# $(MAKE) 331
+	$(MAKE) 341
 	$(MAKE) 3101
 	$(MAKE) 3102
 
