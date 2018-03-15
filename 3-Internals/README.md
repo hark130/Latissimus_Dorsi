@@ -49,6 +49,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [How to Write Advanced Signal Handlers in UNIX](http://www.oracle.com/technetwork/articles/servers-storage-dev/signal-handlers-studio-2282526.html)
 * [Signal Handling and Nonreentrant Functions](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
 * [5.4 Blocking signals](https://www.win.tue.nl/~aeb/linux/lk/lk-5.html) may have the solution to a problem with nosig (see: block signals instead of catching them)
+* [Fork and how signals are delivered to processes](https://unix.stackexchange.com/questions/176235/fork-and-how-signals-are-delivered-to-processes)
 
 ## TO DO
 
