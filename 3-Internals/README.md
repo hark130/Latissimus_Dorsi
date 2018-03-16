@@ -52,6 +52,8 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Fork and how signals are delivered to processes](https://unix.stackexchange.com/questions/176235/fork-and-how-signals-are-delivered-to-processes)
 * [nohup](https://en.wikipedia.org/wiki/Nohup) ([also here](https://www.computerhope.com/unix/unohup.htm))... the inspiration for nosig
 * [CLI Alternatives to nohup](https://askubuntu.com/questions/600956/alternatives-to-nohup)
+* [syscall man page](http://man7.org/linux/man-pages/man2/syscall.2.html)... handy reference extricated from nosig.exe's comments
+* [Interfacing Linux Signals](http://syprog.blogspot.com/2011/10/iterfacing-linux-signals.html)... w/ Assembly
 
 ## TO DO
 
