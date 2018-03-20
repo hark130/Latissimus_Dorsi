@@ -29,11 +29,6 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "ERROR: Too few arguments!\nUsage:\tnosig.exe </path/to/exec>\n\n");
 		success = false;
 	}
-	else if (argc > 2)
-	{
-		fprintf(stderr, "ERROR: Too many arguments!\nUsage:\tnosig.exe </path/to/exec>\n\n");
-		success = false;
-	}
 	else if (argv[argc - 1] == NULL)
 	{
 		HARKLE_ERROR(nosig, main, NULL pointer);
