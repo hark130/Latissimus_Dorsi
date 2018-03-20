@@ -5,6 +5,8 @@
 		DEBUG_ON macro.
  */
 
+#include <stdio.h>
+
 #ifndef __HARKLERROR__
 #define __HARKLERROR__
 
@@ -13,7 +15,7 @@
 #ifdef HARKLE_DEBUG
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
 #else
-#define HARKLE_ERROR(haeder, funcName, ms) ;;;
+#define HARKLE_ERROR(header, funcName, msg) ;;;
 #endif  // HARKLE_ERROR
 
 #endif  // __HARKLERROR__

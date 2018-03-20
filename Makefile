@@ -1,6 +1,12 @@
 CC = gcc
 3 = ./3-Internals/
 
+nosig:
+	$(CC) -o $(3)Memoroad.o -c $(3)Memoroad.c
+	$(CC) -o $(3)Signaleroad.o -c $(3)Signaleroad.c
+	$(CC) -o $(3)3-04_Signal_Handling-1_nosig.o -c $(3)3-04_Signal_Handling-1_nosig.c
+	$(CC) -o nosig.exe $(3)Memoroad.o $(3)Signaleroad.o $(3)3-04_Signal_Handling-1_nosig.o
+
 print_PID_libraries:
 	$(CC) -o $(3)Fileroad.o -c $(3)Fileroad.c
 	$(CC) -o $(3)Harkledir.o -c $(3)Harkledir.c
@@ -18,6 +24,7 @@ redirect_bin_output:
 	$(CC) -o redirect_bin_output.exe $(3)Fileroad.o $(3)Fileroad_Descriptors.o $(3)Memoroad.o $(3)Timeroad.o $(3)3-03_File_Descriptor_Practice-2_redirect_bin_output.o
 
 all:
+	$(MAKE) nosig
 	$(MAKE) print_PID_libraries
 	$(MAKE) redirect_bin_output
 

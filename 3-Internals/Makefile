@@ -13,7 +13,16 @@ CC = gcc
 	$(CC) -c Timeroad.c
 	$(CC) -c 3-03_File_Descriptor_Practice-2_redirect_bin_output.c
 	$(CC) -o redirect_bin_output.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o Timeroad.o 3-03_File_Descriptor_Practice-2_redirect_bin_output.o
-	
+
+341:
+	$(CC) -c Memoroad.c
+	$(CC) -c Signaleroad.c
+	$(CC) -c 3-04_Signal_Handling-1_nosig.c
+	$(CC) -o nosig.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_nosig.o
+	$(CC) -o 3-04_Signal_Handling-1_PoC.exe 3-04_Signal_Handling-1_PoC.c
+	$(CC) -c 3-04_Signal_Handling-1_PoC2.c
+	$(CC) -o 3-04_Signal_Handling-1_PoC2.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_PoC2.o
+
 3101:
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
@@ -38,9 +47,19 @@ tests:
 	$(CC) -c 3-10_Fileroad_Tests-2_main.c
 	$(CC) -o 3-10_Fileroad_Tests-2_main.exe Memoroad.o Fileroad.o 3-10_Fileroad_Tests-2_main.o
 
+echo:
+	$(CC) -o echo_this.exe 3-04_Signal_Handling-1_echo_this.c
+
+hello:
+	$(CC) -o HelloWorld.exe 3-10_Proc_Walk-2_Hello_World.c
+
+waiting:
+	$(CC) -o Waiting.exe 3-04_Signal_Handling-1_Waiting.c
+
 all:
 	$(MAKE) 331
 	$(MAKE) 332
+	$(MAKE) 341
 	$(MAKE) 3101
 	$(MAKE) 3102
 

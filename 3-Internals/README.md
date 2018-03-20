@@ -51,6 +51,21 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [realpath(3)](http://man7.org/linux/man-pages/man3/realpath.3.html)
 * [differences in resolving symlinks between ls, stat, and readlink](https://unix.stackexchange.com/questions/22128/how-to-get-full-path-of-original-file-of-a-soft-symbolic-link)
 * [Example of using gdb and strace to find the cause of a segmentation fault](http://bl0rg.krunch.be/segfault-gdb-strace.html)
+* [github.com/torvalds/linux/signal.h](https://github.com/torvalds/linux/blob/master/include/linux/signal.h)
+* [Open Group signal.h](http://pubs.opengroup.org/onlinepubs/009696699/basedefs/signal.h.html)
+* [Interesting comments on executing the default signal handler](https://stackoverflow.com/questions/6015498/executing-default-signal-handler)
+* [Signal handling primer for glibc 2.2.3](ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_24.html)
+* [signal(7) man page](http://man7.org/linux/man-pages/man7/signal.7.html)
+* [libc termination signals](https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html)
+* [Signal handling quiz](http://www.sanfoundry.com/linux-debugging-questions-answers-signal-handling/)
+* [How to Write Advanced Signal Handlers in UNIX](http://www.oracle.com/technetwork/articles/servers-storage-dev/signal-handlers-studio-2282526.html)
+* [Signal Handling and Nonreentrant Functions](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
+* [5.4 Blocking signals](https://www.win.tue.nl/~aeb/linux/lk/lk-5.html) may have the solution to a problem with nosig (see: block signals instead of catching them)
+* [Fork and how signals are delivered to processes](https://unix.stackexchange.com/questions/176235/fork-and-how-signals-are-delivered-to-processes)
+* [nohup](https://en.wikipedia.org/wiki/Nohup) ([also here](https://www.computerhope.com/unix/unohup.htm))... the inspiration for nosig
+* [CLI Alternatives to nohup](https://askubuntu.com/questions/600956/alternatives-to-nohup)
+* [syscall man page](http://man7.org/linux/man-pages/man2/syscall.2.html)... handy reference extricated from nosig.exe's comments
+* [Interfacing Linux Signals](http://syprog.blogspot.com/2011/10/iterfacing-linux-signals.html)... w/ Assembly
 * [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
 
 ## TO DO
@@ -102,7 +117,24 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" // try PRIuMAX if %ju unsupported
 * Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
 
-### 3-4 IDEAS:
+### 3-4-1 
+
+**NOTE:** Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
+* [X] Validate argument input
+* [X] Verify the file exists?
+* [X] Fork
+* [X] Call exec*
+* [X] Ignore the signals
+
+#### IDEAS:
+
+* Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
+* Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
+* Write a "plug-in" function that would prompt the user for verification if ever the [program received a SIGINT](http://www.csl.mtu.edu/cs4411.choi/www/Resource/signal.pdf) (see: Ctrl-C)
+* "Global" signal handler?
+* Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
+* If a child process makes the call exit(–1), what exit status will be seen by the parent?
+* [The Producer / Consumer Problem](https://users.cs.cf.ac.uk/Dave.Marshall/C/node32.html#SECTION003240000000000000000) - Control access of (consumer) reads and (producer) writes to a buffer
 * Create an API for a virtual filesystem in memory
 	* Calling the entry level function of this library would create a shared pipe with a fork()ed fs manager
 	* Back and forth communication could be facilitated across this pipe
@@ -111,6 +143,33 @@ Developers will have an in-depth working knowledge of Linux Internals
 		* Are you there?  Go.
 		* How many files?  3.
 		* Receive a file.  Go.  Transmits file.  Recvd X bytes.
+
+#### NOTES:
+
+* Methods of synchronization between:
+	* Parent and child processes
+		* fork() and wait()
+		* Child exits with 8 bits (e.g., if (childPID == 0) { exit(func(arg)); })
+		* Any other interprocess communication method
+	* Non-forked processes
+		* files
+		* file locks
+		* semaphores
+		* pipes
+		* signals
+			* sigemptyset() - Initializes the signal set given by set to empty, with all signals excluded from the set.
+			* sigaddset() - Add signal signum from set.
+			* sigdelset() - Delete signal signum from set.
+			* sigprocmask() - Used to fetch and/or change the signal mask of the calling thread. The signal mask is the set of signals whose delivery is currently blocked for the caller.
+				* SIG_BLOCK - The set of blocked signals is the union of the current set and the set argument.
+				* SIG_UNBLOCK - The signals in set are removed from the current set of blocked signals. It is permissible to attempt to unblock a signal which is not blocked.
+				* SIG_SETMASK - The set of blocked signals is set to the argument set.
+			* sigsuspend() - Temporarily replaces the signal mask of the calling process with the mask given by mask and then suspends the process until delivery of a signal whose action is to invoke a signal handler or to terminate a process.
+			* sigaction() - Allows the calling process to examine and/or specify the action to be associated with a specific signal.
+			* kill() - Used to send any signal to any process group or process.
+			* raise() - Sends a signal to the calling process or thread.
+			* signal() - Use sigaction() instead.	
+		* message passing(?)
 
 ### 3-10-1
 

@@ -1,0 +1,57 @@
+execve("./nosig.exe", ["./nosig.exe", "Waiting.exe"], ["XDG_VTNR=7", "XDG_SESSION_ID=c2", "CLUTTER_IM_MODULE=xim", "XDG_GREETER_DATA_DIR=/var/lib/li"..., "TERM=xterm-256color", "SHELL=/bin/bash", "VTE_VERSION=4205", "QT_LINUX_ACCESSIBILITY_ALWAYS_ON"..., "WINDOWID=77594634", "UPSTART_SESSION=unix:abstract=/c"..., "GNOME_KEYRING_CONTROL=", "GTK_MODULES=gail:atk-bridge:unit"..., "USER=joe", "LS_COLORS=rs=0:di=01;34:ln=01;36"..., "QT_ACCESSIBILITY=1", "XDG_SESSION_PATH=/org/freedeskto"..., "XDG_SEAT_PATH=/org/freedesktop/D"..., "SSH_AUTH_SOCK=/run/user/1000/key"..., "DEFAULTS_PATH=/usr/share/gconf/u"..., "XDG_CONFIG_DIRS=/etc/xdg/xdg-ubu"..., "PATH=/usr/local/sbin:/usr/local/"..., "DESKTOP_SESSION=ubuntu", "QT_IM_MODULE=ibus", "QT_QPA_PLATFORMTHEME=appmenu-qt5", "PWD=/home/joe/Documents/Personal"..., "XDG_SESSION_TYPE=x11", "JOB=gnome-session", "XMODIFIERS=@im=ibus", "GNOME_KEYRING_PID=", "LANG=en_US.UTF-8", "GDM_LANG=en_US", "MANDATORY_PATH=/usr/share/gconf/"..., "IM_CONFIG_PHASE=1", "COMPIZ_CONFIG_PROFILE=ubuntu", "GDMSESSION=ubuntu", "SESSIONTYPE=gnome-session", "GTK2_MODULES=overlay-scrollbar", "HOME=/home/joe", "XDG_SEAT=seat0", "SHLVL=1", "LANGUAGE=en_US", "GNOME_DESKTOP_SESSION_ID=this-is"..., "UPSTART_INSTANCE=", "UPSTART_EVENTS=started starting", "XDG_SESSION_DESKTOP=ubuntu", "LOGNAME=joe", "QT4_IM_MODULE=xim", "XDG_DATA_DIRS=/usr/share/ubuntu:"..., "DBUS_SESSION_BUS_ADDRESS=unix:ab"..., "LESSOPEN=| /usr/bin/lesspipe %s", "INSTANCE=Unity", "UPSTART_JOB=unity-settings-daemo"..., "XDG_RUNTIME_DIR=/run/user/1000", "DISPLAY=:0", "XDG_CURRENT_DESKTOP=Unity", "GTK_IM_MODULE=ibus", "LESSCLOSE=/usr/bin/lesspipe %s %"..., "XAUTHORITY=/home/joe/.Xauthority", "_=/usr/bin/strace", "OLDPWD=/home/joe"]) = 0
+brk(NULL)                               = 0x17e2000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_dev=makedev(8, 1), st_ino=2752535, st_mode=S_IFREG|0644, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=280, st_size=142361, st_atime=2018/03/15-19:08:17.455820809, st_mtime=2018/03/15-19:08:17.187825187, st_ctime=2018/03/15-19:08:17.227824533}) = 0
+mmap(NULL, 142361, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7ff96f6f1000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\t\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_dev=makedev(8, 1), st_ino=6029587, st_mode=S_IFREG|0755, st_nlink=1, st_uid=0, st_gid=0, st_blksize=4096, st_blocks=3656, st_size=1868984, st_atime=2018/03/15-18:17:01.483042972, st_mtime=2018/01/14-20:51:31, st_ctime=2018/01/18-21:15:09.996849864}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff96f6f0000
+mmap(NULL, 3971488, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7ff96f125000
+mprotect(0x7ff96f2e5000, 2097152, PROT_NONE) = 0
+mmap(0x7ff96f4e5000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c0000) = 0x7ff96f4e5000
+mmap(0x7ff96f4eb000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7ff96f4eb000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff96f6ef000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ff96f6ee000
+arch_prctl(ARCH_SET_FS, 0x7ff96f6ef700) = 0
+mprotect(0x7ff96f4e5000, 16384, PROT_READ) = 0
+mprotect(0x603000, 4096, PROT_READ)     = 0
+mprotect(0x7ff96f714000, 4096, PROT_READ) = 0
+munmap(0x7ff96f6f1000, 142361)          = 0
+fstat(1, {st_dev=makedev(0, 14), st_ino=4, st_mode=S_IFCHR|0620, st_nlink=1, st_uid=1000, st_gid=5, st_blksize=1024, st_blocks=0, st_rdev=makedev(136, 1), st_atime=2018/03/15-21:34:00.581987476, st_mtime=2018/03/15-21:34:00.581987476, st_ctime=2018/03/15-18:48:54.581987476}) = 0
+brk(NULL)                               = 0x17e2000
+brk(0x1803000)                          = 0x1803000
+write(1, "\n", 1)                       = 1
+stat("Waiting.exe", {st_dev=makedev(8, 33), st_ino=49689456, st_mode=S_IFREG|0775, st_nlink=1, st_uid=1000, st_gid=1000, st_blksize=4096, st_blocks=24, st_size=8832, st_atime=2018/03/15-21:27:09.771193451, st_mtime=2018/03/15-21:27:09.771193451, st_ctime=2018/03/15-21:27:09.771193451}) = 0
+rt_sigaction(SIGHUP, {SIG_IGN, [], 0}, NULL, 128) = -1 EINVAL (Invalid argument)
+write(2, "<<<ERROR>>> - nosig - main() - s"..., 47) = 47
+write(2, "syscall(13, 1, &sigact, NULL, 12"..., 69) = 69
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, "Waiting....", 11)             = 11
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+nanosleep({1, 0}, 0x7fff95ff53c0)       = 0
+write(1, ".", 1)                        = 1
+exit_group(0)                           = ?
++++ exited with 0 +++

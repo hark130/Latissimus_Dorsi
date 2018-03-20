@@ -1,0 +1,130 @@
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////// THE HUNT FOR rt_sigaction() /////////////////////////
+////////// Alternate Title:  What's eating Gilbert "sigaction" Grape? /////////
+// by Joseph Harkleroad ///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+SYNOPSIS:  The sigaction man page contains lies regarding rt_sigaction()!
+	The fourth argument to the rt_sigaction() is NOT "sizeof(sigset_t)".  
+	Rather, it is "SIGRTMAX / 8".
+
+	There I was, working on https://github.com/hark130/Latissimus_Dorsi/blob/→
+3-4-1/3-Internals/3-04_Signal_Handling-1_nosig.c, hereafter referred to as
+"nosig.c", and I wasn't being permitted to ignore (see: SIG_IGN) any signals
+greater than 32 with sigaction().  At first I thought it was because these
+signals were "undefined"(?).  Eventually, I discovered during testing that,
+while I could send kill signals higher than 31, I couldn't ignore them with
+sigaction().  Unfair!  If that's the case, nosig.exe won't work like I
+intended.  Signal 32 was killing my process.
+
+	Investigation showed me that I was passing an invalid parameter to
+sigaction().  Turns out sigaction() has an old limit on what it can handle.
+To quote the sigaction man page:
+	  "...with the addition of real-time signals in Linux 2.2, the fixed-size,
+       32-bit sigset_t type supported by that system call was no longer fit
+       for purpose.  Consequently, a new system call, rt_sigaction(), was
+       added to support an enlarged sigset_t type."
+       (http://man7.org/linux/man-pages/man2/sigaction.2.html)
+
+    Great!  Let's use rt_sigaction().  Turns out this is the LEAST documented
+Linux system call I've come across.  It didn't have its own man page.  At
+best, there was a footnote in the sigaction() man page.  To further quote
+the sigaction man page:
+	  "The new system call takes a fourth argument, size_t sigsetsize, 
+	   which specifies the size in bytes of the signal sets in act.sa_mask
+	   and oldact.sa_mask.  This argument is currently required to have the
+	   value sizeof(sigset_t)..."
+
+	Easy enough.  I setup my syscall(sys_rt_sigaction) with the old and the
+new arguments using sizeof(sigset_t) as the fourth parameter.  Invalid
+argument!  Odd.  During some strace trouble-shooting, I notice that the
+function calls to sigaction() calls rt_sigaction with the value of "8" as
+the fourth parameter.  How odd?!  On my machine, sizeof(sigset_t) == 128!
+I couldn't find any better documentation on the necessary parameters to
+rt_sigaction.  Either I was reading the "required to have the value 
+sizeof(sigset_t)" sentence wrong or the man page was wrong.  But man pages
+are never wrong!  Time to dig.
+
+	The details of my excavation of the linux source code is below and
+I won't bore you with the details.  If you want to be bored, follow along
+with number 9 below.  The short version is that I determine that sigaction()
+is utilizing the "maximum number of signals" macro (see: _NSIG) and dividing
+by 8.  On my machine, _NSIG is defined as 64.  It makes more sense now, but
+not total sense.  Regardless, now I know how sigaction() is calculating the
+value of the fourth parameter to rt_sigaction().  How best to replicate that
+in my code?
+
+	While I was digging, I saw plenty of warnings regarding user-land use
+of "internal" macros.  (SEE: 9. Answer #4)  Ok, which macro CAN I use?
+Short answer:  Use SIGRTMAX.  I eventually changed nosig.c to reflect this
+new "fourth parameter" calculation.  SUCCESS!  Plus, I used SIGRTMAX to
+restrict my (almost) global "signal" for loop.  Perfect.  I originally was
+going to document these findings inside the nosig.c source code but this
+was too odd and interesting a topic to bury in source code like that.  Having
+just creating a Research Documents section earlier in the day, I decided to
+keep it here for accessibility.
+
+	Regardless, the answer has been discovered the journey, observations and
+findings have been documented.  If you want to follow my "research" path,
+follow along 1 - 9 below.  Otherwise, there's still the question "Why does
+it divide _NSIG by 8?"  I suspect the answer has something to do with the
+fact that _NSIG is also used to size an array that holds all of the signal
+numbers.  As such, it may be used internally to facilitate pointer match
+through that array.  This is purely speculation though and I leave it here
+as a future research project for some enterprising young mind.  Good luck!
+
+
+
+
+
+I decided to transition from sigaction() to syscall(rt_sigaction) so that
+I could ignore (SIG_IGN) signals that exceeded 31.  Here's some of what I learned:
+
+1. rt_sigaction, the underpinings of sigaction() can handle larger sigset_t sizes (SEE: sigact.sa_mask)
+2. rt_sigaction's fourth argument "is currently required to have the value sizeof(sigset_t)" (http://man7.org/linux/man-pages/man2/sigaction.2.html)
+3. On my system, sizeof(sigset_t) and sizeof(sigact.sa_mask) both resolve to 128
+4. syscall(13, 1, &sigact, NULL, 128) == EINVAL
+5. An strace of sigaction(1, &sigact, NULL) reveals rt_sigaction(SIGHUP, {SIG_IGN, [], SA_RESTORER, 0x7fbfdcedd4b0}, NULL, 8)
+	(SEE: Latissimus_Dorsi/3-Internals/Error_Output/nosig03-EINVAL-sigaction-strace.txt if it still exists)
+6. An strace of syscall(13, 1, &sigact, NULL, 128) reveals rt_sigaction(SIGHUP, {SIG_IGN, [], 0}, NULL, 128)
+	(SEE: Latissimus_Dorsi/3-Internals/Error_Output/nosig03-EINVAL-rt_sigaction-strace.txt if it still exists)
+7. Observing this behavior leads me to the following conclusions
+	A. sigaction() has added the SA_RESTORER flag to the rt_sigaction() system call
+	B. SA_RESTORER - "Not intended for application use.  This flag is used by C libraries to indicate 
+		that the sa_restorer field contains the address of a "signal trampoline".
+	C. This means that 0x7fbfdcedd4b0 is likely the memory address of the "signal trampoline" sigaction is using
+		(SEE: SIGRETURN(2) for more on trampolines)
+	D. sigaction() is using the value of 8 as the value for the fourth argument.
+8. Observing this behavior has raised the following questions:
+	A. Where is sigaction() getting "8" from?  If I had 3 guesses, here they are (in order):
+		i. The size of the memory address storing the signal number?  	sizeof(void*) == 8
+		ii. The size of &sigact?  										sizeof(&sigact) == 8
+		iii. sizeof(sigset_t) / 16?										sizeof(sigset_t) == 128
+				This one is far fetched but it's the only calculation involving sizeof(sigset_t) that works.
+				After all, "This argument is currently required to have the value sizeof(sigset_t)"
+9. Now we go deeper.  Supposedly, one of the advantages to programming in Linux is that it's open source.  Let's
+	put that to the test.
+		Q1: Where does sigaction() get the value of 8 from?
+		A1: Source code for sigaction.c calculates "_NSIG / 8" (https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/sigaction.c.html)
+		Q2: What is "_NSIG"?
+		A2: (64 + 1) /* Biggest signal number + 1 (including real-time signals). */ /* From <asm/signal.h> */
+		Q3: Where does <asm/signal.h> get "_NSIG" from?  (I looked on my local installation at /usr/include/asm-generic/signal.h)
+		A3: #define _NSIG 64
+		Q4: Can I utilize _NSIG 64 in my code?
+		A4: I saw lots of warnings NOT to:
+			i. Regarding SIGRTMIN and SIGRTMAX, 
+			 /* These should not be considered constants from userland. */ 
+			 // (/usr/include/asm-generic/signal.h)
+			ii. Regarding __SIGRTMIN and __SIGRTMAX, 
+			 /* These are the hard limits of the kernel.  
+				These values should not be used directly at user level. */ 
+			 // (/usr/include/x86_64-linux-gnu/bits/signum.h)
+			iii. Regarding __SIGRTMIN and __SIGRTMAX, 
+			 /* Not all systems support real-time signals.  bits/signum.h indicates
+					that they are supported by overriding __SIGRTMAX to a value greater
+					than __SIGRTMIN.  These constants give the kernel-level hard limits,
+					but some real-time signals may be used internally by glibc.  Do not
+					use these constants in application code; use SIGRTMIN and SIGRTMAX
+					(defined in signal.h) instead.  */ 
+				    (https://code.woboq.org/userspace/glibc/bits/signum-generic.h.html)
+FINAL CONCLUSION:  The answer to 8.A. is "_NSIG / 8".  What should *I* use?  It looks like "SIGRTMAX / 8".
