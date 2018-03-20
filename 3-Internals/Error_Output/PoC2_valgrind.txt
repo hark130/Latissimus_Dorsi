@@ -1,0 +1,123 @@
+joe@Sistemang-Lobo:~/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals$ valgrind -v ./3-04_Signal_Handling-1_PoC2.exe
+==16257== Memcheck, a memory error detector
+==16257== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==16257== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==16257== Command: ./3-04_Signal_Handling-1_PoC2.exe
+==16257== 
+--16257-- Valgrind options:
+--16257--    -v
+--16257-- Contents of /proc/version:
+--16257--   Linux version 4.4.0-116-generic (buildd@lgw01-amd64-021) (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9) ) #140-Ubuntu SMP Mon Feb 12 21:23:04 UTC 2018
+--16257-- 
+--16257-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-rdtscp-sse3
+--16257-- Page sizes: currently 4096, max supported 4096
+--16257-- Valgrind library directory: /usr/lib/valgrind
+--16257-- Reading syms from /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe
+--16257-- Reading syms from /lib/x86_64-linux-gnu/ld-2.23.so
+--16257--   Considering /lib/x86_64-linux-gnu/ld-2.23.so ..
+--16257--   .. CRC mismatch (computed aa979a42 wanted 9019bbb7)
+--16257--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.23.so ..
+--16257--   .. CRC is valid
+--16257-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--16257--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--16257--   .. CRC mismatch (computed eea41ea9 wanted 2009db78)
+--16257--    object doesn't have a symbol table
+--16257--    object doesn't have a dynamic symbol table
+--16257-- Scheduler: using generic scheduler lock implementation.
+--16257-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==16257== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-16257-by-joe-on-???
+==16257== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-16257-by-joe-on-???
+==16257== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-16257-by-joe-on-???
+==16257== 
+==16257== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==16257== don't want to do, unless you know exactly what you're doing,
+==16257== or are doing some strange experiment):
+==16257==   /usr/lib/valgrind/../../bin/vgdb --pid=16257 ...command...
+==16257== 
+==16257== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==16257==   /path/to/gdb ./3-04_Signal_Handling-1_PoC2.exe
+==16257== and then give GDB the following command
+==16257==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=16257
+==16257== --pid is optional if only one valgrind process is running
+==16257== 
+--16257-- REDIR: 0x401cfd0 (ld-linux-x86-64.so.2:strlen) redirected to 0x3809e181 (???)
+--16257-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--16257--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--16257--   .. CRC mismatch (computed 2567ccf6 wanted 49420590)
+--16257--    object doesn't have a symbol table
+--16257-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--16257--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--16257--   .. CRC mismatch (computed 0e27c9a8 wanted ac585421)
+--16257--    object doesn't have a symbol table
+==16257== WARNING: new redirection conflicts with existing -- ignoring it
+--16257--     old: 0x0401cfd0 (strlen              ) R-> (0000.0) 0x3809e181 ???
+--16257--     new: 0x0401cfd0 (strlen              ) R-> (2007.0) 0x04c31020 strlen
+--16257-- REDIR: 0x401b920 (ld-linux-x86-64.so.2:index) redirected to 0x4c30bc0 (index)
+--16257-- REDIR: 0x401bb40 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c320d0 (strcmp)
+--16257-- REDIR: 0x401dd30 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c35270 (mempcpy)
+--16257-- Reading syms from /lib/x86_64-linux-gnu/libc-2.23.so
+--16257--   Considering /lib/x86_64-linux-gnu/libc-2.23.so ..
+--16257--   .. CRC mismatch (computed 7a8ee3e4 wanted a5190ac4)
+--16257--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.23.so ..
+--16257--   .. CRC is valid
+--16257-- REDIR: 0x4ec9a00 (libc.so.6:strcasecmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec5280 (libc.so.6:strcspn) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ecbcf0 (libc.so.6:strncasecmp) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec76f0 (libc.so.6:strpbrk) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec7a80 (libc.so.6:strspn) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec914b (libc.so.6:memcpy@GLIBC_2.2.5) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec7400 (libc.so.6:rindex) redirected to 0x4c308a0 (rindex)
+==16257== Warning: ignored attempt to set SIGRT32 handler in sigaction();
+==16257==          the SIGRT32 signal is used internally by Valgrind
+--16257-- REDIR: 0x4ed0760 (libc.so.6:strchrnul) redirected to 0x4c34da0 (strchrnul)
+<<<ERROR>>> - PoC2 - main() - sigaction failed!
+--16257-- REDIR: 0x4ec93b0 (libc.so.6:__GI_mempcpy) redirected to 0x4c34fa0 (__GI_mempcpy)
+sigaction(64, &sigact, NULL) failed
+--16257-- REDIR: 0x4ebe130 (libc.so.6:malloc) redirected to 0x4c2db20 (malloc)
+--16257-- REDIR: 0x4ec73c0 (libc.so.6:strncpy) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ee0000 (libc.so.6:__strncpy_sse2_unaligned) redirected to 0x4c31570 (__strncpy_sse2_unaligned)
+--16257-- REDIR: 0x4ec5720 (libc.so.6:strlen) redirected to 0x4c30f60 (strlen)
+--16257-- REDIR: 0x4ece470 (libc.so.6:__GI_memcpy) redirected to 0x4c32b00 (__GI_memcpy)
+--16257-- REDIR: 0x4ec9890 (libc.so.6:__GI_stpcpy) redirected to 0x4c33f80 (__GI_stpcpy)
+--16257-- REDIR: 0x4ebed10 (libc.so.6:calloc) redirected to 0x4c2faa0 (calloc)
+--16257-- REDIR: 0x4ec5160 (libc.so.6:strcpy) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4edf9d0 (libc.so.6:__strcpy_sse2_unaligned) redirected to 0x4c31040 (strcpy)
+==16257== Invalid write of size 1
+==16257==    at 0x4C31644: __strncpy_sse2_unaligned (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==16257==    by 0x401E2E: str_signaleroad (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x40203D: main (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==  Address 0x520449f is 0 bytes after a block of size 31 alloc'd
+==16257==    at 0x4C2FB55: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==16257==    by 0x400ACD: get_me_a_buffer (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x401D3B: str_signaleroad (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x40203D: main (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257== 
+
+User defined signal 1 (10) SIGNAL CAUGHT!
+--16257-- REDIR: 0x4ec91b0 (libc.so.6:memset) redirected to 0x4a286f0 (_vgnU_ifunc_wrapper)
+--16257-- REDIR: 0x4ec9240 (libc.so.6:__GI_memset) redirected to 0x4c344c0 (memset)
+--16257-- REDIR: 0x4ebe4f0 (libc.so.6:free) redirected to 0x4c2ed80 (free)
+
+==16257== 
+==16257== HEAP SUMMARY:
+==16257==     in use at exit: 0 bytes in 0 blocks
+==16257==   total heap usage: 3 allocs, 3 frees, 2,079 bytes allocated
+==16257== 
+==16257== All heap blocks were freed -- no leaks are possible
+==16257== 
+==16257== ERROR SUMMARY: 24 errors from 1 contexts (suppressed: 0 from 0)
+==16257== 
+==16257== 24 errors in context 1 of 1:
+==16257== Invalid write of size 1
+==16257==    at 0x4C31644: __strncpy_sse2_unaligned (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==16257==    by 0x401E2E: str_signaleroad (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x40203D: main (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==  Address 0x520449f is 0 bytes after a block of size 31 alloc'd
+==16257==    at 0x4C2FB55: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==16257==    by 0x400ACD: get_me_a_buffer (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x401D3B: str_signaleroad (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257==    by 0x40203D: main (in /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/3-04_Signal_Handling-1_PoC2.exe)
+==16257== 
+==16257== ERROR SUMMARY: 24 errors from 1 contexts (suppressed: 0 from 0)
+[1]+  Killed                  valgrind ./3-04_Signal_Handling-1_PoC2.exe
+
