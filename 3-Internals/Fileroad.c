@@ -4,12 +4,13 @@
 #include "Fileroad.h"
 #include "Harklerror.h"	// HARKLE_ERROR
 #include <inttypes.h>	// intmax_t
+#include <libgen.h>		// basename, dirname
 #include <limits.h>		// UCHAR_MAX, PATH_MAX
 #include "Memoroad.h"
 #include <stdbool.h>	// bool, true, false
 #include <stdio.h>		// fscanf, getchar
 #include <stdlib.h>	 	// calloc
-#include <string.h>	 	// strlen, strstr
+#include <string.h>	 	// strlen, strstr, strerror
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>		// read, stream macros
@@ -89,8 +90,6 @@ char* buff_a_num(void)
 
 	// READ
 	numBytesRead = read(STDIN_FILENO, localBuff, FROAD_SML_BUFF_SIZE);
-	// fprintf(stdout, "numBytesRead == %zu\n", numBytesRead);  // DEBUGGING
-	// fprintf(stdout, "localBuff == %s\n", localBuff);  // DEBUGGING
 
 	if (numBytesRead > FROAD_SML_BUFF_SIZE)
 	{
@@ -107,7 +106,6 @@ char* buff_a_num(void)
 	else  // "Just write." -Goldilocks(?)
 	{
 		// REMOVE ANY NEWLINES
-		// puts("Entering buff_a_num() removing newlines");  // DEBUGGING
 		i = 0;  // Reset temp variable
 		while (i < FROAD_SML_BUFF_SIZE && (*(localBuff + i)) != '\0' && success == true)
 		{
@@ -125,13 +123,11 @@ char* buff_a_num(void)
 			}
 		}
 
-		// puts("Entering buff_a_num() read");  // DEBUGGING
 		// VALIDATE READ
 		// Look for non-numbers
 		i = 0;  // Reset temp variable
 		while (i < FROAD_SML_BUFF_SIZE && (*(localBuff + i)) != '\0' && success == true)
 		{
-			// fprintf(stdout, "Looking at:\t%c (0x%X)\n", (*(localBuff + i)), (*(localBuff + i)));  // DEBUGGING
 			if ((*(localBuff + i)) < 48 || (*(localBuff + i)) > 57)
 			{
 				success = false;
@@ -145,10 +141,7 @@ char* buff_a_num(void)
 		// Copy it onto the heap
 		if (success == true)
 		{
-			// puts("Entering buff_a_num() heap allocation");  // DEBUGGING
-			// fprintf(stdout, "localBuff == %s\n", localBuff);  // DEBUGGING
 			retVal = copy_a_string(localBuff);
-			// fprintf(stdout, "retVal == %s\n", retVal);  // DEBUGGING
 
 			if (!retVal)
 			{
@@ -650,9 +643,7 @@ char* read_a_file(char* fileName)
 							}
 							else
 							{
-								// fprintf(stdout, "REread\n\n%s\n\n", retVal);  // DEBUGGING
-								// fprintf(stdout, "File size is currently %jd.\n", fileSize);
-								// fprintf(stdout, "Just read %jd bytes from fd %d.\n", (intmax_t)numBytesRead, fileDesc);  // DEBUGGING
+
 							}
 						}
 					}
@@ -750,7 +741,6 @@ off_t size_a_file(char* fileName, int* errNum)
 		}
 		else
 		{
-			// printf("File size:\t%lld bytes\n", (long long)fileStat.st_size);  // DEBUGGING
 			retVal = fileStat.st_size;
 		}
 	}
@@ -793,7 +783,6 @@ off_t size_a_file_desc(int fileDesc, int* errNum)
 	// SIZE IT
 	if (success == true)
 	{
-		// fprintf(stdout, "Sizing fd %d\n", fileDesc);  // DEBUGGING
 		stRetVal = fstat(fileDesc, &fileStat);
 		
 		if (stRetVal == -1)
@@ -804,7 +793,6 @@ off_t size_a_file_desc(int fileDesc, int* errNum)
 		}
 		else
 		{
-			// fprintf(stdout, "fd %d is %jd\n", fileDesc, (intmax_t)fileStat.st_size);  // DEBUGGING
 			retVal = fileStat.st_size;
 		}
 	}
@@ -942,6 +930,87 @@ unsigned char get_a_file_type(char* fileName)
 }
 
 
+bool os_path_isfile(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	unsigned char fileType = 0;  // Holds return value from get_a_file_type()
+
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		retVal = false;
+	}
+	else if (!(*path_ptr))
+	{
+		retVal = false;
+	}
+	else
+	{
+		// FILE EXISTS?
+		retVal = os_path_exists(path_ptr);
+
+		if (retVal == true)
+		{
+			// FILE IS A REGULAR FILE?
+			fileType = get_a_file_type(path_ptr);
+
+			if (fileType != DT_REG)
+			{
+				retVal = false;		
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+bool os_path_exists(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int fileDesc = -1;  // Holds return value from open()
+
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		retVal = false;
+	}
+	else if (!(*path_ptr))
+	{
+		retVal = false;
+	}
+	else
+	{
+		// FILE EXISTS?
+		fileDesc = open(path_ptr, O_RDONLY);
+
+		if (fileDesc < 0)
+		{
+			retVal = false;
+			errno = 0;
+		}
+		else
+		{
+			close(fileDesc);
+			fileDesc = -1;
+		}		
+	}
+
+	// CLEAN UP
+	if (fileDesc > -1)
+	{
+		close(fileDesc);
+		fileDesc = -1;
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 {
 	// LOCAL VARIABLES
@@ -1069,6 +1138,144 @@ char* os_path_join(char* path_ptr, char* join_ptr, bool isFile)
 }
 
 
+char* os_path_basename(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char* temp_ptr = NULL;  // Return value from basename() call
+	bool success = true;  // Make this false if anything fails
+	int errNum = 0;  // Catch errno
+	
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		HARKLE_ERROR(Fileroad, os_path_basename, NULL pointer);
+		success = false;
+	}
+	else if (!(*path_ptr))
+	{
+		HARKLE_ERROR(Fileroad, os_path_basename, Empty string);
+		success = false;	
+	}
+	
+	// DETERMINE BASENAME
+	if (success == true)
+	{
+		temp_ptr = basename(path_ptr);
+		
+		if (!temp_ptr)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad, os_path_basename, basename failed);
+			fprintf(stderr, "basename(%s) set errno to %d:\t%s\n", path_ptr, errNum, strerror(errNum));
+			success = false;
+		}
+		else if (!(*temp_ptr))
+		{
+			HARKLE_ERROR(Fileroad, os_path_basename, basename failed);
+			fprintf(stderr, "basename(%s) returned an empty string!\n", path_ptr);
+			success = false;
+		}
+	}
+	
+	// ALLOCATE BUFFER
+	if (success == true)
+	{
+		retVal = copy_a_string(temp_ptr);
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, os_path_basename, copy_a_string failed);
+			success = false;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, os_path_basename, release_a_string failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+char* os_path_dirname(char* path_ptr)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char* temp_ptr = NULL;  // Return value from basename() call
+	bool success = true;  // Make this false if anything fails
+	int errNum = 0;  // Catch errno
+	
+	// INPUT VALIDATION
+	if (!path_ptr)
+	{
+		HARKLE_ERROR(Fileroad, os_path_dirname, NULL pointer);
+		success = false;
+	}
+	else if (!(*path_ptr))
+	{
+		HARKLE_ERROR(Fileroad, os_path_dirname, Empty string);
+		success = false;	
+	}
+	
+	// DETERMINE BASENAME
+	if (success == true)
+	{
+		temp_ptr = dirname(path_ptr);
+		
+		if (!temp_ptr)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Fileroad, os_path_dirname, dirname failed);
+			fprintf(stderr, "dirname(%s) set errno to %d:\t%s\n", path_ptr, errNum, strerror(errNum));
+			success = false;
+		}
+		else if (!(*temp_ptr))
+		{
+			HARKLE_ERROR(Fileroad, os_path_dirname, dirname failed);
+			fprintf(stderr, "dirname(%s) returned an empty string!\n", path_ptr);
+			success = false;
+		}
+	}
+	
+	// ALLOCATE BUFFER
+	if (success == true)
+	{
+		retVal = copy_a_string(temp_ptr);
+		
+		if (!retVal)
+		{
+			HARKLE_ERROR(Fileroad, os_path_dirname, copy_a_string failed);
+			success = false;
+		}
+	}
+	
+	// CLEAN UP
+	if (success == false)
+	{
+		if (retVal)
+		{
+			if (false == release_a_string(&retVal))
+			{
+				HARKLE_ERROR(Fileroad, os_path_dirname, release_a_string failed);
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
 bool rewind_a_file_desc(int fileDesc, int* errNum)
 {
 	// LOCAL VARIABLES
@@ -1098,6 +1305,190 @@ bool rewind_a_file_desc(int fileDesc, int* errNum)
 		{
 			*errNum = errno;
 			retVal = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+char* clean_filename(char* dirtyFile, bool inPlace)
+{
+	// LOCAL VARIABLES
+	char* retVal = NULL;
+	char* backUp = NULL;  // Backup copy of dirtyFile in case we want to revert
+	bool success = true;  // Make this false if anything fails
+	// char currChar = 0;  // One character to switch on
+	// char badChar = 0;  // Temp var to hold bad chars
+	char* temp_ptr = NULL;  // Iterating pointer variable
+	char badChars[33] = { 0 };  // Bad characters to replace
+	size_t dirtStrLen = 0;  // strlen() of dirtyFile
+	int i = 0;  // Iterating variable
+
+	// INPUT VALIDATION
+	if (!dirtyFile)
+	{
+		HARKLE_ERROR(Fileroad, clean_filename, NULL pointer);
+		success = false;
+	}
+	else if (!(*dirtyFile))
+	{
+		HARKLE_ERROR(Fileroad, clean_filename, Empty string);
+		success = false;
+	}
+	else
+	{
+		if (inPlace == true)
+		{
+			retVal = dirtyFile;
+			// Copy dirtyFile for the sake of recovery
+			backUp = copy_a_string(dirtyFile);
+			
+			if (!backUp)
+			{
+				HARKLE_ERROR(Fileroad, clean_filename, copy_a_string failed);
+				success = false;
+			}
+		}
+		else
+		{
+			retVal = copy_a_string(dirtyFile);
+
+			if (!retVal)
+			{
+				HARKLE_ERROR(Fileroad, clean_filename, copy_a_string failed);
+				success = false;
+			}
+			else
+			{
+				dirtStrLen = strlen(retVal);
+			}
+		}
+	}
+
+	// BUILD BAD CHAR ARRAY
+	if (success == true)
+	{
+		// 1. 0x01 - 0x1F
+		for (i = 0; i < 31; i++)
+		{
+			(*(badChars + i)) = i + 1;
+		}
+		// 2. 0x7F
+		(*(badChars + i)) = 0x7F;
+		i++;
+	}
+
+	// CLEAN
+	if (success == true)
+	{
+		// 1. Check first character for non-alpha && non-numeric
+		for (i = 0; i < dirtStrLen; i++)
+		{
+			// Edge case
+			if ((*(retVal + i)) == 0x2F)								// 0x2F == '/'
+			{
+				(*(retVal + i)) = 0x0;
+			}
+			// Wide swaths
+			else if ((*(retVal + i)) < 0x2E)  							// 0x2E == '.'
+			{
+				(*(retVal + i)) = 0x0;
+			}
+			else if ((*(retVal + i)) > 0x39 && (*(retVal + i)) < 0x41)	// 0x39 == '9', 0x41 == 'A'
+			{
+				(*(retVal + i)) = 0x0;	
+			}
+			else if ((*(retVal + i)) > 0x5A && (*(retVal + i)) < 0x61)	// 0x5A == 'Z', 0x61 == 'a'
+			{
+				(*(retVal + i)) = 0x0;
+			}
+			else if ((*(retVal + i)) > 0x7A)  							// 0x7A == 'z'
+			{
+				(*(retVal + i)) = 0x0;	
+			}
+
+			// Did we find a leading "bad char"?
+			if ((*(retVal + i)) != 0x0)
+			{
+				break;
+			}
+		}
+		// 2. Fill in the 'new' nul-terminator (if any)
+		if (*retVal == 0x0)
+		{
+			i = 0;  // Reset temp var
+			// 2.1. Find the first non-nul
+			while ((*(retVal + i)) == 0x0)
+			{
+				i++;
+				// Verify we don't go out of bounds
+				if (i >= dirtStrLen)
+				{
+					// Apparently, *all* of dirtyFile was 'dirty'
+					success = false;
+					break;
+				}
+			}
+
+			if (success == true)
+			{
+				// 2.2. Copy left
+				temp_ptr = retVal;  // Reset temp var
+				while ((*(retVal + i)) != 0x0)
+				{
+					*temp_ptr = (*(retVal + i));
+					temp_ptr++;
+					i++;
+				}
+
+				// 2.3. Resize dirtStrLen
+				dirtStrLen = strlen(retVal);
+
+				if (dirtStrLen < 1)
+				{
+					HARKLE_ERROR(Fileroad, clean_filename, copy left algorithm appears to have failed);
+					success = false;
+				}
+			}
+		}
+	}
+	
+	// 3. Start replacing *ALL* bad chars
+	if (success == true)
+	{
+		temp_ptr = badChars;  // Reset temp var
+		for (i = 0; i < dirtStrLen; i++)
+		{
+			while (*temp_ptr != 0x0)
+			{
+				if ((*(retVal + i)) == *temp_ptr)
+				{
+					(*(retVal + i)) = '_';
+				}
+
+				temp_ptr++;  // Next badChar
+			}
+
+			temp_ptr = badChars;  // Reset temp var
+		}
+	}
+
+	// CLEAN UP
+	if (backUp)
+	{
+		if (false == release_a_string(&backUp))
+		{
+			HARKLE_ERROR(Fileroad, clean_filename, release_a_string failed);
+		}
+	}
+
+	if (success == false && inPlace == false && retVal)
+	{
+		if (false == release_a_string(&retVal))
+		{
+			HARKLE_ERROR(Fileroad, clean_filename, release_a_string failed);
 		}
 	}
 

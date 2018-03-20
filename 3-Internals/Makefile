@@ -1,15 +1,24 @@
 CC = gcc
 
-# 331: 
-# 	$(CC) -c Fileroad_Descriptors.c
-# 	$(CC) -o 3-3_File_Descriptor_Practice-1_main.exe Fileroad_Descriptors.o 3-3_File_Descriptor_Practice-1_main.c
+331:
+	$(CC) -c Fileroad.c
+	$(CC) -c Fileroad_Descriptors.c
+	$(CC) -c Memoroad.c
+	$(CC) -o 3-03_File_Descriptor_Practice-1_main.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o 3-03_File_Descriptor_Practice-1_main.c
+
+332:
+	$(CC) -c Fileroad.c
+	$(CC) -c Fileroad_Descriptors.c
+	$(CC) -c Memoroad.c
+	$(CC) -c Timeroad.c
+	$(CC) -c 3-03_File_Descriptor_Practice-2_redirect_bin_output.c
+	$(CC) -o redirect_bin_output.exe Fileroad.o Fileroad_Descriptors.o Memoroad.o Timeroad.o 3-03_File_Descriptor_Practice-2_redirect_bin_output.o
 
 341:
 	$(CC) -c Memoroad.c
 	$(CC) -c Signaleroad.c
 	$(CC) -c 3-04_Signal_Handling-1_nosig.c
 	$(CC) -o nosig.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_nosig.o
-	# Comment these proof of concepts source files out later
 	$(CC) -o 3-04_Signal_Handling-1_PoC.exe 3-04_Signal_Handling-1_PoC.c
 	$(CC) -c 3-04_Signal_Handling-1_PoC2.c
 	$(CC) -o 3-04_Signal_Handling-1_PoC2.exe Memoroad.o Signaleroad.o 3-04_Signal_Handling-1_PoC2.o
@@ -45,16 +54,11 @@ waiting:
 	$(CC) -o Waiting.exe 3-04_Signal_Handling-1_Waiting.c
 
 all:
-	# $(MAKE) 331
+	$(MAKE) 331
+	$(MAKE) 332
 	$(MAKE) 341
 	$(MAKE) 3101
 	$(MAKE) 3102
 
 clean: 
 	rm -f *.o *.exe *.so
-
-### OLD 3102 ###
-# $(CC) -o ./Map_Memory.o -c ../4-User_Mode/Map_Memory.c
-# $(CC) -c -I ../4-User_Mode/ Harkleproc.c
-# $(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o ./Map_Memory.o 3-10_Proc_Walk-2_main.c
-################

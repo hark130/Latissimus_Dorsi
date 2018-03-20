@@ -6,7 +6,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 ## TASK LIST
 * [ ] 1. Use POSIX system calls using GNU libc (3c)
 * [ ] 2. Understand the difference between System Calls and Library Functions (C)
-* [ ] 3. Open, close, modify, and duplicate File Descriptors (3c)
+* [X] 3. Open, close, modify, and duplicate File Descriptors (3c)
 * [ ] 4. Implement synchronization, memory protection, and shared memory using POSIX primitives and \*nix concepts (3c)
 * [ ] 5. Demonstrate Interprocess Communication knowledge by communicating between multiple applications (3c)
 * [ ] 6. Handle and send signals between applications (3c)
@@ -30,6 +30,18 @@ Developers will have an in-depth working knowledge of Linux Internals
 
 ## RESEARCH SOURCES
 
+* [File Descriptor Wiki](https://en.wikipedia.org/wiki/File_descriptor)
+* [Chapter 1. General Unix and Advanced C - File Descriptors](https://www.bottomupcs.com/file_descriptors.xhtml)
+* [nixCraft: Find Out How Many File Descriptors Are Being Used](https://www.cyberciti.biz/tips/linux-procfs-file-descriptors.html)
+* [File Descriptors Explained](https://linuxmeerkat.wordpress.com/2011/12/02/file-descriptors-explained/)
+* [GNU C Library: File Descriptor Flags](https://www.gnu.org/software/libc/manual/html_node/Descriptor-Flags.html)
+* [GNU C Library: File Status Flags](https://www.gnu.org/software/libc/manual/html_node/File-Status-Flags.html)
+* [File Descriptor Hijacking](http://phrack.org/issues/51/5.html#article)
+* [Hijacking for Fun and Profit](https://www.bignerdranch.com/blog/hijacking-for-fun-and-profit/) ...not sure about this one
+* [libc - Low-Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)
+* [Low Level Input/Output](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_8.html)... scroll down to [Duplicating Descriptors](http://kirste.userpage.fu-berlin.de/chemnet/use/info/libc/libc_toc.html#TOC139)
+* [Inter-Process Pipe-based Communication w/ example](https://linux.die.net/man/2/pipe)
+* [Creating Pipes in C](http://tldp.org/LDP/lpg/node11.html)
 * [procps - The /proc file system utilities](http://procps.sourceforge.net/)
 * [proc(5) man page](http://man7.org/linux/man-pages/man5/proc.5.html)
 * [Brief, but good, /proc/PID/maps rundown](https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps)
@@ -54,17 +66,65 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [CLI Alternatives to nohup](https://askubuntu.com/questions/600956/alternatives-to-nohup)
 * [syscall man page](http://man7.org/linux/man-pages/man2/syscall.2.html)... handy reference extricated from nosig.exe's comments
 * [Interfacing Linux Signals](http://syprog.blogspot.com/2011/10/iterfacing-linux-signals.html)... w/ Assembly
+* [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
 
 ## TO DO
 
-### 3-4-1
+### 3-3-1
+* [X] Open a File Descriptor
+* [X] Close a File Descriptor
+* [X] Modify a File Descriptor
 
+### 3-3-2 Duplicate a File Descriptor (redirect_bin_output.exe)
+**NOTE:**  This is a continuation of 3-3-2
+* [X] Take a CLI command, with flags/options, as an argument
+* [X] Based on the binary name and current time, create log names (changing invalid characters to underscores)
+	* [X] Parse binary name
+	* [X] Get timestamp
+	* [X] Create log file name
+	* [X] BUG: What if name is all garbage (e.g. %^&)
+	* [X] BUG: What if name is a directory (where's os_path_isfile()?)
+* [X] Populate struct with filenames for stdout and stderr
+* [X] Fork()
+* [X] Open() YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Redirect stdout and stderr to YYYYMMDD-HHMMSS-wrapped_bin-output/errors.txt
+* [X] Exec()
+* [X] Parent reports on the status of the child
+* [X] Glue it all together in redirect_bin_output main()
+
+### 3-3-3 
+* [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
+* [ ] Allow input to pass from redirect_bin_output.exe along that pipe
+
+#### IDEAS:
+* [ ] Duplicate a file desc and write to it twice, once for each file descriptor
+* [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
+* [X] Replace stdout with a different file descriptor (e.g., an actual open() file)
+* [X] Replace stderr with a different file descriptor (e.g., an actual open() file)
+* [ ] fork() a process to utilize a pipe as the input for a program/command called by exec()
+* [X] Write a binary wrapper that automatically redirects certain output to certain places
+	* ```command > output.txt```
+	* ```command >> output.txt```
+	* ```command 2> output.txt```
+	* ```command 2>> output.txt```
+	* ```command &> output.txt```
+	* ```command &>> output.txt```
+* [X] Write a function much like runcmd() found [here](https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html)
+
+## NOTES
+* File descriptor ranges from 0 to OPEN_MAX
+* [/dev/null](https://www.networkworld.com/article/3025497/linux/sending-data-into-the-void-with-dev-null.html)
+* Format specifier for uintmax_t: "uintmax_t max   %20ju %16jx\n" // try PRIuMAX if %ju unsupported
+* Finding the name of a file from a descriptor requires an inode search of the file system, since the operating system only maps descriptors to inodes, not file names.
+
+### 3-4-1 
+
+**NOTE:** Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
 * [X] Validate argument input
 * [X] Verify the file exists?
-* [ ] Verify it's a binary?
 * [X] Fork
 * [X] Call exec*
-* [ ] Write a signal handler
+* [X] Ignore the signals
 
 #### IDEAS:
 
@@ -75,6 +135,14 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Write a "wrapper" executable that will ignore certain ignorable signals, similar to the shell utility [nohup](https://en.wikipedia.org/wiki/Nohup)
 * If a child process makes the call exit(–1), what exit status will be seen by the parent?
 * [The Producer / Consumer Problem](https://users.cs.cf.ac.uk/Dave.Marshall/C/node32.html#SECTION003240000000000000000) - Control access of (consumer) reads and (producer) writes to a buffer
+* Create an API for a virtual filesystem in memory
+	* Calling the entry level function of this library would create a shared pipe with a fork()ed fs manager
+	* Back and forth communication could be facilitated across this pipe
+	* Control codes indicate certain commands
+	* Sample Communication:
+		* Are you there?  Go.
+		* How many files?  3.
+		* Receive a file.  Go.  Transmits file.  Recvd X bytes.
 
 #### NOTES:
 
@@ -100,8 +168,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 			* sigaction() - Allows the calling process to examine and/or specify the action to be associated with a specific signal.
 			* kill() - Used to send any signal to any process group or process.
 			* raise() - Sends a signal to the calling process or thread.
-			* signal() - Use sigaction() instead.
-			
+			* signal() - Use sigaction() instead.	
 		* message passing(?)
 
 ### 3-10-1
@@ -171,6 +238,16 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 
 * [X] See 4-User_Mode/Map_Memory.h 
 
+### 3-18 IDEAS
+
+* Kentucky Derby Process Racing
+	* Spawn a bunch of processes (horses)
+	* Send a signal to the process group to start (starting gun)
+	* Wait for the first process to finish (winner)
+	* Send a signal to the process group to stop (race is over) -or-
+	* Wait for the rest to finish (race is over)
+	* Visually report on the status of each horse (Mario Kart)
+
 ### NOTES
 
 * From proc(5) man page:
@@ -182,5 +259,3 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
               in this file as a set of strings separated by null bytes
               ('\0'), with a further null byte after the last string.
 * ```sudo setcap cap_sys_admin+ep 3-10_Proc_Walk-2_main.exe```
-
-

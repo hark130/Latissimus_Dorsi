@@ -28,6 +28,7 @@ Developers will apply standard ___ techniques to Linux system programming
 * [LD_PRELOAD Function Hooking](https://www.technovelty.org/c/using-ld_preload-to-override-a-function.html)
 * [Modifying a Dynamic Library Without Changing the Source Code](http://www.linuxjournal.com/article/7795)
 * [Magic of LD_PRELOAD for Userland Rootkits](http://fluxius.handgrep.se/2011/10/31/the-magic-of-ld_preload-for-userland-rootkits/)
+* [Tutorial - Write a System Call](https://brennan.io/2016/11/14/kernel-dev-ep3/)... sounds like an idea?
 
 ## TO DO
 
