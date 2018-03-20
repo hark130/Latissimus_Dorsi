@@ -29,11 +29,13 @@ la·tis·si·mus läˈtisəməs/ nounAnatomy noun: latissimus dorsi
 4. Linux User Mode Development
 5. Linux Kernel Development
 
-# [Releasable Products](https://github.com/hark130/Latissimus_Dorsi/wiki/Releasable-Products)
+# [Releasable Products](Releasable-Products)
 
-[print_PID_libraries](https://github.com/hark130/Latissimus_Dorsi/wiki/print_PID_libraries) - list files loaded into memory by a PID
+[nosig](nosig) - invoke a utility immune to all possible signals
 
-[redirect_bin_output](https://github.com/hark130/Latissimus_Dorsi/wiki/redirect_bin_output) - redirect the output of a binary into files
+[print_PID_libraries](print_PID_libraries) - list files loaded into memory by a PID
+
+[redirect_bin_output](redirect_bin_output) - redirect the output of a binary into files
 
 # Branching Policies
 * Master - should only contain finalized, verifiable, releasable code
