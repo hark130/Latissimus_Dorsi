@@ -40,6 +40,9 @@ CC = gcc
 	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Proc_Walk-2_main.o
 	$(CC) -c 3-10_Print_PID_Libraries-2_main.c
 	$(CC) -o print_PID_libraries.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Print_PID_Libraries-2_main.o
+	
+3181:
+	$(CC) -o grand_prix.exe -lncurses 3-18_Threading_Practice-1_Grand_Prix.c
 
 tests:
 	$(CC) -c Memoroad.c
