@@ -69,6 +69,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
 * [ncurses](https://www.gnu.org/software/ncurses/)
 * [ncurses How To](http://tldp.org/HOWTO/NCURSES-Programming-HOWTO/index.html)
+* [ncurses overlapping windows](https://www.gnu.org/software/guile-ncurses/manual/html_node/Overlay-and-manipulate-overlapped-windows.html)
 
 ## TO DO
 
