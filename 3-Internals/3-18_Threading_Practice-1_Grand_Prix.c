@@ -124,6 +124,7 @@ int main(int argc, char** argv)
 	}
 	
 	// END THE RACE
+	getch();  // Wait for the user to press a key
 	endwin();  // End curses mode
 	
 	// DONE
