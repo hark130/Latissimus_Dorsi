@@ -124,6 +124,12 @@ int main(int argc, char** argv)
 	}
 	
 	// END THE RACE
+	// Print "Press any key to end race"
+	// PLACEHOLDER
+	getch();  // Wait for the user to press a key
+	clear();  // Clear the screen
+	// Print race results page
+	// PLACEHOLDER
 	getch();  // Wait for the user to press a key
 	endwin();  // End curses mode
 	
