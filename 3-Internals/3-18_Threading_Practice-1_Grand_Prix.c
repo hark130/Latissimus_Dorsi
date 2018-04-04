@@ -108,7 +108,8 @@ int main(int argc, char** argv)
 	
 	// PRINT THE TRACK
 	initscr();  // Start curses mode
-	raw();  // Line buffering disabled
+	cbreak();  // Disables line buffering and erase/kill character-processing
+	// raw();  // Line buffering disabled
 	noecho();  // Disable echo
 	
 	// START THE RACE
