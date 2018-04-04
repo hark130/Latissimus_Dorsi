@@ -105,6 +105,8 @@ int main(int argc, char** argv)
 	bool winner = false;  // Update to true if any thread wins
 	WINDOW* trackWin = NULL;  // WINDOW pointer to the track window
 	WINDOW* rankBarWin = NULL;  // WINDOW pointer to the rank bar window
+	int numCols = 0;  // Number of columns available
+	int numRows = 0;  // Number of rows available
 	
 	// INPUT VALIDATION
 	
@@ -112,6 +114,11 @@ int main(int argc, char** argv)
 	
 	// PRINT THE TRACK
 	initscr();  // Start curses mode
+	getmaxyx(stdscr, numRows, numCols);  // Determine the maximum dimensions
+	if (ERR == numRows || ERR == numCols)
+	{
+		HARKLE_ERROR(Grand_Prix.c, main, getmaxyx failed);
+	}
 	cbreak();  // Disables line buffering and erase/kill character-processing
 	// raw();  // Line buffering disabled
 	noecho();  // Disable echo
