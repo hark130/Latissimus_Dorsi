@@ -93,6 +93,8 @@
 		
  */
 
+#include "Harklecurse.h"		// kill_a_window()
+#include "Harklerror.h"			// HARKLE_ERROR()
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <stdbool.h>			// bool, true, false
 
@@ -101,6 +103,8 @@ int main(int argc, char** argv)
 {
 	// LOCAL VARIABLES
 	bool winner = false;  // Update to true if any thread wins
+	WINDOW* trackWin = NULL;  // WINDOW pointer to the track window
+	WINDOW* rankBarWin = NULL;  // WINDOW pointer to the rank bar window
 	
 	// INPUT VALIDATION
 	
@@ -138,6 +142,25 @@ int main(int argc, char** argv)
 	// Print race results page
 	// PLACEHOLDER
 	getch();  // Wait for the user to press a key
+	
+	// CLEAN UP
+	// 1. trackWin
+	if (NULL != trackWin)
+	{
+		if (OK != kill_a_window(&trackWin))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_window failed);
+		}
+	}
+	// 2. rankBarWin
+	if (NULL != rankBarWin)
+	{
+		if (OK != kill_a_window(&rankBarWin))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_window failed);
+		}
+	}
+	// 3. Restore tty modes, reset cursor location, and resets the terminal into the proper non-visual mode
 	endwin();  // End curses mode
 	
 	// DONE
