@@ -128,6 +128,8 @@ int main(int argc, char** argv)
 	}
 	
 	// END THE RACE
+	// Wait for other threads to finish
+	// PLACEHOLDER
 	// Print "Press any key to end race"
 	// PLACEHOLDER
 	getch();  // Wait for the user to press a key
