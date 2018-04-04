@@ -96,7 +96,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
 * [ ] Allow input to pass from redirect_bin_output.exe along that pipe
 
-#### IDEAS:
+#### 3-3 IDEAS:
 * [ ] Duplicate a file desc and write to it twice, once for each file descriptor
 * [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
 * [X] Replace stdout with a different file descriptor (e.g., an actual open() file)
@@ -126,7 +126,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [X] Call exec*
 * [X] Ignore the signals
 
-#### IDEAS:
+#### 3-4 IDEAS:
 
 * Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
 * Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
@@ -238,11 +238,24 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 
 * [X] See 4-User_Mode/Map_Memory.h 
 
+### 3-18-1 Monaco Grand Prix Thread Racing
+
+* [ ] Spawn threads with dedicated pipes (F1)
+* [ ] Send a signal to the thread group to start (green light)
+* [ ] Threads begin process something (ZOOM) to be determined later
+* [ ] Main thread begins looping over pipes (track status)
+* [ ] Main thread prints status w/ ncurses (track indicator)
+* [ ] Continue until the first thread finishes 260.286 km / 161.734 mi (winner) 
+* [ ] Send a signal to the thread group to stop (race is over)
+* [ ] Report on the race results
+
 ### 3-18 IDEAS
 
-* Kentucky Derby Process Racing
-	* Spawn a bunch of processes (horses)
+* Monaco Grand Prix Thread Racing
+	* Spawn a bunch of threads (horses) with dedicated pipes
 	* Send a signal to the process group to start (starting gun)
+	* Begin looping over pipes (race track status)
+	* Update status w/ ncurses (print updating race track)
 	* Wait for the first process to finish (winner)
 	* Send a signal to the process group to stop (race is over) -or-
 	* Wait for the rest to finish (race is over)
