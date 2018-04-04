@@ -1,5 +1,5 @@
 #include "Harklerror.h"
-#include <ncurses.h>
+#include <ncurses.h>			// WINDOW
 #include <stdbool.h>			// bool, true, false
 
 
@@ -7,7 +7,7 @@ int kill_a_window(WINDOW** oldWin_ptr)
 {
 	// LOCAL VARIABLES
 	bool success = true;  // Make this false if anything fails
-	retVal = OK;  // Function's return value
+	int retVal = OK;  // Function's return value
 	WINDOW* temp_ptr = NULL;
 	int nRetVal = OK;  // ncurse function return values
 	

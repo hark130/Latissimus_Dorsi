@@ -1,6 +1,7 @@
 #ifndef __HARKLECURSE__
 #define __HARKLECURSE__
 
+#include <ncurses.h>			// WINDOW
 
 /*
 	PURPOSE - Erase an ncurses window
