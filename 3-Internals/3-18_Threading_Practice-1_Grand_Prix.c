@@ -16,6 +16,8 @@
 			* White
 			* Bold
 			* Dynamic?
+		4. Appearance
+			* Surround in a box()
 	2. Rank Bar
 		1. Size
 			* One entire edge
@@ -28,6 +30,8 @@
 			* Thread name
 			* Thread ranking
 			* Thread lap
+		4. Appearance
+			* Surround in a box()
 	3. Final Results
 		1. Data displayed
 			* Thread name
