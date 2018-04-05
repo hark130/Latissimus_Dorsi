@@ -8,7 +8,7 @@ typedef struct hThreadDetails
 	char* tName;						// Name of the thread (optional)
 	int tNum;							// Application-defined number
 	pthread_t threadID;					// ID returned by pthread_create()
-	void*(*start_routine)(void*);		// Function point to the thread's startup function
+	void*(*strtFunc)(void*);			// Function point to the thread's startup function
 	void* argvString;					// From command-line argument
 	size_t argSize;						// Size of the buffer containing argvString and any nul/NULL termination
 	pthread_mutex_t pipeMutex; 			// Thread's pipe mutex
