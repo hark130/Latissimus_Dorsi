@@ -71,6 +71,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ncurses How To](http://tldp.org/HOWTO/NCURSES-Programming-HOWTO/index.html)
 * [ncurses overlapping windows](https://www.gnu.org/software/guile-ncurses/manual/html_node/Overlay-and-manipulate-overlapped-windows.html)
 * [Ncurses Programming Guide](www.cs.ukzn.ac.za/~hughm/os/notes/ncurses.html)
+* [ncurses Extended ASCII Charts](http://melvilletheatre.com/articles/ncurses-extended-characters/index.html)
 
 ## TO DO
 
