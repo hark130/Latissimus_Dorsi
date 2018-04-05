@@ -43,7 +43,9 @@ CC = gcc
 	
 3181:
 	$(CC) -c Harklecurse.c
-	$(CC) -o grand_prix.exe Harklecurse.c 3-18_Threading_Practice-1_Grand_Prix.c -lncurses
+	$(CC) -c Harklepipe.c
+	$(CC) -c -pthread Harklethread.c
+	$(CC) -o grand_prix.exe -pthread Harklecurse.o Harklepipe.o Harklethread.o 3-18_Threading_Practice-1_Grand_Prix.c -lncurses
 
 tests:
 	$(CC) -c Memoroad.c
