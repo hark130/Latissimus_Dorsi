@@ -97,32 +97,134 @@
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <stdbool.h>			// bool, true, false
+#include <stdio.h>				// printf
+
+#define OUTER_BORDER_WIDTH_H 4
+#define OUTER_BORDER_WIDTH_V 2
+#define INNER_BORDER_WIDTH_H 4
+#define INNER_BORDER_WIDTH_V 2
+#define RANK_BAR_WIDTH 25
 
 
 int main(int argc, char** argv)
 {
 	// LOCAL VARIABLES
+	int retVal = 0;  // Function's return value, also holds ncurses return values
 	bool winner = false;  // Update to true if any thread wins
-	WINDOW* trackWin = NULL;  // WINDOW pointer to the track window
-	WINDOW* rankBarWin = NULL;  // WINDOW pointer to the rank bar window
+	bool success = true;  // Make this false if anything fails
+	winDetails_ptr stdWin = NULL;  // hCurseWinDetails struct pointer for the stdscr window
+	winDetails_ptr trackWin = NULL;  // hCurseWinDetails struct pointer for the track window
+	winDetails_ptr rankBarWin = NULL;  // hCurseWinDetails struct pointer for the rank bar window
 	int numCols = 0;  // Number of columns available
 	int numRows = 0;  // Number of rows available
 	
 	// INPUT VALIDATION
-	
+
 	// BUILD RACE CARS
 	
 	// PRINT THE TRACK
-	initscr();  // Start curses mode
-	getmaxyx(stdscr, numRows, numCols);  // Determine the maximum dimensions
-	if (ERR == numRows || ERR == numCols)
+	if (true == success)
 	{
-		HARKLE_ERROR(Grand_Prix.c, main, getmaxyx failed);
+		// 1. Setup ncurses
+		initscr();  // Start curses mode
+		cbreak();  // Disables line buffering and erase/kill character-processing
+		// raw();  // Line buffering disabled
+		noecho();  // Disable echo
+
+		// 2. Main Window (stdscr)
+		stdWin = build_a_winDetails_ptr();
+
+		if (!stdWin)
+		{
+			HARKLE_ERROR(Grand_Prix, main, build_a_winDetails_ptr failed);
+		}
+		else
+		{
+			// Populate Main Window struct
+			stdWin->win_ptr = stdscr;
+			stdWin->upperR = 0;
+			stdWin->leftC = 0;
+			getmaxyx(stdscr, stdWin->nRows, stdWin->nCols);  // Determine the maximum dimensions
+			if (ERR == stdWin->nRows || ERR == stdWin->nCols)
+			{
+				HARKLE_ERROR(Grand_Prix, main, getmaxyx failed);
+				success = false;
+			}
+
+			retVal = wborder(stdWin->win_ptr, \
+				             ACS_VLINE, ACS_VLINE, \
+			    	         ACS_HLINE, ACS_HLINE, \
+			        	     ACS_ULCORNER, ACS_URCORNER, \
+			            	 ACS_LLCORNER, ACS_LRCORNER);
+
+			if (OK != retVal)
+			{
+				HARKLE_ERROR(Grand_Prix, main, wborder failed);
+				success = false;
+			}
+		}
 	}
-	cbreak();  // Disables line buffering and erase/kill character-processing
-	// raw();  // Line buffering disabled
-	noecho();  // Disable echo
-	
+
+	// 3. Track Window
+	if (true == success)
+	{
+		trackWin = \
+			populate_a_winDetails_ptr(stdWin->nRows - INNER_BORDER_WIDTH_V - OUTER_BORDER_WIDTH_V, \
+			                          stdWin->nCols - RANK_BAR_WIDTH - INNER_BORDER_WIDTH_H - (2 * OUTER_BORDER_WIDTH_H), \
+			                          OUTER_BORDER_WIDTH_V, \
+			                          OUTER_BORDER_WIDTH_H);
+
+		if (!trackWin)
+		{
+			HARKLE_ERROR(Grand_Prix, main, populate_a_winDetails_ptr failed);
+			success = false;
+		}
+		else
+		{
+			retVal = wborder(trackWin->win_ptr, \
+				             ACS_VLINE, ACS_VLINE, \
+			    	         ACS_HLINE, ACS_HLINE, \
+			        	     ACS_ULCORNER, ACS_URCORNER, \
+			            	 ACS_LLCORNER, ACS_LRCORNER);
+
+			if (OK != retVal)
+			{
+				HARKLE_ERROR(Grand_Prix, main, wborder failed);
+				success = false;
+			}
+		}
+	}
+		
+	// 4. Rank Bar Window
+	if (true == success)
+	{
+		rankBarWin = \
+			populate_a_winDetails_ptr(stdWin->nRows - (2 * OUTER_BORDER_WIDTH_V), \
+			                          RANK_BAR_WIDTH, \
+			                          OUTER_BORDER_WIDTH_V, \
+			                          trackWin->nCols + (2 * OUTER_BORDER_WIDTH_H));
+
+		if (!rankBarWin)
+		{
+			HARKLE_ERROR(Grand_Prix, main, populate_a_winDetails_ptr failed);
+			success = false;
+		}
+		else
+		{
+			retVal = wborder(rankBarWin->win_ptr, \
+				             ACS_VLINE, ACS_VLINE, \
+			    	         ACS_HLINE, ACS_HLINE, \
+			        	     ACS_ULCORNER, ACS_URCORNER, \
+			            	 ACS_LLCORNER, ACS_LRCORNER);
+
+			if (OK != retVal)
+			{
+				HARKLE_ERROR(Grand_Prix, main, wborder failed);
+				success = false;
+			}
+		}
+	}
+
 	// START THE RACE
 	while (1)
 	{
@@ -151,20 +253,44 @@ int main(int argc, char** argv)
 	getch();  // Wait for the user to press a key
 	
 	// CLEAN UP
-	// 1. trackWin
-	if (NULL != trackWin)
+	// 1. stdWin
+	if (NULL != stdWin)
 	{
-		if (OK != kill_a_window(&trackWin))
+		// delwin the WINDOW*
+		if (OK != kill_a_window(&(stdWin->win_ptr)))
 		{
 			HARKLE_ERROR(Grand_Prix.c, main, kill_a_window failed);
 		}
+		// free the struct
+		if (false != kill_a_winDetails_ptr(&stdWin))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_winDetails_ptr failed);	
+		}
 	}
-	// 2. rankBarWin
-	if (NULL != rankBarWin)
+	// 2. trackWin
+	if (NULL != trackWin)
 	{
-		if (OK != kill_a_window(&rankBarWin))
+		if (OK != kill_a_window(&(trackWin->win_ptr)))
 		{
 			HARKLE_ERROR(Grand_Prix.c, main, kill_a_window failed);
+		}
+		// free the struct
+		if (false != kill_a_winDetails_ptr(&trackWin))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_winDetails_ptr failed);	
+		}
+	}
+	// 3. rankBarWin
+	if (NULL != rankBarWin)
+	{
+		if (OK != kill_a_window(&(rankBarWin->win_ptr)))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_window failed);
+		}
+		// free the struct
+		if (false != kill_a_winDetails_ptr(&rankBarWin))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, kill_a_winDetails_ptr failed);	
 		}
 	}
 	// 3. Restore tty modes, reset cursor location, and resets the terminal into the proper non-visual mode
