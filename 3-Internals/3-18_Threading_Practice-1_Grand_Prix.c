@@ -72,13 +72,14 @@
 		[ ] Dynamically place it (on track or off track)
 		[ ] Color it
 [ ] Rank Bar
-	[ ] Draw it
-	[ ] Dynamically size it
+	[X] Draw it
+	[X] Dynamically size it
 	[ ] Populate it
 		[ ] Thread names
 		[ ] Thread colors
 		[ ] Thread details
 			[ ] Thread placing
+			[ ] Thread name
 			[ ] Thread lap
 			[ ] Iterations behind leader
 [ ] Final Results
