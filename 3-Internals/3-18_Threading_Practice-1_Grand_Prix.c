@@ -96,6 +96,7 @@
 
 #include "Harklecurse.h"		// kill_a_window()
 #include "Harklerror.h"			// HARKLE_ERROR()
+#include "Harklethread.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <stdbool.h>			// bool, true, false
 #include <stdio.h>				// printf
@@ -106,10 +107,38 @@
 #define INNER_BORDER_WIDTH_V 2
 #define RANK_BAR_WIDTH 25
 
+#ifndef GRAND_PRIX_MAX_TRIES
+// MACRO to limit repeated allocation attempts
+#define GRAND_PRIX_MAX_TRIES 3
+#endif // GRAND_PRIX_MAX_TRIES
+
+typedef struct threadGrandPrixRace
+{
+	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
+} tgpRacer, *tgpRacer_ptr;
+
+
+/*
+	PURPOSE - Function to be executed by each of the racer's
+	INPUT
+		racerNum - The racer thread's tNum
+	OUTPUT - None
+	NOTES
+		This function is basically a placeholder until most everything
+			else is constructed.
+ */
+void racer_func(int racerNum);
+
 
 int main(int argc, char** argv)
 {
 	// LOCAL VARIABLES
+	//////////////////////////// Program Defaults ////////////////////////////
+	int numF1s = 10;  // Number of 'racing' threads to be spawned
+	int raceLen = 162;  // Length of the race in miles, rounded up
+	int upInterval = 1;  // Frequency of main thread updates
+	int numLaps = 78;  // Number of the laps the 'racing' threads must take
+	//////////////////////////////////////////////////////////////////////////
 	int retVal = 0;  // Function's return value, also holds ncurses return values
 	bool winner = false;  // Update to true if any thread wins
 	bool success = true;  // Make this false if anything fails
@@ -118,10 +147,31 @@ int main(int argc, char** argv)
 	winDetails_ptr rankBarWin = NULL;  // hCurseWinDetails struct pointer for the rank bar window
 	int numCols = 0;  // Number of columns available
 	int numRows = 0;  // Number of rows available
+	int i = 0;  // Iterating variable
+	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	
 	// INPUT VALIDATION
+	if (numF1s < 1)
+	{
+//////////////////////////////// CONTINUE HERE ////////////////////////////////
+	}
 
 	// BUILD RACE CARS
+	if (true == success)
+	{
+		// 1. Allocate an array for the racers
+		while (i < GRAND_PRIX_MAX_TRIES && !racerArr_ptr)
+		{
+			racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, tgpRacer_ptr);
+			i++;
+		}
+
+		// 2. Create the racers
+		for (i = 1; i > numF1s; i++)
+		{
+//////////////////////////////// THEN CONTINUE HERE ////////////////////////////////
+		}
+	}
 	
 	// PRINT THE TRACK
 	if (true == success)
@@ -300,6 +350,24 @@ int main(int argc, char** argv)
 	// DONE
 	return 0;
 }
+
+
+void racer_func(int racerNum)
+{
+	// LOCAL VARIABLES
+	int count = 10;
+
+	// COUNTDOWN
+	while (count)
+	{
+		fprintf(stdout, "Thread #%02d - %d!\n", racerNum, count);
+		count--;
+	}
+
+	// DONE
+	return;
+}
+
 
 /*
 attron/attroff bit-mask attributes
