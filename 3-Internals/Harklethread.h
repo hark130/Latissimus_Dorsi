@@ -5,8 +5,8 @@
 
 typedef struct hThreadDetails
 {
-	char* name;							// Name of the thread (optional)
-	int threadNum;						// Application-defined number
+	char* tName;						// Name of the thread (optional)
+	int tNum;							// Application-defined number
 	pthread_t threadID;					// ID returned by pthread_create()
 	void*(*start_routine)(void*);		// Function point to the thread's startup function
 	void* argvString;					// From command-line argument
