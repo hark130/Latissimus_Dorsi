@@ -1,4 +1,4 @@
-#include "Harklepipe.h"		// build_a_pipe()
+#include "Harklepipe.h"		// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
 #include "Memoroad.h"		// copy_a_string(), get_me_a_buffer()
 #include <string.h>			// memcpy(), strerror()
 
@@ -25,6 +25,21 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 	int tmpInt = 0;  // Return value from build_a_pipe()
 	
 	// INPUT VALIDATION
+	if (!start_routine)
+	{
+		HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, NULL pointer);
+		success = false;
+	}
+	else if ((arg && !argSize) || (!arg && argSize))
+	{
+		HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, arg/argSize mismatch);
+		success = false;
+	}
+	else if (arg && argSize < 0)
+	{
+		HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, Invalid argSize);
+		success = false;
+	}
 	
 	// ALLOCATE MEMORY
 	if (true == success)
@@ -161,11 +176,61 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
+	hThrDetails_ptr tmpStruct_ptr = NULL;
+	bool success = true;  // If anything fails, make this false
 	
-	// 1. retVal->tName
-	// 2. retVal->argvString
+	// INPUT VALIDATION
+	if (!oldStruct_ptr || !(*oldStruct_ptr))
+	{
+		HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, NULL pointer);
+		success = false;
+	}
+	else
+	{
+		tmpStruct_ptr = *oldStruct_ptr;
+	}
+	
+	// ZEROIZE, FREE, DESTROY STRUCT MEMBERS
+	// 1. char* tName;							// Name of the thread (optional)
+	if (tmpStruct_ptr->tName)
+	{
+		if (false == release_a_string(&(tmpStruct_ptr->tName)))
+		{
+			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, release_a_string failed);
+			success = false;
+		}
+	}
+	// 2. int tNum;								// Application-defined number
+	tmpStruct_ptr->tNum = 0;
+	// 3. pthread_t threadID;					// ID returned by pthread_create()
+	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////	
+	// 4. void*(*strtFunc)(void*);				// Function point to the thread's startup function
+	tmpStruct_ptr->strtFunc = NULL;
+	// 5. void* tArgvString;					// From command-line argument
+	if (tmpStruct_ptr->tArgvString)
+	{
+		if (false == release_a_string_len(&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
+		{
+			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, release_a_string_len failed);
+			success = false;
+		}
+	}
+	// 6. size_t tArgSize;						// Size of the buffer containing argvString and any nul/NULL termination
+	tmpStruct_ptr->tArgSize = 0;
+	// 7. pthread_mutex_t pipeMutex; 			// Thread's pipe mutex
+	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
+	// 8. pthread_mutexattr_t pipeMutexAttr;	// Attributes for thread's pipe mutex
+	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
+	// 9. int pipeFDs[2]; // Pipe used to send data from the thread to the main thread
+	tmpStruct_ptr->pipeFDs[HPIPE_READ] = 0;
+	tmpStruct_ptr->pipeFDs[HPIPE_WRITE] = 0;
 
 	// DONE
+	if (false == success)
+	{
+		retVal = false;
+	}
+	
 	return retVal;
 }
 
