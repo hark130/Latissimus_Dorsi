@@ -51,10 +51,10 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 
 
 /*
-	PURPOSE - Allocate heap memory for a hCurseWinDetails struct pointer
+	PURPOSE - Allocate heap memory for a hThreadDetails struct pointer
 	INPUT - None
 	OUTPUT
-		On success, a pointer to a hCurseWinDetails struct
+		On success, a pointer to a hThreadDetails struct
 		On failure, NULL
 	NOTES
 		It is the caller's responsibility to free the memory allocated here
@@ -63,7 +63,7 @@ hThrDetails_ptr allocate_a_hThrDetails_ptr(void);
 
 
 /*
-	PURPOSE - Zeroize, free, and NULL a heap-allocated hCurseWinDetails struct pointer
+	PURPOSE - Zeroize, free, and NULL a heap-allocated hThreadDetails struct pointer
 	INPUT
 		oldStruct_ptr - A pointer to a heap-allocated hThrDetails_ptr
 	OUTPUT
@@ -71,11 +71,11 @@ hThrDetails_ptr allocate_a_hThrDetails_ptr(void);
 		On failure, false
 	NOTES
 		The following struct members will be zeroized, free()d, destroyed, etc:
-			name
-			threadNum
+			tName
+			tNum
 			threadID(?)
-			argvString
-			argSize
+			tArgvString
+			tArgSize
 			pipeMutex
 			pipeMutexAttr
 			pipeFDs
