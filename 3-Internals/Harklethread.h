@@ -8,6 +8,7 @@ typedef struct hThreadDetails
 	char* tName;						// Name of the thread (optional)
 	int tNum;							// Application-defined number
 	pthread_t threadID;					// ID returned by pthread_create()
+	pthread_attr_t tAttr;				// Attributes used in the creation of a new thread
 	void*(*strtFunc)(void*);			// Function point to the thread's startup function
 	void* tArgvString;					// From command-line argument
 	size_t tArgSize;					// Size of the buffer containing argvString and any nul/NULL termination
@@ -41,7 +42,8 @@ typedef struct hThreadDetails
 			pthread_create(&(self->threadID), NULL, start_routine, argvString);
 		arg's pointer will not be copied into the struct.  Instead, arg's
 			buffer will be replicated into a heap-allocated array stored in
-			self->argvString, dimension of argSize. 
+			self->argvString, dimension of argSize.
+		tAttr member is assigned default values
  */
 hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 	                                     int threadNum, \
@@ -74,6 +76,7 @@ hThrDetails_ptr allocate_a_hThrDetails_ptr(void);
 			tName
 			tNum
 			threadID(?)
+			tAttr
 			tArgvString
 			tArgSize
 			pipeMutex

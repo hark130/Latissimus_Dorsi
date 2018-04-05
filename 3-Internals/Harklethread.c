@@ -22,7 +22,7 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 	hThrDetails_ptr retVal = NULL;
 	bool success = true;  // If anything fails, make this false
 	void* tmp_ptr = NULL;  // Return value from string.h function calls
-	int tmpInt = 0;  // Return value from build_a_pipe()
+	int tmpInt = 0;  // Return value from build_a_pipe()/pthread_attr_init()
 	
 	// INPUT VALIDATION
 	if (!start_routine)
@@ -98,17 +98,30 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 			tmp_ptr = NULL;  // Reset temp variable
 		}
 	}
-	
-	// 2. Initialize the mutex
+
+	// 2. Initialize the thread attributes
 	if (true == success)
 	{
-		// 1. pthread_mutex_t pipeMutex; // Thread's pipe mutex
+		// pthread_attr_t tAttr;  // Attributes used in the creation of a new thread
+		tmpInt = pthread_attr_init(&(retVal->tAttr));
+
+		if (tmpInt)
+		{
+			HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, pthread_attr_init failed);
+			success = false;
+		}
+	}
+	
+	// 3. Initialize the mutex
+	if (true == success)
+	{
+		// 3.1. pthread_mutex_t pipeMutex; // Thread's pipe mutex
 		//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
-		// 2. pthread_mutexattr_t pipeMutexAttr; // Attributes for thread's pipe mutex
+		// 3.2. pthread_mutexattr_t pipeMutexAttr; // Attributes for thread's pipe mutex
 		//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
 	}
 	
-	// 3. Build-A-Pipe Workshop
+	// 4. Build-A-Pipe Workshop
 	if (true == success)
 	{
 		tmpInt = make_a_pipe(retVal->pipeFDs, 0);
@@ -153,31 +166,13 @@ hThrDetails_ptr allocate_a_hThrDetails_ptr(void)
 }
 
 
-/*
-	PURPOSE - Zeroize, free, and NULL a heap-allocated hCurseWinDetails struct pointer
-	INPUT
-		oldStruct_ptr - A pointer to a heap-allocated hThrDetails_ptr
-	OUTPUT
-		On success, true
-		On failure, false
-	NOTES
-		The following struct members will be zeroized, free()d, destroyed, etc:
-			name
-			threadNum
-			threadID(?)
-			argvString
-			argSize
-			pipeMutex
-			pipeMutexAttr
-			pipeFDs
-		The variable pointed at by oldStruct_ptr will be assigned NULL
- */
 bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
 	hThrDetails_ptr tmpStruct_ptr = NULL;
 	bool success = true;  // If anything fails, make this false
+	int tmpInt = 0;  // Return values from library functions
 	
 	// INPUT VALIDATION
 	if (!oldStruct_ptr || !(*oldStruct_ptr))
@@ -203,10 +198,21 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 	// 2. int tNum;								// Application-defined number
 	tmpStruct_ptr->tNum = 0;
 	// 3. pthread_t threadID;					// ID returned by pthread_create()
-	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////	
-	// 4. void*(*strtFunc)(void*);				// Function point to the thread's startup function
+	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
+	// 4. pthread_attr_t tAttr;					// Attributes used in the creation of a new thread
+	if (tmpStruct_ptr->tAttr)
+	{
+		tmpInt = pthread_attr_destroy(&(tmpStruct_ptr->tAttr));
+
+		if (tmpInt)
+		{
+			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, pthread_attr_destroy failed);
+			success = false;
+		}
+	}
+	// 5. void*(*strtFunc)(void*);				// Function point to the thread's startup function
 	tmpStruct_ptr->strtFunc = NULL;
-	// 5. void* tArgvString;					// From command-line argument
+	// 6. void* tArgvString;					// From command-line argument
 	if (tmpStruct_ptr->tArgvString)
 	{
 		if (false == release_a_string_len(&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
@@ -215,13 +221,13 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 			success = false;
 		}
 	}
-	// 6. size_t tArgSize;						// Size of the buffer containing argvString and any nul/NULL termination
+	// 7. size_t tArgSize;						// Size of the buffer containing argvString and any nul/NULL termination
 	tmpStruct_ptr->tArgSize = 0;
-	// 7. pthread_mutex_t pipeMutex; 			// Thread's pipe mutex
+	// 8. pthread_mutex_t pipeMutex; 			// Thread's pipe mutex
 	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
-	// 8. pthread_mutexattr_t pipeMutexAttr;	// Attributes for thread's pipe mutex
+	// 9. pthread_mutexattr_t pipeMutexAttr;	// Attributes for thread's pipe mutex
 	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
-	// 9. int pipeFDs[2]; // Pipe used to send data from the thread to the main thread
+	// 10. int pipeFDs[2]; // Pipe used to send data from the thread to the main thread
 	tmpStruct_ptr->pipeFDs[HPIPE_READ] = 0;
 	tmpStruct_ptr->pipeFDs[HPIPE_WRITE] = 0;
 
