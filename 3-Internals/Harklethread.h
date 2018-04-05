@@ -79,6 +79,7 @@ hThrDetails_ptr allocate_a_hThrDetails_ptr(void);
 			pipeMutex
 			pipeMutexAttr
 			pipeFDs
+		This function will not close() an FDs that may remain in pipeFDs
 		The variable pointed at by oldStruct_ptr will be assigned NULL
  */
 bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr);
