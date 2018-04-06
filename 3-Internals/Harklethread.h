@@ -2,6 +2,7 @@
 #define __HARKLETHREAD__
 
 #include <pthread.h>
+#include <stdbool.h>			// bool, true, false
 
 typedef struct hThreadDetails
 {
