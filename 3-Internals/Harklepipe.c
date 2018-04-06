@@ -1,4 +1,5 @@
 #include <errno.h>			// errno
+#include "Harklepipe.h"		// HPIPE_READ, HPIPE_WRITE
 #include "Harklerror.h"		// HARKLE_ERROR
 #include <stdbool.h>		// bool, true, false
 #include <stdio.h>			// fprintf()
