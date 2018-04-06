@@ -13,8 +13,8 @@
 
 
 /*
-	PURPOSE - A helper function, local to Harklemath.c, to calculate *this* 
-		machine's maximum level of precision at runtime
+	PURPOSE - A local helper function, local to Harklemath.c, to calculate
+		*this* machine's maximum level of precision at runtime
 	INPUT - None
 	OUTPUT
 		On success, maximum level of decimal places supported
@@ -31,18 +31,6 @@ int calc_max_precision(void);
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	PURPOSE - Determine if one double is greater than another to a certain
-		level of precision
-	INPUT
-		x - Is x greater than...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x > y, true
-		Otherwise, false
-		On error, false
- */
 bool dble_greater_than(double x, double y, int precision)
 {
 	// LOCAL VARIABLES
@@ -83,18 +71,6 @@ bool dble_greater_than(double x, double y, int precision)
 }
 
 
-/*
-	PURPOSE - Determine if one double is less than another to a certain
-		level of precision
-	INPUT
-		x - Is x less than...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x < y, true
-		Otherwise, false
-		On error, false
- */
 bool dble_less_than(double x, double y, int precision)
 {
 	// LOCAL VARIABLES
@@ -135,18 +111,6 @@ bool dble_less_than(double x, double y, int precision)
 }
 
 
-/*
-	PURPOSE - Determine if one double is equal to another to a certain
-		level of precision
-	INPUT
-		x - Is x equal...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x == y, true
-		Otherwise, false
-		On error, false
- */
 bool dble_equal_to(double x, double y, int precision)
 {
 	// LOCAL VARIABLES
@@ -187,80 +151,62 @@ bool dble_equal_to(double x, double y, int precision)
 }
 
 
-/*
-	PURPOSE - Determine if one double is NOT equal to another to a certain
-		level of precision
-	INPUT
-		x - Is x NOT equal...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x != y, true
-		Otherwise, false
-		On error, false
-	NOTES
-		This function calls and returns the opposite of:
-			dble_equal_to()
- */
-bool dble_not_equal(double x, double y, int precision);
+bool dble_not_equal(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	
+	// CALL dble_equal_to()
+	if (true == dble_equal_to(x, y, precision))
+	{
+		retVal = false;	
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
-/*
-	PURPOSE - Determine if one double is greater than or equal to
-		another to a certain level of precision
-	INPUT
-		x - Is x greater than or equal to...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x >= y, true
-		Otherwise, false
-		On error, false
-	NOTES
-		This function will call the following functions in this order:
-			dble_equal_to()
-			dble_greater_than()
- */
-bool dble_greater_than_equal_to(double x, double y, int precision);
+bool dble_greater_than_equal_to(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;
+	
+	// CALL dble_equal_to()
+	if (true == dble_equal_to(x, y, precision))
+	{
+		retVal = true;	
+	}
+	else if (true == dble_greater_than(x, y, precision))
+	{
+		retVal = true;	
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
-/*
-	PURPOSE - Determine if one double is less than another to a certain
-		level of precision
-	INPUT
-		x - Is x less than or equal to...
-		y - ...y...
-		precision - ...considering this many decimal places?
-	OUTPUT
-		If x <= y, true
-		Otherwise, false
-		On error, false
-	NOTES
-		This function will call the following functions in this order:
-			dble_equal_to()
-			dble_less_than()
- */
-bool dble_less_than_equal_to(double x, double y, int precision);
+bool dble_less_than_equal_to(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;
+	
+	// CALL dble_equal_to()
+	if (true == dble_equal_to(x, y, precision))
+	{
+		retVal = true;	
+	}
+	else if (true == dble_less_than(x, y, precision))
+	{
+		retVal = true;	
+	}
+	
+	// DONE
+	return retVal;
+}
 
 
-/*
-	PURPOSE - Extricate precision 'mask' calculation from the floating point
-		functions
-	INPUT
-		precision - Number of decimal points of precision desired
-	OUTPUT
-		On success, a double value to be used as a comparative value
-		On failure, 0
-	NOTES
-		This function does not support levels of precision below 1
-		This function will attempt to determine/calculate the maximum level
-			of precision for the system it is compiled on.
-		I haven't yet determined how I want to handle TOO much desired
-			precision.
-		Also, I haven't yet determined how I want to handle the system's
-			maximum level of precision if the caller's desired level of
-			precision exceeds the system's maximum precision.
- */
 double calc_precision(int precision)
 {
 	// LOCAL VARIABLES
