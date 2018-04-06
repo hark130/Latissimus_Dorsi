@@ -99,7 +99,9 @@
 #include "Harklethread.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <stdbool.h>			// bool, true, false
+#include <stdint.h>				// intptr_t
 #include <stdio.h>				// printf
+#include <stdlib.h>				// calloc()
 
 #define OUTER_BORDER_WIDTH_H 4
 #define OUTER_BORDER_WIDTH_V 2
@@ -148,6 +150,7 @@ int main(int argc, char** argv)
 	int numCols = 0;  // Number of columns available
 	int numRows = 0;  // Number of rows available
 	int i = 0;  // Iterating variable
+	int numTries = 0;  // Counter for memory allocation function calls
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
 	
@@ -162,10 +165,10 @@ int main(int argc, char** argv)
 	if (true == success)
 	{
 		// 1. Allocate an array for the racers
-		while (i < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
+		while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
 		{
-			racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, tgpRacer_ptr);
-			i++;
+			racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, sizeof(tgpRacer_ptr));
+			numTries++;
 		}
 
 		if (NULL == racerArr_ptr)
@@ -178,13 +181,31 @@ int main(int argc, char** argv)
 			// 2. Create the racers
 			for (i = 0; i < numF1s; i++)
 			{
-				racerArr_ptr[i] = create_a_hThrDetails_ptr(NULL, i + 1, racer_func, i + 1, sizeof(int));
+				// 2.1. Allocate a struct
+				numTries = 0;
+				while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
+				{
+					racerArr_ptr[i] = (tgpRacer_ptr)calloc(1, sizeof(tgpRacer));
+					numTries++;
+				}
 
 				if (NULL == racerArr_ptr[i])
 				{
-					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					HARKLE_ERROR(Grand_Prix, main, calloc failed);
 					success = false;
 					break;
+				}
+				else
+				{
+					// 2.2. Populate that struct
+					racerArr_ptr[i]->F1Details = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
+
+					if (NULL == racerArr_ptr[i]->F1Details)
+					{
+						HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+						success = false;
+						break;
+					}
 				}
 			}
 		}
@@ -373,10 +394,18 @@ int main(int argc, char** argv)
 		{
 			if (racerArr_ptr[i])
 			{
-				if (false == free_a_hThrDetails_ptr(&(racerArr_ptr[i])))
+				if (racerArr_ptr[i]->F1Details)
 				{
-					HARKLE_ERROR(Grand_Prix, main, free_a_hThrDetails_ptr failed);
+					// Free the hThrDetails_ptr
+					if (false == free_a_hThrDetails_ptr(&(racerArr_ptr[i]->F1Details)))
+					{
+						HARKLE_ERROR(Grand_Prix, main, free_a_hThrDetails_ptr failed);
+					}
 				}
+				// Free the tgpRacer_ptr
+				free(racerArr_ptr[i]);
+				// NULL the tgpRacer_ptr
+				racerArr_ptr[i] = NULL;
 			}
 		}
 
