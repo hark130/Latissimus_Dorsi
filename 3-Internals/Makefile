@@ -50,10 +50,13 @@ CC = gcc
 	$(CC) -o grand_prix.exe -pthread Harklecurse.o Harklepipe.o Harklethread.o Memoroad.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses
 
 tests:
-	$(CC) -c Memoroad.c
 	$(CC) -c Fileroad.c
+	$(CC) -c Harklemath.c
+	$(CC) -c Memoroad.c
 	$(CC) -c 3-10_Fileroad_Tests-2_main.c
+	$(CC) -c 3-18_Harklemath_Tests-1_main.c
 	$(CC) -o 3-10_Fileroad_Tests-2_main.exe Memoroad.o Fileroad.o 3-10_Fileroad_Tests-2_main.o
+	$(CC) -o 3-18_Harklemath_Tests-1_main.exe Harklemath.o 3-18_Harklemath_Tests-1_main.o
 
 echo:
 	$(CC) -o echo_this.exe 3-04_Signal_Handling-1_echo_this.c
@@ -70,6 +73,7 @@ all:
 	$(MAKE) 341
 	$(MAKE) 3101
 	$(MAKE) 3102
+	$(MAKE) 3181
 
 clean: 
 	rm -f *.o *.exe *.so
