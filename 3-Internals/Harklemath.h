@@ -1,6 +1,7 @@
 #ifndef __HARKLEMATH__
 #define __HARKLEMATH__
 
+#include <fenv.h>
 #include <stdbool.h>		// bool, true, false
 
 typedef struct cartesianCoordinate
@@ -9,9 +10,30 @@ typedef struct cartesianCoordinate
 	double yCoord;			// Y coordinate
 } cartPnt, *cartPnt_ptr;
 
+
+// Rounding MACROs to pass as round_a_dble()'s rndDir argument
+#define HM_RND FE_TONEAREST		// Round to nearest (the default)
+#define HM_UP FE_UPWARD			// Round up (toward positive infinity)
+#define HM_DWN FE_DOWNWARD		// Round down (toward negative infinity)
+#define HM_IN FE_TOWARDZERO		// Round toward zero
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// FLOATING POINT FUNCTIONS START ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	PURPOSE - Abstract the process of rounding a double to an int
+	INPUT
+		roundMe - The double that needs to be rounded
+		rndDir - The direction to round the double
+	OUTPUT
+		On success, the integer representation of the rounded double
+		On failure, 0
+	NOTES
+		If rndDir is invalid, round_a_dble() will default to the current env
+ */
+int round_a_dble(double roundMe, int rndDir);
 
 
 /*
