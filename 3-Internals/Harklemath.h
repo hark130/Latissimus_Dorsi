@@ -35,7 +35,6 @@ typedef struct cartesianCoordinate
 		On failure, 0
 	NOTES
 		If rndDir is invalid, round_a_dble() will default to the current env
-
  */
 int round_a_dble(double roundMe, int rndDir);
 
