@@ -48,12 +48,12 @@ double calc_ellipse_x_coord(double aVal, double bVal, double yVal)
 	// CALC Y COORD
 	if (true == success)
 	{
-		xVal = aVal * aVal;		// a²
-		xVal -= xVal * xVal;	// a² - x²
-		xVal = sqrt(yVal);		// √(a² - x²)
-		xVal *= bVal;			// b * √(a² - x²)
-		xVal /= aVal;			// (b / a) * √(a² - x²)
-		xVal = fabs(yVal);		// | (b / a) * √(a² - x²) |
+		xVal = bVal * bVal;		// b²
+		xVal -= yVal * yVal;	// b² - y²
+		xVal = sqrt(xVal);		// √(b² - y²)
+		xVal *= aVal;			// a * √(b² - y²)
+		xVal /= bVal;			// (a / b) * √(b² - y²)
+		xVal = fabs(xVal);		// | (a / b) * √(b² - y²) |
 	}
 
 	// DONE
