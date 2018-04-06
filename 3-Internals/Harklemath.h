@@ -26,12 +26,16 @@ typedef struct cartesianCoordinate
 	PURPOSE - Abstract the process of rounding a double to an int
 	INPUT
 		roundMe - The double that needs to be rounded
-		rndDir - The direction to round the double
+		rndDir - The direction to round the double:
+			Use the HM_* MACROS above or
+			Use the original MACROS from fenv.h or
+			Pass 0 to utilize the default settings
 	OUTPUT
 		On success, the integer representation of the rounded double
 		On failure, 0
 	NOTES
 		If rndDir is invalid, round_a_dble() will default to the current env
+
  */
 int round_a_dble(double roundMe, int rndDir);
 
