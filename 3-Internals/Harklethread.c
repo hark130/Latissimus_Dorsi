@@ -1,6 +1,9 @@
-#include "Harklepipe.h"		// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
-#include "Memoroad.h"		// copy_a_string(), get_me_a_buffer()
-#include <string.h>			// memcpy(), strerror()
+#include "Harklepipe.h"			// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
+#include "Harklerror.h"			// HARKLE_ERROR()
+#include "Harklethread.h"
+#include "Memoroad.h"			// copy_a_string(), get_me_a_buffer()
+#include <stdlib.h>				// calloc()
+#include <string.h>				// memcpy(), strerror()
 
 #ifndef HARKLETHREAD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -61,8 +64,14 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 		if (threadName && *threadName)
 		{
 			retVal->tName = copy_a_string(threadName);
+
+			if (NULL == retVal->tName)
+			{
+				HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, copy_a_string failed);
+				success = false;
+			}
 		}
-		
+
 		// 1.2. threadNum [optional]
 		if (threadNum)
 		{
@@ -82,8 +91,8 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 		}
 		else
 		{
-			tmp_ptr = memcpy(retVal->tArgvString, arg, argSize);
-			
+			tmp_ptr = memcpy(retVal->tArgvString, &arg, argSize);
+
 			if (tmp_ptr != retVal->tArgvString)
 			{
 				HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, memcpy failed);
@@ -200,22 +209,19 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 	// 3. pthread_t threadID;					// ID returned by pthread_create()
 	//////////////////////////////// IMPLEMENT LATER ////////////////////////////////
 	// 4. pthread_attr_t tAttr;					// Attributes used in the creation of a new thread
-	if (tmpStruct_ptr->tAttr)
-	{
-		tmpInt = pthread_attr_destroy(&(tmpStruct_ptr->tAttr));
+	tmpInt = pthread_attr_destroy(&(tmpStruct_ptr->tAttr));
 
-		if (tmpInt)
-		{
-			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, pthread_attr_destroy failed);
-			success = false;
-		}
+	if (tmpInt)
+	{
+		HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, pthread_attr_destroy failed);
+		success = false;
 	}
 	// 5. void*(*strtFunc)(void*);				// Function point to the thread's startup function
 	tmpStruct_ptr->strtFunc = NULL;
 	// 6. void* tArgvString;					// From command-line argument
 	if (tmpStruct_ptr->tArgvString)
 	{
-		if (false == release_a_string_len(&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
+		if (false == release_a_string_len((char**)&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
 		{
 			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, release_a_string_len failed);
 			success = false;
