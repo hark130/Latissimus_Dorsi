@@ -1,4 +1,7 @@
+#include <fenv.h>				// fegetround(), fesetround()
+#include "Harklemath.h"			// HM_RND, HM_UP, HM_DWN, HM_IN
 #include "Harklerror.h"			// HARKLE_ERROR
+#include <limits.h>				// INT_MIN, INT_MAX
 #include <math.h>				// sqrt()
 #include <stdbool.h>			// bool, true, false
 
@@ -31,6 +34,76 @@ int calc_max_precision(void);
 //////////////////////////////////////////////////////////////////////////////
 
 
+/*
+	PURPOSE - Abstract the process of rounding a double to an int
+	INPUT
+		roundMe - The double that needs to be rounded
+		rndDir - The direction to round the double
+	OUTPUT
+		On success, the integer representation of the rounded double
+		On failure, 0
+	NOTES
+		If rndDir is invalid, round_a_dble() will default to the current env
+ */
+int round_a_dble(double roundMe, int rndDir)
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	bool success = true;  // If anything fails, make this false
+	bool restoreNeeded = false;  // Set this to true if environment variable is changed
+	int currState = 0;  // Current rounding environment variable to enable restoration
+	
+	// INPUT VALIDATION
+	if (roundMe > (double)(INT_MAX * 1.0))
+	{
+		HARKLE_ERROR(Harklemath, round_a_dble, int overflow);
+		success = false;
+	}
+	else if (roundMe < (double)(INT_MIN * 1.0))
+	{
+		HARKLE_ERROR(Harklemath, round_a_dble, int underflow);
+		success = false;
+	}
+	
+	// DETERMINE ROUNDING DIRECTION
+	if (true == success)
+	{
+		if (rndDir == HM_RND || rndDir == HM_UP || rndDir == HM_DWN || rndDir == HM_IN)
+		{
+			// Turn on the "clean up later" flag
+			restoreNeeded = true;
+			// Get the current rounding environment variable
+			currState = fegetround();
+			// Set the rounding environment variable
+			if (fesetround(rndDir))
+			{
+				HARKLE_ERROR(Harklemath, round_a_dble, fesetround failed);
+				success = false;
+			}
+		}
+	}
+	
+	// ROUND
+	if (true == success)
+	{
+		retVal = round(roundMe);
+	}
+	
+	// CLEAN UP
+	if (true == restoreNeeded)
+	{
+		// Restore the rounding environment variable
+		if (fesetround(currState))
+		{
+			HARKLE_ERROR(Harklemath, round_a_dble, fesetround failed);
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+	
+	
 bool dble_greater_than(double x, double y, int precision)
 {
 	// LOCAL VARIABLES
