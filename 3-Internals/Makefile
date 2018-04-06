@@ -43,6 +43,7 @@ CC = gcc
 	
 3181:
 	$(CC) -c Harklecurse.c
+	$(CC) -c Harklemath.c
 	$(CC) -c Harklepipe.c
 	$(CC) -c -pthread Harklethread.c
 	$(CC) -c Memoroad.c
