@@ -61,8 +61,8 @@
 	[ ] Update the race
 	[ ] Unlock all the pipes
 	[ ] Loop
-[ ] Harklethread.h (Thread Library)
-[ ] Harklepipe.h (Pipe Library)
+[X] Harklethread.h (Thread Library)
+[X] Harklepipe.h (Pipe Library)
 [ ] Mini map
 	[ ] Draw it
 	[ ] Dynamically size it
@@ -91,7 +91,21 @@
 		[ ] Thread details
 			[ ] Thread placing
 			[ ] Thread total time
-		
+
+// TO DO 
+- Find my old float and/or double comparison function and implement it in Harklemath
+- Write test code for the existing ellipse functions in Harklemath
+- Write double-to-int rounding function (I can't "plot" floating point values)
+- Write Harklecurse function that returns an array of double tuples representing 
+	ellipse plot points given dimensions passed in as arguments
+- Design Harklecurse struct to keep track of plot points
+	- int xRelCoord
+	- int yRelCoord
+	- int xCntCoord
+	- int yCntCoord
+	- char graphic
+	- unsigned long pntStatus
+- Write Harklecurse function to convert double tuple list to plottable Harklecurse struct
  */
 
 #include "Harklecurse.h"		// kill_a_window()
