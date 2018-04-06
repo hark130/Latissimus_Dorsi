@@ -41,8 +41,46 @@ int calc_max_precision(void);
 	OUTPUT
 		If x > y, true
 		Otherwise, false
+		On error, false
  */
-bool dble_greater_than(double x, double y, int precision);
+bool dble_greater_than(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;  // Prove this wrong
+	bool success = true;  // Set this to false if anything fails
+	double dbleMask = 0;  // "Mask" to remove undesired values of doubles
+	
+	// INPUT VALIDATION
+	if (precision < 1)
+	{
+		HARKLE_ERROR(Harklemath, dble_greater_than, Invalid precision);
+		success = false;
+	}
+	
+	// CALC PRECISION
+	if (true == success)
+	{
+		dbleMask = calc_precision(precision);
+		
+		if (!dbleMask)
+		{
+			HARKLE_ERROR(Harklemath, dble_greater_than, calc_precision failed);
+			success = false;
+		}
+	}
+	
+	// COMPARE DOUBLES
+	if (true == success)
+	{
+		if (x > y && (x + dbleMask) > (y + dbleMask) && (x - dbleMask) > (y - dbleMask))
+		{
+			retVal = true;	
+		}		
+	}	
+	
+	// DONE
+	return retVal;
+}
 
 
 /*
@@ -55,8 +93,46 @@ bool dble_greater_than(double x, double y, int precision);
 	OUTPUT
 		If x < y, true
 		Otherwise, false
+		On error, false
  */
-bool dble_less_than(double x, double y, int precision);
+bool dble_less_than(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;  // Prove this wrong
+	bool success = true;  // Set this to false if anything fails
+	double dbleMask = 0;  // "Mask" to remove undesired values of doubles
+	
+	// INPUT VALIDATION
+	if (precision < 1)
+	{
+		HARKLE_ERROR(Harklemath, dble_greater_than, Invalid precision);
+		success = false;
+	}
+	
+	// CALC PRECISION
+	if (true == success)
+	{
+		dbleMask = calc_precision(precision);
+		
+		if (!dbleMask)
+		{
+			HARKLE_ERROR(Harklemath, dble_greater_than, calc_precision failed);
+			success = false;
+		}
+	}
+	
+	// COMPARE DOUBLES
+	if (true == success)
+	{
+		if (x < y && (x + dbleMask) < (y + dbleMask) && (x - dbleMask) < (y - dbleMask))
+		{
+			retVal = true;	
+		}		
+	}	
+	
+	// DONE
+	return retVal;
+}
 
 
 /*
@@ -69,8 +145,46 @@ bool dble_less_than(double x, double y, int precision);
 	OUTPUT
 		If x == y, true
 		Otherwise, false
+		On error, false
  */
-bool dble_equal_to(double x, double y, int precision);
+bool dble_equal_to(double x, double y, int precision)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;  // Prove this wrong
+	bool success = true;  // Set this to false if anything fails
+	double dbleMask = 0;  // "Mask" to remove undesired values of doubles
+	
+	// INPUT VALIDATION
+	if (precision < 1)
+	{
+		HARKLE_ERROR(Harklemath, dble_greater_than, Invalid precision);
+		success = false;
+	}
+	
+	// CALC PRECISION
+	if (true == success)
+	{
+		dbleMask = calc_precision(precision);
+		
+		if (!dbleMask)
+		{
+			HARKLE_ERROR(Harklemath, dble_greater_than, calc_precision failed);
+			success = false;
+		}
+	}
+	
+	// COMPARE DOUBLES
+	if (true == success)
+	{
+		if ((x + dbleMask) > y && (x - dbleMask) < y && x < (y + dbleMask) && x > (y - dbleMask))
+		{
+			retVal = true;	
+		}		
+	}	
+	
+	// DONE
+	return retVal;
+}
 
 
 /*
@@ -83,6 +197,7 @@ bool dble_equal_to(double x, double y, int precision);
 	OUTPUT
 		If x != y, true
 		Otherwise, false
+		On error, false
 	NOTES
 		This function calls and returns the opposite of:
 			dble_equal_to()
@@ -100,6 +215,7 @@ bool dble_not_equal(double x, double y, int precision);
 	OUTPUT
 		If x >= y, true
 		Otherwise, false
+		On error, false
 	NOTES
 		This function will call the following functions in this order:
 			dble_equal_to()
@@ -118,6 +234,7 @@ bool dble_greater_than_equal_to(double x, double y, int precision);
 	OUTPUT
 		If x <= y, true
 		Otherwise, false
+		On error, false
 	NOTES
 		This function will call the following functions in this order:
 			dble_equal_to()
