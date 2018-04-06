@@ -149,27 +149,44 @@ int main(int argc, char** argv)
 	int numRows = 0;  // Number of rows available
 	int i = 0;  // Iterating variable
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
+	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
 	
 	// INPUT VALIDATION
 	if (numF1s < 1)
 	{
-//////////////////////////////// CONTINUE HERE ////////////////////////////////
+		HARKLE_ERROR(Grand_Prix, main, Invalid parameter);
+		success = false;
 	}
 
 	// BUILD RACE CARS
 	if (true == success)
 	{
 		// 1. Allocate an array for the racers
-		while (i < GRAND_PRIX_MAX_TRIES && !racerArr_ptr)
+		while (i < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
 		{
 			racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, tgpRacer_ptr);
 			i++;
 		}
 
-		// 2. Create the racers
-		for (i = 1; i > numF1s; i++)
+		if (NULL == racerArr_ptr)
 		{
-//////////////////////////////// THEN CONTINUE HERE ////////////////////////////////
+			HARKLE_ERROR(Grand_Prix, main, calloc failed);
+			success = false;
+		}
+		else
+		{
+			// 2. Create the racers
+			for (i = 0; i < numF1s; i++)
+			{
+				racerArr_ptr[i] = create_a_hThrDetails_ptr(NULL, i + 1, racer_func, i + 1, sizeof(int));
+
+				if (NULL == racerArr_ptr[i])
+				{
+					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					success = false;
+					break;
+				}
+			}
 		}
 	}
 	
@@ -188,6 +205,7 @@ int main(int argc, char** argv)
 		if (!stdWin)
 		{
 			HARKLE_ERROR(Grand_Prix, main, build_a_winDetails_ptr failed);
+			success = false;
 		}
 		else
 		{
@@ -346,7 +364,27 @@ int main(int argc, char** argv)
 	}
 	// 3. Restore tty modes, reset cursor location, and resets the terminal into the proper non-visual mode
 	endwin();  // End curses mode
-	
+
+	// CLEAN UP
+	// Free the racers
+	if (racerArr_ptr)
+	{
+		for (i = 0; i < numF1s; i++)
+		{
+			if (racerArr_ptr[i])
+			{
+				if (false == free_a_hThrDetails_ptr(&(racerArr_ptr[i])))
+				{
+					HARKLE_ERROR(Grand_Prix, main, free_a_hThrDetails_ptr failed);
+				}
+			}
+		}
+
+		// Free the array
+		free(racerArr_ptr);
+		racerArr_ptr = NULL;
+	}
+
 	// DONE
 	return 0;
 }
