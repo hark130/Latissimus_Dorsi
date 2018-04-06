@@ -181,7 +181,145 @@ int main(void)
     fpcTest    specTest78 = { "Special Test 78", 10.00000000000001,    10.00000000000002,   3, false, false, true,  false, true,  true };
     fpcTest    specTest79 = { "Special Test 79", 10.000000000000001,   10.000000000000002,  3, false, false, true,  false, true,  true };
 	
+	fpcTest_ptr nrmTest_arr[] = { \
+		&normTest00, &normTest01, &normTest02, &normTest03, &normTest04, \
+		&normTest05, &normTest06, &normTest07, &normTest08, &normTest09, \
+		&normTest10, &normTest11, &normTest12, &normTest13, &normTest14, \
+		&normTest15, &normTest16, &normTest17, &normTest18, &normTest19, \
+		&normTest20, &normTest21, &normTest22, &normTest23, &normTest24, \
+		&normTest25, &normTest26, &normTest27, &normTest28, &normTest29, \
+		&normTest30, &normTest31, &normTest32, &normTest33, &normTest34, \
+		&normTest35, &normTest36, &normTest37, &normTest38, &normTest39, \
+		&normTest40, &normTest41, &normTest42, &normTest43, &normTest44, \
+		&normTest45, &normTest46, &normTest47, &normTest48, &normTest49, \
+		&normTest50, &normTest51, &normTest52, &normTest53, &normTest54, \
+		&normTest55, &normTest56, &normTest57, &normTest58, &normTest59, \
+		&normTest60, &normTest61, &normTest62, &normTest63 };
+		
+	fpcTest_ptr spcTest_arr[] = { \
+		&specTest00, &specTest01, &specTest02, &specTest03, &specTest04, \
+		&specTest05, &specTest06, &specTest07, &specTest08, &specTest09, \
+		&specTest10, &specTest11, &specTest12, &specTest13, &specTest14, \
+		&specTest15, &specTest16, &specTest17, &specTest18, &specTest19, \
+		&specTest20, &specTest21, &specTest22, &specTest23, &specTest24, \
+		&specTest25, &specTest26, &specTest27, &specTest28, &specTest29, \
+		&specTest30, &specTest31, &specTest32, &specTest33, &specTest34, \
+		&specTest35, &specTest36, &specTest37, &specTest38, &specTest39, \
+		&specTest40, &specTest41, &specTest42, &specTest43, &specTest44, \
+		&specTest45, &specTest46, &specTest47, &specTest48, &specTest49, \
+		&specTest50, &specTest51, &specTest52, &specTest53, &specTest54, \
+		&specTest55, &specTest56, &specTest57, &specTest58, &specTest59, \
+		&specTest60, &specTest61, &specTest62, &specTest63, &specTest64, \
+		&specTest65, &specTest66, &specTest67, &specTest68, &specTest69, \
+		&specTest70, &specTest71, &specTest72, &specTest73, &specTest74, \
+		&specTest75, &specTest76, &specTest77, &specTest78, &specTest79 };
+
+	fpcTest_ptr* testArrays_arr[] = { nrmTest_arr, spcTest_arr, NULL };
 	
+	// RUN TESTS
+	allTests = testArrays_arr;
+
+	while(*allTests)
+	{
+		currTestArr_ptr = *allTests;
+
+		while (*currTestArr_ptr)
+		{
+			test = *currTestArr_ptr;
+
+			if (test)
+			{
+				// EXECUTE TESTS
+				fprintf(stdout, "%s\n\t", test->testName);
+				// 1. dble_greater_than
+				fprintf(stdout, "dble_greater_than()\n\t");
+				numTestsRun++;
+				if (test->gtExp == dble_greater_than(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->gtExp) ? "true" : "false");
+				}
+				// 2. dble_less_than
+				fprintf(stdout, "dble_less_than()\n\t");
+				numTestsRun++;
+				if (test->ltExp == dble_less_than(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->ltExp) ? "true" : "false");
+				}
+				// 3. dble_equal_to
+				fprintf(stdout, "dble_equal_to()\n\t");
+				numTestsRun++;
+				if (test->eqExp == dble_equal_to(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->eqExp) ? "true" : "false");
+				}
+				// 4. dble_not_equal
+				fprintf(stdout, "dble_not_equal()\n\t");
+				numTestsRun++;
+				if (test->neqExp == dble_not_equal(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->neqExp) ? "true" : "false");
+				}
+				// 5. dble_greater_than_equal_to
+				fprintf(stdout, "dble_greater_than_equal_to()\n\t");
+				numTestsRun++;
+				if (test->gteExp == dble_greater_than_equal_to(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->gteExp) ? "true" : "false");
+				}
+				// 6. dble_less_than_equal_to
+				fprintf(stdout, "dble_less_than_equal_to()\n\t");
+				numTestsRun++;
+				if (test->lteExp == dble_less_than_equal_to(test->xIn, test->yIn, test->precIn))
+				{
+					fprintf(stdout, "[X] Success\n");
+					numTestsPassed++;
+				}
+				else
+				{		
+					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "Expected:\t%s\n\t", (true == test->lteExp) ? "true" : "false");
+				}
+			}
+
+			currTestArr_ptr++;
+		}
+
+		allTests++;
+	}
+	
+	// REPORT RESULTS
+	fprintf(stdout, "\n\nTests Run:   \t%d\n", numTestsRun);
+	fprintf(stdout, "Tests Passed:\t%d\n\n", numTestsPassed);
 	
     // DONE
     return 0;
