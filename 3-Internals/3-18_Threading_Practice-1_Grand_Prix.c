@@ -93,9 +93,6 @@
 			[ ] Thread total time
 
 // TO DO 
-- Find my old float and/or double comparison function and implement it in Harklemath
-- Write test code for the existing ellipse functions in Harklemath
-- Write double-to-int rounding function (I can't "plot" floating point values)
 - Write Harklecurse function that returns an array of double tuples representing 
 	ellipse plot points given dimensions passed in as arguments
 - Design Harklecurse struct to keep track of plot points
