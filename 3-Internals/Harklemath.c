@@ -7,15 +7,19 @@
 #include <stdbool.h>			// bool, true, false
 #include <stdio.h>				// sprintf()
 #include <stdlib.h>				// atof()
+#include <string.h>             // memset
 
 // PLACEHOLDERS FOR DOUBLE COMPARISON FUNCTIONS
-// double is a 64 bit IEEE 754 double precision Floating Point Number (1 bit for the sign, 11 bits for the exponent, and 52* bits for the value), i.e. double has 15 decimal digits of precision.
-#define DBL_PRECISION 15
 #define DBL_GRTR(x, y) ((x > y) ? true : false)
 #define DBL_GRTR_EQ(x, y) ((x >= y) ? true : false)
 #define DBL_EQUAL(x, y) ((x == y) ? true : false)
 #define DBL_LESS(x, y) ((x < y) ? true : false)
 #define DBL_LESS_EQ(x, y) ((x <= y) ? true : false)
+
+#ifndef HARKLEMATH_MAX_TRIES
+// MACRO to limit repeated allocation attempts
+#define HARKLEMATH_MAX_TRIES 3
+#endif  // HARKLEMATH_MAX_TRIES
 
 
 /*
@@ -443,6 +447,7 @@ double calc_ellipse_y_coord(double aVal, double bVal, double xVal)
 	}
 	else if (true == DBL_GRTR(xVal, aVal))
 	{
+		printf("\nxVal == %.15f\taVal == %.15f\n\t", xVal, aVal);  // DEBUGGING
 		HARKLE_ERROR(Harklemath, calc_ellipse_y_coord, xVal is greater than aVal);
 		success = false;
 	}
@@ -460,6 +465,253 @@ double calc_ellipse_y_coord(double aVal, double bVal, double xVal)
 
 	// DONE
 	return yVal;
+}
+
+
+/*
+	PURPOSE - Calculate a set of points on an ellipse given the form:
+			x²   y²
+			─  + ─  = 1
+			a²   b²
+	INPUT
+		aVal - "a" from the standard equation above
+		bVal - "b" from the standard equation above
+		numPnts - Pointer to a size_t variable in which to store the size
+			of the returned array.
+	OUTPUT
+		On success, a heap-allocated array with the size of the
+		On failure, 0 (since x can never be zero for a centered ellipse)
+	NOTES
+		The returned array is NOT terminated.  Take care to use numPnts.
+		This function assumes origin of (0, 0) is the center of the ellipse.
+		This function iterates through (0, y), (+x, 0), (0, -y), (-x, 0), and
+			finally to (-1, y).
+		Coordinate values chosen by this function are whole numbers
+ */
+double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
+{
+	// LOCAL VARIABLES
+	double* retVal = NULL;  // Array of double values for ellipse plot points
+	bool success = true;  // If anything fails, make this false
+	int aAbs = 0;  // Rounded absolute value of aVal
+	int bAbs = 0;  // Rounded absolute value of bVal
+	int majAbs = 0;  // Rounded absolute value of the major axis
+	double majPnt = 0;  // Point along the major axis
+	int numTries = 0;  // Keeps count of allocation attempts
+	int numPoints = 0;  // Local count of the number of points in the array
+	bool chooseX = true;  // Indicates x is the major axis
+	void* tmp_ptr = NULL;  // Return value from memset
+	int count = 0;  // Iterating variable
+	// This variable is used to reflect points across the major axis
+	double flipIt = 1;  // Multiple this by ellipse point function calls
+
+	// INPUT VALIDATION
+	if (true == dble_equal_to(aVal, 0, DBL_PRECISION))
+	{
+		HARKLE_ERROR(Harklemath, plot_ellipse_points, aVal is zero);
+		success = false;
+	}
+	else if (true == dble_equal_to(bVal, 0, DBL_PRECISION))
+	{
+		HARKLE_ERROR(Harklemath, plot_ellipse_points, bVal is zero);
+		success = false;
+	}
+	else if (NULL == numPnts)
+	{
+		HARKLE_ERROR(Harklemath, plot_ellipse_points, NULL pointer);
+		success = false;
+	}
+	else
+	{
+		*numPnts = 0;
+	}
+
+	// DETERMINE MAJOR AXIS
+	if (true == dble_less_than(aVal, bVal, DBL_PRECISION))
+	{
+		chooseX = false;  // Y holds the major axis
+	}
+
+	// DETERMINE NUMBER OF POINTS
+	if (true == success)
+	{
+		if (true == dble_not_equal(fabs(aVal), ((int)fabs(aVal)) * 1.0, DBL_PRECISION))
+		{
+			aAbs = round_a_dble(fabs(aVal), HM_UP);
+		}
+		else
+		{
+			aAbs = ((int)fabs(aVal));
+		}
+
+		if (true == dble_not_equal(fabs(bVal), ((int)fabs(bVal)) * 1.0, DBL_PRECISION))
+		{
+			bAbs = round_a_dble(fabs(bVal), HM_UP);
+		}
+		else
+		{
+			bAbs = ((int)fabs(bVal));
+		}
+
+		if (true == chooseX)
+		{
+			majAbs = aAbs;
+		}
+		else
+		{
+			majAbs = bAbs;
+		}
+
+		if (0 == aAbs || 0 == bAbs)
+		{
+			HARKLE_ERROR(Harklemath, plot_ellipse_points, round_a_dble failed);
+			success = false;
+		}
+		else
+		{
+			// majAbs is 1/2 the major axis
+			// 4 for the four quadrants
+			// 2 because each coordinate pair is represented by two doubles
+			numPoints = majAbs * 4 * 2;
+
+			if (numPoints < 8 || 0 != numPoints % 4)
+			{
+				HARKLE_ERROR(Harklemath, plot_ellipse_points, Number of points miscalculated);
+				success = false;
+			}
+		}
+	}
+
+	// ALLOCATE BUFFER
+	if (true == success)
+	{
+		while (numTries < HARKLEMATH_MAX_TRIES && !retVal)
+		{
+			retVal = (double*)calloc(numPoints, sizeof(double));
+			numTries++;
+		}
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Harklemath, plot_ellipse_points, calloc failed);
+			success = false;
+		}
+	}
+
+	// CALCULATE COORDINATE PAIRS
+	while (count < numPoints)
+	{
+		if (true == chooseX)
+		{
+			// Starting point on the major axis
+			if (0 == count)  // (-a, 0)
+			{
+				majPnt = -1 * majAbs;
+			}
+			// Set x in the array
+			retVal[count] = majPnt;
+			count++;  // Next point
+			// Set y in the array
+			fprintf(stdout, "\naAbs == %d\tbAbs == %d\tmajPnt == %.15f\n", aAbs, bAbs, majPnt);  // DEBUGGING
+			retVal[count] = flipIt * calc_ellipse_y_coord(aAbs, bAbs, majPnt);
+			// Error check calc_ellipse_y_coord()
+			// if (0 == retVal[count])
+			// {
+			// 	HARKLE_ERROR(Harklemath, plot_ellipse_points, calc_ellipse_y_coord failed);
+			// 	success = false;
+			// 	break;
+			// }
+
+			// Continue incrementing along the major axis
+			fprintf(stdout, "\ncount == %d and numPoints == %d\n", count, numPoints);  // DEBUGGING
+			///////////////////////////////////// BUG IS HERE //////////////////////////////////////
+			if (count > numPoints / 4)  // (a, 0)
+			{
+				majPnt--;
+				flipIt = -1;
+			}
+			else
+			{
+				majPnt++;
+				flipIt = 1;
+			}
+		}
+		else
+		{
+			// Starting point on the major axis
+			if (0 == count)  // (-a, 0)
+			{
+				majPnt = 0;
+				flipIt = -1;
+			}
+			// Set x in the array
+			retVal[count] = flipIt * calc_ellipse_x_coord(aAbs, bAbs, majPnt);
+			// Error check calc_ellipse_x_coord()
+			// if (0 == retVal[count])
+			// {
+			// 	HARKLE_ERROR(Harklemath, plot_ellipse_points, calc_ellipse_x_coord failed);
+			// 	success = false;
+			// 	break;
+			// }
+			count++;  // Next point
+			// Set y in the array
+			retVal[count] = majPnt;
+
+			// Continue incrementing along the major axis
+			// Quadrant II
+			if (count <= numPoints / 4)
+			{
+				majPnt++;
+				flipIt = -1;
+			}
+			// Quadrant I
+			// else if (count <= numPoints / 2)
+			// {
+			// 	majPnt--;
+			// 	flipIt = 1;
+			// }
+			// Quadrant IV
+			else if (count <= (3 * numPoints / 4))
+			{
+				majPnt--;
+				flipIt = 1;				
+			}
+			// Quadrant III
+			else
+			{
+				majPnt++;
+				flipIt = -1;
+			}
+		}
+	}
+
+	// WRAP UP/CLEAN UP
+	// Wrap up
+	if (true == success)
+	{
+		*numPnts = numPoints;
+	}
+	// Clean up
+	else if (retVal)
+	{
+		// Zeroize retVal
+		if (numPoints > 0)
+		{
+			tmp_ptr = memset(retVal, 0x0, numPoints);
+
+			if (tmp_ptr != retVal)
+			{
+				HARKLE_ERROR(Harklemath, plot_ellipse_points, memset failed);
+			}
+		}
+		// Free retVal
+		free(retVal);
+		// NULL retVal
+		retVal = NULL;
+	}
+
+	// DONE
+	return retVal;
 }
 
 

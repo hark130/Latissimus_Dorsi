@@ -10,6 +10,8 @@ typedef struct cartesianCoordinate
 	double yCoord;			// Y coordinate
 } cartPnt, *cartPnt_ptr;
 
+// double is a 64 bit IEEE 754 double precision Floating Point Number (1 bit for the sign, 11 bits for the exponent, and 52* bits for the value), i.e. double has 15 decimal digits of precision.
+#define DBL_PRECISION 15
 
 // Rounding MACROs to pass as round_a_dble()'s rndDir argument
 #define HM_RND FE_TONEAREST		// Round to nearest (the default)
@@ -175,7 +177,6 @@ double calc_precision(int precision);
 		yVal - "y" from the standard equation above
 	OUTPUT
 		On success, "x" from the equation above
-		On failure, 0 (since x can never be zero for a centered ellipse)
 	NOTES
 		This function only returns the positive result.  Return value
 			could also be negative.
@@ -195,12 +196,38 @@ double calc_ellipse_x_coord(double aVal, double bVal, double yVal);
 		xVal - "x" from the standard equation above
 	OUTPUT
 		On success, "y" from the equation above
-		On failure, 0 (since x can never be zero for a centered ellipse)
 	NOTES
 		This function only returns the positive result.  Return value
 			could also be negative.
  */
 double calc_ellipse_y_coord(double aVal, double bVal, double xVal);
+
+
+/*
+	PURPOSE - Calculate a set of points on an ellipse given the form:
+			x²   y²
+			─  + ─  = 1
+			a²   b²
+	INPUT
+		aVal - "a" from the standard equation above
+		bVal - "b" from the standard equation above
+		numPnts - Pointer to an int variable in which to store the number
+			of individual points, not to be confused w/ coordinates, in
+			the returned array
+	OUTPUT
+		On success, a heap-allocated array 
+		On failure, 0 (since x can never be zero for a centered ellipse)
+	NOTES
+		The returned array is NOT terminated.  Take care to use numPnts.
+		This function assumes origin of (0, 0) is the center of the ellipse.
+		This function will choose points along the major axis
+			That is, (a > b) ? choose x : choose y
+		This function iterates through the ellipse's (x, y) coordinates
+			in the following order regardless of the major axis: 
+			(-a, 0), (0, b), (+a, 0), (0, -b), (-a + 1, y)
+		Coordinate values chosen by this function are whole numbers
+ */
+double* plot_ellipse_points(double aVal, double bVal, int* numPnts);
 
 
 //////////////////////////////////////////////////////////////////////////////
