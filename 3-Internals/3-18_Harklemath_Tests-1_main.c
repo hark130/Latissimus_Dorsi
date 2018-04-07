@@ -51,7 +51,7 @@ int main(void)
     fpcTest    normTest13 = { "Normal Test 13", -10.0000000000001,    10.0000000000001,    15, false, true,  false, true,  false, true };
     fpcTest    normTest14 = { "Normal Test 14", -10.00000000000001,   10.00000000000001,   15, false, true,  false, true,  false, true };
     fpcTest    normTest15 = { "Normal Test 15", -10.000000000000001,  10.000000000000001,  15, false, true,  false, true,  false, true };
-    fpcTest    normTest16 = { "Normal Test 16", (double)10,           (double)-10,         15, true,  false, false, true,  false, true };
+    fpcTest    normTest16 = { "Normal Test 16", (double)10,           (double)-10,         15, true,  false, false, true,  true,  false };
     fpcTest    normTest17 = { "Normal Test 17", 10.1,                 -10.1,               15, true,  false, false, true,  true,  false };
     fpcTest    normTest18 = { "Normal Test 18", 10.01,                -10.01,              15, true,  false, false, true,  true,  false };
     fpcTest    normTest19 = { "Normal Test 19", 10.001,               -10.001,             15, true,  false, false, true,  true,  false };
@@ -116,7 +116,7 @@ int main(void)
     fpcTest    specTest13 = { "Special Test 13", -10.0000000000001,    10.0000000000001,    3, false, true,  false, true,  false, true };
     fpcTest    specTest14 = { "Special Test 14", -10.00000000000001,   10.00000000000001,   3, false, true,  false, true,  false, true };
     fpcTest    specTest15 = { "Special Test 15", -10.000000000000001,  10.000000000000001,  3, false, true,  false, true,  false, true };
-    fpcTest    specTest16 = { "Special Test 16", (double)10,           (double)-10,         3, true,  false, false, true,  false, true };
+    fpcTest    specTest16 = { "Special Test 16", (double)10,           (double)-10,         3, true,  false, false, true,  true,  false };
     fpcTest    specTest17 = { "Special Test 17", 10.1,                 -10.1,               3, true,  false, false, true,  true,  false };
     fpcTest    specTest18 = { "Special Test 18", 10.01,                -10.01,              3, true,  false, false, true,  true,  false };
     fpcTest    specTest19 = { "Special Test 19", 10.001,               -10.001,             3, true,  false, false, true,  true,  false };
@@ -143,7 +143,7 @@ int main(void)
     fpcTest    specTest40 = { "Special Test 40", 10.00000001,          10.00000001,         3, false, false, true,  false, true,  true };
     fpcTest    specTest41 = { "Special Test 41", 10.000000001,         10.000000001,        3, false, false, true,  false, true,  true };
     fpcTest    specTest42 = { "Special Test 42", 10.0000000001,        10.0000000001,       3, false, false, true,  false, true,  true };
-    fpcTest    specTest43 = { "Special Test 43", 10.00000000001,       10.00000000001,      3,  false, false, true,  false, true,  true };
+    fpcTest    specTest43 = { "Special Test 43", 10.00000000001,       10.00000000001,      3, false, false, true,  false, true,  true };
     fpcTest    specTest44 = { "Special Test 44", 10.000000000001,      10.000000000001,     3, false, false, true,  false, true,  true };
     fpcTest    specTest45 = { "Special Test 45", 10.0000000000001,     10.0000000000001,    3, false, false, true,  false, true,  true };
     fpcTest    specTest46 = { "Special Test 46", 10.00000000000001,    10.00000000000001,   3, false, false, true,  false, true,  true };
@@ -164,7 +164,7 @@ int main(void)
     fpcTest    specTest61 = { "Special Test 61", -10.0000000000001,    -10.0000000000001,   3, false, false, true,  false, true,  true };
     fpcTest    specTest62 = { "Special Test 62", -10.00000000000001,   -10.00000000000001,  3, false, false, true,  false, true,  true };
     fpcTest    specTest63 = { "Special Test 63", -10.000000000000001,  -10.000000000000001, 3, false, false, true,  false, true,  true };
-    fpcTest    specTest64 = { "Special Test 64", (double)10,           (double)10,          3, false, true,  false, true,  false, true };
+    fpcTest    specTest64 = { "Special Test 64", (double)10,           (double)10,          3, false, false, true,  false, true,  true };
     fpcTest    specTest65 = { "Special Test 65", 10.1,                 10.2,                3, false, true,  false, true,  false, true };
     fpcTest    specTest66 = { "Special Test 66", 10.01,                10.02,               3, false, true,  false, true,  false, true };
     fpcTest    specTest67 = { "Special Test 67", 10.001,               10.002,              3, false, true,  false, true,  false, true };
@@ -180,7 +180,12 @@ int main(void)
     fpcTest    specTest77 = { "Special Test 77", 10.0000000000001,     10.0000000000002,    3, false, false, true,  false, true,  true };
     fpcTest    specTest78 = { "Special Test 78", 10.00000000000001,    10.00000000000002,   3, false, false, true,  false, true,  true };
     fpcTest    specTest79 = { "Special Test 79", 10.000000000000001,   10.000000000000002,  3, false, false, true,  false, true,  true };
-	
+/******************************************************************************************************************************************/
+/*  Data type  Var Name       Test Name          xIn                   yIn                 p   gtExp  ltExp  eqExp  neqExp gteExp lteExp                */
+/******************************************************************************************************************************************/
+/***************************************************************** LEGEND *****************************************************************/
+/******************************************************************************************************************************************/
+
 	fpcTest_ptr nrmTest_arr[] = { \
 		&normTest00, &normTest01, &normTest02, &normTest03, &normTest04, \
 		&normTest05, &normTest06, &normTest07, &normTest08, &normTest09, \
@@ -194,7 +199,7 @@ int main(void)
 		&normTest45, &normTest46, &normTest47, &normTest48, &normTest49, \
 		&normTest50, &normTest51, &normTest52, &normTest53, &normTest54, \
 		&normTest55, &normTest56, &normTest57, &normTest58, &normTest59, \
-		&normTest60, &normTest61, &normTest62, &normTest63 };
+		&normTest60, &normTest61, &normTest62, &normTest63, NULL };
 		
 	fpcTest_ptr spcTest_arr[] = { \
 		&specTest00, &specTest01, &specTest02, &specTest03, &specTest04, \
@@ -212,12 +217,14 @@ int main(void)
 		&specTest60, &specTest61, &specTest62, &specTest63, &specTest64, \
 		&specTest65, &specTest66, &specTest67, &specTest68, &specTest69, \
 		&specTest70, &specTest71, &specTest72, &specTest73, &specTest74, \
-		&specTest75, &specTest76, &specTest77, &specTest78, &specTest79 };
+		&specTest75, &specTest76, &specTest77, &specTest78, &specTest79, \
+        NULL };
 
 	fpcTest_ptr* testArrays_arr[] = { nrmTest_arr, spcTest_arr, NULL };
 	
 	// RUN TESTS
 	allTests = testArrays_arr;
+    fprintf(stdout, "\n\t");
 
 	while(*allTests)
 	{
@@ -230,83 +237,83 @@ int main(void)
 			if (test)
 			{
 				// EXECUTE TESTS
-				fprintf(stdout, "%s\n\t", test->testName);
+				fprintf(stdout, "%s\n\t\t", test->testName);
 				// 1. dble_greater_than
-				fprintf(stdout, "dble_greater_than()\n\t");
+				fprintf(stdout, "dble_greater_than()           ");
 				numTestsRun++;
 				if (test->gtExp == dble_greater_than(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
-					fprintf(stdout, "Expected:\t%s\n\t", (true == test->gtExp) ? "true" : "false");
+					fprintf(stdout, "[ ] FAIL    ");
+					fprintf(stdout, "Expected:\t%s\n\t\t", (true == test->gtExp) ? "true" : "false");
 				}
 				// 2. dble_less_than
-				fprintf(stdout, "dble_less_than()\n\t");
+				fprintf(stdout, "dble_less_than()              ");
 				numTestsRun++;
 				if (test->ltExp == dble_less_than(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
-					fprintf(stdout, "Expected:\t%s\n\t", (true == test->ltExp) ? "true" : "false");
+					fprintf(stdout, "[ ] FAIL    ");
+					fprintf(stdout, "Expected:\t%s\n\t\t", (true == test->ltExp) ? "true" : "false");
 				}
 				// 3. dble_equal_to
-				fprintf(stdout, "dble_equal_to()\n\t");
+				fprintf(stdout, "dble_equal_to()               ");
 				numTestsRun++;
 				if (test->eqExp == dble_equal_to(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
-					fprintf(stdout, "Expected:\t%s\n\t", (true == test->eqExp) ? "true" : "false");
+					fprintf(stdout, "[ ] FAIL    ");
+					fprintf(stdout, "Expected:\t%s\n\t\t", (true == test->eqExp) ? "true" : "false");
 				}
 				// 4. dble_not_equal
-				fprintf(stdout, "dble_not_equal()\n\t");
+				fprintf(stdout, "dble_not_equal()              ");
 				numTestsRun++;
 				if (test->neqExp == dble_not_equal(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
-					fprintf(stdout, "Expected:\t%s\n\t", (true == test->neqExp) ? "true" : "false");
+					fprintf(stdout, "[ ] FAIL    ");
+					fprintf(stdout, "Expected:\t%s\n\t\t", (true == test->neqExp) ? "true" : "false");
 				}
 				// 5. dble_greater_than_equal_to
-				fprintf(stdout, "dble_greater_than_equal_to()\n\t");
+				fprintf(stdout, "dble_greater_than_equal_to()  ");
 				numTestsRun++;
 				if (test->gteExp == dble_greater_than_equal_to(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
-					fprintf(stdout, "Expected:\t%s\n\t", (true == test->gteExp) ? "true" : "false");
+					fprintf(stdout, "[ ] FAIL    ");
+					fprintf(stdout, "Expected:\t%s\n\t\t", (true == test->gteExp) ? "true" : "false");
 				}
 				// 6. dble_less_than_equal_to
-				fprintf(stdout, "dble_less_than_equal_to()\n\t");
+				fprintf(stdout, "dble_less_than_equal_to()     ");
 				numTestsRun++;
 				if (test->lteExp == dble_less_than_equal_to(test->xIn, test->yIn, test->precIn))
 				{
-					fprintf(stdout, "[X] Success\n");
+					fprintf(stdout, "[X] Success\n\t");
 					numTestsPassed++;
 				}
 				else
 				{		
-					fprintf(stdout, "[ ] FAIL\n\t\t");
+					fprintf(stdout, "[ ] FAIL    ");
 					fprintf(stdout, "Expected:\t%s\n\t", (true == test->lteExp) ? "true" : "false");
 				}
 			}
@@ -319,7 +326,7 @@ int main(void)
 	
 	// REPORT RESULTS
 	fprintf(stdout, "\n\nTests Run:   \t%d\n", numTestsRun);
-	fprintf(stdout, "Tests Passed:\t%d\n\n", numTestsPassed);
+	fprintf(stdout,     "Tests Passed:\t%d\n\n", numTestsPassed);
 	
     // DONE
     return 0;
