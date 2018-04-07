@@ -1,6 +1,8 @@
 #include "Harklemath.h"
 #include "Harklerror.h"
 #include <stdbool.h>            // bool, true, false
+#include <stdlib.h>             // free()
+#include <string.h>             // memset()
 
 typedef struct floatingPointComparisonTestStruct
 {
@@ -15,6 +17,17 @@ typedef struct floatingPointComparisonTestStruct
     bool gteExp;            // Expected results for greater_than_equal()
     bool lteExp;            // Expected results for less_than_equal()
 } fpcTest, *fpcTest_ptr;
+
+typedef struct plotEllipsePointsTestStruct
+{
+    char* testName;         // Name and number of test
+    double aIn;             // "a" input
+    double bIn;             // "b" input
+    int* num_ptr;           // Pointer which holds number of points
+    int expNumPts;          // Expected number of points
+    double* ellArr;         // Array of ellipse coordinate points
+    double* expArr;         // Array of expected ellipse coordinate points
+} pepTest, *pepTest_ptr;
 
 
 int main(void)
@@ -32,7 +45,7 @@ int main(void)
 /******************************************************************************************************************************************/
 /***************************************************************** LEGEND *****************************************************************/
 /******************************************************************************************************************************************/
-/*  Data type  Var Name       Test Name         xIn                   yIn                  p   gtExp  ltExp  eqExp  neqExp gteExp lteExp                */
+/*  Data type  Var Name       Test Name         xIn                   yIn                  p   gtExp  ltExp  eqExp  neqExp gteExp lteExp  */
 /******************************************************************************************************************************************/
 	// Normal Tests
     fpcTest    normTest00 = { "Normal Test 00", (double)-10,          (double)10,          15, false, true,  false, true,  false, true };
@@ -181,7 +194,7 @@ int main(void)
     fpcTest    specTest78 = { "Special Test 78", 10.00000000000001,    10.00000000000002,   3, false, false, true,  false, true,  true };
     fpcTest    specTest79 = { "Special Test 79", 10.000000000000001,   10.000000000000002,  3, false, false, true,  false, true,  true };
 /******************************************************************************************************************************************/
-/*  Data type  Var Name       Test Name          xIn                   yIn                 p   gtExp  ltExp  eqExp  neqExp gteExp lteExp                */
+/*  Data type  Var Name       Test Name          xIn                   yIn                 p   gtExp  ltExp  eqExp  neqExp gteExp lteExp  */
 /******************************************************************************************************************************************/
 /***************************************************************** LEGEND *****************************************************************/
 /******************************************************************************************************************************************/
@@ -323,7 +336,144 @@ int main(void)
 
 		allTests++;
 	}
-	
+
+    /***************************************************************************************************/
+    /********************************** PLOT ELLIPSE POINT UNIT TESTS **********************************/
+    /***************************************************************************************************/
+    // LOCAL VARIABLES
+    pepTest_ptr pepUnitTest = NULL;  // Current test being run
+    pepTest_ptr* pepTestArr_ptr = NULL;  // Current test array
+    pepTest_ptr** pepTests = NULL;  // All the arrays
+    int pepTmpInt = 0;  // Temp integer to store numPoints in
+    int xPnt = 0;  // Index for a x coordinate
+    int yPnt = 1;  // Index for a y coordinate
+    double xCalc = 0;  // A calculated x coordinate
+    double yCalc = 0;  // A calculated y coordinate
+    bool pepPassed = true;  // Make this false if anything fails
+    void* tmp_ptr = NULL;  // Return value from memset
+	// (-a, 0), (0, b), (+a, 0), (0, -b), (-a + 1, y)
+/******************************************************************************************************************************************/
+/***************************************************************** LEGEND *****************************************************************/
+/******************************************************************************************************************************************/
+/*                                (-a, 0)            (0, b)           (+a, 0)            (0, -b)                                          */
+/*  Data type  Var Name          Test Name         aIn             bIn           num_ptr      expNum    ellArr  expArr                    */
+/******************************************************************************************************************************************/
+    // Normal Tests
+    double     pepNormArry00[] = { -3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0 };
+    pepTest    pepNormTest00 = { "Normal Test 00", (double)3,     (double)2,     &pepTmpInt,  24,        NULL,  pepNormArry00 };
+
+
+    pepTest_ptr pepNrmTest_arr[] = { \
+        &pepNormTest00, NULL };
+
+    pepTest_ptr* pepTestArrays_arr[] = { pepNrmTest_arr, NULL };
+
+    // RUN TESTS
+    pepTests = pepTestArrays_arr;
+    fprintf(stdout, "\n");
+
+    while(*pepTests)
+    {
+        pepTestArr_ptr = *pepTests;
+
+        while (*pepTestArr_ptr)
+        {
+            pepUnitTest = *pepTestArr_ptr;
+
+            if (pepUnitTest)
+            {
+                // EXECUTE TEST
+                fprintf(stdout, "%s\n\t", pepUnitTest->testName);
+                pepTmpInt = 0;  // Reset temp variable
+                pepPassed = true;  // Reset temp variable
+                // Function call
+                pepUnitTest->ellArr = plot_ellipse_points(pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->num_ptr);
+                numTestsRun++;
+                // 1. Verify pointer received
+                if (NULL == pepUnitTest->ellArr)
+                {
+                    fprintf(stdout, "[ ] FAIL    NULL pointer returned\n");
+                    pepPassed = false;
+                }
+                else
+                {
+                    // 2. Verify number of points is correct
+                    if (*(pepUnitTest->num_ptr) != pepUnitTest->expNumPts)
+                    {
+                        fprintf(stdout, "[ ] FAIL    Number of points\n\t\t");
+                        fprintf(stdout, "Expected: %d\n\t\tReceived: %d\n", pepUnitTest->expNumPts, *(pepUnitTest->num_ptr));
+                        pepPassed = false;
+                    }
+                    else
+                    {
+                        // 3. Parse points in array
+                        while (yPnt < pepUnitTest->expNumPts)
+                        {
+                            // 3.1. Verify calculations
+                            xCalc = calc_ellipse_x_coord(pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[yPnt]);
+                            yCalc = calc_ellipse_y_coord(pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[xPnt]);
+
+                            if (false == dble_equal_to(xCalc, pepUnitTest->ellArr[xPnt], DBL_PRECISION) \
+                                || false == dble_equal_to(yCalc, pepUnitTest->ellArr[yPnt], DBL_PRECISION))
+                            {
+                                fprintf(stdout, "[ ] FAIL    Point calculation mismatch\n\t\t");
+                                fprintf(stdout, "Expected: (%.15f,%.15f)\n\t\tReceived: (%.15f,%.15f)\n", xCalc, yCalc, \
+                                        pepUnitTest->ellArr[xPnt], pepUnitTest->ellArr[yPnt]);
+                                pepPassed = false;
+                                break;
+                            }
+                            
+                            // 3.2. Verify against expected value (if any)
+                            if (pepUnitTest->expArr[xPnt] && pepUnitTest->expArr[yPnt])
+                            {
+                                if (pepUnitTest->expArr[xPnt] != pepUnitTest->ellArr[xPnt] \
+                                    || pepUnitTest->expArr[yPnt] != pepUnitTest->ellArr[yPnt])
+                                {
+                                    fprintf(stdout, "[ ] FAIL    Expected value mismatch\n\t\t");
+                                    fprintf(stdout, "Expected: (%.15f,%.15f)\n\t\tReceived: (%.15f,%.15f)\n", \
+                                            pepUnitTest->expArr[xPnt], pepUnitTest->expArr[yPnt], \
+                                            pepUnitTest->ellArr[xPnt], pepUnitTest->ellArr[yPnt]);
+                                    pepPassed = false;
+                                    break;
+                                }
+                            }                            
+
+                            // Iterate to the next points
+                            xPnt += 2;
+                            yPnt += 2;
+                        }
+
+                        // Determine pass/fail
+                        if (true == pepPassed)
+                        {
+                            numTestsPassed++;
+                        }
+                    }
+                }
+
+                // CLEAN UP TEST RESULT
+                if (pepUnitTest->ellArr)
+                {
+                    if (pepTmpInt > 0)
+                    {
+                        // Zeroize the array
+                        tmp_ptr = memset(pepUnitTest->ellArr, 0x0, sizeof(double) * pepTmpInt);
+                    }
+
+                    // Free the array
+                    free(pepUnitTest->ellArr);
+
+                    // NULL the array
+                    pepUnitTest->ellArr = NULL;
+                }
+            }
+
+            pepTestArr_ptr++;
+        }
+
+        pepTests++;
+    }
+
 	// REPORT RESULTS
 	fprintf(stdout, "\n\nTests Run:   \t%d\n", numTestsRun);
 	fprintf(stdout,     "Tests Passed:\t%d\n\n", numTestsPassed);
@@ -331,3 +481,16 @@ int main(void)
     // DONE
     return 0;
 }
+
+/*
+typedef struct plotEllipsePointsTestStruct
+{
+    char* testName;         // Name and number of test
+    double aIn;             // "a" input
+    double bIn;             // "b" input
+    int* numPts;            // Pointer which holds number of points
+    int expNumPts;          // Expected number of points
+    double* ellArr;         // Array of ellipse coordinate points
+    double* expArr;         // Array of expected ellipse coordinate points
+} pepTest, *pepTest_ptr;
+ */
