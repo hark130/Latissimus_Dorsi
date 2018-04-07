@@ -1,9 +1,12 @@
 #include <fenv.h>				// fegetround(), fesetround()
+#include <float.h>				// DBL_MANT_DIG, DBL_MIN_EXP
 #include "Harklemath.h"			// HM_RND, HM_UP, HM_DWN, HM_IN
 #include "Harklerror.h"			// HARKLE_ERROR
 #include <limits.h>				// INT_MIN, INT_MAX
 #include <math.h>				// sqrt()
 #include <stdbool.h>			// bool, true, false
+#include <stdio.h>				// sprintf()
+#include <stdlib.h>				// atof()
 
 // PLACEHOLDERS FOR DOUBLE COMPARISON FUNCTIONS
 // double is a 64 bit IEEE 754 double precision Floating Point Number (1 bit for the sign, 11 bits for the exponent, and 52* bits for the value), i.e. double has 15 decimal digits of precision.
@@ -28,6 +31,20 @@
 			value between the two
  */
 int calc_max_precision(void);
+
+
+/*
+	PURPOSE - Quick/dirty method of removing certain decimal places from
+		a double
+	INPUT
+		val - Double to truncate
+		digits - Number of decimals places to keep, truncate everything else
+	OUTPUT
+		On success, val with only digits-number of decimal places
+		On failure, 0
+ */
+double truncate_double(double val, int digits);
+
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// FLOATING POINT FUNCTIONS START ///////////////////////
@@ -150,6 +167,8 @@ bool dble_less_than(double x, double y, int precision)
 	bool retVal = false;  // Prove this wrong
 	bool success = true;  // Set this to false if anything fails
 	double dbleMask = 0;  // "Mask" to remove undesired values of doubles
+	double xVal = truncate_double(x, precision);
+	double yVal = truncate_double(y, precision);
 	
 	// INPUT VALIDATION
 	if (precision < 1)
@@ -168,12 +187,21 @@ bool dble_less_than(double x, double y, int precision)
 			HARKLE_ERROR(Harklemath, dble_greater_than, calc_precision failed);
 			success = false;
 		}
+		// fprintf(stdout, "\nx == %.15f\ty == %.15f\tdbleMask == %.15f\n", x, y, dbleMask);  // DEBUGGING
+		// fprintf(stdout, "\nxTrunc == %.15f\tyTrunc == %.15f\tprecision == %d\n\t\t", xVal, yVal, precision);  // DEBUGGING
 	}
 	
 	// COMPARE DOUBLES
 	if (true == success)
 	{
-		if (x < y && (x + dbleMask) < (y + dbleMask) && (x - dbleMask) < (y - dbleMask))
+		// fprintf(stdout, "\nx == %.15f\ty == %.15f\tdbleMask == %.15f\n", x, y, dbleMask);  // DEBUGGING
+		// fprintf(stdout, "x < y == %.15f < %.15f == %s\n", x, y, (x < y) ? "true" : "false");  // DEBUGGING
+		// fprintf(stdout, "(x + dbleMask) < (y + dbleMask) == %.15f < %.15f == %s\n", \
+		// 	x + dbleMask, y + dbleMask, ((x + dbleMask) < (y + dbleMask)) ? "true" : "false");  // DEBUGGING
+		// fprintf(stdout, "(x - dbleMask) < (y - dbleMask) == %.15f < %.15f == %s\n\t\t", \
+		// 	x - dbleMask, y - dbleMask, ((x - dbleMask) < (y - dbleMask)) ? "true" : "false");  // DEBUGGING
+		if (xVal < yVal)
+		// if (x < y && (x + dbleMask) < (y + dbleMask) && (x - dbleMask) < (y - dbleMask))
 		{
 			retVal = true;	
 		}		
@@ -245,12 +273,13 @@ bool dble_greater_than_equal_to(double x, double y, int precision)
 	// LOCAL VARIABLES
 	bool retVal = false;
 	
-	// CALL dble_equal_to()
+	// Equal to?
 	if (true == dble_equal_to(x, y, precision))
 	{
 		retVal = true;	
 	}
-	else if (true == dble_greater_than(x, y, precision))
+	// Greater than?
+	if (true == retVal || true == dble_greater_than(x, y, precision))
 	{
 		retVal = true;	
 	}
@@ -265,12 +294,13 @@ bool dble_less_than_equal_to(double x, double y, int precision)
 	// LOCAL VARIABLES
 	bool retVal = false;
 	
-	// CALL dble_equal_to()
+	// Equal to?
 	if (true == dble_equal_to(x, y, precision))
 	{
 		retVal = true;	
 	}
-	else if (true == dble_less_than(x, y, precision))
+	// Less than?
+	if (true == retVal || true == dble_less_than(x, y, precision))
 	{
 		retVal = true;	
 	}
@@ -346,9 +376,9 @@ double calc_precision(int precision)
 
 
 /*
-          a
+		  a
 	x = ± ─ √(b² - y²)
-          b
+		  b
  */
 double calc_ellipse_x_coord(double aVal, double bVal, double yVal)
 {
@@ -390,9 +420,9 @@ double calc_ellipse_x_coord(double aVal, double bVal, double yVal)
 
 
 /*
-          b
+		  b
 	y = ± ─ √(a² - x²)
-          a
+		  a
  */
 double calc_ellipse_y_coord(double aVal, double bVal, double xVal)
 {
@@ -460,7 +490,7 @@ int calc_max_precision(void)
 			++counter;
 			num2 = num2 / 10.0;
 		}
-		printf("%2d digits accuracy in calculations\n", counter);  // DEBUGGING
+		// printf("%2d digits accuracy in calculations\n", counter);  // DEBUGGING
 
 		// Reset temp variables
 		retVal = counter;  // Store this result
@@ -478,13 +508,47 @@ int calc_max_precision(void)
 			++counter;
 			num2 = num2 / 10.0;
 		}
-		printf("%2d digits accuracy in storage\n", counter);  // DEBUGGING
+		// printf("%2d digits accuracy in storage\n", counter);  // DEBUGGING
 		
 		// Determine which accuracy count is least-specific
 		if (counter < retVal)
 		{
 			retVal = counter;	
 		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+double truncate_double(double val, int digits)
+{
+	// LOCAL VARIABLES
+	double retVal = 0.0;
+	char format[9] = { 0 };  // Big enough for "%%.1074f\0"
+	char dbleBuff[3 + DBL_MANT_DIG - DBL_MIN_EXP + 1] = { 0 };
+
+
+	// INPUT VALIDATION
+	if (0 == digits)
+	{
+		retVal = val;
+	}
+	else if (digits < 0 || digits > 1074)
+	{
+		HARKLE_ERROR(Harklemath, truncate_double, Invalid number of digits);
+	}
+	else
+	{
+		// TRUNCATE
+		// fprintf(stdout, "\nval == %.15f\ndigits == %d\n", val, digits);  // DEBUGGING
+		// Dynamically build a sprintf format string
+		sprintf(format, "%%.%df", digits);
+		// Use that format string to truncate val into a string
+		sprintf(dbleBuff, format, val);
+		// Convert that string back to a double
+		retVal = atof(dbleBuff);
 	}
 
 	// DONE
