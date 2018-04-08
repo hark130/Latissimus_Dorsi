@@ -237,7 +237,7 @@ int main(void)
 	
 	// RUN TESTS
 	allTests = testArrays_arr;
-    fprintf(stdout, "\n\t");
+    fprintf(stdout, "\nFLOATING POINT COMPARISON UNIT TESTS\n\t");
 
 	while(*allTests)
 	{
@@ -375,7 +375,6 @@ int main(void)
     double     pepNormArry05[] = { -2, 0, 0, 0,       0, 1, 0, 0,       2, 0, 0, 0,       0, -1, 0, 0, 0, 0 };
     pepTest    pepNormTest05 = { "Normal Test 05", (double)1.1,   (double)0.1,   &pepTmpInt,  16,        NULL,  pepNormArry05 };
 
-
     pepTest_ptr pepNrmTest_arr[] = { \
         &pepNormTest00, &pepNormTest01, &pepNormTest02, &pepNormTest03, &pepNormTest04, \
         &pepNormTest05, NULL };
@@ -384,7 +383,7 @@ int main(void)
 
     // RUN TESTS
     pepTests = pepTestArrays_arr;
-    fprintf(stdout, "\n");
+    fprintf(stdout, "\nPLOT ELLIPSE POINTS UNIT TESTS\n");
 
     while(*pepTests)
     {
