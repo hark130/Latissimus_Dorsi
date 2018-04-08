@@ -359,12 +359,26 @@ int main(void)
 /*  Data type  Var Name          Test Name         aIn             bIn           num_ptr      expNum    ellArr  expArr                    */
 /******************************************************************************************************************************************/
     // Normal Tests
+    // 1. Whole numbers as "a" and "b"
     double     pepNormArry00[] = { -3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0 };
     pepTest    pepNormTest00 = { "Normal Test 00", (double)3,     (double)2,     &pepTmpInt,  24,        NULL,  pepNormArry00 };
+    double     pepNormArry01[] = { -2, 0, 0, 0,       0, 1, 0, 0,       2, 0, 0, 0,       0, -1, 0, 0, 0, 0 };
+    pepTest    pepNormTest01 = { "Normal Test 01", (double)2,     (double)1,     &pepTmpInt,  16,        NULL,  pepNormArry01 };
+    // 2. 'High' doubles as "a" and "b" (expect they are rounded up)
+    double     pepNormArry02[] = { -3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0 };
+    pepTest    pepNormTest02 = { "Normal Test 02", (double)2.9,   (double)1.9,   &pepTmpInt,  24,        NULL,  pepNormArry02 };
+    double     pepNormArry03[] = { -2, 0, 0, 0,       0, 1, 0, 0,       2, 0, 0, 0,       0, -1, 0, 0, 0, 0 };
+    pepTest    pepNormTest03 = { "Normal Test 03", (double)1.9,   (double)0.9,   &pepTmpInt,  16,        NULL,  pepNormArry03 };
+    // 3. 'Low' doubles as "a" and "b" (expect they are *still* rounded up)
+    double     pepNormArry04[] = { -3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0 };
+    pepTest    pepNormTest04 = { "Normal Test 04", (double)2.1,   (double)1.1,   &pepTmpInt,  24,        NULL,  pepNormArry04 };
+    double     pepNormArry05[] = { -2, 0, 0, 0,       0, 1, 0, 0,       2, 0, 0, 0,       0, -1, 0, 0, 0, 0 };
+    pepTest    pepNormTest05 = { "Normal Test 05", (double)1.1,   (double)0.1,   &pepTmpInt,  16,        NULL,  pepNormArry05 };
 
 
     pepTest_ptr pepNrmTest_arr[] = { \
-        &pepNormTest00, NULL };
+        &pepNormTest00, &pepNormTest01, &pepNormTest02, &pepNormTest03, &pepNormTest04, \
+        &pepNormTest05, NULL };
 
     pepTest_ptr* pepTestArrays_arr[] = { pepNrmTest_arr, NULL };
 
