@@ -89,14 +89,19 @@ int round_a_dble(double roundMe, int rndDir)
 	// DETERMINE ROUNDING DIRECTION
 	if (true == success)
 	{
-		if (rndDir == HM_RND || rndDir == HM_UP || rndDir == HM_DWN || rndDir == HM_IN)
+		// HM_UP is handled with ceil() below
+		// HM_DWN is handled with floor() below
+		// HM_RND and HM_IN are handled with the combination of environment variables
+		//	and round()
+		if (rndDir == HM_RND || rndDir == HM_IN)
+		// if (rndDir == HM_RND || rndDir == HM_UP || rndDir == HM_DWN || rndDir == HM_IN)
 		{
 			// Turn on the "clean up later" flag
 			restoreNeeded = true;
 			// Get the current rounding environment variable
 			currState = fegetround();
 			// Set the rounding environment variable
-			if (fesetround(rndDir))
+			if (fesetround(rndDir) || fegetround() != rndDir)
 			{
 				HARKLE_ERROR(Harklemath, round_a_dble, fesetround failed);
 				success = false;
@@ -107,7 +112,19 @@ int round_a_dble(double roundMe, int rndDir)
 	// ROUND
 	if (true == success)
 	{
-		retVal = round(roundMe);
+		if (rndDir == HM_UP)
+		{
+			retVal = round(ceil(roundMe));
+		}
+		else if (rndDir == HM_DWN)
+		{
+			retVal = round(floor(roundMe));
+		}
+		else
+		{
+			retVal = round(roundMe);
+		}
+		fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
 	}
 	
 	// CLEAN UP
@@ -564,6 +581,7 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 
 		if (0 == aAbs || 0 == bAbs)
 		{
+			fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %.15f\tbAbs == %.15f\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
 			HARKLE_ERROR(Harklemath, plot_ellipse_points, round_a_dble failed);
 			success = false;
 		}
