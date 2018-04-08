@@ -411,10 +411,15 @@ int main(void)
                         {
                             // 3.1. Verify calculations
                             xCalc = calc_ellipse_x_coord(pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[yPnt]);
+                            // fprintf(stdout, "\ncalc_ellipse_x_coord(%.15f, %.15F, %.15f) == %.15f\n", pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[yPnt], xCalc);  // DEBUGGING
                             yCalc = calc_ellipse_y_coord(pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[xPnt]);
+                            // fprintf(stdout, "\ncalc_ellipse_Y_coord(%.15f, %.15F, %.15f) == %.15f\n", pepUnitTest->aIn, pepUnitTest->bIn, pepUnitTest->ellArr[xPnt], yCalc);  // DEBUGGING
 
-                            if (false == dble_equal_to(xCalc, pepUnitTest->ellArr[xPnt], DBL_PRECISION) \
-                                || false == dble_equal_to(yCalc, pepUnitTest->ellArr[yPnt], DBL_PRECISION))
+                            // Compare absolute calculated values to the absolute values of the values received
+                            // The test code doesn't know which points are positive and which are negative
+                            // This particular test isn't testing that
+                            if (false == dble_equal_to(fabs(xCalc), fabs(pepUnitTest->ellArr[xPnt]), DBL_PRECISION) \
+                                || false == dble_equal_to(fabs(yCalc), fabs(pepUnitTest->ellArr[yPnt]), DBL_PRECISION))
                             {
                                 fprintf(stdout, "[ ] FAIL    Point calculation mismatch\n\t\t");
                                 fprintf(stdout, "Expected: (%.15f,%.15f)\n\t\tReceived: (%.15f,%.15f)\n", xCalc, yCalc, \
@@ -446,6 +451,7 @@ int main(void)
                         // Determine pass/fail
                         if (true == pepPassed)
                         {
+                            fprintf(stdout, "[X] Success\n");
                             numTestsPassed++;
                         }
                     }
