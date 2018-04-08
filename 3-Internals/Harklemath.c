@@ -124,7 +124,7 @@ int round_a_dble(double roundMe, int rndDir)
 		{
 			retVal = round(roundMe);
 		}
-		fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
+		// fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
 	}
 	
 	// CLEAN UP
