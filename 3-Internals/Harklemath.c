@@ -608,12 +608,14 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 			{
 				majPnt = -1 * majAbs;
 			}
-			// Set x in the array
+			// Set the x-point for this coordinate in the array
 			retVal[count] = majPnt;
+			// fprintf(stdout, "%d x == %.15f\n", count, retVal[count]);  // DEBUGGING
 			count++;  // Next point
-			// Set y in the array
-			fprintf(stdout, "\naAbs == %d\tbAbs == %d\tmajPnt == %.15f\n", aAbs, bAbs, majPnt);  // DEBUGGING
+			// Set y-pont for this coordinate in the array
+			// fprintf(stdout, "\naAbs == %d\tbAbs == %d\tmajPnt == %.15f\n", aAbs, bAbs, majPnt);  // DEBUGGING
 			retVal[count] = flipIt * calc_ellipse_y_coord(aAbs, bAbs, majPnt);
+			// fprintf(stdout, "%d y == %.15f\n", count, retVal[count]);  // DEBUGGING
 			// Error check calc_ellipse_y_coord()
 			// if (0 == retVal[count])
 			// {
@@ -621,11 +623,12 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 			// 	success = false;
 			// 	break;
 			// }
+			count++;  // Next point
 
 			// Continue incrementing along the major axis
-			fprintf(stdout, "\ncount == %d and numPoints == %d\n", count, numPoints);  // DEBUGGING
+			// fprintf(stdout, "\ncount == %d and numPoints == %d\n", count, numPoints);  // DEBUGGING
 			///////////////////////////////////// BUG IS HERE //////////////////////////////////////
-			if (count > numPoints / 4)  // (a, 0)
+			if (count > numPoints / 2)  // (a, 0)
 			{
 				majPnt--;
 				flipIt = -1;
@@ -670,7 +673,7 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 			// 	majPnt--;
 			// 	flipIt = 1;
 			// }
-			// Quadrant IV
+			// Quadrant I through Quadrant IV
 			else if (count <= (3 * numPoints / 4))
 			{
 				majPnt--;
