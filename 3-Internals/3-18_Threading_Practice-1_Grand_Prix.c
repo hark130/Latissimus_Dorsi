@@ -93,8 +93,6 @@
 			[ ] Thread total time
 
 // TO DO 
-- Write Harklecurse function that returns an array of double tuples representing 
-	ellipse plot points given dimensions passed in as arguments
 - Design Harklecurse struct to keep track of plot points
 	- int xRelCoord
 	- int yRelCoord
