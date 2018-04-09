@@ -93,6 +93,21 @@
 			[ ] Thread total time
 
 // TO DO 
+- Current flow design
+	1. main() determines track window size (Local logic)
+	2. main() determines maximum axis based on window size (Local logic)
+	3. main() determines center (Harklemath helper function?  Local logic?)
+	4. main() calls HMath plot_ellipse_points()
+	5. main() calls build_geometric_list(double* relEllipseCoords, centX, centY)
+		6. build_geometic_list(head*, x, y), for each (x, y) in ellipseCoords calls:
+			7. resolve_x_coord(relX, cntX)
+			8. resolve_y_coord(relY, cntY)
+			9. add_cartCoord_node(absX, absY, '*', 0x0) which calls:
+				10. build_cardCood_node() which calls...
+					11. ...allocate_cardCoord_node() to allocate memory...
+					12. ...and then assigns info to the struct
+				13. add_cartCoord_node() calls insert_cartCoord_node(0) (0 for end, X for "in front of node X")
+						14. insert_cardCoord_node() calls find_end_cardCoord_node() and adds the node
 - Design Harklecurse struct to keep track of plot points
 	- int xRelCoord
 	- int yRelCoord
