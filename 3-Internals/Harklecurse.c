@@ -5,15 +5,175 @@
 #include <stdbool.h>			// bool, true, false
 #include <stdlib.h>				// calloc()
 
-
 #ifndef HARKLECURSE_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define HARKLECURSE_MAX_TRIES 3
 #endif  // HARKLECURSE_MAX_TRIES
 
+/*
+typdef struct hcCartesianCoordinate
+{
+	int absX;								// X coordinate starting at window's top left
+	int absY;								// Y coordinate starting at window's top left
+	char graphic;							// Character to print at this coordinate
+	unsigned long hcFlags;					// Implementation-defined coordinate details
+	struct hcCartesianCoordinate* nextPnt;  // Next node in the linked list
+} hcCartCoord, *hcCartCoord_ptr;
+ */
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// STRUCT FUNCTIONS START ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+////////////////////// CARTESIAN COORDINATE STRUCT START /////////////////////
+
+
+/*
+	PURPOSE - Allocate heap memory for one hcCartesianCoordinate struct
+	INPUT - None
+	OUTPUT
+		On success, pointer to a hcCartesianCoordinate struct on the heap
+		On failure, NULL
+	NOTES
+		It is the caller's responsibility to free the memory allocated by this function call
+ */
+hcCartCoord_ptr allocate_cartCoord_struct(void)
+{
+	// LOCAL VARIABLES
+	hcCartCoord_ptr retVal = NULL;
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Initialize a newly heap-allocated hcCartesianCoordinate struct
+	INPUT
+		xVal - Absolute, from the ncurse window's top left, x coordinate of this point
+		yVal - Absolute, from the ncurse window's top left, y coordinate of this point
+		pntChar - The character to print at coordinate (xVal, yVal)
+		initStatus - Initial value of the implementation-defined flags available for this point
+	OUTPUT
+		On success, pointer to a hcCartesianCoordinate struct on the heap that has been
+			populated with the build_new_cartCoord_struct() arguments
+		On failure, NULL
+	NOTES
+		This function calls allocate_cartCoord_struct() to allocate memory for the struct
+		It is the caller's responsibility to free the memory allocated by this function call
+ */
+hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, unsigned long initStatus)
+{
+	// LOCAL VARIABLES
+	hcCartCoord_ptr retVal = NULL;
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - This function will add a new cartCoord node (hcCartesianCoordinate struct) to
+		a linked list of cartCoord nodes, if one already exists.
+	INPUT
+		headPnt - hcCartesianCoordinate struct pointer to an existing head node, if any.  If
+			headPnt is NULL, newPnt will become the head node of a linked list
+		newPnt - hcCartesianCoordinate struct pointer to a new node to add to the existing
+			link list, if any
+		pntPos - Position to add newPnt:
+			0 - Add newPnt to the end
+			X - Insert newPnt in front of node #X
+	OUTPUT
+		On success, pointer to the head node of a linked list of hcCartesianCoordinate structs.
+			If headPnt is NULL, newPnt will be returned.  Otherwise, headPnt will be returned.
+		On failure, NULL
+	NOTES
+		If pntPos exceeds the length of the linked list, this function will just add newPnt
+			to the end.
+		Take care not to lose the pointer to your head node in case this function experiences
+			an error.  PRO TIP: Use a temp variable to store this function's return value.
+ */
+hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newPnt, int pntPos)
+{
+	// LOCAL VARIABLES
+	hcCartCoord_ptr retVal = NULL;
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Count the number of nodes in the linked list of hcCartesianCoordinate structs
+		starting at headPnt
+	INPUT
+		headPnt - headPnt - hcCartesianCoordinate struct pointer to an existing head node,
+			if any
+	OUTPUT
+		On success, number of nodes in the linked list.  If headPnt is NULL, 0.
+		On error, -1
+ */
+int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
+{
+	// LOCAL VARIABLES
+	int retVal = -1;  // Default return value if any input validation fails
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Free the heap-allocated memory associated with a hcCartesianCoordinate struct
+	INPUT
+		oldStruct_ptr - A pointer to a heap-allocated hcCartesianCoordinate struct pointer
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will attempt to zeroize and free the memory at *oldStruct_ptr.  It
+			will also set the original pointer to NULL.  Call this function as
+			free_cartCoord_struct(&myCartCoord_ptr);
+ */
+bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Set this to false if anything fails
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Free all of the hcCartesianCoordinate struct nodes contained in the
+		linked list that starts at the given head node
+	INPUT
+		oldHeadNode_ptr - A pointer to the head node pointer of a hcCartesianCoordinate
+			struct linked list
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will attempt to zeroize, free, and NULL all of the memory of
+			all the nodes in the linked list starting at *oldHeadNode_ptr.  Call 
+			this function as free_cardCoord_linked_list(&myHeadNode_ptr);
+		This function is recursive.
+		This function is also recursive.
+ */
+bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Set this to false if anything fails
+	
+	// DONE
+	return retVal;
+}
+
+
+////////////////////// CARTESIAN COORDINATE STRUCT STOP //////////////////////
+
+///////////////////////// NCURSES WINDOW STRUCT START ////////////////////////
 
 
 winDetails_ptr build_a_winDetails_ptr(void)
@@ -174,6 +334,8 @@ bool kill_a_winDetails_ptr(winDetails_ptr* oldStruct_ptr)
 	return retVal;
 }
 
+
+///////////////////////// NCURSES WINDOW STRUCT STOP /////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// STRUCT FUNCTIONS STOP ////////////////////////////
