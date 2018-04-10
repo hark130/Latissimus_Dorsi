@@ -140,7 +140,77 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newPnt, int pntPos)
 {
 	// LOCAL VARIABLES
-	hcCartCoord_ptr retVal = NULL;
+	hcCartCoord_ptr retVal = NULL;  // This variable will hold the head node
+	hcCartCoord_ptr currNode = NULL;  // This variable will walk the linked list
+	bool success = false;  // If anything fails, make this false
+	int numNodes = 0;  // Stores the number of nodes in the linked list
+	int currPos = 0;  // Keeps track of the node 'index' as we walk the linked list
+	
+	// INPUT VALIDATION
+	if (NULL == newPnt)
+	{
+		HARKLE_ERROR(Harklecurse, add_cartCoord_node, NULL pointer);
+		success = false;
+	}
+	else if (headPnt == newPnt)
+	{
+		HARKLE_ERROR(Harklecurse, add_cartCoord_node, headPnt and newPnt are equal);
+		success = false;
+	}
+	else if (pntPos < 0)
+	{
+		HARKLE_ERROR(Harklecurse, add_cartCoord_node, Invalid pntPos);
+		success = false;
+	}
+	
+	// DETERMINE HEAD NODE
+	if (true == success)
+	{
+		if (NULL == headPnt)
+		{
+			retVal = newPnt;	
+		}
+		else
+		{
+			retVal = headPnt;
+		}
+	}
+		
+	// INSERT THE NEW NODE
+	if (true == success && retVal != newPnt)
+	{
+		// Count the nodes in the linked list
+		numNodes = get_num_cartCoord_nodes(retVal);
+		
+		if (numNodes < 0)
+		{
+			HARKLE_ERROR(Harklecurse, add_cartCoord_node, get_num_cartCoord_nodes failed);
+			success = false;
+		}
+		else
+		{
+			currNode = retVal;
+			
+			if (0 == pntPos || pntPos > numNodes)
+			{
+				// Find the end
+				while (NULL != currNode->nextPnt)
+				{
+					currNode = currNode->nextPnt;
+				}
+				
+				// Insert the node there
+				currNode->nextPnt = newPnt;
+			}
+			else
+			{
+				while (currPos < pntPos)
+				{
+					/////////////////////// CONTINUE HERE ///////////////////////
+				}
+			}
+		}		
+	}
 	
 	// DONE
 	return retVal;
