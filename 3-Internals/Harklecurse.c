@@ -51,26 +51,65 @@ hcCartCoord_ptr allocate_cartCoord_struct(void)
 }
 
 
-/*
-	PURPOSE - Initialize a newly heap-allocated hcCartesianCoordinate struct
-	INPUT
-		xVal - Absolute, from the ncurse window's top left, x coordinate of this point
-		yVal - Absolute, from the ncurse window's top left, y coordinate of this point
-		pntChar - The character to print at coordinate (xVal, yVal)
-		initStatus - Initial value of the implementation-defined flags available for this point
-	OUTPUT
-		On success, pointer to a hcCartesianCoordinate struct on the heap that has been
-			populated with the build_new_cartCoord_struct() arguments
-		On failure, NULL
-	NOTES
-		This function calls allocate_cartCoord_struct() to allocate memory for the struct
-		It is the caller's responsibility to free the memory allocated by this function call
- */
 hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, unsigned long initStatus)
 {
 	// LOCAL VARIABLES
 	hcCartCoord_ptr retVal = NULL;
 	bool success = true;  // If anything fails, set this to false
+	int numTries = 0;  // Number of allocation attempts
+	
+	// INPUT VALIDATION
+	if (xVal < 0)
+	{
+		HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, Invalid xVal);
+		success = false;
+	}
+	else if (yVal < 0)
+	{
+		HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, Invalid yVal);
+		success = false;
+	}
+	else if (pntChar < 0 || pntChar > 255)
+	{
+		HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, Invalid pntChar);
+		success = false;
+	}
+	
+	// STRUCT ALLOCATION
+	if (true == success)
+	{
+		retVal = allocate_cartCoord_struct();
+		
+		if (NULL == retVal)
+		{
+			HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, allocate_cartCoord_struct failed);
+			success = false;
+		}
+	}
+	
+	// POPULATE STRUCT
+	if (true == success)
+	{
+		// int absX;								// X coordinate starting at window's top left
+		retVal->absX = xVal;
+		// int absY;								// Y coordinate starting at window's top left
+		retVal->absY = yVal;
+		// char graphic;							// Character to print at this coordinate
+		retVal->graphic = pntChar;
+		// unsigned long hcFlags;					// Implementation-defined coordinate details
+		retVal->hcFlags = initStatus;
+		// struct hcCartesianCoordinate* nextPnt; // Next node in the linked list
+		retVal->hcFlags = NULL;
+	}
+	
+	// CLEAN UP
+	if (false == success && retVal)
+	{
+		if (false == free_cartCoord_struct(&retVal))
+		{
+			HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, free_cartCoord_struct failed);
+		}
+	}
 	
 	// DONE
 	return retVal;
