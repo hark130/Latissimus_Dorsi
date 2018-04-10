@@ -28,19 +28,23 @@ typdef struct hcCartesianCoordinate
 ////////////////////// CARTESIAN COORDINATE STRUCT START /////////////////////
 
 
-/*
-	PURPOSE - Allocate heap memory for one hcCartesianCoordinate struct
-	INPUT - None
-	OUTPUT
-		On success, pointer to a hcCartesianCoordinate struct on the heap
-		On failure, NULL
-	NOTES
-		It is the caller's responsibility to free the memory allocated by this function call
- */
 hcCartCoord_ptr allocate_cartCoord_struct(void)
 {
 	// LOCAL VARIABLES
 	hcCartCoord_ptr retVal = NULL;
+	int numTries = 0;  // Counts the number of allocation attempts
+	
+	// ALLOCATION
+	while (numTries < HARKLECURSE_MAX_TRIES && NULL == retVal)
+	{
+		retVal = (hcCartCoord_ptr)calloc(1, sizeof(hcCartCoord));
+		numTries++;
+	}
+	
+	if (NULL == retVal)
+	{
+		HARKLE_ERROR(Harklecurse, allocate_cartCoord_struct, calloc failed);
+	}
 	
 	// DONE
 	return retVal;
@@ -66,6 +70,7 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 {
 	// LOCAL VARIABLES
 	hcCartCoord_ptr retVal = NULL;
+	bool success = true;  // If anything fails, set this to false
 	
 	// DONE
 	return retVal;
