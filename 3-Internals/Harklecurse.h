@@ -2,6 +2,7 @@
 #define __HARKLECURSE__
 
 #include <ncurses.h>			// WINDOW
+#include <stdbool.h>			// bool, true, false
 
 // This struct defines details about an ncurses window
 typedef struct hCurseWinDetails
