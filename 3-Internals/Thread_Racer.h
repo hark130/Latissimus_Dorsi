@@ -40,7 +40,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 		This function calls allocate_tgpRacer_ptr()
 		It is the caller's responsibility to free() the memory returned		
  */
-tgpRacer_ptr allocate_tgpRacer_pt(hThrDetails_ptr structDetails);
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails);
 
 
 /*
