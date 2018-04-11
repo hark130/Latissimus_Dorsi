@@ -1,0 +1,13 @@
+aVal == 167.000000000000000	bVal == 58.000000000000000	aAbs == 167.000000000000000	bAbs == 58.000000000000000
+centX == 84	centY == 29
+relEllipseCoords[1 - 1] == -167.000000000000000	relEllipseCoords[1] == 0.000000000000000
+roundMe == -167.000000000000000	rounded == -167
+roundMe == 0.000000000000000	rounded == 0
+tmpX == -167	tmpY == 0
+Invalid xVal == -167
+<<<ERROR>>> - Harklecurse - build_new_cartCoord_struct() - Invalid xVal!
+<<<ERROR>>> - Harklemath - build_geometric_list() - build_new_cartCoord_struct failed!
+<<<ERROR>>> - Grand_Prix - main() - build_geometric_list failed!
+
+Is this an issue between stdscr relative values and the track window center point?
+
