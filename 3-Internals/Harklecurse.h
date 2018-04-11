@@ -110,6 +110,8 @@ int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt);
 		This function will attempt to zeroize and free the memory at *oldStruct_ptr.  It
 			will also set the original pointer to NULL.  Call this function as
 			free_cartCoord_struct(&myCartCoord_ptr);
+		This function will recursively attempt to free any nextPnt pointers it finds.
+		Alos, this function will recursively attempt to free any nextPnt pointers it finds.
  */
 bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr);
 
@@ -127,8 +129,6 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr);
 		This function will attempt to zeroize, free, and NULL all of the memory of
 			all the nodes in the linked list starting at *oldHeadNode_ptr.  Call 
 			this function as free_cardCoord_linked_list(&myHeadNode_ptr);
-		This function is recursive.
-		This function is also recursive.
  */
 bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr);
 
