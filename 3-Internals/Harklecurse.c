@@ -269,11 +269,46 @@ int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
 		This function will attempt to zeroize and free the memory at *oldStruct_ptr.  It
 			will also set the original pointer to NULL.  Call this function as
 			free_cartCoord_struct(&myCartCoord_ptr);
+		This function will also attempt to zeroize and free any nextPnt pointers it finds
  */
 bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;  // Set this to false if anything fails
+
+	// INPUT VALIDATION
+	if (NULL == oldStruct_ptr || NULL == *oldStruct_ptr)
+	{
+		retVal = false;
+	}
+	else
+	{
+		// FREE NODE
+		// 1. Zeroize/Free/NULL any nodes beneath this one in the linked list
+		if (NULL != (*oldStruct_ptr)->nextPnt)
+		{
+			retVal = free_cartCoord_struct(&((*oldStruct_ptr)->nextPnt));
+
+			if (false == retVal)
+			{
+				HARKLE_ERROR(Harklecurse, free_cartCoord_struct, Recursive call to free_cartCoord_struct has failed);
+			}
+		}
+		// 2. Zeroize/Free/NULL this node's members
+		// int absX;								// X coordinate starting at window's top left
+		(*oldStruct_ptr)->absX = 0;
+		// int absY;								// Y coordinate starting at window's top left
+		(*oldStruct_ptr)->absY = 0;
+		// char graphic;							// Character to print at this coordinate
+		(*oldStruct_ptr)->graphic = 0;
+		// unsigned long hcFlags;					// Implementation-defined coordinate details
+		(*oldStruct_ptr)->hcFlags = 0;
+		// struct hcCartesianCoordinate* nextPnt;  // Next node in the linked list
+		// Handled recursively above
+		// 3. Free/NULL this node
+		free(*oldStruct_ptr);
+		*oldStruct_ptr = NULL;
+	}
 	
 	// DONE
 	return retVal;
