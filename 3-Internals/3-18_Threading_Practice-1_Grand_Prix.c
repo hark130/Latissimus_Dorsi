@@ -519,7 +519,18 @@ int main(int argc, char** argv)
 	// Free the track plot point array
 	if (trackPntArray)
 	{
-		/////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////	
+		// Zeroize the memory
+		if (numTrackPnts > 0)
+		{
+			if (trackPntArray != memset(trackPntArray, 0x0, numTrackPnts))
+			{
+				HARKLE_ERROR(Grand_Prix, main, memset failed);
+			}
+		}
+		// Free the pointer
+		free(trackPntArray);
+		// NULL the pointer
+		trackPntArray = NULL;
 	}
 
 	// Free the linked list of cartCoord nodes
