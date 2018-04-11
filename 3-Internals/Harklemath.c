@@ -51,6 +51,35 @@ int calc_max_precision(void);
 double truncate_double(double val, int digits);
 
 
+/*
+	PURPOSE - Translate plot points that are relative to the center of a windows
+		into plot points that are absolute with relation to the upper left corner
+		of a window
+	INPUT
+		relX - x point relative to the specified center coordinate
+		relY - y point relative to the specified center coordinate
+		cntX - x point of the center coordinate
+		cntY - y point of the center coordinate
+		absX - [OUT] translation of relX into an absolute reference point
+			starting at (0, 0) if that represents the upper left hand corner
+			of the window
+		absY - [OUT] translation of relY into an absolute reference point
+			starting at (0, 0) if that represents the upper left hand corner
+			of the window
+	OUTPUT
+		On success, true (and absX/absY have the real results)
+		On failure, false
+	NOTES
+		This function, were it not a local helper function, might best be served
+			inside Harklecurse as it has been written to help translate plot
+			points into a format easily digestible by ncurses window plotting
+			functions.  This is because ncurses windows treat "home" (see: (0, 0))
+			as the upper left hand corner of the window.
+		As of now, this function is exclusively called by build_geometric_list()
+ */
+bool translate_plot_points(int relX, int relY, int cntX, int cntY, int* absX, int* absY);
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// FLOATING POINT FUNCTIONS START ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -1072,6 +1101,71 @@ double truncate_double(double val, int digits)
 	return retVal;
 }
 
+
+/*
+	PURPOSE - Translate plot points that are relative to the center of a windows
+		into plot points that are absolute with relation to the upper left corner
+		of a window
+	INPUT
+		relX - x point relative to the specified center coordinate
+		relY - y point relative to the specified center coordinate
+		cntX - x point of the center coordinate
+		cntY - y point of the center coordinate
+		absX - [OUT] translation of relX into an absolute reference point
+			starting at (0, 0) if that represents the upper left hand corner
+			of the window
+		absY - [OUT] translation of relY into an absolute reference point
+			starting at (0, 0) if that represents the upper left hand corner
+			of the window
+	OUTPUT
+		On success, true (and absX/absY have the real results)
+		On failure, false
+	NOTES
+		This function, were it not a local helper function, might best be served
+			inside Harklecurse as it has been written to help translate plot
+			points into a format easily digestible by ncurses window plotting
+			functions.  This is because ncurses windows treat "home" (see: (0, 0))
+			as the upper left hand corner of the window.
+		As of now, this function is exclusively called by build_geometric_list()
+ */
+bool translate_plot_points(int relX, int relY, int cntX, int cntY, int* absX, int* absY)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // If anything fails, set this to false
+	
+	// INPUT VALIDATION
+	if (!absX || !absY)
+	{
+		HARKLE_ERROR(Harklemath, translate_plot_points, NULL pointer);
+		retVal = false;
+	}
+	else if (cntX < 1 || cntY < 1)
+	{
+		HARKLE_ERROR(Harklemath, translate_plot_points, Invalid center coordinates);
+		retVal = false;
+	}
+	else if ((cntX + relX) < 0 || (cntY - relY) < 0)
+	{
+		HARKLE_ERROR(Harklemath, translate_plot_points, Invalid relative coordinates);
+		retVal = false;
+	}
+	else
+	{
+		*absX = 0;
+		*absY = 0;
+	}
+	
+	// TRANSLATE COORDINATES
+	if (true == retVal)
+	{
+		*absX = cntX + relX;
+		*absY = cntY - relY;
+	}
+	
+	// DONE
+	return retVal;
+}
+	
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////// LOCAL HELPER FUNCTIONS STOP /////////////////////////
