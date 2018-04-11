@@ -61,6 +61,7 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 	// INPUT VALIDATION
 	if (xVal < 0)
 	{
+		printf("\nInvalid xVal == %d\n", xVal);  // DEBUGGING
 		HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, Invalid xVal);
 		success = false;
 	}
@@ -98,8 +99,8 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 		retVal->graphic = pntChar;
 		// unsigned long hcFlags;					// Implementation-defined coordinate details
 		retVal->hcFlags = initStatus;
-		// struct hcCartesianCoordinate* nextPnt; // Next node in the linked list
-		retVal->hcFlags = NULL;
+		// struct hcCartesianCoordinate* nextPnt; 	// Next node in the linked list
+		retVal->nextPnt = NULL;
 	}
 	
 	// CLEAN UP
@@ -299,7 +300,7 @@ bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr)
 	bool retVal = true;  // Set this to false if anything fails
 	
 	// INPUT VALIDATION
-	if (NULL == oldStruct_ptr || NULL == *oldStruct_ptr)
+	if (NULL == oldHeadNode_ptr || NULL == *oldHeadNode_ptr)
 	{
 		HARKLE_ERROR(Harklecurse, free_cartCoord_struct, NULL pointer);
 		retVal = false;
@@ -628,20 +629,20 @@ int kill_a_window(WINDOW** oldWin_ptr)
 /*
 	PURPOSE - Print all cartCoord nodes into a given ncurses WINDOW
 	INPUT
-		curWin - Pointer to a WINDOW object
+		currWin - Pointer to a WINDOW object
 		headNode - Head node to a linked list of hcCartesianCoordinate structs
 	OUTPUT
 		On success, true
 		On failure, false
  */
-bool print_plot_list(WINDOW* curWin, hcCartCoord_ptr headNode)
+bool print_plot_list(WINDOW* currWin, hcCartCoord_ptr headNode)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;  // If anything fails, make this false
-	hcCartCoord_ptr curNode = NULL;  // Current node being printed
+	hcCartCoord_ptr currNode = NULL;  // Current node being printed
 
 	// INPUT VALIDATION
-	if (NULL == curWin || NULL == headNode)
+	if (NULL == currWin || NULL == headNode)
 	{
 		HARKLE_ERROR(Harklecurse, print_plot_list, NULL pointer);
 		retVal = false;
@@ -650,7 +651,7 @@ bool print_plot_list(WINDOW* curWin, hcCartCoord_ptr headNode)
 	// WALK LINKED LIST
 	while (currNode && true == retVal)
 	{
-		if (OK != mvwaddch(curWin, currNode->absY, currNode->absX, currNode->graphic))
+		if (OK != mvwaddch(currWin, currNode->absY, currNode->absX, currNode->graphic))
 		{
 			HARKLE_ERROR(Harklecurse, print_plot_list, mvwaddch failed);
 			retVal = false;

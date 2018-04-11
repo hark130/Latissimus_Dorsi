@@ -16,7 +16,7 @@ typedef struct hCurseWinDetails
 
 // This struct defines details about an absolute cartesian coordinate to
 //	plot in an ncurses window
-typdef struct hcCartesianCoordinate
+typedef struct hcCartesianCoordinate
 {
 	int absX;								// X coordinate starting at window's top left
 	int absY;								// Y coordinate starting at window's top left
@@ -228,13 +228,13 @@ int kill_a_window(WINDOW** oldWin_ptr);
 /*
 	PURPOSE - Print all cartCoord nodes into a given ncurses WINDOW
 	INPUT
-		curWin - Pointer to a WINDOW object
+		currWin - Pointer to a WINDOW object
 		headNode - Head node to a linked list of hcCartesianCoordinate structs
 	OUTPUT
 		On success, true
 		On failure, false
  */
-bool print_plot_list(WINDOW* curWin, hcCartCoord_ptr headNode);
+bool print_plot_list(WINDOW* currWin, hcCartCoord_ptr headNode);
 
 
 //////////////////////////////////////////////////////////////////////////////
