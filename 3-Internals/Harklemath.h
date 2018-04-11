@@ -19,6 +19,13 @@ typedef struct cartesianCoordinate
 #define HM_DWN FE_DOWNWARD		// Round down (toward negative infinity)
 #define HM_IN FE_TOWARDZERO		// Round toward zero
 
+// Center MACROs to pass as determine_center()'s orientWint argument
+#define HM_UP_LEFT   1			// If not exactly center, window's center defaults to upper left
+#define HM_UP_RIGHT  2			// If not exactly center, window's center defaults to upper right
+#define HM_LOW_LEFT  3			// If not exactly center, window's center defaults to lower left
+#define HM_LOW_RIGHT 4			// If not exactly center, window's center defaults to lower left
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// FLOATING POINT FUNCTIONS START ///////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -229,6 +236,23 @@ double calc_ellipse_y_coord(double aVal, double bVal, double xVal);
  */
 double* plot_ellipse_points(double aVal, double bVal, int* numPnts);
 
+
+/*
+	PURPOSE - Determine the center coordinates of a rectangle given it's width
+		and height.
+	INPUT
+		width - Width of the window, minimum 3
+		height - Height of the window, minimum 3
+		xCoord - Pointer to an int variable to store the "x" coordinate of the center
+		yCoord - Pointer to an int variable to store the "y" coordinate of the center
+		orientWin - MACRO representation of window orientation if ever the center isn't
+			the perfect center.  Function defaults to HM_UP_LEFT if orientWin is
+			invalid.
+	OUTPUT
+		On success, true;
+		On failure, false;
+ */
+bool determine_center(int width, int height, int* xCoord, int* yCoord, int orientWin);
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GEOMETRIC FUNCTIONS STOP //////////////////////////

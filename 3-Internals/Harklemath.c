@@ -1,6 +1,6 @@
 #include <fenv.h>				// fegetround(), fesetround()
 #include <float.h>				// DBL_MANT_DIG, DBL_MIN_EXP
-#include "Harklemath.h"			// HM_RND, HM_UP, HM_DWN, HM_IN
+#include "Harklemath.h"			// HM_* MACROs
 #include "Harklerror.h"			// HARKLE_ERROR
 #include <limits.h>				// INT_MIN, INT_MAX
 #include <math.h>				// sqrt()
@@ -730,6 +730,113 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 		// NULL retVal
 		retVal = NULL;
 	}
+
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Determine the center coordinates of a rectangle given it's width
+		and height.
+	INPUT
+		width - Width of the window
+		height - Height of the window
+		xCoord - Pointer to an int variable to store the "x" coordinate of the center
+		yCoord - Pointer to an int variable to store the "y" coordinate of the center
+		orientWin - MACRO representation of window orientation if ever the center isn't
+			the perfect center.  Function defaults to HM_UP_LEFT if orientWin is
+			invalid.
+	OUTPUT
+		On success, true;
+		On failure, false;
+ */
+bool determine_center(int width, int height, int* xCoord, int* yCoord, int orientWin)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // If anything fails, make this false
+	int realOrientWin = 0;  // Translate orientWin into this variable
+	int realWidth = 0;  // Adjusted width if center isn't exactly center
+	int realHeight = 0;  // Adjusted height if center isn't exactly center
+
+	// INPUT VALIDATION
+	if (width < 3)
+	{
+		HARKLE_ERROR(Harklemath, determine_center, Invalid width);
+		retVal = false;
+	}
+	else if (height < 3)
+	{
+		HARKLE_ERROR(Harklemath, determine_center, Invalid height);
+		retVal = false;
+	}
+	else if (!xCoord || !yCoord)
+	{
+		HARKLE_ERROR(Harklemath, determine_center, NULL pointer);
+		retVal = false;
+	}
+	else
+	{
+		*xCoord = 0;
+		*yCoord = 0;
+
+		if (orientWin == HM_UP_LEFT  || \
+			orientWin == HM_UP_RIGHT || \
+			orientWin == HM_LOW_LEFT || \
+			orientWin == HM_LOW_RIGHT)
+		{
+			realOrientWin = orientWin;
+		}
+		else
+		{
+			realOrientWin = HM_UP_LEFT;
+		}
+	}
+
+	// CALCUALTE CENTER
+	if (true == retVal)
+	{
+		// Width
+		if (width & 1)  // Width is odd
+		{
+			realWidth = width;
+		}
+		else  // Width is even
+		{
+			if (realOrientWin == HM_UP_RIGHT || \
+				realOrientWin == HM_LOW_RIGHT)
+			{
+				realWidth = width + 1;
+			}
+			else
+			{
+				realWidth = width - 1;
+			}
+		}
+
+		*xCoord = ((realWidth - 1) / 2) + 1;
+
+		// Height
+		if (height & 1)  // Height is odd
+		{
+			realHeight = height;
+		}
+		else  // Height is even
+		{
+			if (realOrientWin == HM_LOW_LEFT || \
+				realOrientWin == HM_LOW_RIGHT)
+			{
+				realHeight = height + 1;
+			}
+			else
+			{
+				realHeight = height - 1;
+			}
+		}
+
+		*yCoord = ((realHeight - 1) / 2) + 1;
+	}
+
 
 	// DONE
 	return retVal;
