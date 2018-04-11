@@ -225,6 +225,18 @@ WINDOW* make_a_window(int numRows, int numCols, int startY, int startX);
 int kill_a_window(WINDOW** oldWin_ptr);
 
 
+/*
+	PURPOSE - Print all cartCoord nodes into a given ncurses WINDOW
+	INPUT
+		curWin - Pointer to a WINDOW object
+		headNode - Head node to a linked list of hcCartesianCoordinate structs
+	OUTPUT
+		On success, true
+		On failure, false
+ */
+bool print_plot_list(WINDOW* curWin, hcCartCoord_ptr headNode);
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// NCURSES FUNCTIONS STOP ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -625,6 +625,47 @@ int kill_a_window(WINDOW** oldWin_ptr)
 }
 
 
+/*
+	PURPOSE - Print all cartCoord nodes into a given ncurses WINDOW
+	INPUT
+		curWin - Pointer to a WINDOW object
+		headNode - Head node to a linked list of hcCartesianCoordinate structs
+	OUTPUT
+		On success, true
+		On failure, false
+ */
+bool print_plot_list(WINDOW* curWin, hcCartCoord_ptr headNode)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // If anything fails, make this false
+	hcCartCoord_ptr curNode = NULL;  // Current node being printed
+
+	// INPUT VALIDATION
+	if (NULL == curWin || NULL == headNode)
+	{
+		HARKLE_ERROR(Harklecurse, print_plot_list, NULL pointer);
+		retVal = false;
+	}
+
+	// WALK LINKED LIST
+	while (currNode && true == retVal)
+	{
+		if (OK != mvwaddch(curWin, currNode->absY, currNode->absX, currNode->graphic))
+		{
+			HARKLE_ERROR(Harklecurse, print_plot_list, mvwaddch failed);
+			retVal = false;
+		}
+		else
+		{
+			currNode = currNode->nextPnt;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// NCURSES FUNCTIONS STOP ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
