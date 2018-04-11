@@ -116,27 +116,6 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 }
 
 
-/*
-	PURPOSE - This function will add a new cartCoord node (hcCartesianCoordinate struct) to
-		a linked list of cartCoord nodes, if one already exists.
-	INPUT
-		headPnt - hcCartesianCoordinate struct pointer to an existing head node, if any.  If
-			headPnt is NULL, newPnt will become the head node of a linked list
-		newPnt - hcCartesianCoordinate struct pointer to a new node to add to the existing
-			link list, if any
-		pntPos - Position to add newPnt:
-			0 - Add newPnt to the end
-			X - Insert newPnt in front of node #X
-	OUTPUT
-		On success, pointer to the head node of a linked list of hcCartesianCoordinate structs.
-			If headPnt is NULL, newPnt will be returned.  Otherwise, headPnt will be returned.
-		On failure, NULL
-	NOTES
-		If pntPos exceeds the length of the linked list, this function will just add newPnt
-			to the end.
-		Take care not to lose the pointer to your head node in case this function experiences
-			an error.  PRO TIP: Use a temp variable to store this function's return value.
- */
 hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newPnt, int pntPos)
 {
 	// LOCAL VARIABLES
@@ -258,8 +237,22 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
 {
 	// LOCAL VARIABLES
-	int retVal = -1;  // Default return value if any input validation fails
+	int retVal = 0;  // Default return value if any input validation fails
+	hcCartCoord_ptr tmp_ptr = NULL;  // Walk the linked list with this variable
 	
+	// INPUT VALIDATION
+	if (headPnt)
+	{
+		// COUNT NODES
+		tmp_ptr = headPnt;
+
+		while (tmp_ptr)
+		{
+			retVal++;
+			tmp_ptr = tmp_ptr->nextPnt;
+		}
+	}
+
 	// DONE
 	return retVal;
 }
