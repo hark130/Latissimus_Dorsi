@@ -144,7 +144,7 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 	hcCartCoord_ptr currNode = NULL;  // This variable will walk the linked list
 	bool success = false;  // If anything fails, make this false
 	int numNodes = 0;  // Stores the number of nodes in the linked list
-	int currPos = 0;  // Keeps track of the node 'index' as we walk the linked list
+	int currPos = 1;  // Keeps track of the node 'index' as we walk the linked list
 	
 	// INPUT VALIDATION
 	if (NULL == newPnt)
@@ -191,6 +191,7 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 		{
 			currNode = retVal;
 			
+			// New node goes at the end
 			if (0 == pntPos || pntPos > numNodes)
 			{
 				// Find the end
@@ -202,17 +203,44 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 				// Insert the node there
 				currNode->nextPnt = newPnt;
 			}
+			// New node goes at the beginning
+			else if (1 == pntPos)
+			{
+				retVal = newPnt;
+				newPnt->nextPnt = headPnt;
+			}
 			else
 			{
-				while (currPos < pntPos)
+				while (currPos < (pntPos - 1))
 				{
-					/////////////////////// CONTINUE HERE ///////////////////////
+					if (NULL == currNode->nextPnt)
+					{
+						HARKLE_ERROR(Harklecurse, add_cartCoord_node, get_num_cartCoord_nodes appears to have miscalculated);
+						success = false;
+						break;
+					}
+					else
+					{
+						currNode = currNode->nextPnt;
+						currPos++;						
+					}
+				}
+
+				if (true == success && currNode)
+				{
+					newPnt->nextPnt = currNode->nextPnt;
+					currNode->nextPnt = newPnt;
 				}
 			}
 		}		
 	}
 	
 	// DONE
+	if (false == success)
+	{
+		retVal = NULL;
+	}
+
 	return retVal;
 }
 
