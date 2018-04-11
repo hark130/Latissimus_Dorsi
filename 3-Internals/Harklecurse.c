@@ -224,16 +224,6 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 }
 
 
-/*
-	PURPOSE - Count the number of nodes in the linked list of hcCartesianCoordinate structs
-		starting at headPnt
-	INPUT
-		headPnt - headPnt - hcCartesianCoordinate struct pointer to an existing head node,
-			if any
-	OUTPUT
-		On success, number of nodes in the linked list.  If headPnt is NULL, 0.
-		On error, -1
- */
 int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
 {
 	// LOCAL VARIABLES
@@ -258,19 +248,6 @@ int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
 }
 
 
-/*
-	PURPOSE - Free the heap-allocated memory associated with a hcCartesianCoordinate struct
-	INPUT
-		oldStruct_ptr - A pointer to a heap-allocated hcCartesianCoordinate struct pointer
-	OUTPUT
-		On success, true
-		On failure, false
-	NOTES
-		This function will attempt to zeroize and free the memory at *oldStruct_ptr.  It
-			will also set the original pointer to NULL.  Call this function as
-			free_cartCoord_struct(&myCartCoord_ptr);
-		This function will also attempt to zeroize and free any nextPnt pointers it finds
- */
 bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 {
 	// LOCAL VARIABLES
@@ -279,6 +256,7 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 	// INPUT VALIDATION
 	if (NULL == oldStruct_ptr || NULL == *oldStruct_ptr)
 	{
+		HARKLE_ERROR(Harklecurse, free_cartCoord_struct, NULL pointer);
 		retVal = false;
 	}
 	else
@@ -304,7 +282,7 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 		// unsigned long hcFlags;					// Implementation-defined coordinate details
 		(*oldStruct_ptr)->hcFlags = 0;
 		// struct hcCartesianCoordinate* nextPnt;  // Next node in the linked list
-		// Handled recursively above
+		// Handled recursively above (or below, depending on how you look at it... recursively)
 		// 3. Free/NULL this node
 		free(*oldStruct_ptr);
 		*oldStruct_ptr = NULL;
@@ -315,27 +293,22 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 }
 
 
-/*
-	PURPOSE - Free all of the hcCartesianCoordinate struct nodes contained in the
-		linked list that starts at the given head node
-	INPUT
-		oldHeadNode_ptr - A pointer to the head node pointer of a hcCartesianCoordinate
-			struct linked list
-	OUTPUT
-		On success, true
-		On failure, false
-	NOTES
-		This function will attempt to zeroize, free, and NULL all of the memory of
-			all the nodes in the linked list starting at *oldHeadNode_ptr.  Call 
-			this function as free_cardCoord_linked_list(&myHeadNode_ptr);
-		This function is recursive.
-		This function is also recursive.
- */
 bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;  // Set this to false if anything fails
 	
+	// INPUT VALIDATION
+	if (NULL == oldStruct_ptr || NULL == *oldStruct_ptr)
+	{
+		HARKLE_ERROR(Harklecurse, free_cartCoord_struct, NULL pointer);
+		retVal = false;
+	}
+	else
+	{
+		retVal = free_cartCoord_struct(oldHeadNode_ptr);
+	}
+
 	// DONE
 	return retVal;
 }
