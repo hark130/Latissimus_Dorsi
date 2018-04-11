@@ -66,6 +66,9 @@ tgpRacer_ptr* allocate_tgpRacer_arr(int numRacers);
 	OUTPUT
 		On success, true
 		On failure, false
+	NOTES
+		If the F1Details member exists, this function will attempt to call 
+			free_a_hThrDetails_ptr() to free() it.
  */
 bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr);
 
