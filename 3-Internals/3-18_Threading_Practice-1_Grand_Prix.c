@@ -183,6 +183,8 @@ int main(int argc, char** argv)
 	int numTrackPnts = 0;  // Number of track points in trackPntArray
 	int cntTrkPntX = 0;  // x coordinate for the center of the track window
 	int cntTrkPntY = 0;  // y coordinate for the center of the track window
+	int axisLenX = 0;  // Calculate the maximum value of the ellipse function's variable "a" here
+	int axisLenY = 0;  // Calculate the maximum value of the ellipse function's variable "b" here
 	hcCartCoord_ptr trkHeadNode = NULL;  // Head node of the linked list of track plot points
 	hcCartCoord_ptr newNode = NULL;  // Newly created node is held here prior to linking
 	hcCartCoord_ptr tmpNode = NULL;  // Holds the return value from function calls
@@ -359,8 +361,29 @@ int main(int argc, char** argv)
 		}
 		else
 		{
+			// 5.2. Calculate the axis of the ellipse based on the window size
+			// Horizontal axis
+			if (trackWin->nCols & 1)  // Windown width is odd
+			{
+				axisLenX = (trackWin->nCols - 1) / 2;
+			}
+			else
+			{
+				axisLenX = (trackWin->nCols - 2) / 2;
+			}
+			// Vertical axis
+			if (trackWin->rRows & 1)
+			{
+				axisLenY = (trackWin->rRows - 1) / 2;
+			}
+			else
+			{
+				axisLenY = (trackWin->rRows - 2) / 2;
+			}
+			
 			// 5.2. Get plot points for the race track
-			trackPntArray = plot_ellipse_points(trackWin->nCols, trackWin->nRows, &numTrackPnts);
+			trackPntArray = plot_ellipse_points(axisLenX, axisLenY, &numTrackPnts);
+			// trackPntArray = plot_ellipse_points(trackWin->nCols, trackWin->nRows, &numTrackPnts);
 
 			if (NULL == trackPntArray || 0 == numTrackPnts || 0 != numTrackPnts % 2)
 			{
