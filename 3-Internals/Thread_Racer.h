@@ -81,6 +81,9 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr);
 	OUTPUT
 		On success, true
 		On failure, false
+	NOTES
+		This function will attempt to free any tgpRacer_ptrs found in the arry
+			by calling free_tgpRacer_ptr()
  */
 bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr);
 
