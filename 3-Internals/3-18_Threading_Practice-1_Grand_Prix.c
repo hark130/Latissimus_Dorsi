@@ -119,6 +119,7 @@
  */
 
 #include "Harklecurse.h"		// kill_a_window()
+#include "Harklemath.h"			// determine_center()
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
@@ -369,54 +370,12 @@ int main(int argc, char** argv)
 			else
 			{
 				// 5.3. Convert plot points into linked list of Cartesian Coordinates
-				for (i = 1; i < numTrackPnts; i += 2)
+				trkHeadNode = build_geometric_list(trackPntArray, numTrackPnts, cntTrkPntX, cntTrkPntY);
+
+				if (NULL == trkHeadNode)
 				{
-					if (NULL == trkHeadNode)
-					{
-						// This new struct becomes the head node
-						trkHeadNode = build_new_cartCoord_struct(trackPntArray[i - 1], \
-							                                     trackPntArray[i], '*', 0);
-
-						if (NULL == trkHeadNode)
-						{
-							HARKLE_ERROR(Grand_Prix, main, build_new_cartCoord_struct failed);
-							success = false;
-							break;
-						}
-					}
-					else
-					{
-						// Build a new struct
-						newNode = build_new_cartCoord_struct(trackPntArray[i - 1], \
-							                                 trackPntArray[i], '*', 0);
-
-						if (NULL == newNode)
-						{
-							HARKLE_ERROR(Grand_Prix, main, build_new_cartCoord_struct failed);
-							success = false;
-							break;
-						}
-						else
-						{
-							// Add this struct to the end of the linked list
-							tmpNode = add_cartCoord_node(trkHeadNode, newNode, 0);
-
-							if (NULL == tmpNode)
-							{
-								HARKLE_ERROR(Grand_Prix, main, add_cartCoord_node failed);
-								success = false;
-								if (false == free_cartCoord_struct(&newNode))
-								{
-									HARKLE_ERROR(Grand_Prix, main, free_cartCoord_struct failed);
-								}
-								break;
-							}
-							else if (tmpNode != trkHeadNode)
-							{
-								trkHeadNode = tmpNode;
-							}
-						}
-					}					
+					HARKLE_ERROR(Grand_Prix, main, build_geometric_list failed);
+					success = false;
 				}
 			}
 		}
