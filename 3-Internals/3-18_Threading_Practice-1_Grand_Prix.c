@@ -177,6 +177,14 @@ int main(int argc, char** argv)
 	int numTries = 0;  // Counter for memory allocation function calls
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
+	// Race Track
+	double* trackPntArray = NULL;  // Return value from plot_ellipse_points()
+	int numTrackPnts = 0;  // Number of track points in trackPntArray
+	int cntTrkPntX = 0;  // x coordinate for the center of the track window
+	int cntTrkPntY = 0;  // y coordinate for the center of the track window
+	hcCartCoord_ptr trkHeadNode = NULL;  // Head node of the linked list of track plot points
+	hcCartCoord_ptr newNode = NULL;  // Newly created node is held here prior to linking
+	hcCartCoord_ptr tmpNode = NULL;  // Holds the return value from function calls
 	
 	// INPUT VALIDATION
 	if (numF1s < 1)
@@ -339,19 +347,107 @@ int main(int argc, char** argv)
 		}
 	}
 
-	// START THE RACE
-	while (1)
+	// 5. Race Track
+	if (true == success)
 	{
-		// Update race details
-		winner = true;  // PLACEHOLDER
-		
-		// Print updates
-		refresh();  // Print it on the real screen
-		
-		// Is there a winner?
-		if (winner == true)
+		// 5.1. Get the center of the track window
+		if (false == determine_center(trackWin->nCols, trackWin->nRows, &cntTrkPntX, &cntTrkPntY, HM_UP_LEFT))
 		{
-			break;	
+			HARKLE_ERROR(Grand_Prix, main, determine_center failed);
+			success = false;
+		}
+		else
+		{
+			// 5.2. Get plot points for the race track
+			trackPntArray = plot_ellipse_points(trackWin->nCols, trackWin->nRows, &numTrackPnts);
+
+			if (NULL == trackPntArray || 0 == numTrackPnts || 0 != numTrackPnts % 2)
+			{
+				HARKLE_ERROR(Grand_Prix, main, plot_ellipse_points failed);
+				success = false;
+			}
+			else
+			{
+				// 5.3. Convert plot points into linked list of Cartesian Coordinates
+				for (i = 1; i < numTrackPnts; i += 2)
+				{
+					if (NULL == trkHeadNode)
+					{
+						// This new struct becomes the head node
+						trkHeadNode = build_new_cartCoord_struct(trackPntArray[i - 1], \
+							                                     trackPntArray[i], '*', 0);
+
+						if (NULL == trkHeadNode)
+						{
+							HARKLE_ERROR(Grand_Prix, main, build_new_cartCoord_struct failed);
+							success = false;
+							break;
+						}
+					}
+					else
+					{
+						// Build a new struct
+						newNode = build_new_cartCoord_struct(trackPntArray[i - 1], \
+							                                 trackPntArray[i], '*', 0);
+
+						if (NULL == newNode)
+						{
+							HARKLE_ERROR(Grand_Prix, main, build_new_cartCoord_struct failed);
+							success = false;
+							break;
+						}
+						else
+						{
+							// Add this struct to the end of the linked list
+							tmpNode = add_cartCoord_node(trkHeadNode, newNode, 0);
+
+							if (NULL == tmpNode)
+							{
+								HARKLE_ERROR(Grand_Prix, main, add_cartCoord_node failed);
+								success = false;
+								if (false == free_cartCoord_struct(&newNode))
+								{
+									HARKLE_ERROR(Grand_Prix, main, free_cartCoord_struct failed);
+								}
+								break;
+							}
+							else if (tmpNode != trkHeadNode)
+							{
+								trkHeadNode = tmpNode;
+							}
+						}
+					}					
+				}
+			}
+		}
+	}
+
+	// 5.4. Print Track Points
+	if (true == success)
+	{
+		if (false == print_plot_list(trackWin->win_ptr, trkHeadNode))
+		{
+			HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
+			success = false;
+		}
+	}
+
+	// START THE RACE
+	if (true == success)
+	{
+		while (1)
+		{
+			// Update race details
+			winner = true;  // PLACEHOLDER
+			
+			// Print updates
+			refresh();  // Print it on the real screen
+			
+			// Is there a winner?
+			if (winner == true)
+			{
+				break;	
+			}
 		}
 	}
 	
@@ -436,6 +532,21 @@ int main(int argc, char** argv)
 		// Free the array
 		free(racerArr_ptr);
 		racerArr_ptr = NULL;
+	}
+
+	// Free the track plot point array
+	if (trackPntArray)
+	{
+		/////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////	
+	}
+
+	// Free the linked list of cartCoord nodes
+	if (trkHeadNode)
+	{
+		if (false == free_cardCoord_linked_list(&trkHeadNode))
+		{
+			HARKLE_ERROR(Grand_Prix, main, free_cardCoord_linked_list failed);
+		}
 	}
 
 	// DONE
