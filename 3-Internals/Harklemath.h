@@ -2,7 +2,8 @@
 #define __HARKLEMATH__
 
 #include <fenv.h>
-#include <stdbool.h>		// bool, true, false
+#include "Harklecurse.h"		// hcCartCoord_ptr
+#include <stdbool.h>			// bool, true, false
 
 typedef struct cartesianCoordinate
 {
@@ -253,6 +254,25 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts);
 		On failure, false;
  */
 bool determine_center(int width, int height, int* xCoord, int* yCoord, int orientWin);
+
+
+/*
+	PURPOSE - Convert an array of point coordinates, stored as doubles, relative to
+		center (centX, centY), into a linked list of hcCartCoord structs
+	INPUT
+		relEllipseCoords - A non-nul-terminated array of doubles.  Each even index 
+			is an x point and each odd index is a y point.  These x and y points 
+			make up coordinates.
+		numPnts - The number of points contained in relEllipseCoords.  This value
+			must be even and positive.
+		centX - x value of the center coordinate
+		centY - y value of the center coordinate
+	OUTPUT
+		On success, a pointer to the head node of a linked list of heap-allocated
+			hcCartCoord structs translated from reEllipseCoords
+		On failure, NULL
+ */
+hcCartCoord_ptr build_geometric_list(double* relEllipseCoords, int numPnts, int centX, int centY);
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GEOMETRIC FUNCTIONS STOP //////////////////////////

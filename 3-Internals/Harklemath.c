@@ -1,5 +1,6 @@
 #include <fenv.h>				// fegetround(), fesetround()
 #include <float.h>				// DBL_MANT_DIG, DBL_MIN_EXP
+#include "Harklecurse.h"		// hcCartCoord_ptr
 #include "Harklemath.h"			// HM_* MACROs
 #include "Harklerror.h"			// HARKLE_ERROR
 #include <limits.h>				// INT_MIN, INT_MAX
@@ -124,7 +125,7 @@ int round_a_dble(double roundMe, int rndDir)
 		{
 			retVal = round(roundMe);
 		}
-		// fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
+		fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
 	}
 	
 	// CLEAN UP
@@ -510,8 +511,8 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 	// LOCAL VARIABLES
 	double* retVal = NULL;  // Array of double values for ellipse plot points
 	bool success = true;  // If anything fails, make this false
-	int aAbs = 0;  // Rounded absolute value of aVal
-	int bAbs = 0;  // Rounded absolute value of bVal
+	double aAbs = 0;  // Rounded absolute value of aVal
+	double bAbs = 0;  // Rounded absolute value of bVal
 	int majAbs = 0;  // Rounded absolute value of the major axis
 	double majPnt = 0;  // Point along the major axis
 	int numTries = 0;  // Keeps count of allocation attempts
@@ -554,21 +555,26 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 	{
 		if (true == dble_not_equal(fabs(aVal), ((int)fabs(aVal)) * 1.0, DBL_PRECISION))
 		{
-			aAbs = round_a_dble(fabs(aVal), HM_UP);
+			aAbs = fabs(aVal);
+			// aAbs = round_a_dble(fabs(aVal), HM_UP);
 		}
 		else
 		{
-			aAbs = ((int)fabs(aVal));
+			aAbs = fabs(aVal);
+			// aAbs = ((int)fabs(aVal));
 		}
 
 		if (true == dble_not_equal(fabs(bVal), ((int)fabs(bVal)) * 1.0, DBL_PRECISION))
 		{
-			bAbs = round_a_dble(fabs(bVal), HM_UP);
+			bAbs = fabs(bVal);
+			// bAbs = round_a_dble(fabs(bVal), HM_UP);
 		}
 		else
 		{
-			bAbs = ((int)fabs(bVal));
+			bAbs = fabs(bVal);
+			// bAbs = ((int)fabs(bVal));
 		}
+		fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %.15f\tbAbs == %.15f\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
 
 		if (true == chooseX)
 		{
@@ -579,24 +585,36 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 			majAbs = bAbs;
 		}
 
-		if (0 == aAbs || 0 == bAbs)
-		{
-			fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %.15f\tbAbs == %.15f\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
-			HARKLE_ERROR(Harklemath, plot_ellipse_points, round_a_dble failed);
-			success = false;
-		}
-		else
-		{
-			// majAbs is 1/2 the major axis
-			// 4 for the four quadrants
-			// 2 because each coordinate pair is represented by two doubles
-			numPoints = majAbs * 4 * 2;
+		// if (0 == aAbs || 0 == bAbs)
+		// {
+		// 	// fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %d\tbAbs == %d\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
+		// 	HARKLE_ERROR(Harklemath, plot_ellipse_points, round_a_dble failed);
+		// 	success = false;
+		// }
+		// else
+		// {
+		// 	// majAbs is 1/2 the major axis
+		// 	// 4 for the four quadrants
+		// 	// 2 because each coordinate pair is represented by two doubles
+		// 	numPoints = majAbs * 4 * 2;
 
-			if (numPoints < 8 || 0 != numPoints % 4)
-			{
-				HARKLE_ERROR(Harklemath, plot_ellipse_points, Number of points miscalculated);
-				success = false;
-			}
+		// 	if (numPoints < 8 || 0 != numPoints % 4)
+		// 	{
+		// 		HARKLE_ERROR(Harklemath, plot_ellipse_points, Number of points miscalculated);
+		// 		success = false;
+		// 	}
+		// }
+
+
+		// majAbs is 1/2 the major axis
+		// 4 for the four quadrants
+		// 2 because each coordinate pair is represented by two doubles
+		numPoints = majAbs * 4 * 2;
+
+		if (numPoints < 8 || 0 != numPoints % 4)
+		{
+			HARKLE_ERROR(Harklemath, plot_ellipse_points, Number of points miscalculated);
+			success = false;
 		}
 	}
 
@@ -837,6 +855,125 @@ bool determine_center(int width, int height, int* xCoord, int* yCoord, int orien
 		*yCoord = ((realHeight - 1) / 2) + 1;
 	}
 
+
+	// DONE
+	return retVal;
+}
+
+
+hcCartCoord_ptr build_geometric_list(double* relEllipseCoords, int numPnts, int centX, int centY)
+{
+	// LOCAL VARIABLES
+	hcCartCoord_ptr retVal = NULL;
+	hcCartCoord_ptr newNode = NULL;  // Newly created node prior to linking
+	hcCartCoord_ptr tmpNode = NULL;  // Return value from add_cartCoord_node()
+	int tmpX = 0;  // Temporary x value translated from the double array
+	int tmpY = 0;  // Temporary y value translated from the double array
+	bool success = true;  // Set this to false if anything fails
+	int i = 0;  // Iterating variable
+
+	// INPUT VALIDATION
+	if (NULL == relEllipseCoords)
+	{
+		HARKLE_ERROR(Harklemath, build_geometric_list, NULL pointer);
+		success = false;
+	}
+	else if (numPnts < 2 || numPnts % 2)
+	{
+		HARKLE_ERROR(Harklemath, build_geometric_list, Invalid numPnts);
+		success = false;
+	}
+	else if (centX < 0)
+	{
+		HARKLE_ERROR(Harklemath, build_geometric_list, Invalid centX);
+		success = false;
+	}
+	else if (centY < 0)
+	{
+		HARKLE_ERROR(Harklemath, build_geometric_list, Invalid centY);
+		success = false;
+	}
+
+	// BUILD LINKED LIST
+	if (true == success)
+	{
+		for (i = 1; i < numPnts; i += 2)
+		{
+			// Round the doubles to ints
+			printf("\ncentX == %d\tcentY == %d\n", centX, centY);  // DEBUGGING
+			printf("\nrelEllipseCoords[%d - 1] == %.15f\trelEllipseCoords[%d] == %.15f\n", i, relEllipseCoords[i - 1], i, relEllipseCoords[i]);  // DEBUGGING
+			tmpX = round_a_dble(relEllipseCoords[i - 1], HM_UP);
+			tmpY = round_a_dble(relEllipseCoords[i], HM_UP);
+			printf("\ntmpX == %d\ttmpY == %d\n", tmpX, tmpY);  // DEBUGGING
+
+			// Build a node
+			if (NULL == retVal)
+			{
+				// Build the head node
+				retVal = build_new_cartCoord_struct(tmpX, \
+						                            tmpY, '*', 0);
+
+				if (NULL == retVal)
+				{
+					HARKLE_ERROR(Harklemath, build_geometric_list, build_new_cartCoord_struct failed);
+					success = false;
+					break;
+				}
+			}
+			else
+			{
+				// Build a child node		
+				newNode = build_new_cartCoord_struct(tmpX, tmpY, '*', 0);
+
+				if (NULL == newNode)
+				{
+					HARKLE_ERROR(Harklemath, build_geometric_list, build_new_cartCoord_struct failed);
+					success = false;
+					break;
+				}
+				else
+				{
+					// Add the child node to the existing linked list
+					tmpNode = add_cartCoord_node(retVal, newNode, 0);
+
+					if (NULL == tmpNode)
+					{
+						HARKLE_ERROR(Harklemath, build_geometric_list, add_cartCoord_node failed);
+						success = false;
+						break;
+					}
+					else if (tmpNode != retVal)
+					{
+						retVal = tmpNode;
+					}
+
+					newNode = NULL;  // Reset the temp variable as an indication of successful linking
+				}				
+			}
+		}
+	}
+
+	// CLEAN UP
+	if (false == success)
+	{
+		// newNode
+		if (newNode)
+		{
+			if (false == free_cartCoord_struct(&newNode))
+			{
+				HARKLE_ERROR(Harklemath, build_geometric_list, free_cartCoord_struct failed);
+			}
+		}
+		
+		// retVal
+		if (retVal)
+		{
+			if (false == free_cardCoord_linked_list(&retVal))
+			{
+				HARKLE_ERROR(Harklemath, build_geometric_list, free_cardCoord_linked_list failed);
+			}
+		}
+	}
 
 	// DONE
 	return retVal;
