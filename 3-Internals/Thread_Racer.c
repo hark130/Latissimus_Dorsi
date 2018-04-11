@@ -186,19 +186,39 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr)
 }
 
 
-/*
-	PURPOSE - Free a heap-allocated array of heap-allocated threadGrandPrixRace
-		struct pointers
-	INPUT
-		oldArr_ptr - Pointer to an array of threadGrandPrixRace struct pointers
-	OUTPUT
-		On success, true
-		On failure, false
- */
 bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
+	// tgpRacer_ptr oldStruct = NULL;  // Variable to iterate through the struct pointers
+	tgpRacer_ptr* oldArray = NULL;  // Variable to iterate through the array
+	
+	// INPUT VALIDATION
+	if (NULL == oldArr_ptr || NULL == *oldArr_ptr)
+	{
+		HARKLE_ERROR(Thread_Racer, free_tgpRacer_arr, NULL pointer);
+		retVal = false;
+	}
+	else
+	{
+		oldArray = *oldArr_ptr;	
+	}
+	
+	// ZEROIZE/FREE/NULL THE STRUCT POINTERS
+	while (NULL != *oldArray)
+	{
+		if (false == free_tgpRacer_ptr(&(*oldArray)))
+		{
+			HARKLE_ERROR(Thread_Racer, free_tgpRacer_arr, free_tgpRacer_ptr failed);
+			retVal = false;
+		}
+		
+		oldArray++;  // Next struct pointer
+	}	
+	
+	// ZEROIZE/FREE/NULL THE ARRAY
+	free(*oldArr_ptr);
+	*oldArr_ptr = NULL;
 	
 	// DONE
 	return retVal;
