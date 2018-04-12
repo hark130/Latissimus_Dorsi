@@ -61,7 +61,7 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 	// INPUT VALIDATION
 	if (xVal < 0)
 	{
-		printf("\nInvalid xVal == %d\n", xVal);  // DEBUGGING
+		// printf("\nInvalid xVal == %d\n", xVal);  // DEBUGGING
 		HARKLE_ERROR(Harklecurse, build_new_cartCoord_struct, Invalid xVal);
 		success = false;
 	}
@@ -122,7 +122,7 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 	// LOCAL VARIABLES
 	hcCartCoord_ptr retVal = NULL;  // This variable will hold the head node
 	hcCartCoord_ptr currNode = NULL;  // This variable will walk the linked list
-	bool success = false;  // If anything fails, make this false
+	bool success = true;  // If anything fails, make this false
 	int numNodes = 0;  // Stores the number of nodes in the linked list
 	int currPos = 1;  // Keeps track of the node 'index' as we walk the linked list
 	
@@ -647,12 +647,18 @@ bool print_plot_list(WINDOW* currWin, hcCartCoord_ptr headNode)
 		HARKLE_ERROR(Harklecurse, print_plot_list, NULL pointer);
 		retVal = false;
 	}
+	else
+	{
+		currNode = headNode;
+	}
 
 	// WALK LINKED LIST
 	while (currNode && true == retVal)
 	{
+		// fprintf(stdout, "Printing %c at (%d, %d)\t", currNode->graphic, currNode->absX, currNode->absY);  // DEBUGGING
 		if (OK != mvwaddch(currWin, currNode->absY, currNode->absX, currNode->graphic))
 		{
+			fprintf(stdout, "Failed to print %c at (%d, %d)\t", currNode->graphic, currNode->absX, currNode->absY);  // DEBUGGING
 			HARKLE_ERROR(Harklecurse, print_plot_list, mvwaddch failed);
 			retVal = false;
 		}
