@@ -79,6 +79,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [GPU_loop.c](http://aut.researchgateway.ac.nz/bitstream/handle/10292/5605/FeronB.pdf?sequence=3)
 	* [Volatile C loop](https://stackoverflow.com/questions/21161175/example-of-very-cpu-intensive-c-function-under-5-lines-of-code)
 	* [Project Euler](https://projecteuler.chat/viewtopic.php?t=1422)
+	* [Simple Prime Test](https://en.wikipedia.org/wiki/Primality_test#Simple_methods) starting at a large number and working down
 
 ## TO DO
 
