@@ -128,6 +128,7 @@
 #include <stdint.h>				// intptr_t
 #include <stdio.h>				// printf
 #include <stdlib.h>				// calloc()
+#include "Thread_Racer.h"
 
 #define OUTER_BORDER_WIDTH_H 4
 #define OUTER_BORDER_WIDTH_V 2
@@ -140,10 +141,10 @@
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
-typedef struct threadGrandPrixRace
-{
-	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
-} tgpRacer, *tgpRacer_ptr;
+// typedef struct threadGrandPrixRace
+// {
+// 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
+// } tgpRacer, *tgpRacer_ptr;
 
 
 /*
@@ -177,8 +178,10 @@ int main(int argc, char** argv)
 	int numRows = 0;  // Number of rows available
 	int i = 0;  // Iterating variable
 	int numTries = 0;  // Counter for memory allocation function calls
+	// Race Cars
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
+	hThrDetails_ptr tmpMember = NULL;  // Temp variable to hold the F1Details during creation
 	// Race Track
 	double* trackPntArray = NULL;  // Return value from plot_ellipse_points()
 	int numTrackPnts = 0;  // Number of track points in trackPntArray
@@ -201,15 +204,16 @@ int main(int argc, char** argv)
 	if (true == success)
 	{
 		// 1. Allocate an array for the racers
-		while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
-		{
-			racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, sizeof(tgpRacer_ptr));
-			numTries++;
-		}
+		racerArr_ptr = allocate_tgpRacer_arr(numF1s);
+		// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
+		// {
+		// 	racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, sizeof(tgpRacer_ptr));
+		// 	numTries++;
+		// }
 
 		if (NULL == racerArr_ptr)
 		{
-			HARKLE_ERROR(Grand_Prix, main, calloc failed);
+			HARKLE_ERROR(Grand_Prix, main, allocate_tgpRacer_arr failed);
 			success = false;
 		}
 		else
@@ -217,31 +221,44 @@ int main(int argc, char** argv)
 			// 2. Create the racers
 			for (i = 0; i < numF1s; i++)
 			{
-				// 2.1. Allocate a struct
-				numTries = 0;
-				while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
+				// 2.1. Create struct data
+				// tmpMember
+				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
+
+				if (!tmpMember)
 				{
-					racerArr_ptr[i] = (tgpRacer_ptr)calloc(1, sizeof(tgpRacer));
-					numTries++;
+					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					success = false;
+					break;
 				}
+
+				// 2.1. Create a populated struct
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember);
+				// numTries = 0;
+				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
+				// {
+				// 	racerArr_ptr[i] = (tgpRacer_ptr)calloc(1, sizeof(tgpRacer));
+				// 	numTries++;
+				// }
 
 				if (NULL == racerArr_ptr[i])
 				{
-					HARKLE_ERROR(Grand_Prix, main, calloc failed);
+					HARKLE_ERROR(Grand_Prix, main, populate_tgpRacer_ptr failed);
 					success = false;
 					break;
 				}
 				else
 				{
-					// 2.2. Populate that struct
-					racerArr_ptr[i]->F1Details = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
+					tmpMember = NULL;
+					// // 2.2. Populate that struct
+					// racerArr_ptr[i]->F1Details = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
 
-					if (NULL == racerArr_ptr[i]->F1Details)
-					{
-						HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
-						success = false;
-						break;
-					}
+					// if (NULL == racerArr_ptr[i]->F1Details)
+					// {
+					// 	HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					// 	success = false;
+					// 	break;
+					// }
 				}
 			}
 		}
@@ -541,6 +558,15 @@ int main(int argc, char** argv)
 		if (false == free_cardCoord_linked_list(&trkHeadNode))
 		{
 			HARKLE_ERROR(Grand_Prix, main, free_cardCoord_linked_list failed);
+		}
+	}
+
+	// 
+	if (tmpMember)
+	{
+		if (false == free_a_hThrDetails_ptr(&tmpMember))
+		{
+			HARKLE_ERROR(Grand_Prix, main, free_a_hThrDetails_ptr failed);
 		}
 	}
 
