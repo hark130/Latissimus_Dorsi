@@ -8,6 +8,8 @@
 #ifndef __THREAD_RACER__
 #define __THREAD_RACER__
 
+#include "Harklethread.h"			// hThrDetails_ptr
+
 typedef struct threadGrandPrixRace
 {
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread

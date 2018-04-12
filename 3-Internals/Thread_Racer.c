@@ -6,6 +6,8 @@
  */
 
 #include "Harklerror.h"				// HARKLE_ERROR
+#include "Harklethread.h"			// hThrDetails_ptr
+#include <stdlib.h>					// calloc()
 #include "Thread_Racer.h"			// struct threadGrandPrixRace
 
 #ifndef THREADRACER_MAX_TRIES
@@ -228,5 +230,3 @@ bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr)
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// STRUCT FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
-#endif  // __THREAD_RACER__
