@@ -122,6 +122,7 @@
 #include "Harklemath.h"			// determine_center()
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
+#include <string.h>				// memset()
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <stdbool.h>			// bool, true, false
 #include <stdint.h>				// intptr_t
@@ -372,15 +373,16 @@ int main(int argc, char** argv)
 				axisLenX = (trackWin->nCols - 2) / 2;
 			}
 			// Vertical axis
-			if (trackWin->rRows & 1)
+			if (trackWin->nRows & 1)
 			{
-				axisLenY = (trackWin->rRows - 1) / 2;
+				axisLenY = (trackWin->nRows - 1) / 2;
 			}
 			else
 			{
-				axisLenY = (trackWin->rRows - 2) / 2;
+				axisLenY = (trackWin->nRows - 2) / 2;
 			}
-			
+			fprintf(stdout, "Win size == width: %d\tlength == %d\n", trackWin->nCols, trackWin->nRows);  // DEBUGGING
+			fprintf(stdout, "'a' (Horizontal) == %d\t'b' (Vertical) == %d\n", axisLenX, axisLenY);  // DEBUGGING
 			// 5.2. Get plot points for the race track
 			trackPntArray = plot_ellipse_points(axisLenX, axisLenY, &numTrackPnts);
 			// trackPntArray = plot_ellipse_points(trackWin->nCols, trackWin->nRows, &numTrackPnts);
