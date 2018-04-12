@@ -72,6 +72,13 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ncurses overlapping windows](https://www.gnu.org/software/guile-ncurses/manual/html_node/Overlay-and-manipulate-overlapped-windows.html)
 * [Ncurses Programming Guide](www.cs.ukzn.ac.za/~hughm/os/notes/ncurses.html)
 * [ncurses Extended ASCII Charts](http://melvilletheatre.com/articles/ncurses-extended-characters/index.html)
+* Computation Intensive Examples
+	* [Stack Overflow Java answer](https://stackoverflow.com/questions/3693197/cpu-intensive-calculation-examples)
+	* [How expensive is an operation on a CPU?](https://streamhpc.com/blog/2012-07-16/how-expensive-is-an-operation-on-a-cpu/)
+	* Calculate primes using Newton's method
+	* [GPU_loop.c](http://aut.researchgateway.ac.nz/bitstream/handle/10292/5605/FeronB.pdf?sequence=3)
+	* [Volatile C loop](https://stackoverflow.com/questions/21161175/example-of-very-cpu-intensive-c-function-under-5-lines-of-code)
+	* [Project Euler](https://projecteuler.chat/viewtopic.php?t=1422)
 
 ## TO DO
 
