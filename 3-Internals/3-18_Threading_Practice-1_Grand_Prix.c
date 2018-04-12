@@ -183,6 +183,7 @@ int main(int argc, char** argv)
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
 	hThrDetails_ptr tmpMember = NULL;  // Temp variable to hold the F1Details during creation
 	// Race Track
+	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
 	double* trackPntArray = NULL;  // Return value from plot_ellipse_points()
 	int numTrackPnts = 0;  // Number of track points in trackPntArray
 	int cntTrkPntX = 0;  // x coordinate for the center of the track window
@@ -380,6 +381,7 @@ int main(int argc, char** argv)
 		else
 		{
 			// 5.2. Calculate the axis of the ellipse based on the window size
+
 			// Horizontal axis
 			if (trackWin->nCols & 1)  // Windown width is odd
 			{
@@ -389,6 +391,7 @@ int main(int argc, char** argv)
 			{
 				axisLenX = (trackWin->nCols - 2) / 2;
 			}
+
 			// Vertical axis
 			if (trackWin->nRows & 1)
 			{
@@ -398,9 +401,23 @@ int main(int argc, char** argv)
 			{
 				axisLenY = (trackWin->nRows - 2) / 2;
 			}
+			
+			// Calculate the ellipse buffer
+			internalBuffer = (int)trackWin->nCols / 50;
+			if (internalBuffer < 1)
+			{
+				internalBuffer = 1;	
+			}
+			
+			// Reduce the horizontal/vertical axis by the buffer
+			axisLenX -= internalBuffer;
+			axisLenY -= internalBuffer;
+			
 			fprintf(stdout, "Win size == width: %d\tlength == %d\n", trackWin->nCols, trackWin->nRows);  // DEBUGGING
 			fprintf(stdout, "'a' (Horizontal) == %d\t'b' (Vertical) == %d\n", axisLenX, axisLenY);  // DEBUGGING
-			// 5.2. Get plot points for the race track
+			fprintf(stdout, "Internal buffer == %d\n", internalBuffer);  // DEBUGGING
+			
+			// 5.3. Get plot points for the race track
 			trackPntArray = plot_ellipse_points(axisLenX, axisLenY, &numTrackPnts);
 			// trackPntArray = plot_ellipse_points(trackWin->nCols, trackWin->nRows, &numTrackPnts);
 
