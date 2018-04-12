@@ -86,8 +86,8 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 		retVal->absY = yVal;
 		// char graphic;							// Character to print at this coordinate
 		retVal->graphic = pntChar;
-		// char defGraphic;							// Original character to print at this coordinate
-		retVal->defGraphic = pntChar;
+		// char defGraph;							// Original character to print at this coordinate
+		retVal->defGraph = pntChar;
 		// unsigned long hcFlags;					// Implementation-defined coordinate details
 		retVal->hcFlags = initStatus;
 		// struct hcCartesianCoordinate* nextPnt; 	// Next node in the linked list
@@ -271,8 +271,8 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 		(*oldStruct_ptr)->absY = 0;
 		// char graphic;							// Character to print at this coordinate
 		(*oldStruct_ptr)->graphic = 0;
-		// char defGraphic;							// Original character to print at this coordinate
-		(*oldStruct_ptr)->defGraphic = 0;
+		// char defGraph;							// Original character to print at this coordinate
+		(*oldStruct_ptr)->defGraph = 0;
 		// unsigned long hcFlags;					// Implementation-defined coordinate details
 		(*oldStruct_ptr)->hcFlags = 0;
 		// struct hcCartesianCoordinate* nextPnt;  // Next node in the linked list
