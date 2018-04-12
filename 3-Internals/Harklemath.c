@@ -154,7 +154,7 @@ int round_a_dble(double roundMe, int rndDir)
 		{
 			retVal = round(roundMe);
 		}
-		fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
+		// fprintf(stdout, "\nroundMe == %.15f\trounded == %d\n", roundMe, retVal);  // DEBUGGING
 	}
 	
 	// CLEAN UP
@@ -494,7 +494,7 @@ double calc_ellipse_y_coord(double aVal, double bVal, double xVal)
 	}
 	else if (true == DBL_GRTR(xVal, aVal))
 	{
-		printf("\nxVal == %.15f\taVal == %.15f\n\t", xVal, aVal);  // DEBUGGING
+		// printf("\nxVal == %.15f\taVal == %.15f\n\t", xVal, aVal);  // DEBUGGING
 		HARKLE_ERROR(Harklemath, calc_ellipse_y_coord, xVal is greater than aVal);
 		success = false;
 	}
@@ -603,7 +603,7 @@ double* plot_ellipse_points(double aVal, double bVal, int* numPnts)
 			bAbs = fabs(bVal);
 			// bAbs = ((int)fabs(bVal));
 		}
-		fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %.15f\tbAbs == %.15f\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
+		// fprintf(stdout, "aVal == %.15f\tbVal == %.15f\taAbs == %.15f\tbAbs == %.15f\n", aVal, bVal, aAbs, bAbs);  // DEBUGGING
 
 		if (true == chooseX)
 		{
@@ -898,6 +898,8 @@ hcCartCoord_ptr build_geometric_list(double* relEllipseCoords, int numPnts, int 
 	hcCartCoord_ptr tmpNode = NULL;  // Return value from add_cartCoord_node()
 	int tmpX = 0;  // Temporary x value translated from the double array
 	int tmpY = 0;  // Temporary y value translated from the double array
+	int tmpAbsX = 0;  // Temp x value translated from tmpX around center coordinate (centX, centY)
+	int tmpAbsY = 0;  // Temp y value translated from tmpY around center coordinate (centX, centY)
 	bool success = true;  // Set this to false if anything fails
 	int i = 0;  // Iterating variable
 
@@ -929,18 +931,25 @@ hcCartCoord_ptr build_geometric_list(double* relEllipseCoords, int numPnts, int 
 		for (i = 1; i < numPnts; i += 2)
 		{
 			// Round the doubles to ints
-			printf("\ncentX == %d\tcentY == %d\n", centX, centY);  // DEBUGGING
-			printf("\nrelEllipseCoords[%d - 1] == %.15f\trelEllipseCoords[%d] == %.15f\n", i, relEllipseCoords[i - 1], i, relEllipseCoords[i]);  // DEBUGGING
+			// printf("\ncentX == %d\tcentY == %d\n", centX, centY);  // DEBUGGING
+			// printf("\nrelEllipseCoords[%d - 1] == %.15f\trelEllipseCoords[%d] == %.15f\n", i, relEllipseCoords[i - 1], i, relEllipseCoords[i]);  // DEBUGGING
 			tmpX = round_a_dble(relEllipseCoords[i - 1], HM_UP);
 			tmpY = round_a_dble(relEllipseCoords[i], HM_UP);
-			printf("\ntmpX == %d\ttmpY == %d\n", tmpX, tmpY);  // DEBUGGING
+			// printf("\ntmpX == %d\ttmpY == %d\n", tmpX, tmpY);  // DEBUGGING
+			// Prepare absolute coordinate points
+			if (false == translate_plot_points(tmpX, tmpY, centX, centY, &tmpAbsX, &tmpAbsY))
+			{
+				HARKLE_ERROR(Harklemath, build_geometric_list, translate_plot_points failed);
+				success = false;
+				break;
+			}
 
 			// Build a node
 			if (NULL == retVal)
 			{
 				// Build the head node
-				retVal = build_new_cartCoord_struct(tmpX, \
-						                            tmpY, '*', 0);
+				retVal = build_new_cartCoord_struct(tmpAbsX, \
+						                            tmpAbsY, '*', 0);
 
 				if (NULL == retVal)
 				{
@@ -952,7 +961,7 @@ hcCartCoord_ptr build_geometric_list(double* relEllipseCoords, int numPnts, int 
 			else
 			{
 				// Build a child node		
-				newNode = build_new_cartCoord_struct(tmpX, tmpY, '*', 0);
+				newNode = build_new_cartCoord_struct(tmpAbsX, tmpAbsY, '*', 0);
 
 				if (NULL == newNode)
 				{
@@ -1160,6 +1169,7 @@ bool translate_plot_points(int relX, int relY, int cntX, int cntY, int* absX, in
 	{
 		*absX = cntX + relX;
 		*absY = cntY - relY;
+		// printf("\nTranslated (%d, %d) from center (%d, %d) into absolute coordinate (%d, %d)\n", relX, relY, cntX, cntY, *absX, *absY);  // DEBUGGING
 	}
 	
 	// DONE
