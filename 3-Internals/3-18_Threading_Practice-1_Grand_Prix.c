@@ -119,11 +119,11 @@
  */
 
 #include "Harklecurse.h"		// kill_a_window()
-#include "Harklemath.h"			// determine_center()
+#include "Harklemath.h"			// determine_center(), NUM_PRIMES_ULLONG
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
-#include <string.h>				// memset()
 #include <ncurses.h>			// initscr(), refresh(), endwin()
+#include <string.h>				// memset()
 #include <stdbool.h>			// bool, true, false
 #include <stdint.h>				// intptr_t
 #include <stdio.h>				// printf
@@ -157,6 +157,34 @@
 			else is constructed.
  */
 void racer_func(int racerNum);
+
+
+/*
+	PURPOSE - Determine if an unsigned long long is prime
+	INPUT
+		num - An unsigned long long to test as prime
+	OUTPUT
+		If prime, true
+		If not, false
+ */
+bool is_this_prime(unsigned long long num);
+
+
+/*
+	PURPOSE - This racer function will attempt to locate trackLen number
+		of primes starting at ULLONG_MAX and iterating down
+	INPUT
+		F1Details - A hThrDetails struct pointer with details about this
+			thread.  Most importantly, the pipe with which it needs to
+			communicate back to the main thread.
+		trackLen - The number of primes to calculate.  The main thread
+			will likely pass in the number of "coordinates" calculated
+			for the track unless that number is larger than 
+			NUM_PRIMES_ULLONG (which is the approximate number
+			of primes less than ULLONG_MAX according to the prime number
+			theorem)
+ */
+void racer_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen);
 
 
 int main(int argc, char** argv)
@@ -609,6 +637,79 @@ void racer_func(int racerNum)
 }
 
 
+bool is_this_prime(unsigned long long num)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	unsigned long long i = 5;  // Temp var
+	
+	// CALCULATE
+	if (num <= 1)
+	{
+		retVal = false;
+	}
+	else if (n <= 3)
+	{
+		retVal = true;
+	}
+	else if (0 == num % 2 || 0 == num % 3)
+	{
+		retVal = false;
+	}
+	else
+	{
+		while (i * i <= num && i <= (int)sqrt(num))
+		{
+			if (0 == num % i || 0 == num % (i + 2))
+			{
+				retVal = false;
+				break;
+			}
+			else
+			{
+				i += 6;	
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+	
+
+void racer_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen)
+{
+	// LOCAL VARIABLES
+	unsigned long long counter = 0;  // Counts down the number of primes found
+	unsigned long long i = ULLONG_MAX;  // Iterating variable
+	
+	// INPUT VALIDATION
+	if (trackLen > 0)
+	{
+		counter = trackLen;
+	
+		// FIND PRIMES
+		while (counter)
+		{
+			for (i = ULLONG_MAX; i > 0; i--)
+			{
+				if (true == is_this_prime(i))
+				{
+					// Decrement counter
+					counter--;
+					// Print the prime to the pipe
+					/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
+					fprintf(stdout, "%llu is prime.\n", i);  // DEBUGGING
+				}
+			}
+		}
+	}
+	
+	// DONE
+	/////////////////////// WHAT'S THE RIGHT WAY FOR A THREAD TO EXIT? ///////////////////////
+	return;
+}
+	
 /*
 attron/attroff bit-mask attributes
 
