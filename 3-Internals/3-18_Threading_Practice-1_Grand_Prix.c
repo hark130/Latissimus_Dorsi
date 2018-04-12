@@ -122,6 +122,8 @@
 #include "Harklemath.h"			// determine_center(), NUM_PRIMES_ULLONG
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
+#include <limits.h>				// ULLONG_MAX
+#include <math.h>				// sqrt()
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <string.h>				// memset()
 #include <stdbool.h>			// bool, true, false
@@ -441,9 +443,9 @@ int main(int argc, char** argv)
 			axisLenX -= internalBuffer;
 			axisLenY -= internalBuffer;
 			
-			fprintf(stdout, "Win size == width: %d\tlength == %d\n", trackWin->nCols, trackWin->nRows);  // DEBUGGING
-			fprintf(stdout, "'a' (Horizontal) == %d\t'b' (Vertical) == %d\n", axisLenX, axisLenY);  // DEBUGGING
-			fprintf(stdout, "Internal buffer == %d\n", internalBuffer);  // DEBUGGING
+			// fprintf(stdout, "Win size == width: %d\tlength == %d\n", trackWin->nCols, trackWin->nRows);  // DEBUGGING
+			// fprintf(stdout, "'a' (Horizontal) == %d\t'b' (Vertical) == %d\n", axisLenX, axisLenY);  // DEBUGGING
+			// fprintf(stdout, "Internal buffer == %d\n", internalBuffer);  // DEBUGGING
 			
 			// 5.3. Get plot points for the race track
 			trackPntArray = plot_ellipse_points(axisLenX, axisLenY, &numTrackPnts);
@@ -648,7 +650,7 @@ bool is_this_prime(unsigned long long num)
 	{
 		retVal = false;
 	}
-	else if (n <= 3)
+	else if (num <= 3)
 	{
 		retVal = true;
 	}
