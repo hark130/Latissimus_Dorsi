@@ -26,6 +26,9 @@ typedef struct cartesianCoordinate
 #define HM_LOW_LEFT  3			// If not exactly center, window's center defaults to lower left
 #define HM_LOW_RIGHT 4			// If not exactly center, window's center defaults to lower left
 
+// Approximate (guesstimated) number of primes less than data type maximums
+#define NUM_PRIMES_ULLONG 455050683  // Just a wag based on http://primes.utm.edu/howmany.html#pnt
+
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////// FLOATING POINT FUNCTIONS START ///////////////////////
