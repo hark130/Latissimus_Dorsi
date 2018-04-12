@@ -21,7 +21,7 @@ typedef struct hcCartesianCoordinate
 	int absX;								// X coordinate starting at window's top left
 	int absY;								// Y coordinate starting at window's top left
 	char graphic;							// Character to print at this coordinate
-	char default;							// Original character to print at this coordinate
+	char defGraph;							// Original character to print at this coordinate
 	unsigned long hcFlags;					// Implementation-defined coordinate details
 	struct hcCartesianCoordinate* nextPnt;  // Next node in the linked list
 } hcCartCoord, *hcCartCoord_ptr;
