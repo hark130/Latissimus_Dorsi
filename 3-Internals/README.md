@@ -80,6 +80,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Volatile C loop](https://stackoverflow.com/questions/21161175/example-of-very-cpu-intensive-c-function-under-5-lines-of-code)
 	* [Project Euler](https://projecteuler.chat/viewtopic.php?t=1422)
 	* [Simple Prime Test](https://en.wikipedia.org/wiki/Primality_test#Simple_methods) starting at a large number and working down
+	* [Bailey–Borwein–Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
 
 ## TO DO
 
