@@ -82,8 +82,14 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen)
 		}
 		else
 		{
+			// hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
 			retVal->F1Details = structDetails;
+			// int trackLen;					// Length of the track
 			retVal->trackLen = trkLen;
+			// int currPos;						// Current position along the track
+			retVal->currPos = 0;  // Zeroize this
+			// bool winner;						// This thread won
+			retVal->winner = false;  // Initialize this
 		}
 	}
 	
@@ -176,6 +182,10 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr)
 		}
 		// int trackLen;					// Length of the track
 		(*oldStruct_ptr)->trackLen = 0;
+		// int currPos;						// Current position along the track
+		(*oldStruct_ptr)->currPos = 0;
+		// bool winner;						// This thread won
+		(*oldStruct_ptr)->winner = false;
 		
 		// Free the struct
 		free(*oldStruct_ptr);

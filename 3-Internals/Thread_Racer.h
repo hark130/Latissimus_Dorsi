@@ -14,6 +14,8 @@ typedef struct threadGrandPrixRace
 {
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
 	int trackLen;					// Length of the track
+	int currPos;					// Current position along the track
+	bool winner;					// This thread won
 } tgpRacer, *tgpRacer_ptr;
 
 //////////////////////////////////////////////////////////////////////////////
