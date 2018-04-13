@@ -133,7 +133,9 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 	// 4. Build-A-Pipe Workshop
 	if (true == success)
 	{
-		tmpInt = make_a_pipe(retVal->pipeFDs, 0);
+		// Make these pipes non-blocking so reads from an empty pipe don't hang
+		tmpInt = make_a_pipe(retVal->pipeFDs, O_NONBLOCK);
+		// tmpInt = make_a_pipe(retVal->pipeFDs, 0);
 		
 		if (tmpInt)
 		{
