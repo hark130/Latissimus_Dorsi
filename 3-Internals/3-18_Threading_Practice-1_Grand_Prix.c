@@ -595,7 +595,8 @@ int main(int argc, char** argv)
 							//	EACCES, EAGAIN, or EWOULDBLOCK
 							if (errNum & (EACCES | EAGAIN | EWOULDBLOCK))
 							{
-								fprintf(stdout, "Thread #%d's pipe responded '%s'", racer_ptr->F1Details->tNum, strerror(errNum));  // DEBUGGING
+								// fprintf(stdout, "Thread #%d's pipe responded '%s'", racer_ptr->F1Details->tNum, strerror(errNum));  // DEBUGGING
+								continue;
 							}
 							else
 							{
@@ -657,6 +658,16 @@ int main(int argc, char** argv)
 
 			// Update race details
 			// foundWinner = true;  // PLACEHOLDER
+			//////////////////////////////////////////// NEXT UP ////////////////////////////////////////////
+			/////////////// WRAP ALL OF THIS INTO AN update_tgpRacer_pos() in Thread_Racer.*? ///////////////
+			// 1. Get old hcCartCoord_ptr from tgpRacer struct (add member to tgpRacer struct)
+			//////////// WRAP ALL OF THIS INTO AN remove_tgpRacer_from_coord() in Harklecurse.*? ////////////
+			// 2. Remove this tgpRacer's flag from the hcCartCoord struct (Harklecurse function)
+			// 3. Reset this hcCartCoord struct's current graphic (Harklecurse function)
+			/////////////// WRAP ALL OF THIS INTO AN add_tgpRacer_to_coord() in Harklecurse.*? //////////////
+			// 4. Find the new hcCartCoord struct for this racer (position diff?, walk the list?)
+			// 5. Update the new hcCartCoord struct with this racer
+			// 6. Reset this hcCartCoord struct's current graphic (Harklecurse function)
 			
 			// Print updates
 			refresh();  // Print it on the real screen
