@@ -9,6 +9,7 @@
 
 #define HP_BUFF_SIZE 64
 
+
 int make_a_pipe(int emptyPipes[2], int flags)
 {
 	// LOCAL VARIABLES
@@ -65,7 +66,34 @@ int make_a_pipe(int emptyPipes[2], int flags)
 			{
 				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe failed);
 			}
-			fprintf(stderr, "Function call failed with:\t%s\n", strerror(errNum));
+			fprintf(stderr, "Function call returned errno:\t%s\n", strerror(errNum));
+		}
+		else
+		{
+			if (flags)
+			{
+				#ifndef _GNU_SOURCE
+				errNum = set_fd_flags(emptyPipes[HPIPE_READ], flags, true);
+
+				if (errNum)
+				{
+					HARKLE_ERROR(Harklepipe, make_a_pipe, set_fd_flags failed);
+					fprintf(stderr, "set_fd_flags() return errno:\t%s\n", strerror(errNum));
+					success = false;
+				}
+				else
+				{
+					errNum = set_fd_flags(emptyPipes[HPIPE_WRITE], flags, true);
+
+					if (errNum)
+					{
+						HARKLE_ERROR(Harklepipe, make_a_pipe, set_fd_flags failed);
+						fprintf(stderr, "set_fd_flags() return errno:\t%s\n", strerror(errNum));
+						success = false;
+					}
+				}
+				#endif  // _GNU_SOURCE
+			}
 		}
 	}
 
@@ -79,7 +107,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 			emptyPipes[HPIPE_READ] = readFD;
 		}
 		// Write fd
-		if (writeFD != emptyPipes[HPIPE_READ])
+		if (writeFD != emptyPipes[HPIPE_WRITE])
 		{
 			close(emptyPipes[HPIPE_WRITE]);
 			emptyPipes[HPIPE_WRITE] = writeFD;
