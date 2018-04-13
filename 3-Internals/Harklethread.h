@@ -98,6 +98,17 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr);
 //////////////////////////////////////////////////////////////////////////////
 
 
+/*
+	PURPOSE - Create a thread configured with the information contained
+		in the hThrDetails struct
+	INPUT
+		babyThread - hThreadDetails struct pointer
+	OUTPUT
+		On success, 0
+		On failure, error code returned by pthread_create()
+ */
+int spawn_harklethread(hThrDetails_ptr babyThread);
+
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// PTHREAD FUNCTIONS STOP ///////////////////////////

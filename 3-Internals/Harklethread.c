@@ -219,14 +219,14 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 	// 5. void*(*strtFunc)(void*);				// Function point to the thread's startup function
 	tmpStruct_ptr->strtFunc = NULL;
 	// 6. void* tArgvString;					// From command-line argument
-	if (tmpStruct_ptr->tArgvString)
-	{
-		if (false == release_a_string_len((char**)&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
-		{
-			HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, release_a_string_len failed);
-			success = false;
-		}
-	}
+	// if (tmpStruct_ptr->tArgvString)
+	// {
+	// 	if (false == release_a_string_len((char**)&(tmpStruct_ptr->tArgvString), tmpStruct_ptr->tArgSize))
+	// 	{
+	// 		HARKLE_ERROR(Harklethread, free_a_hThrDetails_ptr, release_a_string_len failed);
+	// 		success = false;
+	// 	}
+	// }
 	// 7. size_t tArgSize;						// Size of the buffer containing argvString and any nul/NULL termination
 	tmpStruct_ptr->tArgSize = 0;
 	// 8. pthread_mutex_t pipeMutex; 			// Thread's pipe mutex
@@ -255,6 +255,51 @@ bool free_a_hThrDetails_ptr(hThrDetails_ptr* oldStruct_ptr)
 /////////////////////////// PTHREAD FUNCTIONS START //////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+
+/*
+	PURPOSE - Create a thread configured with the information contained
+		in the hThrDetails struct
+	INPUT
+		babyThread - hThreadDetails struct pointer
+	OUTPUT
+		On success, 0
+		On failure, error code returned by pthread_create()
+ */
+int spawn_harklethread(hThrDetails_ptr babyThread)
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	bool success = true;
+
+	// INPUT VALIDATION
+	if (!babyThread)
+	{
+		HARKLE_ERROR(Harklethread, spawn_harklethread, NULL struct pointer);
+		success = false;
+	}
+	else if (!(babyThread->strtFunc))
+	{
+		HARKLE_ERROR(Harklethread, spawn_harklethread, NULL function pointer);
+		success = false;
+	}
+
+	// SPAWN NEW THREAD
+	if (true == success)
+	{
+		retVal = pthread_create(&(babyThread->threadID), &(babyThread->tAttr), \
+			                    babyThread->strtFunc, babyThread->tArgvString);
+
+		if (retVal)
+		{
+			HARKLE_ERROR(Harklethread, spawn_harklethread, NULL struct pointer);
+			fprintf(stderr, "pthread_create() returned errno:\t%s\n", strerror(retVal));
+			success = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
