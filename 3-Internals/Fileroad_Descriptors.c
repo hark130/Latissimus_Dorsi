@@ -903,7 +903,7 @@ int get_fd_flags(int fileDesc)
 }
 
 
-int set_fd_flags(int fileDesc, int newFlags, bool addFlags);
+int set_fd_flags(int fileDesc, int newFlags, bool addFlags)
 {
 	// LOCAL VARIABLES
 	int retVal = 0;
