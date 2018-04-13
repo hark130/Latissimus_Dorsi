@@ -119,11 +119,13 @@
  */
 
 #include "Harklecurse.h"		// kill_a_window()
+#include "Harklepipe.h"			// read_a_pipe()
 #include "Harklemath.h"			// determine_center(), NUM_PRIMES_ULLONG
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
 #include <limits.h>				// ULLONG_MAX
 #include <math.h>				// sqrt()
+#include "Memoroad.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include <string.h>				// memset()
 #include <stdbool.h>			// bool, true, false
@@ -145,6 +147,7 @@
 #endif // GRAND_PRIX_MAX_TRIES
 
 #define SLEEPY_RACER 1  // Number of seconds for racer_sleepy_func() to sleep
+#define SLEEPY_BUFF 20  // Local buffer size
 
 // typedef struct threadGrandPrixRace
 // {
@@ -218,7 +221,7 @@ int main(int argc, char** argv)
 	int numLaps = 78;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
 	int retVal = 0;  // Function's return value, also holds ncurses return values
-	bool winner = false;  // Update to true if any thread wins
+	bool foundWinner = false;  // Update to true if any thread wins
 	bool success = true;  // Make this false if anything fails
 	winDetails_ptr stdWin = NULL;  // hCurseWinDetails struct pointer for the stdscr window
 	winDetails_ptr trackWin = NULL;  // hCurseWinDetails struct pointer for the track window
@@ -232,6 +235,7 @@ int main(int argc, char** argv)
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
 	hThrDetails_ptr tmpMember = NULL;  // Temp variable to hold the F1Details during creation
+	char* pipeReads = NULL;  // Returned values from read_a_pipe() calls
 	// Race Track
 	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
 	double* trackPntArray = NULL;  // Return value from plot_ellipse_points()
@@ -533,18 +537,114 @@ int main(int argc, char** argv)
 		}
 
 		// 2. Green Light
+		/////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////
 
-		// 3. Checkered Flag
-		while (1)
+		// 3. RACE!
+		while (true == success)
 		{
+			// Give the threads a moment to execute
+			sleep(SLEEPY_RACER);
+
+			// Read what the thread has done so far
+			for (i = 0; i < numF1s; i++)
+			{
+				racer_ptr = racerArr_ptr[i];
+
+				// 1. Lock the mutex
+				tmpInt = pthread_mutex_lock(&(racer_ptr->F1Details->pipeMutex));
+
+				if (tmpInt)
+				{
+					HARKLE_ERROR(Grand_Prix, main, pthread_mutex_lock failed);
+					fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(tmpInt));
+					success = false;
+					break;
+				}
+				else
+				{
+					// 2. Read the pipe
+					do
+					{
+						// Free any previous reads
+						if (pipeReads)
+						{
+							if (false == release_a_string(&pipeReads))
+							{
+								HARKLE_ERROR(Grand_Prix, main, release_a_string failed);
+								success = false;
+								break;
+							}
+						}
+						puts("ENTERING READ_A_PIPE()");  // DEBUGGING
+						//////////////////////////////// BUG ////////////////////////////////
+						// Second function call to pipe reads is hanging
+						/////////////////////////////////////////////////////////////////////
+						pipeReads = read_a_pipe(racer_ptr->F1Details->pipeFDs[HPIPE_READ], '\n');
+
+						if (!pipeReads)
+						{
+							HARKLE_ERROR(Grand_Prix, main, read_a_pipe failed);
+							success = false;
+							break;
+						}
+						else
+						{
+							// Remove the newline
+							// fprintf(stdout, "Before:\t%s\n", pipeReads);  // DEBUGGING
+							if (pipeReads[strlen(pipeReads - 1)] == '\n')
+							{
+								pipeReads[strlen(pipeReads - 1)] = 0;
+							}
+							// fprintf(stdout, "After: \t%s\n", pipeReads);  // DEBUGGING
+
+							// Convert the string to an integer
+							tmpInt = atoi(pipeReads);
+							// fprintf(stdout, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
+
+							// Update the struct
+							if (racer_ptr->currPos >= tmpInt)
+							{
+								HARKLE_ERROR(Grand_Prix, main, atoi (or the thread logic) failed);
+								fprintf(stderr, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
+									    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
+								success = false;
+								break;
+							}
+							else
+							{
+								racer_ptr->currPos = tmpInt;
+								if (racer_ptr->currPos == numTrackPnts)
+								{
+									foundWinner = true;
+									racer_ptr->winner = true;
+									fprintf(stdout, "It appears that Thread #%d has won!\n", racer_ptr->F1Details->tNum);
+									break;
+								}
+							}
+						}
+					} while (pipeReads);
+
+					// 3. Unlock the mutex
+					tmpInt = pthread_mutex_unlock(&(racer_ptr->F1Details->pipeMutex));
+
+					if (tmpInt)
+					{
+						HARKLE_ERROR(Grand_Prix, main, pthread_mutex_unlock failed);
+						fprintf(stderr, "pthread_mutex_unlock() returned errno:\t%s\n", strerror(tmpInt));
+						success = false;
+						break;
+					}
+				}
+			}
+
 			// Update race details
-			winner = true;  // PLACEHOLDER
+			// foundWinner = true;  // PLACEHOLDER
 			
 			// Print updates
 			refresh();  // Print it on the real screen
 			
 			// Is there a winner?
-			if (winner == true)
+			if (foundWinner == true)
 			{
 				break;	
 			}
@@ -672,6 +772,15 @@ int main(int argc, char** argv)
 		if (false == free_a_hThrDetails_ptr(&tmpMember))
 		{
 			HARKLE_ERROR(Grand_Prix, main, free_a_hThrDetails_ptr failed);
+		}
+	}
+
+	// 9. Free this temp variable if it's still around
+	if (pipeReads)
+	{
+		if (false == release_a_string(&pipeReads))
+		{
+			HARKLE_ERROR(Grand_Prix, main, release_a_string failed);
 		}
 	}
 
@@ -955,17 +1064,25 @@ void racer_sleepy_func(tgpRacer_ptr threadDets)
 {
 	// LOCAL VARIABLES
 	int counter = 0;  // Counts down the number of primes found
+	int errNum = 0;  // Capture errno here during error conditions
+	char localNum[SLEEPY_BUFF + 1] = { 0 };  // ULLONG_MAX as a placeholder
+	*localNum = 0;  // Hide that data
+	int numBytes = 0;  // Return value from snprintf()
+	bool success = true;  // Set this to false if anything fails
 	
 	// INPUT VALIDATION
 	if (!threadDets)
 	{
 		HARKLE_ERROR(Grand_Prix, racer_sleepy_func, NULL pointer);
+		success = false;
 	}
 	else if (threadDets->trackLen < 0)
 	{
 		HARKLE_ERROR(Grand_Prix, racer_sleepy_func, Invalid track length);
+		success = false;
 	}
-	else
+
+	if (true == success)
 	{
 		for (counter = 1; counter <= threadDets->trackLen; counter++)
 		{
@@ -976,14 +1093,65 @@ void racer_sleepy_func(tgpRacer_ptr threadDets)
 			sleep(SLEEPY_RACER);
 			// fprintf(stdout, "Thread #%d is sleepy...  zzzZZZzzz... %d\n", threadDets->F1Details->tNum, counter);  // DEBUGGING
 
-			// Print the counter to the pipe
-			/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
+			// OUTPUT TO THE PIPE
+			// 1. Lock the mutex
+			errNum = pthread_mutex_lock(&(threadDets->F1Details->pipeMutex));
+
+			if (errNum)
+			{
+				HARKLE_ERROR(Grand_Prix, racer_sleepy_func, pthread_mutex_lock failed);
+				fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(errNum));
+				success = false;
+				break;
+			}
+			else
+			{
+				// 2. Write the counter
+				// 2.1. Convert counter to a string
+				numBytes = snprintf(localNum, SLEEPY_BUFF, "%d\n", counter);
+
+				if (numBytes >= SLEEPY_BUFF)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_sleepy_func, snprintf truncated the output);
+					success = false;
+					break;
+				}
+				else if (numBytes < 0)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_sleepy_func, snprintf failed);
+					success = false;
+					break;
+				}
+				else
+				{
+					// 2.2. Write that string to the pipe
+					errNum = write_a_pipe(threadDets->F1Details->pipeFDs[HPIPE_WRITE], (void*)localNum, numBytes);
+
+					if (errNum)
+					{
+						HARKLE_ERROR(Grand_Prix, racer_sleepy_func, write_a_pipe failed);
+						fprintf(stderr, "write_a_pipe() returned errno:\t%s\n", strerror(errNum));
+						success = false;
+						break;
+					}
+				}
+
+				// 3. Unlock the mutex
+				errNum = pthread_mutex_unlock(&(threadDets->F1Details->pipeMutex));
+
+				if (errNum)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_sleepy_func, pthread_mutex_unlock failed);
+					fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(errNum));
+					success = false;
+					break;
+				}
+			}
 		}
 	}
 
 	return;
 }
-
 
 
 /*
