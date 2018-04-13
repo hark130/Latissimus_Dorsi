@@ -52,18 +52,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void)
 }
 
 
-/*
-	PURPOSE - Allocate, and populate, heap memory for one threadGrandPrixRace struct
-	INPUT
-		structDetails - hThrDetails struct containing thread-related details
-	OUTPUT
-		On success, heap-allocated and populated threadGrandPrixRace struct pointer
-		On failure, NULL
-	NOTES
-		This function calls allocate_tgpRacer_ptr()
-		It is the caller's responsibility to free() the memory returned		
- */
-tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails)
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen)
 {
 	// LOCAL VARIABLES
 	tgpRacer_ptr retVal = NULL;
@@ -73,6 +62,11 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails)
 	if (!structDetails)
 	{
 		HARKLE_ERROR(Thread_Racer, allocate_tgpRacer_ptr, NULL pointer);
+		success = false;
+	}
+	else if (trkLen < 1)
+	{
+		HARKLE_ERROR(Thread_Racer, allocate_tgpRacer_ptr, Invalid track length);
 		success = false;
 	}
 	
@@ -89,6 +83,7 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails)
 		else
 		{
 			retVal->F1Details = structDetails;
+			retVal->trackLen = trkLen;
 		}
 	}
 	
@@ -169,12 +164,18 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr)
 		// Zeroize the struct members		
 		// Free the struct members		
 		// NULL the struct members
-		if (false == free_a_hThrDetails_ptr(&((*oldStruct_ptr)->F1Details)))
+		// hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
+		if ((*oldStruct_ptr)->F1Details)
 		{
-			HARKLE_ERROR(Thread_Racer, free_tgpRacer_ptr, free_a_hThrDetails_ptr failed);
-			retVal = false;
-			(*oldStruct_ptr)->F1Details = NULL;  // Make it NULL anyway
+			if (false == free_a_hThrDetails_ptr(&((*oldStruct_ptr)->F1Details)))
+			{
+				HARKLE_ERROR(Thread_Racer, free_tgpRacer_ptr, free_a_hThrDetails_ptr failed);
+				retVal = false;
+				(*oldStruct_ptr)->F1Details = NULL;  // Make it NULL anyway
+			}
 		}
+		// int trackLen;					// Length of the track
+		(*oldStruct_ptr)->trackLen = 0;
 		
 		// Free the struct
 		free(*oldStruct_ptr);

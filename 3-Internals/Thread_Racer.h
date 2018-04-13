@@ -13,11 +13,13 @@
 typedef struct threadGrandPrixRace
 {
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
+	int trackLen;					// Length of the track
 } tgpRacer, *tgpRacer_ptr;
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// STRUCT FUNCTIONS START ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
 
 /*
 	PURPOSE - Allocate heap memory for one threadGrandPrixRace struct
@@ -35,6 +37,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 	PURPOSE - Allocate, and populate, heap memory for one threadGrandPrixRace struct
 	INPUT
 		structDetails - hThrDetails struct containing thread-related details
+		trkLen - Length of the track this racer has to run
 	OUTPUT
 		On success, heap-allocated and populated threadGrandPrixRace struct pointer
 		On failure, NULL
@@ -42,7 +45,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 		This function calls allocate_tgpRacer_ptr()
 		It is the caller's responsibility to free() the memory returned		
  */
-tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails);
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen);
 
 
 /*
