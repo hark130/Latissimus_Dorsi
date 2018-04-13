@@ -131,6 +131,7 @@
 #include <stdio.h>				// printf
 #include <stdlib.h>				// calloc()
 #include "Thread_Racer.h"
+#include <unistd.h>				// sleep()
 
 #define OUTER_BORDER_WIDTH_H 4
 #define OUTER_BORDER_WIDTH_V 2
@@ -142,6 +143,8 @@
 // MACRO to limit repeated allocation attempts
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
+
+#define SLEEPY_RACER 1  // Number of seconds for racer_sleepy_func() to sleep
 
 // typedef struct threadGrandPrixRace
 // {
@@ -185,8 +188,24 @@ bool is_this_prime(unsigned long long num);
 			NUM_PRIMES_ULLONG (which is the approximate number
 			of primes less than ULLONG_MAX according to the prime number
 			theorem)
+	OUTPUT - None
  */
-void racer_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen);
+void racer_ull_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen);
+void racer_ul_prime_func(hThrDetails_ptr F1Details, unsigned long trackLen);
+void racer_uint_prime_func(hThrDetails_ptr F1Details, unsigned int trackLen);
+
+
+/*
+	PURPOSE - This racer function will merely increment and sleep()
+	INPUT
+		F1Details - A hThrDetails struct pointer with details about this
+			thread.  Most importantly, the pipe with which it needs to
+			communicate back to the main thread.
+		threadDets - tgpRacer struct pointer with all the details
+	OUTPUT - None		
+ */
+void racer_sleepy_func(tgpRacer_ptr threadDets);
+// void racer_sleepy_func(int trackLen);
 
 
 int main(int argc, char** argv)
@@ -208,9 +227,10 @@ int main(int argc, char** argv)
 	int numRows = 0;  // Number of rows available
 	int i = 0;  // Iterating variable
 	int numTries = 0;  // Counter for memory allocation function calls
+	int tmpInt = 0;  // Holds various return values
 	// Race Cars
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
-	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racert struct pointers
+	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
 	hThrDetails_ptr tmpMember = NULL;  // Temp variable to hold the F1Details during creation
 	// Race Track
 	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
@@ -231,70 +251,6 @@ int main(int argc, char** argv)
 		success = false;
 	}
 
-	// BUILD RACE CARS
-	if (true == success)
-	{
-		// 1. Allocate an array for the racers
-		racerArr_ptr = allocate_tgpRacer_arr(numF1s);
-		// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
-		// {
-		// 	racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, sizeof(tgpRacer_ptr));
-		// 	numTries++;
-		// }
-
-		if (NULL == racerArr_ptr)
-		{
-			HARKLE_ERROR(Grand_Prix, main, allocate_tgpRacer_arr failed);
-			success = false;
-		}
-		else
-		{
-			// 2. Create the racers
-			for (i = 0; i < numF1s; i++)
-			{
-				// 2.1. Create struct data
-				// tmpMember
-				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
-
-				if (!tmpMember)
-				{
-					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
-					success = false;
-					break;
-				}
-
-				// 2.1. Create a populated struct
-				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember);
-				// numTries = 0;
-				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
-				// {
-				// 	racerArr_ptr[i] = (tgpRacer_ptr)calloc(1, sizeof(tgpRacer));
-				// 	numTries++;
-				// }
-
-				if (NULL == racerArr_ptr[i])
-				{
-					HARKLE_ERROR(Grand_Prix, main, populate_tgpRacer_ptr failed);
-					success = false;
-					break;
-				}
-				else
-				{
-					tmpMember = NULL;
-					// // 2.2. Populate that struct
-					// racerArr_ptr[i]->F1Details = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
-
-					// if (NULL == racerArr_ptr[i]->F1Details)
-					// {
-					// 	HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
-					// 	success = false;
-					// 	break;
-					// }
-				}
-			}
-		}
-	}
-	
 	// PRINT THE TRACK
 	if (true == success)
 	{
@@ -480,9 +436,105 @@ int main(int argc, char** argv)
 		}
 	}
 
+	// BUILD RACE CARS
+	if (true == success)
+	{
+		// 1. Allocate an array for the racers
+		racerArr_ptr = allocate_tgpRacer_arr(numF1s);
+		// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr)
+		// {
+		// 	racerArr_ptr = (tgpRacer_ptr*)calloc(numF1s, sizeof(tgpRacer_ptr));
+		// 	numTries++;
+		// }
+
+		if (NULL == racerArr_ptr)
+		{
+			HARKLE_ERROR(Grand_Prix, main, allocate_tgpRacer_arr failed);
+			success = false;
+		}
+		else
+		{
+			// 2. Create the racers
+			for (i = 0; i < numF1s; i++)
+			{
+				// 2.1. Create struct data
+				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, NULL, 0);
+				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, (void*)numTrackPnts, sizeof(int));
+				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
+
+				if (!tmpMember)
+				{
+					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					success = false;
+					break;
+				}
+
+				// 2.1. Create a populated struct
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts);
+				// numTries = 0;
+				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
+				// {
+				// 	racerArr_ptr[i] = (tgpRacer_ptr)calloc(1, sizeof(tgpRacer));
+				// 	numTries++;
+				// }
+
+				if (NULL == racerArr_ptr[i])
+				{
+					HARKLE_ERROR(Grand_Prix, main, populate_tgpRacer_ptr failed);
+					success = false;
+					break;
+				}
+				else
+				{
+					// Make this thread self-aware
+					racerArr_ptr[i]->F1Details->tArgvString = racerArr_ptr[i];
+					racerArr_ptr[i]->F1Details->tArgSize = sizeof(tgpRacer_ptr);
+					///////////////////////////////////////////
+					tmpMember = NULL;  // FIX THIS LATER! //
+					///////////////////////////////////////////
+					// // 2.2. Populate that struct
+					// racerArr_ptr[i]->F1Details = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
+
+					// if (NULL == racerArr_ptr[i]->F1Details)
+					// {
+					// 	HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
+					// 	success = false;
+					// 	break;
+					// }
+				}
+			}
+		}
+	}
+
 	// START THE RACE
 	if (true == success)
 	{
+		// tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
+		// tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
+		// spawn_harklethread(racert_ptr);
+
+		// 1. Line Up The Cars
+		for (i = 0; i < numF1s; i++)
+		{
+			racer_ptr = racerArr_ptr[i];
+
+			tmpInt = spawn_harklethread(racer_ptr->F1Details);
+
+			if (tmpInt)
+			{
+				HARKLE_ERROR(Grand_Prix, main, spawn_harklethread failed);
+				fprintf(stderr, "spawn_harklethread() returned errno:\t%s\n", strerror(tmpInt));
+				success = false;
+			}
+			else
+			{
+				// fprintf(stdout, "Just spawned thread #%d\n", racer_ptr->F1Details->tNum);  // DEBUGGING
+			}
+		}
+
+		// 2. Green Light
+
+		// 3. Checkered Flag
 		while (1)
 		{
 			// Update race details
@@ -509,8 +561,9 @@ int main(int argc, char** argv)
 	// Print race results page
 	// PLACEHOLDER
 	getch();  // Wait for the user to press a key
-	
+
 	// CLEAN UP
+	// ncurses Windows
 	// 1. stdWin
 	if (NULL != stdWin)
 	{
@@ -551,11 +604,16 @@ int main(int argc, char** argv)
 			HARKLE_ERROR(Grand_Prix.c, main, kill_a_winDetails_ptr failed);	
 		}
 	}
-	// 3. Restore tty modes, reset cursor location, and resets the terminal into the proper non-visual mode
+	// 4. Restore tty modes, reset cursor location, and resets the terminal into the proper non-visual mode
 	endwin();  // End curses mode
+	
+	// TESTING
+	// racer_uint_prime_func(tmpMember, 400);
+	// racer_ul_prime_func(tmpMember, 1000);
+	// racer_sleepy_func(tmpMember, 100);
 
-	// CLEAN UP
-	// Free the racers
+	// Allocation
+	// 5. Free the racers
 	if (racerArr_ptr)
 	{
 		for (i = 0; i < numF1s; i++)
@@ -582,7 +640,7 @@ int main(int argc, char** argv)
 		racerArr_ptr = NULL;
 	}
 
-	// Free the track plot point array
+	// 6. Free the track plot point array
 	if (trackPntArray)
 	{
 		// Zeroize the memory
@@ -599,7 +657,7 @@ int main(int argc, char** argv)
 		trackPntArray = NULL;
 	}
 
-	// Free the linked list of cartCoord nodes
+	// 7. Free the linked list of cartCoord nodes
 	if (trkHeadNode)
 	{
 		if (false == free_cardCoord_linked_list(&trkHeadNode))
@@ -608,7 +666,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	// 
+	// 8. Free this temp variable if it's still around
 	if (tmpMember)
 	{
 		if (false == free_a_hThrDetails_ptr(&tmpMember))
@@ -679,30 +737,42 @@ bool is_this_prime(unsigned long long num)
 }
 	
 
-void racer_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen)
+void racer_ull_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen)
 {
 	// LOCAL VARIABLES
 	unsigned long long counter = 0;  // Counts down the number of primes found
 	unsigned long long i = ULLONG_MAX;  // Iterating variable
 	
 	// INPUT VALIDATION
-	if (trackLen > 0)
+	if (F1Details && trackLen > 0)
 	{
 		counter = trackLen;
 	
 		// FIND PRIMES
-		while (counter)
+		while (1)
 		{
+			// for (i = 1; i <=  ULLONG_MAX; i++)
 			for (i = ULLONG_MAX; i > 0; i--)
 			{
+				fprintf(stdout, "Investigating %llu...\n", i);  // DEBUGGING
 				if (true == is_this_prime(i))
 				{
 					// Decrement counter
 					counter--;
 					// Print the prime to the pipe
 					/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
-					fprintf(stdout, "%llu is prime.\n", i);  // DEBUGGING
+					fprintf(stdout, "#%llu:\t%llu is prime.\n", counter, i);  // DEBUGGING
 				}
+
+				if (0 == counter)
+				{
+					break;
+				}
+			}
+
+			if (0 == counter)
+			{
+				break;
 			}
 		}
 	}
@@ -711,7 +781,211 @@ void racer_prime_func(hThrDetails_ptr F1Details, unsigned long long trackLen)
 	/////////////////////// WHAT'S THE RIGHT WAY FOR A THREAD TO EXIT? ///////////////////////
 	return;
 }
+
+
+void racer_ul_prime_func(hThrDetails_ptr F1Details, unsigned long trackLen)
+{
+	// LOCAL VARIABLES
+	unsigned long counter = 0;  // Counts down the number of primes found
+	unsigned long i = ULONG_MAX;  // Iterating variable
+	unsigned long tmpVar = 5;  // Used to check for prime
+	bool isThisPrime = true;  // Reset this to true
 	
+	puts("ENTERING racer_ul_prime_func()");  // DEBUGGING
+
+	// INPUT VALIDATION
+	if (F1Details && trackLen > 0)
+	{
+		counter = trackLen;
+	
+		// FIND PRIMES
+		while (1)
+		{
+			// for (i = 1; i <=  ULLONG_MAX; i++)
+			for (i = ULONG_MAX; i > 0; i--)
+			{
+				fprintf(stdout, "Investigating %lu...\n", i);  // DEBUGGING
+
+
+				if (i <= 1)
+				{
+					isThisPrime = false;
+				}
+				else if (i <= 3)
+				{
+					isThisPrime = true;
+				}
+				else if (0 == i % 2 || 0 == i % 3)
+				{
+					isThisPrime = false;
+				}
+				else
+				{
+					while (tmpVar * tmpVar <= i && tmpVar <= (int)sqrt(i))
+					{
+						if (0 == i % tmpVar || 0 == i % (tmpVar + 2))
+						{
+							isThisPrime = false;
+							break;
+						}
+						else
+						{
+							tmpVar += 6;	
+						}
+					}
+				}
+
+				if (true == isThisPrime)
+				{
+					// Decrement counter
+					counter--;
+					// Print the prime to the pipe
+					/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
+					fprintf(stdout, "#%lu:\t%lu is prime.\n", counter, i);  // DEBUGGING
+				}
+				else
+				{
+					// Reset temp variable
+					isThisPrime = true;
+				}
+
+				if (0 == counter)
+				{
+					break;
+				}
+			}
+
+			if (0 == counter)
+			{
+				break;
+			}
+		}
+	}
+	
+	// DONE
+	/////////////////////// WHAT'S THE RIGHT WAY FOR A THREAD TO EXIT? ///////////////////////
+	return;
+}
+
+
+void racer_uint_prime_func(hThrDetails_ptr F1Details, unsigned int trackLen)
+{
+	// LOCAL VARIABLES
+	unsigned int counter = 0;  // Counts down the number of primes found
+	unsigned int i = UINT_MAX;  // Iterating variable
+	unsigned int tmpVar = 5;  // Used to check for prime
+	bool isThisPrime = true;  // Reset this to true
+	
+	// INPUT VALIDATION
+	if (F1Details && trackLen > 0)
+	{
+		counter = trackLen;
+	
+		// FIND PRIMES
+		while (1)
+		{
+			// for (i = 1; i <=  ULLONG_MAX; i++)
+			for (i = UINT_MAX; i > 0; i--)
+			{
+				// fprintf(stdout, "Investigating %u...\n", i);  // DEBUGGING
+
+
+				if (i <= 1)
+				{
+					isThisPrime = false;
+				}
+				else if (i <= 3)
+				{
+					isThisPrime = true;
+				}
+				else if (0 == i % 2 || 0 == i % 3)
+				{
+					isThisPrime = false;
+				}
+				else
+				{
+					while (tmpVar * tmpVar <= i && tmpVar <= (int)sqrt(i))
+					{
+						if (0 == i % tmpVar || 0 == i % (tmpVar + 2))
+						{
+							isThisPrime = false;
+							break;
+						}
+						else
+						{
+							tmpVar += 6;	
+						}
+					}
+				}
+
+				if (true == isThisPrime)
+				{
+					// Decrement counter
+					counter--;
+					// Print the prime to the pipe
+					/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
+					// fprintf(stdout, "#%u:\t%u is prime.\n", counter, i);  // DEBUGGING
+				}
+				else
+				{
+					// Reset temp variable
+					isThisPrime = true;
+				}
+
+				if (0 == counter)
+				{
+					break;
+				}
+			}
+
+			if (0 == counter)
+			{
+				break;
+			}
+		}
+	}
+	
+	// DONE
+	/////////////////////// WHAT'S THE RIGHT WAY FOR A THREAD TO EXIT? ///////////////////////
+	return;
+}
+
+void racer_sleepy_func(tgpRacer_ptr threadDets)
+// void racer_sleepy_func(int trackLen)
+{
+	// LOCAL VARIABLES
+	int counter = 0;  // Counts down the number of primes found
+	
+	// INPUT VALIDATION
+	if (!threadDets)
+	{
+		HARKLE_ERROR(Grand_Prix, racer_sleepy_func, NULL pointer);
+	}
+	else if (threadDets->trackLen < 0)
+	{
+		HARKLE_ERROR(Grand_Prix, racer_sleepy_func, Invalid track length);
+	}
+	else
+	{
+		for (counter = 1; counter <= threadDets->trackLen; counter++)
+		{
+			// 𝄞 Why are you sleepy? ♬
+			// ♩ Sleepy thread ♪
+			// ♭ Thread is sleepy ♫
+			// 𝄫 Sleepy thread ♫
+			sleep(SLEEPY_RACER);
+			// fprintf(stdout, "Thread #%d is sleepy...  zzzZZZzzz... %d\n", threadDets->F1Details->tNum, counter);  // DEBUGGING
+
+			// Print the counter to the pipe
+			/////////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////////
+		}
+	}
+
+	return;
+}
+
+
+
 /*
 attron/attroff bit-mask attributes
 
