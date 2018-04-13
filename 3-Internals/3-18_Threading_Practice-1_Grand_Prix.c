@@ -146,8 +146,9 @@
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
-#define SLEEPY_RACER 1  // Number of seconds for racer_sleepy_func() to sleep
-#define SLEEPY_BUFF 20  // Local buffer size
+#define SLEEPY_OFFICIALS 2	// Number of seconds for the main thread to sleep each evaluation
+#define SLEEPY_RACER 1  	// Number of seconds for racer_sleepy_func() to sleep
+#define SLEEPY_BUFF 20  	// Local buffer size
 
 // typedef struct threadGrandPrixRace
 // {
@@ -543,7 +544,7 @@ int main(int argc, char** argv)
 		while (true == success)
 		{
 			// Give the threads a moment to execute
-			sleep(SLEEPY_RACER);
+			sleep(SLEEPY_OFFICIALS);
 
 			// Read what the thread has done so far
 			for (i = 0; i < numF1s; i++)
@@ -578,6 +579,11 @@ int main(int argc, char** argv)
 						puts("ENTERING READ_A_PIPE()");  // DEBUGGING
 						//////////////////////////////// BUG ////////////////////////////////
 						// Second function call to pipe reads is hanging
+						// I now believe that read_a_pipe() is blocking on an empty socket.
+						//	With the mutex locked, it will hang forever.  Seems like I need
+						//	to include some functionality inside make_a_pipe() to utilize
+						//	fcntl() to set the pipe to "F_GETFL and F_SETFL plus O_NONBLOCK"
+						// see: https://stackoverflow.com/questions/13811614/c-how-to-see-if-a-pipe-is-empty
 						/////////////////////////////////////////////////////////////////////
 						pipeReads = read_a_pipe(racer_ptr->F1Details->pipeFDs[HPIPE_READ], '\n');
 
