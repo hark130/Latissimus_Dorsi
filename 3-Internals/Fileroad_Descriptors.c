@@ -1,15 +1,15 @@
 #include <errno.h>			// errno
-#include "Fileroad.h"		// os_path_basename, os_path_dirname
+#include "Fileroad.h"		// os_path_basename(), os_path_dirname()
 #include "Fileroad_Descriptors.h"
-#include <fcntl.h>			// open, open flags
+#include <fcntl.h>			// open(), open flags, fcntl()
 #include "Harklerror.h"		// HARKLE_ERROR
-#include "Memoroad.h"		// release_a_string, copy_a_string
-#include <stdio.h>          // fprintf
-#include <stdlib.h>			// calloc
-#include <string.h>         // memset
+#include "Memoroad.h"		// release_a_string(), copy_a_string()
+#include <stdio.h>		  	// fprintf()
+#include <stdlib.h>			// calloc()
+#include <string.h>		 	// memset()
 #include <sys/stat.h>		// mode_t
-#include <sys/wait.h>		// wait
-#include <unistd.h>			// close, pid_t
+#include <sys/wait.h>		// wait()
+#include <unistd.h>			// close(), pid_t, fcntl()
 
 #ifndef FD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -23,8 +23,8 @@
 
 rBinDat_ptr create_rBinDat_ptr(void)
 {
-    // LOCAL VARIABLES
-    rBinDat_ptr retVal = NULL;
+	// LOCAL VARIABLES
+	rBinDat_ptr retVal = NULL;
 	int numTries = 0;
 
 	// ALLOCATE MEMORY
@@ -32,10 +32,10 @@ rBinDat_ptr create_rBinDat_ptr(void)
 	{
 		retVal = (rBinDat_ptr)calloc(1, sizeof(rBinDat));
 		numTries++;
-    }
-    
-    // DONE
-    return retVal;
+	}
+	
+	// DONE
+	return retVal;
 }
 
 
@@ -493,8 +493,8 @@ int wrap_bin(rBinDat_ptr binToWrap)
 
 fdDetails_ptr create_fdDetails_ptr(void)
 {
-    // LOCAL VARIABLES
-    fdDetails_ptr retVal = NULL;
+	// LOCAL VARIABLES
+	fdDetails_ptr retVal = NULL;
 	int numTries = 0;
 
 	// ALLOCATE MEMORY
@@ -502,17 +502,17 @@ fdDetails_ptr create_fdDetails_ptr(void)
 	{
 		retVal = (fdDetails_ptr)calloc(1, sizeof(fdDetails));
 		numTries++;
-    }
-    
-    // DONE
-    return retVal;
+	}
+	
+	// DONE
+	return retVal;
 }
 
 
 fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 {
-    // LOCAL VARIABLES
-    fdDetails_ptr retVal = NULL;
+	// LOCAL VARIABLES
+	fdDetails_ptr retVal = NULL;
 	bool success = true;
 	size_t len = 0;  // Length of filename
 	char* temp_ptr = NULL;  // Holds return value from strncpy()
@@ -524,7 +524,7 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 		flags != O_RDWR &&
 		flags != (O_WRONLY | O_CREAT) &&
 		flags != (O_RDWR | O_CREAT) &&
-	    success == true)
+		success == true)
 	{
 		success = false;
 		fprintf(stderr, "<<<ERROR>>> - open_fd() - bad flags parameter\n");  // DEBUGGING
@@ -609,8 +609,8 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 		success = false;
 		fprintf(stderr, "<<<ERROR>>> - open_fd() - NULL filename parameter\n");  // DEBUGGING	
 	}
-    
-    // DONE
+	
+	// DONE
 	if (success == false)
 	{
 		// Something failed.  Undo everything!
@@ -627,92 +627,92 @@ fdDetails_ptr open_fd(const char* fname, int flags, mode_t mode)
 		free_fdDetails(&retVal);
 	}
 
-    return retVal;
+	return retVal;
 }
 
 
 void free_fdDetails(fdDetails_ptr* oldStruct_ptr)
 {
-    // LOCAL VARIABLES
-    fdDetails_ptr tempStruct_ptr = NULL;
-    void* temp_ptr = NULL;
-    size_t len = 0;
-    
-    // INPUT VALIDATION
-    if (oldStruct_ptr != NULL)
-    {
-        if (*oldStruct_ptr != NULL)
-        {
-            tempStruct_ptr = (fdDetails_ptr)*oldStruct_ptr;
-            
-            // char* filename_ptr;     // Path to file
-            if (tempStruct_ptr->filename_ptr != NULL)
-            {
-                // Get the filename length
-                len = strlen(tempStruct_ptr->filename_ptr);
-                    
-                // Memset
-                if (len > 0)
-                {
-                    temp_ptr = memset(tempStruct_ptr->filename_ptr, 0x0, len);
-                    
-                    if (temp_ptr != tempStruct_ptr->filename_ptr)
-                    {
+	// LOCAL VARIABLES
+	fdDetails_ptr tempStruct_ptr = NULL;
+	void* temp_ptr = NULL;
+	size_t len = 0;
+	
+	// INPUT VALIDATION
+	if (oldStruct_ptr != NULL)
+	{
+		if (*oldStruct_ptr != NULL)
+		{
+			tempStruct_ptr = (fdDetails_ptr)*oldStruct_ptr;
+			
+			// char* filename_ptr;	 // Path to file
+			if (tempStruct_ptr->filename_ptr != NULL)
+			{
+				// Get the filename length
+				len = strlen(tempStruct_ptr->filename_ptr);
+					
+				// Memset
+				if (len > 0)
+				{
+					temp_ptr = memset(tempStruct_ptr->filename_ptr, 0x0, len);
+					
+					if (temp_ptr != tempStruct_ptr->filename_ptr)
+					{
 						// DEBUGGING
-                        fprintf(stderr, "<<<ERROR>>> - free_fdDetails() - memset failed to zeroize the struct's filename_ptr\n");
-                    }
-                }
-                
-                // Free
-                free(tempStruct_ptr->filename_ptr);
-                
-                // NULL
-                tempStruct_ptr->filename_ptr = NULL;
-            }
-            
-            // int fileDesc;           // File descriptor
-            tempStruct_ptr->fileDesc = 0;
-            
-            // uintmax_t fileSize;     // Actual size of file
-            tempStruct_ptr->fileSize = 0;
-            
-		    // int fileDescFlags;		// File descriptor flags
-            tempStruct_ptr->fileDescFlags = 0;
+						fprintf(stderr, "<<<ERROR>>> - free_fdDetails() - memset failed to zeroize the struct's filename_ptr\n");
+					}
+				}
+				
+				// Free
+				free(tempStruct_ptr->filename_ptr);
+				
+				// NULL
+				tempStruct_ptr->filename_ptr = NULL;
+			}
+			
+			// int fileDesc;		   // File descriptor
+			tempStruct_ptr->fileDesc = 0;
+			
+			// uintmax_t fileSize;	 // Actual size of file
+			tempStruct_ptr->fileSize = 0;
+			
+			// int fileDescFlags;		// File descriptor flags
+			tempStruct_ptr->fileDescFlags = 0;
 
-		    // int fileStatFlags;		// File status flags
-		    tempStruct_ptr->fileStatFlags = 0;
-            
+			// int fileStatFlags;		// File status flags
+			tempStruct_ptr->fileStatFlags = 0;
+			
 			// 2. FREE/CLEAR STRUCT
 			// Free the struct pointer
 			free((void*)*oldStruct_ptr);
 			// Clear the struct pointer
 			tempStruct_ptr = NULL;
-            *oldStruct_ptr = NULL;
-        }
-    }
-    
-    // DONE
-    return;
+			*oldStruct_ptr = NULL;
+		}
+	}
+	
+	// DONE
+	return;
 }
 
 
 bool validate_fdDetails(fdDetails_ptr checkThis_ptr)
 {
-    // LOCAL VARIABLES
-    bool retVal = true;
-    
-    // DONE
-    return retVal;
+	// LOCAL VARIABLES
+	bool retVal = true;
+	
+	// DONE
+	return retVal;
 }
 
 
 int update_fdDetails(fdDetails_ptr updateThis_ptr)
 {
-    // LOCAL VARIABLES
-    int retVal = 0;
-    
-    // DONE
-    return retVal;
+	// LOCAL VARIABLES
+	int retVal = 0;
+	
+	// DONE
+	return retVal;
 }
 
 
@@ -852,19 +852,118 @@ off_t get_file_len(int fileDesc)
 		curVal = lseek(fileDesc, 0, SEEK_CUR);
 
 		// Seek to the end
-	    retVal = lseek(fileDesc, 0, SEEK_END);
-	     
-	    if(retVal == -1)
-	    {
-	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - lseek() failed!\n");
-	    }
+		retVal = lseek(fileDesc, 0, SEEK_END);
+		 
+		if(retVal == -1)
+		{
+			HARKLE_ERROR(Fileroad_Descriptors, get_file_len, lseek failed);
+		}
 
-	    // Preserve offset
-	    if (curVal != lseek(fileDesc, curVal, SEEK_SET))
-	    {
-	    	fprintf(stderr, "<<<ERROR>>> - get_file_len() - Failed to recover the existing offset!\n");
-	    }
+		// Preserve offset
+		if (curVal != lseek(fileDesc, curVal, SEEK_SET))
+		{
+			HARKLE_ERROR(Fileroad_Descriptors, get_file_len, Failed to recover the existing offset);
+		}
 	}
+	// DONE
+	return retVal;
+}
+
+
+int get_fd_flags(int fileDesc)
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	// int errNum = 0;  // Capture errno on error condition
+	bool success = true;  // Set this to false if anything fails
+
+	// INPUT VALIDATION
+	if (fileDesc < 0)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, get_fd_flags, Invalid file descriptor);
+		success = false;
+	}
+
+	// GET FLAGS
+	if (true == success)
+	{
+		retVal = fcntl(fileDesc, F_GETFL);
+
+		if (-1 == retVal)
+		{
+			retVal = errno;
+			HARKLE_ERROR(Fileroad_Descriptors, get_fd_flags, fcntl failed);
+			fprintf(stderr, "fcntl() has returned errno:\t%s\n", strerror(retVal));
+			success = false;			
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+int set_fd_flags(int fileDesc, int newFlags, bool addFlags);
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	bool success = true;  // Set this to false if anything fails
+	int actualFlags = 0;  // Combination of existing flags and newFlags
+
+	// INPUT VALIDATION
+	if (fileDesc < 0)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, set_fd_flags, Invalid file descriptor);
+		success = false;
+	}
+	else if (newFlags < 0)
+	{
+		HARKLE_ERROR(Fileroad_Descriptors, set_fd_flags, Invalid flags);
+		success = false;
+	}
+
+	// DETERMINE WHICH FLAGS TO SET
+	if (true == success)
+	{
+		// Add or replace flags?
+		if (true == addFlags)
+		{
+			// 1. Get the original flags
+			actualFlags = get_fd_flags(fileDesc);
+
+			if (-1 == actualFlags)
+			{
+				retVal = errno;
+				HARKLE_ERROR(Fileroad_Descriptors, set_fd_flags, get_fd_flags failed);
+				fprintf(stderr, "get_fd_flags() has returned errno:\t%s\n", strerror(retVal));
+				success = false;
+			}
+			else
+			{
+				// 2. OR the newFlags in
+				actualFlags |= newFlags;
+			}
+		}
+		else
+		{
+			actualFlags = newFlags;
+		}		
+	}
+
+	// SET FLAGS
+	if (true == success)
+	{
+		retVal = fcntl(fileDesc, F_SETFL, actualFlags);
+
+		if (-1 == retVal)
+		{
+			retVal = errno;
+			HARKLE_ERROR(Fileroad_Descriptors, set_fd_flags, fcntl failed);
+			fprintf(stderr, "fcntl() has returned errno:\t%s\n", strerror(retVal));
+			success = false;
+		}
+	}
+
 	// DONE
 	return retVal;
 }
@@ -878,6 +977,6 @@ off_t get_file_len(int fileDesc)
 // For later
 int fd_is_valid(int fd)
 {
-    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
+	return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
 }
  */
