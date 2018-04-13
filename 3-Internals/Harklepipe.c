@@ -1,4 +1,5 @@
 #include <errno.h>			// errno
+#include "Fileroad_Descriptors.h"	// set_fd_flags()
 #include "Harklepipe.h"		// HPIPE_READ, HPIPE_WRITE
 #include "Harklerror.h"		// HARKLE_ERROR
 #include "Memoroad.h"		
@@ -119,7 +120,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 }
 
 
-char* read_a_pipe(int readFD, char stop)
+char* read_a_pipe(int readFD, char stop, int* errNumber)
 {
 	// LOCAL VARIABLES
 	char* retVal = NULL;
@@ -137,6 +138,15 @@ char* read_a_pipe(int readFD, char stop)
 		HARKLE_ERROR(Harklepipe, read_a_pipe, Invalid file descriptor);
 		success = false;
 	}
+	else if (!errNumber)
+	{
+		HARKLE_ERROR(Harklepipe, read_a_pipe, NULL pointer);
+		success = false;
+	}
+	else
+	{
+		*errNumber = 0;  // Initialize errNumber
+	}
 
 	// BEGIN READING
 	while (true == success && readCnt < HP_BUFF_SIZE)
@@ -146,8 +156,9 @@ char* read_a_pipe(int readFD, char stop)
 		if (-1 == readRetVal)
 		{
 			errNum = errno;
-			HARKLE_ERROR(Harklepipe, read_a_pipe, read failed);
-			fprintf(stderr, "read() returned errno:\t%s\n", strerror(errNum));
+			*errNumber = errno;
+			// HARKLE_ERROR(Harklepipe, read_a_pipe, read failed);
+			// fprintf(stderr, "read() returned errno:\t%s\n", strerror(errNum));
 			success = false;
 		}
 		else if (numBytes != readRetVal)

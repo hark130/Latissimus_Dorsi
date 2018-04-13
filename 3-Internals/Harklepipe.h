@@ -33,9 +33,10 @@ int make_a_pipe(int emptyPipes[2], int flags);
 		stop - A character that, if read, will cause this function
 			to stop reading and return with everything read
 			up until that point
+		errNumber - [OUT] A pointer to a location to store errno upon error
 	OUTPUT
 		On sucess, heap-allocated copy of what was read
-		On failure, NULL
+		On failure, NULL (errNumber is updated with errno)
 	NOTES
 		This function will not close the file descriptor
 		It is the caller's responsibility to free the memory returned
@@ -47,7 +48,7 @@ int make_a_pipe(int emptyPipes[2], int flags);
 			continue reading.  Right now, I don't need it and I
 			just want to get the bytes flowing through these pipes.
  */
-char* read_a_pipe(int readFD, char stop);
+char* read_a_pipe(int readFD, char stop, int* errNumber);
 
 
 /*
