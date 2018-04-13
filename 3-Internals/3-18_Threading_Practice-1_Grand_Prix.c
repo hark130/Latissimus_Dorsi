@@ -118,6 +118,7 @@
 - Write Harklecurse function to convert double tuple list to plottable Harklecurse struct
  */
 
+#include <errno.h>
 #include "Harklecurse.h"		// kill_a_window()
 #include "Harklepipe.h"			// read_a_pipe()
 #include "Harklemath.h"			// determine_center(), NUM_PRIMES_ULLONG
@@ -222,6 +223,7 @@ int main(int argc, char** argv)
 	int numLaps = 78;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
 	int retVal = 0;  // Function's return value, also holds ncurses return values
+	int errNum = 0;  // Holds errno returned from read_a_pipe()
 	bool foundWinner = false;  // Update to true if any thread wins
 	bool success = true;  // Make this false if anything fails
 	winDetails_ptr stdWin = NULL;  // hCurseWinDetails struct pointer for the stdscr window
@@ -585,13 +587,23 @@ int main(int argc, char** argv)
 						//	fcntl() to set the pipe to "F_GETFL and F_SETFL plus O_NONBLOCK"
 						// see: https://stackoverflow.com/questions/13811614/c-how-to-see-if-a-pipe-is-empty
 						/////////////////////////////////////////////////////////////////////
-						pipeReads = read_a_pipe(racer_ptr->F1Details->pipeFDs[HPIPE_READ], '\n');
+						pipeReads = read_a_pipe(racer_ptr->F1Details->pipeFDs[HPIPE_READ], '\n', &errNum);
 
-						if (!pipeReads)
+						if (!pipeReads || errNum)
 						{
-							HARKLE_ERROR(Grand_Prix, main, read_a_pipe failed);
-							success = false;
-							break;
+							// Apparently, a read from an empty pipe could return
+							//	EACCES, EAGAIN, or EWOULDBLOCK
+							if (errNum & (EACCES | EAGAIN | EWOULDBLOCK))
+							{
+								fprintf(stdout, "Thread #%d's pipe responded '%s'", racer_ptr->F1Details->tNum, strerror(errNum));  // DEBUGGING
+							}
+							else
+							{
+								HARKLE_ERROR(Grand_Prix, main, read_a_pipe failed);
+								fprintf(stderr, "read_a_pipe() returned errno:\t%s\n", strerror(errNum));
+								success = false;
+								break;
+							}
 						}
 						else
 						{
