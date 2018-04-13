@@ -1,3 +1,4 @@
+#include <fcntl.h>				// O_NONBLOCK
 #include "Harklepipe.h"			// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
 #include "Harklerror.h"			// HARKLE_ERROR()
 #include "Harklethread.h"
