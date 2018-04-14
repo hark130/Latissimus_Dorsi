@@ -111,7 +111,7 @@
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
-#define SLEEPY_OFFICIALS 2	// Number of seconds for the main thread to sleep each evaluation
+#define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
 #define SLEEPY_RACER 1  	// Number of seconds for racer_sleepy_func() to sleep
 #define SLEEPY_BUFF 20  	// Local buffer size
 
@@ -396,8 +396,9 @@ int main(int argc, char** argv)
 				else
 				{
 					// 5.4. Number all the Cartesian Coordinates in the linked list
-					if (numTrackPnts != number_cartCoord_nodes(trkHeadNode))
+					if (numTrackPnts / 2 != number_cartCoord_nodes(trkHeadNode))
 					{
+						// fprintf(stdout, "Track length == %d\tNumber Nodes == %d\n", numTrackPnts, number_cartCoord_nodes(trkHeadNode));  // DEBUGGING
 						HARKLE_ERROR(Grand_Prix, main, number_cartCoord_nodes failed);
 						success = false;
 					}
@@ -414,6 +415,10 @@ int main(int argc, char** argv)
 			HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
 			success = false;
 		}
+		// else
+		// {
+		// 	refresh();  // Print it on the real screen
+		// }
 	}
 
 	// BUILD RACE CARS
@@ -450,7 +455,7 @@ int main(int argc, char** argv)
 				}
 
 				// 2.1. Create a populated struct
-				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts, trkHeadNode);
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode);
 				// numTries = 0;
 				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
 				// {
@@ -552,7 +557,7 @@ int main(int argc, char** argv)
 								break;
 							}
 						}
-						puts("ENTERING READ_A_PIPE()");  // DEBUGGING
+						// puts("ENTERING READ_A_PIPE()");  // DEBUGGING
 						//////////////////////////////// BUG ////////////////////////////////
 						// Second function call to pipe reads is hanging
 						// I now believe that read_a_pipe() is blocking on an empty socket.
@@ -595,7 +600,8 @@ int main(int argc, char** argv)
 							// fprintf(stdout, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
 
 							// Update the struct
-							if (racer_ptr->currPos >= tmpInt)
+							// Ignore the starting positions
+							if (racer_ptr->currPos >= tmpInt && tmpInt != 1)
 							{
 								HARKLE_ERROR(Grand_Prix, main, atoi (or the thread logic) failed);
 								fprintf(stderr, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
@@ -605,8 +611,11 @@ int main(int argc, char** argv)
 							}
 							else
 							{
+								// fprintf(stdout, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
+									    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
+								// fprintf(stdout, "The track size is %d\n", numTrackPnts);  // DEBUGGING
 								racer_ptr->currPos = tmpInt;
-								if (racer_ptr->currPos == numTrackPnts)
+								if (racer_ptr->currPos == numTrackPnts / 2)
 								{
 									foundWinner = true;
 									racer_ptr->winner = true;
@@ -631,32 +640,38 @@ int main(int argc, char** argv)
 			}
 
 			// Update race details
-			// foundWinner = true;  // PLACEHOLDER
-			//////////////////////////////////////////// NEXT UP ////////////////////////////////////////////
-			/////////////// WRAP ALL OF THIS INTO AN update_tgpRacer_pos() in Thread_Racer.*? ///////////////
-			// 1. Get old hcCartCoord_ptr from tgpRacer struct (add member to tgpRacer struct)
-			//////////// WRAP ALL OF THIS INTO AN remove_tgpRacer_from_coord() in Harklecurse.*? ////////////
-			// 2. Remove this tgpRacer's flag from the hcCartCoord struct (Harklecurse function)
-			// 3. Reset this hcCartCoord struct's current graphic (Harklecurse function)
-			/////////////// WRAP ALL OF THIS INTO AN add_tgpRacer_to_coord() in Harklecurse.*? //////////////
-			// 4. Find the new hcCartCoord struct for this racer (position diff?, walk the list?)
-			// 5. Update the new hcCartCoord struct with this racer
-			// 6. Reset this hcCartCoord struct's current graphic (Harklecurse function)
+			if (false == update_all_racer_pos(racerArr_ptr))
+			{
+				HARKLE_ERROR(Grand_Prix, main, update_all_racer_pos failed);
+				success = false;
+			}
+			else
+			{
+				// puts("Updating racer positions");  // DEBUGGING
+				// fprintf(stdout, "Thread #%d is at %d\n", (*racerArr_ptr)->F1Details->tNum, (*racerArr_ptr)->currPos);  // DEBUGGING
+				// fprintf(stdout, "Thread #%d is at coord %d which has char %c (%d)\n", \
+				        (*racerArr_ptr)->F1Details->tNum, (*racerArr_ptr)->currCoord->posNum, \
+				        (*racerArr_ptr)->currCoord->graphic, (*racerArr_ptr)->currCoord->graphic);  // DEBUGGING
+			}
 
-			// Thread_Racer
-			// update_all_pos()
-				// update_tgpRacer_pos()
-					// remove_racer_from_coord()
-						// clear_racer_flag()
-						// update_coord_graphic()
-					// add_racer_to_coord()
-						// move_racer_pos()
-						// set_racer_flag()
-						// update_coord_graphic()
-			// 
+			// Update the trackWind
+			if (false == print_plot_list(trackWin->win_ptr, trkHeadNode))
+			{
+				HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
+				success = false;
+			}
+			else
+			{
+				// puts("Printing the plot list");  // DEBUGGING
+			}
 			
 			// Print updates
-			refresh();  // Print it on the real screen
+			if (OK != wrefresh(trackWin->win_ptr))  // Print it on the real screen
+			{
+				HARKLE_ERROR(Grand_Prix, main, wrefresh failed);
+				success = false;
+			}
+			// refresh();  // Print it on the real screen
 			
 			// Is there a winner?
 			if (foundWinner == true)
@@ -1106,6 +1121,7 @@ void racer_sleepy_func(tgpRacer_ptr threadDets)
 			// ♭ Thread is sleepy ♫
 			// 𝄫 Sleepy thread ♫
 			sleep(SLEEPY_RACER);
+			// sleep(threadDets->F1Details->tNum);
 			// fprintf(stdout, "Thread #%d is sleepy...  zzzZZZzzz... %d\n", threadDets->F1Details->tNum, counter);  // DEBUGGING
 
 			// OUTPUT TO THE PIPE
