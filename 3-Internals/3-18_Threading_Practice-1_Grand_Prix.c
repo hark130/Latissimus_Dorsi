@@ -4,10 +4,6 @@
 // DESIGN
 1. Visual Design
 	1. Racetrack
-		1. Size
-			* Dynamic based on window size
-		2. Shape
-			* Monaco Grand Prix
 		3. "Car" indicators
 			* Color circles
 			* Color numbers
@@ -16,22 +12,12 @@
 			* White
 			* Bold
 			* Dynamic?
-		4. Appearance
-			* Surround in a box()
 	2. Rank Bar
-		1. Size
-			* One entire edge
-		2. Location
-			* Right
-			* Left
-			* Bottom
 		3. Data displayed
 			* Green plus/red minus indicating change in status?
 			* Thread name
 			* Thread ranking
 			* Thread lap
-		4. Appearance
-			* Surround in a box()
 	3. Final Results
 		1. Data displayed
 			* Thread name
@@ -41,31 +27,31 @@
 	1. Main
 		1. Support for CLI args
 			* -n Number of threads (10)
-			* -d Length of race (161.734 mi)
+			* -l Number of laps (1)
 			* -u Update interval (1 sec)
-			* -l Number of laps (78)
 		2. Determine winner
 			* First to exit()?
 			* Photo finish (time)?
 			
 // TASKS
-[ ] Thread function
-	[ ] Calculate something
-	[ ] Check mutex and wait
-	[ ] Update pipe
-	[ ] Loop
-[ ] Main thread function
-	[ ] Sleep for an update interval
-	[ ] Lock all the mutexes
-	[ ] Read all the pipes
-	[ ] Update the race
-	[ ] Unlock all the pipes
-	[ ] Loop
+[ ] Set max number of racers to 0xF
+[X] Thread function
+	[X] Calculate something
+	[X] Check mutex and wait
+	[X] Update pipe
+	[X] Loop
+[X] Main thread function
+	[X] Sleep for an update interval
+	[X] Lock all the mutexes
+	[X] Read all the pipes
+	[X] Update the race
+	[X] Unlock all the pipes
+	[X] Loop
 [X] Harklethread.h (Thread Library)
 [X] Harklepipe.h (Pipe Library)
 [ ] Mini map
-	[ ] Draw it
-	[ ] Dynamically size it
+	[X] Draw it
+	[X] Dynamically size it
 	[ ] Color it
 	[ ] Indicators
 		[ ] Place it
@@ -93,29 +79,7 @@
 			[ ] Thread total time
 
 // TO DO 
-- Current flow design
-	1. main() determines track window size (Local logic)
-	2. main() determines maximum axis based on window size (Local logic)
-	3. main() determines center (Harklemath helper function?  Local logic?)
-	4. main() calls HMath plot_ellipse_points()
-	5. main() calls build_geometric_list(double* relEllipseCoords, centX, centY)
-		6. build_geometic_list(head*, x, y), for each (x, y) in ellipseCoords calls:
-			7. resolve_x_coord(relX, cntX)
-			8. resolve_y_coord(relY, cntY)
-			9. add_cartCoord_node(absX, absY, '*', 0x0) which calls:
-				10. build_cardCood_node() which calls...
-					11. ...allocate_cardCoord_node() to allocate memory...
-					12. ...and then assigns info to the struct
-				13. add_cartCoord_node() calls insert_cartCoord_node(0) (0 for end, X for "in front of node X")
-						14. insert_cardCoord_node() calls find_end_cardCoord_node() and adds the node
-- Design Harklecurse struct to keep track of plot points
-	- int xRelCoord
-	- int yRelCoord
-	- int xCntCoord
-	- int yCntCoord
-	- char graphic
-	- unsigned long pntStatus
-- Write Harklecurse function to convert double tuple list to plottable Harklecurse struct
+
  */
 
 #include <errno.h>
@@ -429,6 +393,15 @@ int main(int argc, char** argv)
 					HARKLE_ERROR(Grand_Prix, main, build_geometric_list failed);
 					success = false;
 				}
+				else
+				{
+					// 5.4. Number all the Cartesian Coordinates in the linked list
+					if (numTrackPnts != number_cartCoord_nodes(trkHeadNode))
+					{
+						HARKLE_ERROR(Grand_Prix, main, number_cartCoord_nodes failed);
+						success = false;
+					}
+				}
 			}
 		}
 	}
@@ -477,7 +450,7 @@ int main(int argc, char** argv)
 				}
 
 				// 2.1. Create a populated struct
-				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts);
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts, trkHeadNode);
 				// numTries = 0;
 				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
 				// {
@@ -525,6 +498,7 @@ int main(int argc, char** argv)
 		{
 			racer_ptr = racerArr_ptr[i];
 
+			// Start the engines
 			tmpInt = spawn_harklethread(racer_ptr->F1Details);
 
 			if (tmpInt)
@@ -668,6 +642,18 @@ int main(int argc, char** argv)
 			// 4. Find the new hcCartCoord struct for this racer (position diff?, walk the list?)
 			// 5. Update the new hcCartCoord struct with this racer
 			// 6. Reset this hcCartCoord struct's current graphic (Harklecurse function)
+
+			// Thread_Racer
+			// update_all_pos()
+				// update_tgpRacer_pos()
+					// remove_racer_from_coord()
+						// clear_racer_flag()
+						// update_coord_graphic()
+					// add_racer_to_coord()
+						// move_racer_pos()
+						// set_racer_flag()
+						// update_coord_graphic()
+			// 
 			
 			// Print updates
 			refresh();  // Print it on the real screen
