@@ -169,7 +169,7 @@ char* read_a_pipe(int readFD, char stop, int* errNumber)
 		else
 		{
 			readCnt++;  // One character was read
-			fprintf(stdout, "Just read a %c (%d)\n", *tmp_ptr, *tmp_ptr);  // DEBUGGING
+			// fprintf(stdout, "Just read a %c (%d)\n", *tmp_ptr, *tmp_ptr);  // DEBUGGING
 
 			if (0 == *tmp_ptr || '\n' == *tmp_ptr || stop == *tmp_ptr)
 			{
