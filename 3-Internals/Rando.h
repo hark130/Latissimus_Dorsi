@@ -27,6 +27,9 @@ void rando_init(void);
 			generator just once
  */
 int rando_me(int low, int high);
+unsigned int rando_a_uint(unsigned int low, unsigned int high);
+unsigned long rando_a_ulong(unsigned long low, unsigned long high);
+unsigned long long rando_a_ullong(unsigned long long low, unsigned long long high);
 
 
 #endif  // __RANDO_H__
