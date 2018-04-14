@@ -267,6 +267,7 @@ int number_cartCoord_nodes(hcCartCoord_ptr headPnt)
 		{
 			retVal++;  // Count the node
 			tmp_ptr->posNum = retVal;  // Number the node
+			// fprintf(stdout, "Current position number:\t%d\n", retVal);  // DEBUGGING
 			tmp_ptr = tmp_ptr->nextPnt;  // Get the next node
 		}
 	}
@@ -369,6 +370,7 @@ hcCartCoord_ptr get_pos_num(hcCartCoord_ptr startPnt, int posNumber)
 
 	while (retVal)
 	{
+		// fprintf(stdout, "Current position number:\t%d\n", retVal->posNum);  // DEBUGGING
 		if (retVal->posNum == posNumber)
 		{
 			break;
