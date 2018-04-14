@@ -84,6 +84,8 @@ hcCartCoord_ptr build_new_cartCoord_struct(int xVal, int yVal, char pntChar, uns
 		retVal->absX = xVal;
 		// int absY;								// Y coordinate starting at window's top left
 		retVal->absY = yVal;
+		// int posNum;								// Order of the track points, starting at 1
+		retVal->posNum = 0;
 		// char graphic;							// Character to print at this coordinate
 		retVal->graphic = pntChar;
 		// char defGraph;							// Original character to print at this coordinate
@@ -205,7 +207,7 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 			}
 		}		
 	}
-	
+
 	// DONE
 	if (false == success)
 	{
@@ -232,6 +234,40 @@ int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt)
 		{
 			retVal++;
 			tmp_ptr = tmp_ptr->nextPnt;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+/*
+	PURPOSE - Reset the posNum member of each hcCartesianCoordinate struct in the linked list
+	INPUT
+		headPnt - hcCartesianCoordinate struct pointer to the head node
+	OUTPUT
+		On success, number of nodes in the linked list
+		On failure, -1
+ */
+int number_cartCoord_nodes(hcCartCoord_ptr headPnt)
+{
+	// LOCAL VARIABLES
+	int retVal = -1;  // Default return value if any input validation fails
+	hcCartCoord_ptr tmp_ptr = NULL;  // Walk the linked list with this variable
+	
+	// INPUT VALIDATION
+	if (headPnt)
+	{
+		// NUMBER NODES
+		retVal = 0;
+		tmp_ptr = headPnt;
+
+		while (tmp_ptr)
+		{
+			retVal++;  // Count the node
+			tmp_ptr->posNum = retVal;  // Number the node
+			tmp_ptr = tmp_ptr->nextPnt;  // Get the next node
 		}
 	}
 
@@ -269,6 +305,8 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr)
 		(*oldStruct_ptr)->absX = 0;
 		// int absY;								// Y coordinate starting at window's top left
 		(*oldStruct_ptr)->absY = 0;
+		// int posNum;								// Order of the track points, starting at 1
+		(*oldStruct_ptr)->posNum = 0;
 		// char graphic;							// Character to print at this coordinate
 		(*oldStruct_ptr)->graphic = 0;
 		// char defGraph;							// Original character to print at this coordinate
@@ -301,6 +339,44 @@ bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr)
 	else
 	{
 		retVal = free_cartCoord_struct(oldHeadNode_ptr);
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+hcCartCoord_ptr get_pos_num(hcCartCoord_ptr startPnt, int posNumber)
+{
+	// LOCAL VARIABLES
+	hcCartCoord_ptr retVal = NULL;
+	bool success = true;  // Set this to false if anything fails
+
+	// INPUT VALIDATION
+	if (!startPnt)
+	{
+		HARKLE_ERROR(Harklecurse, get_pos_num, NULL pointer);
+		success = false;
+	}
+	else if (posNumber < 1)
+	{
+		HARKLE_ERROR(Harklecurse, get_pos_num, Invalid position number);
+		success = false;
+	}
+
+	// FIND THE NODE
+	retVal = startPnt;
+
+	while (retVal)
+	{
+		if (retVal->posNum == posNumber)
+		{
+			break;
+		}
+		else
+		{
+			retVal = retVal->nextPnt;
+		}
 	}
 
 	// DONE

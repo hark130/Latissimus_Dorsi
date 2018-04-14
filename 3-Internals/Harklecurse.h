@@ -20,6 +20,7 @@ typedef struct hcCartesianCoordinate
 {
 	int absX;								// X coordinate starting at window's top left
 	int absY;								// Y coordinate starting at window's top left
+	int posNum;								// Order of the track points, starting at 1
 	char graphic;							// Character to print at this coordinate
 	char defGraph;							// Original character to print at this coordinate
 	unsigned long hcFlags;					// Implementation-defined coordinate details
@@ -91,13 +92,24 @@ hcCartCoord_ptr add_cartCoord_node(hcCartCoord_ptr headPnt, hcCartCoord_ptr newP
 	PURPOSE - Count the number of nodes in the linked list of hcCartesianCoordinate structs
 		starting at headPnt
 	INPUT
-		headPnt - headPnt - hcCartesianCoordinate struct pointer to an existing head node,
+		headPnt - hcCartesianCoordinate struct pointer to an existing head node,
 			if any
 	OUTPUT
 		On success, number of nodes in the linked list.  If headPnt is NULL, 0.
 		On error, -1
  */
 int get_num_cartCoord_nodes(hcCartCoord_ptr headPnt);
+
+
+/*
+	PURPOSE - Reset the posNum member of each hcCartesianCoordinate struct in the linked list
+	INPUT
+		headPnt - hcCartesianCoordinate struct pointer to the head node
+	OUTPUT
+		On success, number of nodes in the linked list
+		On failure, -1
+ */
+int number_cartCoord_nodes(hcCartCoord_ptr headPnt);
 
 
 /*
@@ -132,6 +144,24 @@ bool free_cartCoord_struct(hcCartCoord_ptr* oldStruct_ptr);
 			this function as free_cardCoord_linked_list(&myHeadNode_ptr);
  */
 bool free_cardCoord_linked_list(hcCartCoord_ptr* oldHeadNode_ptr);
+
+
+/*
+	PURPOSE - Find the struct in linked list starting at headPnt whose posNum
+		matches posNumber
+	INPUT
+		startPnt - Linked hcCartesianCoordinate struct pointer to begin at
+		posNumber - The position number to find
+	OUTPUT
+		On success, hcCartesianCoordinate struct pointer to the posNumber-th
+			node
+		On failure, 
+	NOTE
+		This function will NOT return the posNumber-th node.  It will search
+			for a posNum match to posNumber.
+		This function will return the first matching node it comes across
+ */
+hcCartCoord_ptr get_pos_num(hcCartCoord_ptr startPnt, int posNumber);
 
 
 ////////////////////// CARTESIAN COORDINATE STRUCT STOP //////////////////////
