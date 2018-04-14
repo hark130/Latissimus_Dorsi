@@ -79,12 +79,12 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 	// INPUT VALIDATION
 	if (!structDetails)
 	{
-		HARKLE_ERROR(Thread_Racer, allocate_tgpRacer_ptr, NULL pointer);
+		HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, NULL pointer);
 		success = false;
 	}
 	else if (trkLen < 1)
 	{
-		HARKLE_ERROR(Thread_Racer, allocate_tgpRacer_ptr, Invalid track length);
+		HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, Invalid track length);
 		success = false;
 	}
 	
@@ -95,7 +95,7 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 		
 		if (!retVal)
 		{
-			HARKLE_ERROR(Thread_Racer, allocate_tgpRacer_ptr, allocate_tgpRacer_ptr failed);
+			HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, allocate_tgpRacer_ptr failed);
 			success = false;
 		}
 		else
@@ -105,11 +105,33 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 			// int trackLen;					// Length of the track
 			retVal->trackLen = trkLen;
 			// int currPos;						// Current position along the track
-			retVal->currPos = 0;  // Zeroize this
+			retVal->currPos = 1;  // Starting position
 			// hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 			retVal->currCoord = currentCoord;
 			// bool winner;						// This thread won
 			retVal->winner = false;  // Initialize this
+
+			// Update the currCoord
+			if (retVal->currCoord)
+			{
+				if (false == add_racer_to_track(retVal))
+				{
+					HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, add_racer_to_track failed);
+					success = false;
+				}
+			}
+		}
+	}
+
+	// CLEAN UP
+	if (false == success)
+	{
+		if (retVal)
+		{
+			if (false == free_tgpRacer_ptr(&retVal))
+			{
+				HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, free_tgpRacer_ptr failed);
+			}
 		}
 	}
 	
@@ -283,7 +305,7 @@ bool update_all_racer_pos(tgpRacer_ptr* racer_arr)
 	}
 
 	// ITERATE THROUGH THE RACERS
-	if (true == success)
+	if (true == retVal)
 	{
 		tmp_arr = racer_arr;
 
@@ -339,6 +361,10 @@ bool update_racer_pos(tgpRacer_ptr racer_ptr)
 		HARKLE_ERROR(Thread_Racer, update_racer_pos, Invalid racer number);
 		retVal = false;
 	}
+	// else if (racer_ptr->currPos == racer_ptr->trackLen)
+	// {
+	// 	racer_ptr->winner = true;
+	// }
 	// Verify racer moved position
 	else if (racer_ptr->currPos > racer_ptr->currCoord->posNum)
 	{
@@ -356,6 +382,7 @@ bool update_racer_pos(tgpRacer_ptr racer_ptr)
 		// ADD RACER TO THE TRACK
 		if (true == retVal)
 		{
+			// fprintf(stdout, "Racer #%d current position is %d and the track length is %d.\n", racer_ptr->F1Details->tNum, racer_ptr->currPos, racer_ptr->trackLen);  // DEBUGGING
 			retVal = add_racer_to_track(racer_ptr);
 
 			if (false == retVal)
@@ -492,6 +519,7 @@ bool add_racer_to_track(tgpRacer_ptr racer_ptr)
 
 		if (!newCoord)
 		{
+			fprintf(stderr, "Starting at %d, couldn't find %d\n", racer_ptr->currCoord->posNum, racer_ptr->currPos);  // DEBUGGING
 			HARKLE_ERROR(Thread_Racer, add_racer_to_track, get_pos_num failed);
 			retVal = false;	
 		}
@@ -649,7 +677,7 @@ bool update_coord_graphic(hcCartCoord_ptr hcCoord, int newRcrNum)
 				hcCoord->graphic = hcCoord->defGraph;
 
 				// If there's another racer here...
-				for (i = 0x0; i <= 0xF, i++)
+				for (i = 0x0; i <= 0xF; i++)
 				{
 					if (i != newRcrNum)
 					{
