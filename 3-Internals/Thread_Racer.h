@@ -8,6 +8,7 @@
 #ifndef __THREAD_RACER__
 #define __THREAD_RACER__
 
+#include "Harklecurse.h"			// hcCartCoord_ptr
 #include "Harklethread.h"			// hThrDetails_ptr
 
 typedef struct threadGrandPrixRace
@@ -15,6 +16,7 @@ typedef struct threadGrandPrixRace
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
 	int trackLen;					// Length of the track
 	int currPos;					// Current position along the track
+	hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 	bool winner;					// This thread won
 } tgpRacer, *tgpRacer_ptr;
 
@@ -40,6 +42,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 	INPUT
 		structDetails - hThrDetails struct containing thread-related details
 		trkLen - Length of the track this racer has to run
+		currentCoord - Optional parameter to specificy the currCoord member
 	OUTPUT
 		On success, heap-allocated and populated threadGrandPrixRace struct pointer
 		On failure, NULL
@@ -47,7 +50,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 		This function calls allocate_tgpRacer_ptr()
 		It is the caller's responsibility to free() the memory returned		
  */
-tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen);
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hcCartCoord_ptr currentCoord);
 
 
 /*
@@ -76,6 +79,8 @@ tgpRacer_ptr* allocate_tgpRacer_arr(int numRacers);
 	NOTES
 		If the F1Details member exists, this function will attempt to call 
 			free_a_hThrDetails_ptr() to free() it.
+		If the currCoord member exists, this function will not attempt to free it.
+			Instead, it will merely set it to NULL.
  */
 bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr);
 
@@ -97,6 +102,133 @@ bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr);
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// STRUCT FUNCTIONS STOP ////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////// RACER FUNCTIONS START ///////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	PURPOSE - Move all the racers around the track based on their progress
+	INPUT
+		racer_arr - An NULL-terminated array of tgpRacer struct pointers to 
+			move around the track
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		Calls Thread_Racer::update_racer_pos()
+ */
+bool update_all_racer_pos(tgpRacer_ptr* racer_arr);
+
+
+/*
+	PURPOSE - Move a racer around the track based on its progress
+	INPUT
+		racer_ptr - Pointer to a tgpRacer struct representing the racer
+			to update
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		Calls Thread_Racer::remove_racer_from_track()
+		Calls Thread_Racer::add_racer_to_track()
+ */
+bool update_racer_pos(tgpRacer_ptr racer_ptr);
+
+
+/*
+	PURPOSE - Remove a racer from its old position on the track
+	INPUT
+		racer_ptr - Pointer to a tgpRacer struct representing the racer
+			to update
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		Calls Harklecurse::get_pos_num()
+		Calls Thread_Racer::clear_racer_flag()
+		Calls Thread_Racer::update_coord_graphic()
+ */
+bool remove_racer_from_track(tgpRacer_ptr racer_ptr);
+
+
+/*
+	PURPOSE - Remove a racer's flag from a given hcCartesianCoordinate
+		struct
+	INPUT
+		hcCoord - Pointer to a hcCartesianCoordinate struct
+		racerNum - Flag to clear
+	OUTPUT
+		On success, true
+		On failure, or if the racer's flag was not present, false
+	NOTES
+		This function will first verify the racer's flag was raised
+			in the first place before trying to clear it
+		A racer's flag has a value equal to 2^racerNum
+ */
+bool clear_racer_flag(hcCartCoord_ptr hcCoord, int racerNum);
+
+
+/*
+	PURPOSE - Add a racer to its new position on the track
+	INPUT
+		racer_ptr - Pointer to a tgpRacer struct representing the racer
+			to update
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		Calls Harklecurse::get_pos_num()
+		Calls Thread_Racer::set_racer_flag()
+		Calls Thread_Racer::update_coord_graphic()
+ */
+bool add_racer_to_track(tgpRacer_ptr racer_ptr);
+
+
+/*
+	PURPOSE - Add a racer's flag to a given hcCartesianCoordinate
+		struct
+	INPUT
+		hcCoord - Pointer to a hcCartesianCoordinate struct
+		racerNum - Flag to add
+	OUTPUT
+		On success, true
+		On failure, or if the racer's flag was already present, false
+	NOTES
+		This function will first verify the racer's flag was not raised
+			before trying to clear it
+		A racer's flag has a value equal to 2^racerNum
+ */
+bool set_racer_flag(hcCartCoord_ptr hcCoord, int racerNum);
+
+
+/*
+	PURPOSE - Update a hcCartesianCoordinate struct after some change in
+		flag status has been made to it
+	INPUT
+		hcCoord - Pointer to a hcCartesianCoordinate struct
+		newRcrNum - Most recent racer change made to this struct.  It could
+			be that newRcrNum just left and its flag has been cleared.  It
+			could also mean that this racer just arrived.
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		If newRcrNum is not present in the flags, the graphic will be reset
+			if it holds newRcrNum's hex digit.  If there are other racer's
+			here, it will be set to the lowest racer number.  Otherwise,
+			it will be reset to the defGraph.
+		If newRcrNum is present in the flags and no other racers are here,
+			the graphic will be set to newRcrNum's hex digit.  Otherwise,
+			no change.
+ */
+bool update_coord_graphic(hcCartCoord_ptr hcCoord, int newRcrNum);
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////// RACER FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 #endif  // __THREAD_RACER__
