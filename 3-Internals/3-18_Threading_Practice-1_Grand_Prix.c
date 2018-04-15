@@ -208,6 +208,12 @@ int main(int argc, char** argv)
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
 	hThrDetails_ptr tmpMember = NULL;  // Temp variable to hold the F1Details during creation
 	char* pipeReads = NULL;  // Returned values from read_a_pipe() calls
+	char* racerNames[] = {
+		"L. Torvalds", "H. Sweeten", "G. Uytterhoeven", "A. Bergmann", "A. Viro", "T. Iwai", \
+		"L. Clausen", "M. Chehab", "V. Syrjälä", "L. Walleij", "D. Carpenter", "Intel", \
+		"Red Hat", "Linaro", "Samsung", "SUSE", "IBM", "Renesas Electronics", \
+	};
+
 	// Race Track
 	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
 	double* trackPntArray = NULL;  // Return value from plot_ellipse_points()
