@@ -13,6 +13,8 @@
 #include <ncurses.h>				// WINDOW
 #include <stdbool.h>				// bool, true, false
 
+#define TR_MAX_RACERS 17
+
 typedef struct threadGrandPrixRace
 {
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
@@ -20,6 +22,7 @@ typedef struct threadGrandPrixRace
 	int numLaps;					// Total number of laps
 	int currLap;					// Current lap
 	int currPos;					// Current position along the track
+	unsigned long relPos;			// Distance behind the leader
 	hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 	bool winner;					// This thread won
 } tgpRacer, *tgpRacer_ptr;
@@ -258,6 +261,26 @@ bool update_coord_graphic(hcCartCoord_ptr hcCoord, int newRcrNum);
  */
 bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr);
 
+
+/*
+	PURPOSE - Sort the tgpRacer struct pointers into another array by
+		ranking order
+	INPUT
+		racerArr_ptr - [IN] A NULL-terminated array of tgpRacer struct 
+			pointers to sort
+		rankedRacer_arr - [OUT] An entirely NULL array of minimum dimension
+			TR_MAX_RACERS + 1 into which the tgpRacer struct pointers will
+			be sorted
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		rankedRacer_arr must be NULL from index 0 to index TR_MAX_RACERS
+		I'm currently undecided on whether or not I'll write a helper
+			function to also update each racer's relPos member or just
+			add the logic into this function
+ */
+bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr);
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
