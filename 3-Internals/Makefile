@@ -49,9 +49,10 @@ CC = gcc
 	$(CC) -c Harklepipe.c
 	$(CC) -c -pthread Harklethread.c
 	$(CC) -c Memoroad.c
+	$(CC) -c Rando.c
 	$(CC) -c Thread_Racer.c
 	$(CC) -c 3-18_Threading_Practice-1_Grand_Prix.c
-	$(CC) -o grand_prix.exe -pthread Fileroad.o Fileroad_Descriptors.o Harklecurse.o Harklemath.o Harklepipe.o Harklethread.o Memoroad.o Thread_Racer.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses -lm
+	$(CC) -o grand_prix.exe -pthread Fileroad.o Fileroad_Descriptors.o Harklecurse.o Harklemath.o Harklepipe.o Harklethread.o Memoroad.o Rando.o Thread_Racer.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses -lm
 
 tests:
 	$(CC) -c Fileroad.c
