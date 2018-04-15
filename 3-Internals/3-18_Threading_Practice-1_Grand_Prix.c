@@ -92,6 +92,7 @@
 #include <math.h>				// sqrt()
 #include "Memoroad.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
+#include "Rando.h"				// rando_a_uint()
 #include <string.h>				// memset()
 #include <stdbool.h>			// bool, true, false
 #include <stdint.h>				// intptr_t
@@ -112,7 +113,8 @@
 #endif // GRAND_PRIX_MAX_TRIES
 
 #define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
-#define SLEEPY_RACER 1  	// Number of seconds for racer_sleepy_func() to sleep
+#define SLEEPY_RACER 0  	// Number of seconds for racer_sleepy_func() to sleep
+#define FAST_RACER 10000		// Multiple to increase the number of calculations, minimum 1
 #define SLEEPY_BUFF 20  	// Local buffer size
 
 // typedef struct threadGrandPrixRace
@@ -175,6 +177,9 @@ void racer_uint_prime_func(hThrDetails_ptr F1Details, unsigned int trackLen);
  */
 void racer_sleepy_func(tgpRacer_ptr threadDets);
 // void racer_sleepy_func(int trackLen);
+
+// Randomize a uint and test for prime.  Send current count to the pipe.
+void racer_rando_prime(tgpRacer_ptr threadDets);
 
 
 int main(int argc, char** argv)
@@ -443,7 +448,8 @@ int main(int argc, char** argv)
 			for (i = 0; i < numF1s; i++)
 			{
 				// 2.1. Create struct data
-				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, NULL, 0);
+				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_rando_prime, NULL, 0);
+				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, NULL, 0);
 				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, (void*)numTrackPnts, sizeof(int));
 				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
 
@@ -1089,6 +1095,7 @@ void racer_uint_prime_func(hThrDetails_ptr F1Details, unsigned int trackLen)
 	return;
 }
 
+
 void racer_sleepy_func(tgpRacer_ptr threadDets)
 // void racer_sleepy_func(int trackLen)
 {
@@ -1120,8 +1127,8 @@ void racer_sleepy_func(tgpRacer_ptr threadDets)
 			// ♩ Sleepy thread ♪
 			// ♭ Thread is sleepy ♫
 			// 𝄫 Sleepy thread ♫
-			sleep(SLEEPY_RACER);
-			// sleep(threadDets->F1Details->tNum);
+			// sleep(SLEEPY_RACER);
+			sleep(threadDets->F1Details->tNum);
 			// fprintf(stdout, "Thread #%d is sleepy...  zzzZZZzzz... %d\n", threadDets->F1Details->tNum, counter);  // DEBUGGING
 
 			// OUTPUT TO THE PIPE
@@ -1173,6 +1180,177 @@ void racer_sleepy_func(tgpRacer_ptr threadDets)
 				if (errNum)
 				{
 					HARKLE_ERROR(Grand_Prix, racer_sleepy_func, pthread_mutex_unlock failed);
+					fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(errNum));
+					success = false;
+					break;
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+
+void racer_rando_prime(tgpRacer_ptr threadDets)
+{
+	// LOCAL VARIABLES
+	int counter = 0;  // Counts the number of primes found
+	int subCounter = 0;  // Require more calculations than before
+	int fastMult = 0;  // Multiple to increase the number of calculations, minimum 1
+	int errNum = 0;  // Capture errno here during error conditions
+	char localNum[SLEEPY_BUFF + 1] = { 0 };  // ULLONG_MAX as a placeholder
+	int numBytes = 0;  // Return value from snprintf()
+	bool success = true;  // Set this to false if anything fails
+	bool isThisPrime = true;  // Reset this to true
+	////////////////////// DATA TYPE DEPENDENT VARIABLES /////////////////////
+	// uint randoNum = 0;  // Holds a psuedo-random number
+	// unsigned long randoNum = 0;  // Holds a psuedo-random number
+	volatile unsigned long long randoNum = 0;  // Holds a psuedo-random number
+	// unsigned int tmpVar = 5;  // Used to check for prime
+	// unsigned long tmpVar = 5;  // Used to check for prime
+	unsigned long long tmpVar = 5;  // Used to check for prime
+	//////////////////////////////////////////////////////////////////////////
+	
+	// INPUT VALIDATION
+	if (!threadDets)
+	{
+		HARKLE_ERROR(Grand_Prix, racer_rando_prime, NULL pointer);
+		success = false;
+	}
+	else if (threadDets->trackLen < 0)
+	{
+		HARKLE_ERROR(Grand_Prix, racer_rando_prime, Invalid track length);
+		success = false;
+	}
+	else
+	{
+		if (FAST_RACER >= 1)
+		{
+			fastMult = FAST_RACER;
+		}
+		else
+		{
+			fastMult = 1;
+		}
+	}
+
+	if (true == success)
+	{
+		while (counter <= threadDets->trackLen)
+		{
+			// 𝄞 Why are you sleepy? ♬
+			// ♩ Sleepy thread ♪
+			// ♭ Thread is sleepy ♫
+			// 𝄫 Sleepy thread ♫
+			sleep(SLEEPY_RACER);
+			// sleep(threadDets->F1Details->tNum);
+			// fprintf(stdout, "Thread #%d is sleepy...  zzzZZZzzz... %d\n", threadDets->F1Details->tNum, counter);  // DEBUGGING
+
+			// FIND A RANDOM PRIME
+			while (1)
+			{
+				isThisPrime = true;  // Reset temp var
+				// randoNum = rando_a_uint(1, UINT_MAX);
+				// randoNum = rando_a_ulong(1, ULONG_MAX);
+				randoNum = rando_a_ullong(1, ULLONG_MAX);
+				// fprintf(stdout, "Thread #%d got %u.\n", threadDets->F1Details->tNum, randoNum);  // DEBUGGING
+				// fprintf(stdout, "Thread #%d got %lu.\n", threadDets->F1Details->tNum, randoNum);  // DEBUGGING
+				// fprintf(stdout, "Thread #%d got %llu.\n", threadDets->F1Details->tNum, randoNum);  // DEBUGGING
+
+				if (randoNum <= 1)
+				{
+					isThisPrime = false;
+				}
+				else if (randoNum <= 3)
+				{
+					isThisPrime = true;
+				}
+				else if (0 == randoNum % 2 || 0 == randoNum % 3)
+				{
+					isThisPrime = false;
+				}
+				else
+				{
+					while (tmpVar * tmpVar <= randoNum && tmpVar <= (unsigned long long)sqrt(randoNum))
+					// while (tmpVar * tmpVar <= randoNum && tmpVar <= (unsigned int)sqrt(randoNum))
+					{
+						if (0 == randoNum % tmpVar || 0 == randoNum % (tmpVar + 2))
+						{
+							isThisPrime = false;
+							break;
+						}
+						else
+						{
+							tmpVar += 6;	
+						}
+					}
+				}
+
+				if (true == isThisPrime)
+				{
+					subCounter++;
+					if (0 == subCounter % fastMult)
+					{
+						counter++;
+						subCounter = 0;  // Reset temp var
+						break;
+					}
+					// fprintf(stdout, "Thread #%d found prime #%d:\t%u.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
+					// fprintf(stdout, "Thread #%d found prime #%d:\t%lu.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
+					// fprintf(stdout, "Thread #%d found prime #%d:\t%llu.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
+				}
+			}
+
+			// OUTPUT TO THE PIPE
+			// 1. Lock the mutex
+			errNum = pthread_mutex_lock(&(threadDets->F1Details->pipeMutex));
+
+			if (errNum)
+			{
+				HARKLE_ERROR(Grand_Prix, racer_rando_prime, pthread_mutex_lock failed);
+				fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(errNum));
+				success = false;
+				break;
+			}
+			else
+			{
+				// 2. Write the counter
+				// 2.1. Convert counter to a string
+				numBytes = snprintf(localNum, SLEEPY_BUFF, "%d\n", counter);
+
+				if (numBytes >= SLEEPY_BUFF)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_rando_prime, snprintf truncated the output);
+					success = false;
+					break;
+				}
+				else if (numBytes < 0)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_rando_prime, snprintf failed);
+					success = false;
+					break;
+				}
+				else
+				{
+					// 2.2. Write that string to the pipe
+					errNum = write_a_pipe(threadDets->F1Details->pipeFDs[HPIPE_WRITE], (void*)localNum, numBytes);
+
+					if (errNum)
+					{
+						HARKLE_ERROR(Grand_Prix, racer_rando_prime, write_a_pipe failed);
+						fprintf(stderr, "write_a_pipe() returned errno:\t%s\n", strerror(errNum));
+						success = false;
+						break;
+					}
+				}
+
+				// 3. Unlock the mutex
+				errNum = pthread_mutex_unlock(&(threadDets->F1Details->pipeMutex));
+
+				if (errNum)
+				{
+					HARKLE_ERROR(Grand_Prix, racer_rando_prime, pthread_mutex_unlock failed);
 					fprintf(stderr, "pthread_mutex_lock() returned errno:\t%s\n", strerror(errNum));
 					success = false;
 					break;
