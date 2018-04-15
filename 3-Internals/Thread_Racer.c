@@ -118,6 +118,8 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 			retVal->currLap = 1;
 			// int currPos;						// Current position along the track
 			retVal->currPos = 1;  // Starting position
+			// unsigned long relPos;			// Distance behind the leader
+			retVal->relPos = 0;  // This is set by update_rank_win()
 			// hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 			retVal->currCoord = currentCoord;
 			// bool winner;						// This thread won
@@ -236,12 +238,14 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr)
 		}
 		// int trackLen;					// Length of the track
 		(*oldStruct_ptr)->trackLen = 0;
-		// int numLaps;					// Total number of laps
+		// int numLaps;						// Total number of laps
 		(*oldStruct_ptr)->numLaps = 0;
-		// int currLap;					// Current lap
+		// int currLap;						// Current lap
 		(*oldStruct_ptr)->currLap = 0;
 		// int currPos;						// Current position along the track
 		(*oldStruct_ptr)->currPos = 0;
+		// unsigned long relPos;			// Distance behind the leader
+		(*oldStruct_ptr)->relPos = 0;
 		// hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 		(*oldStruct_ptr)->currCoord = NULL;
 		// bool winner;						// This thread won
@@ -769,10 +773,14 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 	char tmpString1[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
 	char tmpString2[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
 	int tmpInt = 0;  // Temp int for calculations
-	tgpRacer_ptr rankedRacerArr[17] = { NULL };  // Holds the ranked racers
+	tgpRacer_ptr rankedRacerArr[TR_MAX_RACERS + 1] = { NULL };  // Holds the ranked racers
 	int i = 0;  // Iterating variable
 	int topLap = 0;  // Highest lap number among the racers
-	int totalLaps = 0;  // Total laps 
+	int totalLaps = 0;  // Total laps
+	int topPosition = 0;  // Laps * currPos for the racer in 1st place
+	int currPrintRow = 1;  // Keep track of which row is currently being printed
+	char currentRacer = 0;  // Store the current racer's 'symbol' (hex digit) here
+
 
 	// INPUT VALIDATION
 	if (!rankWin_ptr)
@@ -786,7 +794,7 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 		retVal = false;
 	}
 	//////////////////////////// UPDATE THIS LATER ///////////////////////////
-	else if (rankWin_ptr->nCols < 5)
+	else if (rankWin_ptr->nCols < 39)
 	{
 		HARKLE_ERROR(Thread_Racer, update_ranking_win, Invalid number of columns);
 		retVal = false;
@@ -818,44 +826,52 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 		}
 
 		// RANK RACERS
-		//////////////////////// IMPLEMENT THIS LATER IN A HELPER FUNCTION ////////////////////////
-		for (i = 0; i < 16; i++)
+		// for (i = 0; i < TR_MAX_RACERS; i++)
+		// {
+		// 	if (NULL == racerArr_ptr[i])
+		// 	{
+		// 		break;
+		// 	}
+		// 	else
+		// 	{
+		// 		rankedRacerArr[i] = racerArr_ptr[i];
+		// 	}
+		// }
+		if (false == sort_racers(racerArr_ptr, rankedRacerArr))
 		{
-			if (NULL == racerArr_ptr[i])
-			{
-				break;
-			}
-			else
-			{
-				rankedRacerArr[i] = racerArr_ptr[i];
-			}
+			HARKLE_ERROR(Thread_Racer, update_ranking_win, sort_racers failed);
+			retVal = false;
 		}
-
-		// Get top lap
-		topLap = rankedRacerArr[0]->currLap;
-		// Get total laps
-		totalLaps = racerArr_ptr[0]->numLaps;
+		else
+		{
+			// Get top lap
+			topLap = rankedRacerArr[0]->currLap;
+			// Get total laps
+			totalLaps = racerArr_ptr[0]->numLaps;
+		}
 	}
 
 	// FORMAT ROWS
+	// 1. Header Row - THREAD GRAND PRIX
 	if (true == retVal)
 	{
-		// 1. Header Row - THREAD GRAND PRIX
 		// 1.1. Setup temp buffer
 		snprintf(tmpString1, TR_BUFF_SIZE, "%s", "THREAD GRAND PRIX");
 		// 1.2. Determine size of this line
 		tmpInt = (maxWid - strlen(tmpString1)) / 2;
 		// 1.3. Print the buffer within the spacing
-		if (true == retVal && OK != mvwprintw(tWin_ptr, 1, 2, "%*s", tmpInt + strlen(tmpString1), tmpString1))
+		if (true == retVal && OK != mvwprintw(tWin_ptr, currPrintRow, 2, "%*s", tmpInt + strlen(tmpString1), tmpString1))
 		{
 			HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on the header);
 			retVal = false;
 		}
 	}
 
+	// 2. Race Details - LAP           X of Y
 	if (true == retVal)
 	{
-		// 2. Race Details - LAP           X of Y
+		// 2.0. Increment print row
+		currPrintRow++;
 		// 2.1. Setup temp buffers
 		snprintf(tmpString1, TR_BUFF_SIZE, "%s", "LAP");
 		snprintf(tmpString2, TR_BUFF_SIZE, "%d of %d", topLap, totalLaps);
@@ -866,17 +882,239 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 			HARKLE_ERROR(Thread_Racer, update_ranking_win, Lap line is too long);
 			retVal = false;
 		}
-		else if (true == retVal && OK != mvwprintw(tWin_ptr, 2, 2, "%s%*s", tmpString1, tmpInt + strlen(tmpString2), tmpString2))
+		else if (true == retVal && OK != mvwprintw(tWin_ptr, currPrintRow, 2, \
+			                                       "%s%*s", tmpString1, tmpInt + \
+			                                       strlen(tmpString2), tmpString2))
 		{
 			HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on the header);
 			retVal = false;
 		}
 	}
 
+	// 3. Ranked Racers
+	if (true == retVal)
+	{
+		for (i = 0; i < TR_MAX_RACERS; i++)
+		{
+			// 3.0. Verify the bounds
+			// 3.0.1. Check number of racers
+			if (NULL == rankedRacerArr[i])
+			{
+				break;  // No more racers
+			}
+			// 3.0.2. Verify we're not going off the bottom
+			else if (currPrintRow == maxLen)
+			{
+				break;  // No more room
+			}
+			else
+			{
+				// fprintf(stdout, "\nPrinting Thread #%d\n", rankedRacerArr[i]->F1Details->tNum);  // DEBUGGING
+				currPrintRow++;  // Print another racer
+				currentRacer = ithc(rankedRacerArr[i]->F1Details->tNum);
+
+				if (!currentRacer)
+				{
+					HARKLE_ERROR(Thread_Racer, update_ranking_win, ithc failed);
+					retVal = false;
+					break;
+				}
+			}
+
+			// 3.1. Setup temp buffers
+			if (rankedRacerArr[i]->F1Details->tName)
+			{
+				snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %20s -%4lu", \
+					     i + 1, currentRacer, rankedRacerArr[i]->F1Details->tName, \
+					     rankedRacerArr[i]->relPos);
+			}
+			else
+			{
+				snprintf(tmpString2, TR_BUFF_SIZE, "%s%02d", "Thread #", \
+					     rankedRacerArr[i]->F1Details->tNum);
+				if (i > 0)
+				{
+					snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-20s -%04lu", \
+						     i + 1, currentRacer, tmpString2, \
+						     rankedRacerArr[i]->relPos);
+				}
+				else
+				{
+					snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-26s", \
+						     i + 1, currentRacer, tmpString2);
+				}
+			}
+
+			// 3.2. Print the line
+			if (OK != mvwprintw(tWin_ptr, currPrintRow, 2, \
+				                "%*s", maxWid, tmpString1))
+			{
+				HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on a racer);
+				retVal = false;
+			}
+		}		
+	}
+
 	// DONE
 	return retVal;
 }
 
+
+bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Set this to false if anything fails
+	int i = 0;  // Iterating variable
+	// int j = 0;  // Iterating variable
+	tgpRacer_ptr realLeader = NULL;  // First place
+	tgpRacer_ptr currLeader = NULL;  // Temporary 'benchmark' to check against
+	// tgpRacer_ptr* dest_arr = NULL;  // Iterating pointer for rankedRacer_arr
+	// Set an index to nul if a racerArr_ptr index number has already been
+	//	sorted into rankedRacer_arr
+	char bookKeep[TR_MAX_RACERS + 1] = { 0 };  // Bookkeeping for the sorting
+	char bookChar = 'X';  // Bookkeeping char
+	int currLdrIndex = 0;  // Keep track of the index for the current leader
+	int numRacersRanked = 0;  // The number of racers that have already been sorted
+	int totalRacers = 0;  // Number of pointers in racerArr_ptr
+
+	// INPUT VALIDATION
+	if (!racerArr_ptr || !(*racerArr_ptr))
+	{
+		HARKLE_ERROR(Thread_Racer, sort_racers, NULL racer array pointer);
+		retVal = false;
+	}
+	else if (!rankedRacer_arr)
+	{
+		HARKLE_ERROR(Thread_Racer, sort_racers, NULL ranked racer array pointer);
+		retVal = false;
+	}
+	else
+	{
+		// Verify racerArr_ptr doesn't exceed TR_MAX_RACERS
+		for (i = 0; i <= TR_MAX_RACERS; i++)
+		{
+			if (racerArr_ptr[i])
+			{
+				totalRacers++;
+			}
+			else
+			{
+				break;  // Found the NULL termination
+			}
+		}
+
+		if (totalRacers > TR_MAX_RACERS)
+		{
+			HARKLE_ERROR(Thread_Racer, sort_racers, Too many racers);
+			retVal = false;
+		}
+		else if (totalRacers < 1)
+		{
+			HARKLE_ERROR(Thread_Racer, sort_racers, Too few racers);
+			retVal = false;
+		}
+
+		// Verify rankedRacer_arr is emtpy
+		for (i = 0; i <= TR_MAX_RACERS; i++)
+		{
+			if (NULL != rankedRacer_arr[i])
+			{
+				HARKLE_ERROR(Thread_Racer, sort_racers, Ranked racer array contains a pointer);
+				retVal = false;
+				break;
+			}
+		}
+	}
+
+	// PREPARE THE BOOKKEEPING ARRAY
+	if (true == retVal)
+	{
+		for (i = 0; i < totalRacers; i++)
+		{
+			bookKeep[i] = bookChar;
+		}
+	}
+
+	// SORT THE RACERS
+	if (true == retVal)
+	{
+		// 0. Prepare the destination pointer
+		// dest_arr = rankedRacer_arr;
+
+		// 1. Find first place racer
+		while (true == retVal && numRacersRanked < totalRacers)
+		{
+			// Find the current leader in the race
+			for (i = 0; i < totalRacers; i++)
+			{
+				// End of racers?
+				if (NULL == racerArr_ptr[i])
+				{
+					break;
+				}
+				// Did we already sort this one?
+				else if (!bookKeep[i])
+				{
+					continue;
+				}
+				// Find a racer that's ahead of the current leader
+				else
+				{
+					// Haven't found one yet
+					if (!currLeader)
+					{
+						// You're the leader now!
+						currLeader = racerArr_ptr[i];
+					}
+					// Ahead on laps
+					else if (racerArr_ptr[i]->currLap > currLeader->currLap)
+					{
+						currLeader = racerArr_ptr[i];
+						currLdrIndex = i;
+					}
+					// Same lap but ahead on position
+					else if (racerArr_ptr[i]->currLap == currLeader->currLap && \
+						     racerArr_ptr[i]->currPos > currLeader->currPos)
+					{
+						currLeader = racerArr_ptr[i];
+						currLdrIndex = i;
+					}
+				}
+			}
+
+			// Did we find a current leader?
+			if (currLeader)
+			{
+				if (0 == numRacersRanked)
+				{
+					realLeader = currLeader;  // Store the current leader
+					realLeader->relPos = 0;  // Relative position is front of the pack
+				}
+				else
+				{
+					// UPDATE RACERS RELATIVE POSITION
+					currLeader->relPos = ((realLeader->currLap * realLeader->trackLen) + realLeader->currPos) - \
+					                     ((currLeader->currLap * currLeader->trackLen) + currLeader->currPos);
+				}
+				// Store this racer in the destination array
+				// fprintf(stdout, "Just sorted Thread #%d\n", currLeader->F1Details->tNum);  // DEBUGGING
+				(*(rankedRacer_arr + numRacersRanked)) = currLeader;
+				numRacersRanked++;  // Advance the iterating variable to the next index
+				bookKeep[currLdrIndex] = 0;  // Clear the book keeping char for this racer
+				currLeader = NULL;  // Reset temp variable
+			}
+			// How did we get here?!
+			else
+			{
+				HARKLE_ERROR(Thread_Racer, sort_racers, First place racer sorting logic error);
+				retVal = false;
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
