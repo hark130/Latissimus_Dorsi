@@ -461,7 +461,8 @@ int main(int argc, char** argv)
 				}
 
 				// 2.1. Create a populated struct
-				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode);
+				//////////////////////////////////// MODIFY LAPS ONCE ITS IMPLEMENTED ////////////////////////////////////
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode, 1);
 				// numTries = 0;
 				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
 				// {
@@ -660,24 +661,37 @@ int main(int argc, char** argv)
 				        (*racerArr_ptr)->currCoord->graphic, (*racerArr_ptr)->currCoord->graphic);  // DEBUGGING
 			}
 
-			// Update the trackWind
+			// UDPATE THE WINDOWS
+			// Update the trackWin
 			if (false == print_plot_list(trackWin->win_ptr, trkHeadNode))
 			{
 				HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
 				success = false;
+				continue;
 			}
-			else
+			// Update the rankWin
+			if (false == update_ranking_win(rankBarWin, racerArr_ptr))
 			{
-				// puts("Printing the plot list");  // DEBUGGING
+				HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
+				success = false;
+				continue;
 			}
 			
-			// Print updates
+			// PRINT THE WINDOWS
+			// Print the trackWin
 			if (OK != wrefresh(trackWin->win_ptr))  // Print it on the real screen
 			{
-				HARKLE_ERROR(Grand_Prix, main, wrefresh failed);
+				HARKLE_ERROR(Grand_Prix, main, wrefresh failed on trackWin);
 				success = false;
+				continue;
 			}
-			// refresh();  // Print it on the real screen
+			// Print the rankWin
+			if (OK != wrefresh(rankBarWin->win_ptr))
+			{
+				HARKLE_ERROR(Grand_Prix, main, wrefresh failed on rankBar);
+				success = false;
+				continue;
+			}
 			
 			// Is there a winner?
 			if (foundWinner == true)
