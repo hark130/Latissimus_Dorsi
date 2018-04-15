@@ -81,6 +81,7 @@
 // TO DO 
 BUGS
 	[ ] Oddly sized windows (e.g., Taller than it is wide)
+	[ ] Verify that the populate_whatever() function validates the tNum as < 0xF for the purposes of printing/formatting
  */
 
 #include <errno.h>
