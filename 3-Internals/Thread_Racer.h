@@ -10,11 +10,15 @@
 
 #include "Harklecurse.h"			// hcCartCoord_ptr
 #include "Harklethread.h"			// hThrDetails_ptr
+#include <ncurses.h>				// WINDOW
+#include <stdbool.h>				// bool, true, false
 
 typedef struct threadGrandPrixRace
 {
 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
 	int trackLen;					// Length of the track
+	int numLaps;					// Total number of laps
+	int currLap;					// Current lap
 	int currPos;					// Current position along the track
 	hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
 	bool winner;					// This thread won
@@ -43,6 +47,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 		structDetails - hThrDetails struct containing thread-related details
 		trkLen - Length of the track this racer has to run
 		currentCoord - Optional parameter to specificy the currCoord member
+		numberLaps - Number of laps to run
 	OUTPUT
 		On success, heap-allocated and populated threadGrandPrixRace struct pointer
 		On failure, NULL
@@ -50,7 +55,8 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void);
 		This function calls allocate_tgpRacer_ptr()
 		It is the caller's responsibility to free() the memory returned		
  */
-tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hcCartCoord_ptr currentCoord);
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, \
+	                               hcCartCoord_ptr currentCoord, int numberLaps);
 
 
 /*
@@ -229,6 +235,32 @@ bool update_coord_graphic(hcCartCoord_ptr hcCoord, int newRcrNum);
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// RACER FUNCTIONS STOP ////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// GRAND PRIX FUNCTIONS START ////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	PURPOSE - Update the Grand Prix in-race stats window
+	INPUT
+		rankWin_ptr - Pointer to the winDetails struct containing the rank
+			bar information
+		racerArr_ptr - An NULL-terminated array of tgpRacer struct pointers
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will not call wrefresh().  Instead, it will merely
+			update the WINDOW.  The calling function is responsible for
+			calling wrefresh().
+ */
+bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr);
+
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 #endif  // __THREAD_RACER__

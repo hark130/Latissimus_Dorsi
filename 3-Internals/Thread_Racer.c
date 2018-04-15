@@ -9,12 +9,15 @@
 #include "Harklerror.h"				// HARKLE_ERROR
 #include "Harklethread.h"			// hThrDetails_ptr
 #include <stdlib.h>					// calloc()
+#include <string.h>					// strlen()
 #include "Thread_Racer.h"			// struct threadGrandPrixRace
 
 #ifndef THREADRACER_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define THREADRACER_MAX_TRIES 3
 #endif  // THREADRACER_MAX_TRIES
+
+#define TR_BUFF_SIZE 64  // Default buffer size
 
 // MACRO DEFINING THE RACER FLAGS FOR struct hcCartesianCoordinate.hcFlags
 #define TR_RACER_FLAG(n) (n >= 0x0 && 0xF >= n) ? (1 << n) : (0)
@@ -70,7 +73,7 @@ tgpRacer_ptr allocate_tgpRacer_ptr(void)
 }
 
 
-tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hcCartCoord_ptr currentCoord)
+tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hcCartCoord_ptr currentCoord, int numberLaps)
 {
 	// LOCAL VARIABLES
 	tgpRacer_ptr retVal = NULL;
@@ -85,6 +88,11 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 	else if (trkLen < 1)
 	{
 		HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, Invalid track length);
+		success = false;
+	}
+	else if (numberLaps < 1)
+	{
+		HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, Invalid number of laps);
 		success = false;
 	}
 	
@@ -104,6 +112,10 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 			retVal->F1Details = structDetails;
 			// int trackLen;					// Length of the track
 			retVal->trackLen = trkLen;
+			// int numLaps;						// Total number of laps
+			retVal->numLaps = numberLaps;
+			// int currLap;						// Current lap
+			retVal->currLap = 1;
 			// int currPos;						// Current position along the track
 			retVal->currPos = 1;  // Starting position
 			// hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
@@ -224,6 +236,10 @@ bool free_tgpRacer_ptr(tgpRacer_ptr* oldStruct_ptr)
 		}
 		// int trackLen;					// Length of the track
 		(*oldStruct_ptr)->trackLen = 0;
+		// int numLaps;					// Total number of laps
+		(*oldStruct_ptr)->numLaps = 0;
+		// int currLap;					// Current lap
+		(*oldStruct_ptr)->currLap = 0;
 		// int currPos;						// Current position along the track
 		(*oldStruct_ptr)->currPos = 0;
 		// hcCartCoord_ptr currCoord;		// Current cartesian coordinate location
@@ -723,6 +739,147 @@ bool update_coord_graphic(hcCartCoord_ptr hcCoord, int newRcrNum)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// RACER FUNCTIONS STOP ////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// GRAND PRIX FUNCTIONS START ////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	PURPOSE - Update the Grand Prix in-race stats window
+	INPUT
+		rankWin_ptr - Pointer to the WINDOW object holding the rank bar
+		racerArr_ptr - An NULL-terminated array of tgpRacer struct pointers
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will not call wrefresh().  Instead, it will merely
+			update the WINDOW.  The calling function is responsible for
+			calling wrefresh().
+ */
+bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	WINDOW* tWin_ptr = NULL;  // Get this from rankWin_ptr for ease of reference
+	int maxWid = 0;  // Max printable window width
+	int maxLen = 0;  // Max printable window length
+	char tmpString1[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
+	char tmpString2[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
+	int tmpInt = 0;  // Temp int for calculations
+	tgpRacer_ptr rankedRacerArr[17] = { NULL };  // Holds the ranked racers
+	int i = 0;  // Iterating variable
+	int topLap = 0;  // Highest lap number among the racers
+	int totalLaps = 0;  // Total laps 
+
+	// INPUT VALIDATION
+	if (!rankWin_ptr)
+	{
+		HARKLE_ERROR(Thread_Racer, update_ranking_win, NULL struct pointer);
+		retVal = false;
+	}
+	else if (!racerArr_ptr || !(*racerArr_ptr))
+	{
+		HARKLE_ERROR(Thread_Racer, update_ranking_win, NULL racer pointer);
+		retVal = false;
+	}
+	//////////////////////////// UPDATE THIS LATER ///////////////////////////
+	else if (rankWin_ptr->nCols < 5)
+	{
+		HARKLE_ERROR(Thread_Racer, update_ranking_win, Invalid number of columns);
+		retVal = false;
+	}
+	//////////////////////////// UPDATE THIS LATER ///////////////////////////
+	else if (rankWin_ptr->nRows < 5)
+	{
+		HARKLE_ERROR(Thread_Racer, update_ranking_win, Invalid number of rows);
+		retVal = false;
+	}
+	else if (!(rankWin_ptr->win_ptr))
+	{
+		HARKLE_ERROR(Thread_Racer, update_ranking_win, NULL WINDOW pointer);
+		retVal = false;
+	}
+	else
+	{
+		tWin_ptr = rankWin_ptr->win_ptr;
+	}
+
+	if (true == retVal)
+	{
+		// GET WINDOW SIZE
+		if (true == retVal)
+		{
+			maxWid = rankWin_ptr->nCols - 4;
+			maxLen = rankWin_ptr->nRows - 4;
+			// fprintf(stdout, "maxWid == %d - strlen(%lu) == %d\n", maxWid, strlen("THREAD GRAND PRIX"), tmpInt);  // DEBUGGING
+		}
+
+		// RANK RACERS
+		//////////////////////// IMPLEMENT THIS LATER IN A HELPER FUNCTION ////////////////////////
+		for (i = 0; i < 16; i++)
+		{
+			if (NULL == racerArr_ptr[i])
+			{
+				break;
+			}
+			else
+			{
+				rankedRacerArr[i] = racerArr_ptr[i];
+			}
+		}
+
+		// Get top lap
+		topLap = rankedRacerArr[0]->currLap;
+		// Get total laps
+		totalLaps = racerArr_ptr[0]->numLaps;
+	}
+
+	// FORMAT ROWS
+	if (true == retVal)
+	{
+		// 1. Header Row - THREAD GRAND PRIX
+		// 1.1. Setup temp buffer
+		snprintf(tmpString1, TR_BUFF_SIZE, "%s", "THREAD GRAND PRIX");
+		// 1.2. Determine size of this line
+		tmpInt = (maxWid - strlen(tmpString1)) / 2;
+		// 1.3. Print the buffer within the spacing
+		if (true == retVal && OK != mvwprintw(tWin_ptr, 1, 2, "%*s", tmpInt + strlen(tmpString1), tmpString1))
+		{
+			HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on the header);
+			retVal = false;
+		}
+	}
+
+	if (true == retVal)
+	{
+		// 2. Race Details - LAP           X of Y
+		// 2.1. Setup temp buffers
+		snprintf(tmpString1, TR_BUFF_SIZE, "%s", "LAP");
+		snprintf(tmpString2, TR_BUFF_SIZE, "%d of %d", topLap, totalLaps);
+		// 2.2. Determine size of this line
+		tmpInt = maxWid - strlen(tmpString1) - strlen(tmpString2);
+		if (tmpInt < 0)
+		{
+			HARKLE_ERROR(Thread_Racer, update_ranking_win, Lap line is too long);
+			retVal = false;
+		}
+		else if (true == retVal && OK != mvwprintw(tWin_ptr, 2, 2, "%s%*s", tmpString1, tmpInt + strlen(tmpString2), tmpString2))
+		{
+			HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on the header);
+			retVal = false;
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
