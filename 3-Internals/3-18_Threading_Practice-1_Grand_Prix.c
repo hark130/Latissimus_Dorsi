@@ -79,7 +79,8 @@
 			[ ] Thread total time
 
 // TO DO 
-
+BUGS
+	[ ] Oddly sized windows (e.g., Taller than it is wide)
  */
 
 #include <errno.h>
@@ -105,14 +106,14 @@
 #define OUTER_BORDER_WIDTH_V 2
 #define INNER_BORDER_WIDTH_H 4
 #define INNER_BORDER_WIDTH_V 2
-#define RANK_BAR_WIDTH 25
+#define RANK_BAR_WIDTH 40
 
 #ifndef GRAND_PRIX_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
-#define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
+#define SLEEPY_OFFICIALS .5	// Number of seconds for the main thread to sleep each evaluation
 #define SLEEPY_RACER 0  	// Number of seconds for racer_sleepy_func() to sleep
 #define FAST_RACER 10000		// Multiple to increase the number of calculations, minimum 1
 #define SLEEPY_BUFF 20  	// Local buffer size
