@@ -82,6 +82,9 @@
 BUGS
 	[ ] Oddly sized windows (e.g., Taller than it is wide)
 	[ ] Verify that the populate_whatever() function validates the tNum as < 0xF for the purposes of printing/formatting
+	[ ] Refactor the way thread names get randomized.  Keep track of the remaining names, rando(1, numRemNames), iterate
+		through the remaining names to get that name (skipping over, and not counting, NULL).  It's a more efficient way
+		of approaching the problem.
  */
 
 #include <errno.h>
@@ -203,6 +206,7 @@ int main(int argc, char** argv)
 	int numCols = 0;  // Number of columns available
 	int numRows = 0;  // Number of rows available
 	int i = 0;  // Iterating variable
+	int j = 0;  // Iterating variable
 	int numTries = 0;  // Counter for memory allocation function calls
 	int tmpInt = 0;  // Holds various return values
 	// Race Cars
@@ -215,6 +219,9 @@ int main(int argc, char** argv)
 		"L. Clausen", "M. Chehab", "V. Syrjälä", "L. Walleij", "D. Carpenter", "Intel", \
 		"Red Hat", "Linaro", "Samsung", "SUSE", "IBM", "Renesas Electronics", \
 	};
+	char* tmpRacerName = NULL;  // Temp racer name to assign
+	int tmpNameIndex = 0;  // Temp variable to hold a randomized index into racerNames
+	size_t numNames = sizeof(racerNames) / sizeof(*racerNames);  // Dimension of racerNames
 
 	// Race Track
 	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
@@ -455,8 +462,43 @@ int main(int argc, char** argv)
 			// 2. Create the racers
 			for (i = 0; i < numF1s; i++)
 			{
+				// 2.0. Randomize a name for the racer
+				do
+				{
+					tmpNameIndex = rando_me(0, numNames);
+					
+					if (tmpNameIndex < 0 || tmpNameIndex > numNames)
+					{
+						HARKLE_ERROR(Grand_Prix, main, allocate_tgpRacer_arr failed);
+						success = false;
+						break;
+					}
+					else if (racerNames[tmpNameIndex])
+					{
+						tmpRacerName = racerNames[tmpNameIndex];
+					}
+					else
+					{
+						// Verify a name still exists in the list
+						for (j = 0; j < numNames; j++)
+						{
+							if (racerNames[j])
+							{
+								break;  // Found one	
+							}
+						}
+						// Did we find at least one left?
+						if (!(racerNames[j]))
+						{
+							// Apparently, we're out of names
+							break;
+						}
+					}
+				} while (tmpRacerName && true == success)
+				
 				// 2.1. Create struct data
-				tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_rando_prime, NULL, 0);
+				tmpMember = create_a_hThrDetails_ptr(tmpRacerName, i + 1, (void*)racer_rando_prime, NULL, 0);
+				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_rando_prime, NULL, 0);
 				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, NULL, 0);
 				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_sleepy_func, (void*)numTrackPnts, sizeof(int));
 				// tmpMember = create_a_hThrDetails_ptr(NULL, i + 1, (void*)racer_func, (void*)(intptr_t)(i + 1), sizeof(int));
@@ -466,6 +508,11 @@ int main(int argc, char** argv)
 					HARKLE_ERROR(Grand_Prix, main, create_a_hThrDetails_ptr failed);
 					success = false;
 					break;
+				}
+				else
+				{
+					// Remove the name we chose so we don't reuse it
+					racerNames[tmpNameIndex] = NULL;
 				}
 
 				// 2.1. Create a populated struct
