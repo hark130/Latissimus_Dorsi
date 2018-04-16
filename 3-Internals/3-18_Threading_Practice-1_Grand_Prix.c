@@ -209,6 +209,7 @@ int main(int argc, char** argv)
 	int j = 0;  // Iterating variable
 	int numTries = 0;  // Counter for memory allocation function calls
 	int tmpInt = 0;  // Holds various return values
+	
 	// Race Cars
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
 	tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
@@ -222,6 +223,7 @@ int main(int argc, char** argv)
 	char* tmpRacerName = NULL;  // Temp racer name to assign
 	int tmpNameIndex = 0;  // Temp variable to hold a randomized index into racerNames
 	size_t numNames = sizeof(racerNames) / sizeof(*racerNames);  // Dimension of racerNames
+	int highLap = 0;  // Current lap of the front runner
 
 	// Race Track
 	int internalBuffer = 0;  // Distance between ellipse's V1, V2, V3, V4 and the trackWin border
@@ -677,7 +679,7 @@ int main(int argc, char** argv)
 									    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
 								// fprintf(stdout, "The track size is %d\n", numTrackPnts);  // DEBUGGING
 								racer_ptr->currPos = tmpInt;
-								if (racer_ptr->currPos == numTrackPnts / 2)
+								if (racer_ptr->currPos == numTrackPnts / 2 && racer_ptr->numLaps == racer_ptr->currLap)
 								{
 									foundWinner = true;
 									racer_ptr->winner = true;
@@ -706,6 +708,7 @@ int main(int argc, char** argv)
 			{
 				HARKLE_ERROR(Grand_Prix, main, update_all_racer_pos failed);
 				success = false;
+				break;
 			}
 			else
 			{
@@ -715,6 +718,19 @@ int main(int argc, char** argv)
 				        (*racerArr_ptr)->F1Details->tNum, (*racerArr_ptr)->currCoord->posNum, \
 				        (*racerArr_ptr)->currCoord->graphic, (*racerArr_ptr)->currCoord->graphic);  // DEBUGGING
 			}
+			
+			// Determine current lap
+			for (i = 0; i < numF1s; i++)
+			{
+				highLap = highest_lap(racerArr_ptr);
+				
+				if (-1 == highLap)
+				{
+					HARKLE_ERROR(Grand_Prix, main, update_all_racer_pos failed);
+					success = false;
+					break;
+				}
+			}
 
 			// UDPATE THE WINDOWS
 			// Update the trackWin
@@ -722,14 +738,14 @@ int main(int argc, char** argv)
 			{
 				HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
 				success = false;
-				continue;
+				break;
 			}
 			// Update the rankWin
 			if (false == update_ranking_win(rankBarWin, racerArr_ptr))
 			{
 				HARKLE_ERROR(Grand_Prix, main, print_plot_list failed);
 				success = false;
-				continue;
+				break;
 			}
 			
 			// PRINT THE WINDOWS
@@ -738,14 +754,14 @@ int main(int argc, char** argv)
 			{
 				HARKLE_ERROR(Grand_Prix, main, wrefresh failed on trackWin);
 				success = false;
-				continue;
+				break;
 			}
 			// Print the rankWin
 			if (OK != wrefresh(rankBarWin->win_ptr))
 			{
 				HARKLE_ERROR(Grand_Prix, main, wrefresh failed on rankBar);
 				success = false;
-				continue;
+				break;
 			}
 			
 			// Is there a winner?
