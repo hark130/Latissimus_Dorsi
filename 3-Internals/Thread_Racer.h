@@ -282,6 +282,18 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr);
  */
 bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr);
 
+
+/*
+	PURPOSE - Determine the lap of the current winner
+	INPUT
+		racerArr_ptr - [IN] A NULL-terminated array of tgpRacer struct 
+			pointers to evaluate
+	OUTPUT
+		On success, the lap number
+		On failure, -1
+ */
+int highest_lap(racerArr_ptr);
+
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
