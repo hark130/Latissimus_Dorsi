@@ -1065,6 +1065,7 @@ bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr)
 					{
 						// You're the leader now!
 						currLeader = racerArr_ptr[i];
+						currLdrIndex = i;
 					}
 					// Ahead on laps
 					else if (racerArr_ptr[i]->currLap > currLeader->currLap)
