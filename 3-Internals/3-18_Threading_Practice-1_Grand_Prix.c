@@ -469,7 +469,7 @@ int main(int argc, char** argv)
 					
 					if (tmpNameIndex < 0 || tmpNameIndex > numNames)
 					{
-						HARKLE_ERROR(Grand_Prix, main, allocate_tgpRacer_arr failed);
+						HARKLE_ERROR(Grand_Prix, main, rando_me failed);
 						success = false;
 						break;
 					}
