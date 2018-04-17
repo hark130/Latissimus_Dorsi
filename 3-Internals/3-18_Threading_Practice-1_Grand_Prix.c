@@ -85,6 +85,13 @@ BUGS
 	[ ] Refactor the way thread names get randomized.  Keep track of the remaining names, rando(1, numRemNames), iterate
 		through the remaining names to get that name (skipping over, and not counting, NULL).  It's a more efficient way
 		of approaching the problem.
+	[ ] Maybe lapNum isn't needed any longer as a new argument to some of the update_racer_*() functions
+
+IDEAS
+	[ ] If the rankWin nRows are enough, added some horizontal border above and below the laps line
+	[ ] Color code the racers according to ROY-G-BIV
+	[ ] Bold the titles
+	[ ] Add support for CLI
  */
 
 #include <errno.h>
@@ -195,6 +202,7 @@ int main(int argc, char** argv)
 	int raceLen = 162;  // Length of the race in miles, rounded up
 	int upInterval = 1;  // Frequency of main thread updates
 	int numLaps = 78;  // Number of the laps the 'racing' threads must take
+	// int numLaps = 2;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
 	int retVal = 0;  // Function's return value, also holds ncurses return values
 	int errNum = 0;  // Holds errno returned from read_a_pipe()
@@ -217,7 +225,7 @@ int main(int argc, char** argv)
 	char* pipeReads = NULL;  // Returned values from read_a_pipe() calls
 	char* racerNames[] = {
 		"L. Torvalds", "H. Sweeten", "G. Uytterhoeven", "A. Bergmann", "A. Viro", "T. Iwai", \
-		"L. Clausen", "M. Chehab", "V. Syrjälä", "L. Walleij", "D. Carpenter", "Intel", \
+		"L. Clausen", "M. Chehab", "V. Syrjala", "L. Walleij", "D. Carpenter", "Intel", \
 		"Red Hat", "Linaro", "Samsung", "SUSE", "IBM", "Renesas Electronics", \
 	};
 	char* tmpRacerName = NULL;  // Temp racer name to assign
@@ -496,7 +504,7 @@ int main(int argc, char** argv)
 							break;
 						}
 					}
-				} while (tmpRacerName && true == success)
+				} while (!tmpRacerName && true == success);
 				
 				// 2.1. Create struct data
 				tmpMember = create_a_hThrDetails_ptr(tmpRacerName, i + 1, (void*)racer_rando_prime, NULL, 0);
@@ -514,12 +522,15 @@ int main(int argc, char** argv)
 				else
 				{
 					// Remove the name we chose so we don't reuse it
+					// fprintf(stdout, "Before: %s\n", racerNames[tmpNameIndex]);  // DEBUGGING
 					racerNames[tmpNameIndex] = NULL;
+					tmpRacerName = NULL;
+					// fprintf(stdout, "After:  %s\n", racerNames[tmpNameIndex]);  // DEBUGGING
 				}
 
 				// 2.1. Create a populated struct
-				//////////////////////////////////// MODIFY LAPS ONCE ITS IMPLEMENTED ////////////////////////////////////
-				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode, 1);
+				racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode, numLaps);
+				// racerArr_ptr[i] = populate_tgpRacer_ptr(tmpMember, numTrackPnts / 2, trkHeadNode, 1);
 				// numTries = 0;
 				// while (numTries < GRAND_PRIX_MAX_TRIES && NULL == racerArr_ptr[i])
 				// {
@@ -661,29 +672,50 @@ int main(int argc, char** argv)
 
 							// Convert the string to an integer
 							tmpInt = atoi(pipeReads);
-							// fprintf(stdout, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
+							// if (!tmpInt)
+							// {
+							// 	fprintf(stdout, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
+							// }
+							// fprintf(stderr, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
 
 							// Update the struct
+
 							// Ignore the starting positions
-							if (racer_ptr->currPos >= tmpInt && tmpInt != 1)
-							{
-								HARKLE_ERROR(Grand_Prix, main, atoi (or the thread logic) failed);
-								fprintf(stderr, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
-									    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
-								success = false;
-								break;
-							}
-							else
+							// if (racer_ptr->currPos >= tmpInt && tmpInt != 1)
+							// {
+							// 	fprintf(stderr, "pipeReads (%s) just translated into %d.\n", pipeReads, tmpInt);  // DEBUGGING
+							// 	HARKLE_ERROR(Grand_Prix, main, atoi (or the thread logic) failed);
+							// 	fprintf(stderr, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
+							// 		    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
+							// 	success = false;
+							// 	break;
+							// }
+							// else
+
+							if (1)
 							{
 								// fprintf(stdout, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
 									    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
 								// fprintf(stdout, "The track size is %d\n", numTrackPnts);  // DEBUGGING
-								racer_ptr->currPos = tmpInt;
-								if (racer_ptr->currPos == numTrackPnts / 2 && racer_ptr->numLaps == racer_ptr->currLap)
+								// fprintf(stdout, "This racer is on lap %d of %d\n", racer_ptr->currLap, racer_ptr->numLaps);  // DEBUGGING
+								// if (racer_ptr->trackLen == racer_ptr->currPos)
+								// fprintf(stderr, "\n%d == %d && 1 == %d\n", racer_ptr->trackLen, racer_ptr->currPos, tmpInt);  // DEBUGGING
+								if (racer_ptr->trackLen == racer_ptr->currPos && 1 == tmpInt)
 								{
+									// fprintf(stdout, "Moving up a lap from %d to %d\n", racer_ptr->currLap, racer_ptr->currLap + 1);  // DEBUGGING
+									racer_ptr->currLap++;
+									tmpInt++;
+								}
+								racer_ptr->currPos = tmpInt;
+								// if (racer_ptr->currPos == racer_ptr->trackLen && racer_ptr->numLaps == racer_ptr->currLap || \
+								// 	racer_ptr->currPos == 1 && racer_ptr->numLaps <= racer_ptr->currLap)
+								if (racer_ptr->currPos == racer_ptr->trackLen && racer_ptr->numLaps == racer_ptr->currLap)
+								// if (racer_ptr->currPos == numTrackPnts / 2 && racer_ptr->numLaps == racer_ptr->currLap)
+								{
+									// fprintf(stdout, "This racer is on lap %d of %d\n", racer_ptr->currLap, racer_ptr->numLaps);  // DEBUGGING
 									foundWinner = true;
 									racer_ptr->winner = true;
-									fprintf(stdout, "It appears that Thread #%d has won!\n", racer_ptr->F1Details->tNum);
+									// fprintf(stdout, "It appears that Thread #%d has won!\n", racer_ptr->F1Details->tNum);
 									break;
 								}
 							}
@@ -702,9 +734,19 @@ int main(int argc, char** argv)
 					}
 				}
 			}
+			
+			// Determine current lap
+			highLap = highest_lap(racerArr_ptr);
+			
+			if (-1 == highLap)
+			{
+				HARKLE_ERROR(Grand_Prix, main, highest_lap failed);
+				success = false;
+				break;
+			}
 
 			// Update race details
-			if (false == update_all_racer_pos(racerArr_ptr))
+			if (false == update_all_racer_pos(racerArr_ptr, trkHeadNode, highLap))
 			{
 				HARKLE_ERROR(Grand_Prix, main, update_all_racer_pos failed);
 				success = false;
@@ -717,19 +759,6 @@ int main(int argc, char** argv)
 				// fprintf(stdout, "Thread #%d is at coord %d which has char %c (%d)\n", \
 				        (*racerArr_ptr)->F1Details->tNum, (*racerArr_ptr)->currCoord->posNum, \
 				        (*racerArr_ptr)->currCoord->graphic, (*racerArr_ptr)->currCoord->graphic);  // DEBUGGING
-			}
-			
-			// Determine current lap
-			for (i = 0; i < numF1s; i++)
-			{
-				highLap = highest_lap(racerArr_ptr);
-				
-				if (-1 == highLap)
-				{
-					HARKLE_ERROR(Grand_Prix, main, update_all_racer_pos failed);
-					success = false;
-					break;
-				}
 			}
 
 			// UDPATE THE WINDOWS
@@ -767,6 +796,7 @@ int main(int argc, char** argv)
 			// Is there a winner?
 			if (foundWinner == true)
 			{
+				// puts("ENDED HERE");  // DEBUGGING
 				break;	
 			}
 		}
@@ -832,6 +862,10 @@ int main(int argc, char** argv)
 	// racer_uint_prime_func(tmpMember, 400);
 	// racer_ul_prime_func(tmpMember, 1000);
 	// racer_sleepy_func(tmpMember, 100);
+	// fprintf(stdout, "Thread Racer #%d was previously at %d but is now reading at position %d.\n", \
+		    racer_ptr->F1Details->tNum, racer_ptr->currPos, tmpInt);  // DEBUGGING
+	// fprintf(stdout, "The track size is %d\n", numTrackPnts);  // DEBUGGING
+	// fprintf(stdout, "This racer is on lap %d of %d\n", racer_ptr->currLap, racer_ptr->numLaps);  // DEBUGGING
 
 	// Allocation
 	// 5. Free the racers
@@ -1281,6 +1315,7 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 {
 	// LOCAL VARIABLES
 	int counter = 0;  // Counts the number of primes found
+	int currentLap = 1;  // Counts the number of laps this thread has run
 	int subCounter = 0;  // Require more calculations than before
 	int fastMult = 0;  // Multiple to increase the number of calculations, minimum 1
 	int errNum = 0;  // Capture errno here during error conditions
@@ -1322,7 +1357,7 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 
 	if (true == success)
 	{
-		while (counter <= threadDets->trackLen)
+		while (counter != threadDets->trackLen || currentLap != threadDets->numLaps)
 		{
 			// 𝄞 Why are you sleepy? ♬
 			// ♩ Sleepy thread ♪
@@ -1377,8 +1412,27 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 					subCounter++;
 					if (0 == subCounter % fastMult)
 					{
-						counter++;
+						// counter++;
 						subCounter = 0;  // Reset temp var
+
+						if (counter == threadDets->trackLen && currentLap < threadDets->numLaps)
+						{
+							counter = 1;
+							currentLap++;
+							// threadDets->currLap++;
+							// if (threadDets->F1Details->tNum == 1)
+							// {
+							// 	fprintf(stderr, "Thread #%d is looping at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
+							// }
+						}
+						else
+						{
+							counter++;
+							// if (threadDets->F1Details->tNum == 1)
+							// {
+							// 	fprintf(stderr, "Thread #%d is at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
+							// }
+						}
 						break;
 					}
 					// fprintf(stdout, "Thread #%d found prime #%d:\t%u.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
@@ -1443,6 +1497,11 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 			}
 		}
 	}
+
+	// if (threadDets->F1Details->tNum == 1)
+	// {
+	// 	fprintf(stderr, "Thread #%d is exiting at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
+	// }
 
 	return;
 }
