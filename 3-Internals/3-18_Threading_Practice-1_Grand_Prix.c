@@ -86,6 +86,7 @@ BUGS
 		through the remaining names to get that name (skipping over, and not counting, NULL).  It's a more efficient way
 		of approaching the problem.
 	[ ] Maybe lapNum isn't needed any longer as a new argument to some of the update_racer_*() functions
+	[ ] LAST!  Run grand_prix.exe through redirect_bin_output.exe to look for otherwise 'silenced' errors
 
 IDEAS
 	[ ] If the rankWin nRows are enough, added some horizontal border above and below the laps line
