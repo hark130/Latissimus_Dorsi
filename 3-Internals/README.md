@@ -82,6 +82,10 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Simple Prime Test](https://en.wikipedia.org/wiki/Primality_test#Simple_methods) starting at a large number and working down
 	* [Bailey–Borwein–Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
 * [memset() optimized out](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
+* [Code Injection into Running Linux Application](https://www.codeproject.com/Articles/33340/Code-Injection-into-Running-Linux-Application?fid=1534990&df=90&mpp=10&sort=Position&spc=Relaxed&tid=4678205)
+* [ptrace man page](https://linux.die.net/man/2/ptrace)
+* [Injecting code into running process with linux-inject](https://lkubuntu.wordpress.com/2016/01/31/injecting-code-into-running-process-with-linux-inject/)
+* [Linux ptrace introduction AKA injecting into sshd for fun](https://blog.xpnsec.com/linux-process-injection-aka-injecting-into-sshd-for-fun/)
 
 ## TO DO
 
