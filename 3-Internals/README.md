@@ -81,6 +81,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Project Euler](https://projecteuler.chat/viewtopic.php?t=1422)
 	* [Simple Prime Test](https://en.wikipedia.org/wiki/Primality_test#Simple_methods) starting at a large number and working down
 	* [Bailey–Borwein–Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
+* [memset() optimized out](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
 
 ## TO DO
 
