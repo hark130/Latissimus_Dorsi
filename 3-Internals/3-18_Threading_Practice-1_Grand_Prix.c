@@ -807,7 +807,10 @@ int main(int argc, char** argv)
 	// Wait for other threads to finish
 	// PLACEHOLDER
 	// Print "Press any key to end race"
-	// PLACEHOLDER
+	if (OK != mvwaddstr(stdWin->win_ptr, 1, 1, "Press any key to end the race"))
+	{
+		HARKLE_ERROR(Grand_Prix.c, main, mvwaddstr failed);
+	}
 	getch();  // Wait for the user to press a key
 	clear();  // Clear the screen
 	// Print race results page
