@@ -804,18 +804,35 @@ int main(int argc, char** argv)
 	}
 	
 	// END THE RACE
-	// Wait for other threads to finish
-	// PLACEHOLDER
-	// Print "Press any key to end race"
-	if (OK != mvwaddstr(stdWin->win_ptr, 1, 1, "Press any key to end the race"))
-	{
-		HARKLE_ERROR(Grand_Prix.c, main, mvwaddstr failed);
+	if (true == success)
+		{
+		// Wait for other threads to finish
+		// PLACEHOLDER
+		// Print "Press any key to end race"
+		if (OK != mvwaddstr(stdWin->win_ptr, 1, 1, "Press any key to end the race"))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, mvwaddstr failed);
+			success = false;
+		}
+		getch();  // Wait for the user to press a key
+		clear();  // Clear the screen
+		// Print race results page
+		if (false == update_results_win(stdWin->win_ptr, racerArr_ptr))
+		{
+			HARKLE_ERROR(Grand_Prix.c, main, update_results_win failed);
+			success = false;
+		}
+		else
+		{
+			// Print the trackWin
+			if (OK != wrefresh(stdWin->win_ptr))  // Print it on the real screen
+			{
+				HARKLE_ERROR(Grand_Prix, main, wrefresh failed on stdWin);
+				success = false;
+			}
+		}
+		getch();  // Wait for the user to press a key
 	}
-	getch();  // Wait for the user to press a key
-	clear();  // Clear the screen
-	// Print race results page
-	// PLACEHOLDER
-	getch();  // Wait for the user to press a key
 
 	// CLEAN UP
 	// ncurses Windows
