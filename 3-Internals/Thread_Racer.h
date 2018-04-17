@@ -301,6 +301,24 @@ bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr);
  */
 int highest_lap(tgpRacer_ptr* racerArr_ptr);
 
+
+/*
+	PURPOSE - Update the Grand Prix final results window
+	INPUT
+		rankWin_ptr - Pointer to the winDetails struct containing the final
+			results window information
+		racerArr_ptr - An NULL-terminated array of tgpRacer struct pointers
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will not call wrefresh().  Instead, it will merely
+			update the WINDOW.  The calling function is responsible for
+			calling wrefresh().
+ */
+bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr);
+
+
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
