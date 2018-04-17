@@ -86,6 +86,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ptrace man page](https://linux.die.net/man/2/ptrace)
 * [Injecting code into running process with linux-inject](https://lkubuntu.wordpress.com/2016/01/31/injecting-code-into-running-process-with-linux-inject/)
 * [Linux ptrace introduction AKA injecting into sshd for fun](https://blog.xpnsec.com/linux-process-injection-aka-injecting-into-sshd-for-fun/)
+* [Dynamically Inject a Shared Library Into a Running Process on Android/ARM](https://www.evilsocket.net/2015/05/01/dynamically-inject-a-shared-library-into-a-running-process-on-androidarm/)
 
 ## TO DO
 
