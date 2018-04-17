@@ -128,7 +128,7 @@ tgpRacer_ptr populate_tgpRacer_ptr(hThrDetails_ptr structDetails, int trkLen, hc
 			// Update the currCoord
 			if (retVal->currCoord)
 			{
-				if (false == add_racer_to_track(retVal))
+				if (false == add_racer_to_track(retVal, retVal->currCoord))
 				{
 					HARKLE_ERROR(Thread_Racer, populate_tgpRacer_ptr, add_racer_to_track failed);
 					success = false;
@@ -311,7 +311,7 @@ bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr)
 //////////////////////////////////////////////////////////////////////////////
 
 
-bool update_all_racer_pos(tgpRacer_ptr* racer_arr)
+bool update_all_racer_pos(tgpRacer_ptr* racer_arr, hcCartCoord_ptr headNode, int lapNum)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
@@ -320,7 +320,18 @@ bool update_all_racer_pos(tgpRacer_ptr* racer_arr)
 	// INPUT VALIDATION
 	if (!racer_arr || !(*racer_arr))
 	{
-		HARKLE_ERROR(Thread_Racer, update_all_racer_pos, NULL pointer);
+		HARKLE_ERROR(Thread_Racer, update_all_racer_pos, NULL racer array pointer);
+		retVal = false;
+	}
+	if (!headNode)
+	{
+		HARKLE_ERROR(Thread_Racer, update_all_racer_pos, NULL head node pointer);
+		retVal = false;
+	}
+	else if (lapNum < 1)
+	{
+		// fprintf(stdout, "Invalid lap number == %d\n", lapNum);  // DEBUGGING
+		HARKLE_ERROR(Thread_Racer, update_all_racer_pos, Invalid lap number);
 		retVal = false;
 	}
 
@@ -331,7 +342,7 @@ bool update_all_racer_pos(tgpRacer_ptr* racer_arr)
 
 		while (*tmp_arr)
 		{
-			retVal = update_racer_pos(*tmp_arr);
+			retVal = update_racer_pos(*tmp_arr, headNode, lapNum);
 			
 			if (false == retVal)
 			{
@@ -350,7 +361,7 @@ bool update_all_racer_pos(tgpRacer_ptr* racer_arr)
 }
 
 
-bool update_racer_pos(tgpRacer_ptr racer_ptr)
+bool update_racer_pos(tgpRacer_ptr racer_ptr, hcCartCoord_ptr headNode, int lapNum)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
@@ -359,6 +370,11 @@ bool update_racer_pos(tgpRacer_ptr racer_ptr)
 	if (!racer_ptr)
 	{
 		HARKLE_ERROR(Thread_Racer, update_racer_pos, NULL pointer);
+		retVal = false;
+	}
+	if (!headNode)
+	{
+		HARKLE_ERROR(Thread_Racer, update_racer_pos, NULL head node pointer);
 		retVal = false;
 	}
 	else if (!(racer_ptr->currCoord))
@@ -371,14 +387,20 @@ bool update_racer_pos(tgpRacer_ptr racer_ptr)
 		HARKLE_ERROR(Thread_Racer, update_racer_pos, Invalid current position);
 		retVal = false;
 	}
-	else if (racer_ptr->currPos < racer_ptr->currCoord->posNum)
-	{
-		HARKLE_ERROR(Thread_Racer, update_racer_pos, Racer went backwards);
-		retVal = false;
-	}
+	/////////////////// MAY BE NO LONGER VALID SINCE IMPLEMENTING LAPS ///////////////////
+	// else if (racer_ptr->currPos < racer_ptr->currCoord->posNum)
+	// {
+	// 	HARKLE_ERROR(Thread_Racer, update_racer_pos, Racer went backwards);
+	// 	retVal = false;
+	// }
 	else if (racer_ptr->F1Details->tNum < 0x0 || racer_ptr->F1Details->tNum > 0xF)
 	{
 		HARKLE_ERROR(Thread_Racer, update_racer_pos, Invalid racer number);
+		retVal = false;
+	}
+	else if (lapNum < 1)
+	{
+		HARKLE_ERROR(Thread_Racer, update_racer_pos, Invalid lap number);
 		retVal = false;
 	}
 	// else if (racer_ptr->currPos == racer_ptr->trackLen)
@@ -386,31 +408,41 @@ bool update_racer_pos(tgpRacer_ptr racer_ptr)
 	// 	racer_ptr->winner = true;
 	// }
 	// Verify racer moved position
-	else if (racer_ptr->currPos > racer_ptr->currCoord->posNum)
+	// else if (racer_ptr->currPos > racer_ptr->currCoord->posNum)
+	// {
+
+	// REMOVE RACER FROM THE TRACK
+	if (true == retVal)
 	{
-		// REMOVE RACER FROM THE TRACK
-		if (true == retVal)
+		retVal = remove_racer_from_track(racer_ptr);
+
+		if (false == retVal)
 		{
-			retVal = remove_racer_from_track(racer_ptr);
-
-			if (false == retVal)
-			{
-				HARKLE_ERROR(Thread_Racer, update_racer_pos, remove_racer_from_track failed);
-			}
-		}
-
-		// ADD RACER TO THE TRACK
-		if (true == retVal)
-		{
-			// fprintf(stdout, "Racer #%d current position is %d and the track length is %d.\n", racer_ptr->F1Details->tNum, racer_ptr->currPos, racer_ptr->trackLen);  // DEBUGGING
-			retVal = add_racer_to_track(racer_ptr);
-
-			if (false == retVal)
-			{
-				HARKLE_ERROR(Thread_Racer, update_racer_pos, add_racer_to_track failed);
-			}
+			HARKLE_ERROR(Thread_Racer, update_racer_pos, remove_racer_from_track failed);
 		}
 	}
+
+	// ADD RACER TO THE TRACK
+	// if (true == retVal)
+	if (true == retVal && racer_ptr->currLap == lapNum)
+	{
+		// if (racer_ptr->F1Details->tNum == 1)
+		// {
+		// 	fprintf(stdout, "Racer #%d current position is at position %d on lap %d and the track length is %d.\n", racer_ptr->F1Details->tNum, racer_ptr->currPos, racer_ptr->currLap, racer_ptr->trackLen);  // DEBUGGING
+		// }
+		retVal = add_racer_to_track(racer_ptr, headNode);
+
+		if (false == retVal)
+		{
+			HARKLE_ERROR(Thread_Racer, update_racer_pos, add_racer_to_track failed);
+		}
+	}
+
+		// else
+		// {
+		// 	fprintf(stdout, "Racer #%d isn't printed because the front runner is on lap %d and it's on lap %d.\n", racer_ptr->F1Details->tNum, lapNum, racer_ptr->currLap);  // DEBUGGING
+		// }
+	// }
 
 	// DONE
 	return retVal;
@@ -489,14 +521,14 @@ bool clear_racer_flag(hcCartCoord_ptr hcCoord, int racerNum)
 	}
 
 	// IS THE FLAG ON?
-	if (true == retVal)
-	{
-		if (racerFlag != (hcCoord->hcFlags & racerFlag))
-		{
-			HARKLE_ERROR(Thread_Racer, clear_racer_flag, Flag was not set);
-			retVal = false;
-		}
-	}
+	// if (true == retVal)
+	// {
+	// 	if (racerFlag != (hcCoord->hcFlags & racerFlag))
+	// 	{
+	// 		HARKLE_ERROR(Thread_Racer, clear_racer_flag, Flag was not set);
+	// 		retVal = false;
+	// 	}
+	// }
 
 	// CLEAR THE FLAG
 	if (true == retVal)
@@ -509,7 +541,7 @@ bool clear_racer_flag(hcCartCoord_ptr hcCoord, int racerNum)
 }
 
 
-bool add_racer_to_track(tgpRacer_ptr racer_ptr)
+bool add_racer_to_track(tgpRacer_ptr racer_ptr, hcCartCoord_ptr headNode)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;
@@ -519,17 +551,22 @@ bool add_racer_to_track(tgpRacer_ptr racer_ptr)
 	if (!racer_ptr)
 	{
 		HARKLE_ERROR(Thread_Racer, add_racer_to_track, NULL racer pointer);
-		retVal = false;		
+		retVal = false;
+	}
+	if (!headNode)
+	{
+		HARKLE_ERROR(Thread_Racer, add_racer_to_track, NULL head node pointer);
+		retVal = false;
 	}
 	else if (!(racer_ptr->currCoord))
 	{
 		HARKLE_ERROR(Thread_Racer, add_racer_to_track, NULL coordinate pointer);
-		retVal = false;		
+		retVal = false;
 	}
 	else if (!(racer_ptr->F1Details))
 	{
 		HARKLE_ERROR(Thread_Racer, add_racer_to_track, NULL thread pointer);
-		retVal = false;		
+		retVal = false;
 	}
 
 	// GET NEW POSITION COORDINATE STRUCT
@@ -539,9 +576,18 @@ bool add_racer_to_track(tgpRacer_ptr racer_ptr)
 
 		if (!newCoord)
 		{
-			fprintf(stderr, "Starting at %d, couldn't find %d\n", racer_ptr->currCoord->posNum, racer_ptr->currPos);  // DEBUGGING
-			HARKLE_ERROR(Thread_Racer, add_racer_to_track, get_pos_num failed);
-			retVal = false;	
+			newCoord = get_pos_num(headNode, racer_ptr->currPos);
+
+			if (!newCoord)
+			{
+				// fprintf(stderr, "Starting at %d, couldn't find %d\n", headNode->posNum, racer_ptr->currPos);  // DEBUGGING
+				HARKLE_ERROR(Thread_Racer, add_racer_to_track, get_pos_num failed);
+				retVal = false;
+			}
+			else
+			{
+				racer_ptr->currCoord = newCoord;
+			}
 		}
 		else
 		{
@@ -907,7 +953,8 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 			{
 				break;  // No more room
 			}
-			else
+			// 3.0.3. Verify this racer is on the lap
+			else if (rankedRacerArr[i]->currLap == topLap)
 			{
 				// fprintf(stdout, "\nPrinting Thread #%d\n", rankedRacerArr[i]->F1Details->tNum);  // DEBUGGING
 				currPrintRow++;  // Print another racer
@@ -919,38 +966,54 @@ bool update_ranking_win(winDetails_ptr rankWin_ptr, tgpRacer_ptr* racerArr_ptr)
 					retVal = false;
 					break;
 				}
-			}
 
-			// 3.1. Setup temp buffers
-			if (rankedRacerArr[i]->F1Details->tName)
-			{
-				snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %20s -%4lu", \
-					     i + 1, currentRacer, rankedRacerArr[i]->F1Details->tName, \
-					     rankedRacerArr[i]->relPos);
-			}
-			else
-			{
-				snprintf(tmpString2, TR_BUFF_SIZE, "%s%02d", "Thread #", \
-					     rankedRacerArr[i]->F1Details->tNum);
-				if (i > 0)
+				// 3.1. Setup temp buffers
+				if (rankedRacerArr[i]->F1Details->tName)
 				{
 					snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-20s -%04lu", \
-						     i + 1, currentRacer, tmpString2, \
+						     i + 1, currentRacer, rankedRacerArr[i]->F1Details->tName, \
 						     rankedRacerArr[i]->relPos);
 				}
 				else
 				{
-					snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-26s", \
-						     i + 1, currentRacer, tmpString2);
+					snprintf(tmpString2, TR_BUFF_SIZE, "%s%02d", "Thread #", \
+						     rankedRacerArr[i]->F1Details->tNum);
+					if (i > 0)
+					{
+						snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-20s -%04lu", \
+							     i + 1, currentRacer, tmpString2, \
+							     rankedRacerArr[i]->relPos);
+					}
+					else
+					{
+						snprintf(tmpString1, TR_BUFF_SIZE, "%2d (0x%c) %-26s", \
+							     i + 1, currentRacer, tmpString2);
+					}
+				}
+
+				// 3.2. Print the line
+				if (OK != mvwprintw(tWin_ptr, currPrintRow, 2, \
+					                "%*s", maxWid, tmpString1))
+				{
+					HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on a racer);
+					retVal = false;
 				}
 			}
-
-			// 3.2. Print the line
-			if (OK != mvwprintw(tWin_ptr, currPrintRow, 2, \
-				                "%*s", maxWid, tmpString1))
+			// 3.2. Doesn't belong on the rank win so clear this line
+			else
 			{
-				HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on a racer);
-				retVal = false;
+				currPrintRow++;  // Print the next row
+
+				// 3.1. Setup temp buffers
+				snprintf(tmpString1, TR_BUFF_SIZE, "%*s", maxWid, " ");
+
+				// 3.2. Print the line
+				if (OK != mvwprintw(tWin_ptr, currPrintRow, 2, \
+					                "%*s", maxWid, tmpString1))
+				{
+					HARKLE_ERROR(Thread_Racer, update_ranking_win, mvwprintw failed on a racer);
+					retVal = false;
+				}
 			}
 		}		
 	}
@@ -1116,6 +1179,55 @@ bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr)
 	// DONE
 	return retVal;
 }
+
+
+/*
+	PURPOSE - Determine the lap of the current winner
+	INPUT
+		racerArr_ptr - [IN] A NULL-terminated array of tgpRacer struct 
+			pointers to evaluate
+	OUTPUT
+		On success, the lap number
+		On failure, -1
+ */
+int highest_lap(tgpRacer_ptr* racerArr_ptr)
+{
+	// LOCAL VARIABLES
+	int retVal = -1;
+	bool success = true;  // Set this to false if anything fails
+	int i = 0;  // Iterating variable
+
+	// INPUT VALIDATION
+	if (!racerArr_ptr || !(*racerArr_ptr))
+	{
+		HARKLE_ERROR(Thread_Racer, highest_lap, NULL pointer);
+		success = false;
+	}
+
+	// EVALUATE RACERS
+	if (true == success)
+	{
+		for (i = 0; i <= TR_MAX_RACERS; i++)
+		{
+			if (NULL == racerArr_ptr[i])
+			{
+				break;
+			}
+			else
+			{
+				if (racerArr_ptr[i]->currLap > retVal)
+				{
+					retVal = racerArr_ptr[i]->currLap;
+					// fprintf(stdout, "Highest lap number is currently:\t%d\n", retVal);  // DEBUGGING
+				}
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
