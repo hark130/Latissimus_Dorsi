@@ -1229,6 +1229,177 @@ int highest_lap(tgpRacer_ptr* racerArr_ptr)
 }
 
 
+/*
+	PURPOSE - Update the Grand Prix final results window
+	INPUT
+		rankWin_ptr - Pointer to the winDetails struct containing the final
+			results window information
+		racerArr_ptr - An NULL-terminated array of tgpRacer struct pointers
+	OUTPUT
+		On success, true
+		On failure, false
+	NOTES
+		This function will not call wrefresh().  Instead, it will merely
+			update the WINDOW.  The calling function is responsible for
+			calling wrefresh().
+ */
+bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	WINDOW* tWin_ptr = NULL;  // Get this from resWin_ptr for ease of reference
+	int maxWid = 0;  // Max printable window width
+	int maxLen = 0;  // Max printable window length
+	tgpRacer_ptr rankedRacerArr[TR_MAX_RACERS + 1] = { NULL };  // Holds the ranked racers
+	char tmpString1[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
+	char tmpString2[TR_BUFF_SIZE + 1] = { 0 };  // Temp array to prep printed lines
+	int i = 0;  // Iterating variable
+	int tmpInt = 0;  // Temp int for calculations
+	int currPrintRow = 1;  // Keep track of which row is currently being printed
+	char currentRacer = 0;  // Store the current racer's 'symbol' (hex digit) here
+	char offRes1[] = {"   ____  _________      _       __   ____                  ____      "};
+	char offRes2[] = {"  / __ \/ __/ __(_)____(_)___ _/ /  / __ \___  _______  __/ / /______"};
+	char offRes3[] = {" / / / / /_/ /_/ / ___/ / __ `/ /  / /_/ / _ \/ ___/ / / / / __/ ___/"};
+	char offRes4[] = {"/ /_/ / __/ __/ / /__/ / /_/ / /  / _, _/  __(__  ) /_/ / / /_(__  ) "};
+	char offRes5[] = {"\____/_/ /_/ /_/\___/_/\__,_/_/  /_/ |_|\___/____/\__,_/_/\__/____/  "};
+	char* offResLines[] = { offRes1, offRes2, offRes3, offRes4, offRes5, NULL };
+	char** tmp_arr = NULL;  // Temp variable to hold an array of chars
+
+	// INPUT VALIDATION
+	if (!resWin_ptr)
+	{
+		HARKLE_ERROR(Thread_Racer, update_results_win, NULL struct pointer);
+		retVal = false;
+	}
+	else if (!(rankWin_ptr->win_ptr))
+	{
+		HARKLE_ERROR(Thread_Racer, update_results_win, NULL WINDOW pointer);
+		retVal = false;
+	}
+	// "Official Results" is 69 characters long
+	// 2 spaces are required on either side 'readability'
+	else if (rankWin_ptr->nCols < ((sizeof(offRes2)/sizeof(*offRes2)) + 4)
+	{
+		HARKLE_ERROR(Thread_Racer, update_results_win, Invalid number of columns);
+		retVal = false;
+	}
+	// TR_MAX_RACERS to print all the results for all the racers
+	// 5 for the "Official Results"
+	// 2 for an empty upper and lower line
+	else if (rankWin_ptr->nRows < (TR_MAX_RACERS + 5 + 2))
+	{
+		HARKLE_ERROR(Thread_Racer, update_results_win, Invalid number of rows);
+		retVal = false;
+	}
+	else
+	{
+		tWin_ptr = resWin_ptr->win_ptr;  // Ease of reference
+		maxWid = rankWin_ptr->nCols - 4;  // Empty buffer
+		maxLen = rankWin_ptr->nRows - 4;  // Empty buffer
+	}	
+	
+	// SORT THE RACERS
+	if (true == retVal)
+	{
+		if (false == sort_racers(racerArr_ptr, rankedRacerArr))
+		{
+			HARKLE_ERROR(Thread_Racer, update_results_win, sort_racers failed);
+			retVal = false;
+		}
+	}
+
+	// UPDATE WINDOW
+	if (true == retVal)
+	{
+		// 1. Print the header
+		tmp_arr = offResLines;
+		
+		while (*tmp_arr && true == retVal)
+		{
+			// 1.1. Determine the size of this line
+			tmpInt = (maxWid - strlen(*tmp_arr)) / 2;
+			// 1.2. Print the buffer within the spacing
+			if (OK != mvwprintw(tWin_ptr, currPrintRow, 2, "%*s", tmpInt + strlen(*tmp_arr), *tmp_arr))
+			{
+				HARKLE_ERROR(Thread_Racer, update_results_win, mvwprintw failed);
+				retVal = false;
+			}
+			else
+			{								
+				// Next row on the window
+				currPrintRow++;
+				// Next line to print to the window
+				tmp_arr++;
+			}
+		}
+		
+		// 2. Print the racers
+		if (true == retVal)
+		{
+			for (i = 0; i < TR_MAX_RACERS; i++)
+			{
+				if (NULL == rankedRacerArr[i])
+				{
+					break;  // No more racers	
+				}
+				else if (currPrintRow > (maxLen + 2))
+				{
+					break;  // No more room	
+				}
+				else
+				{
+					// 2.1. Get racer's hex digit
+					currentRacer = ithc(rankedRacerArr[i]->F1Details->tNum);
+
+					if (!currentRacer)
+					{
+						HARKLE_ERROR(Thread_Racer, update_results_win, ithc failed);
+						retVal = false;
+						break;
+					}
+					else
+					{
+						// 2.2. Setup temp buffer two with everything but the time
+						if (rankedRacerArr[i]->F1Details->tName)
+						{
+							snprintf(tmpString2, TR_BUFF_SIZE, "%2d  (0x%c)  %-20s", i + 1, \
+									 currentRacer, rankedRacerArr[i]->F1Details->tName);
+						}
+						else
+						{
+							snprintf(tmpString2, TR_BUFF_SIZE, "%2d  (0x%c)  %s%02d", i + 1, \
+									 currentRacer, "Thread #", rankedRacerArr[i]->F1Details->tNum);
+						}
+						
+						// 2.3. Setup temp buffer one with the temp buffer two and the time
+						if (i > 0)
+						{
+							snprintf(tmpString1, TR_BUFF_SIZE, %-*s  -%05lu", tmpString2, \
+							         maxWid - 8, rankedRacerArr[i]->relPos);
+						}
+						else
+						{
+							snprintf(tmpString1, TR_BUFF_SIZE, %-*s", tmpString2, maxWid);
+						}									 
+					}
+					
+					// 2.3. Print the line
+					if (OK != mvwprintw(tWin_ptr, currPrintRow + i, 2, "%*s", maxWid, tmpString1))
+					{
+						HARKLE_ERROR(Thread_Racer, update_results_win, mvwprintw failed);
+						retVal = false;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
