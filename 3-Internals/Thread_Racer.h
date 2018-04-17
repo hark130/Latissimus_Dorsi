@@ -123,13 +123,16 @@ bool free_tgpRacer_arr(tgpRacer_ptr** oldArr_ptr);
 	INPUT
 		racer_arr - An NULL-terminated array of tgpRacer struct pointers to 
 			move around the track
+		headNode - First coordinate point on the track, in case the racer makes a lap
+		lapNum - Current lap number of the leader
 	OUTPUT
 		On success, true
 		On failure, false
 	NOTES
 		Calls Thread_Racer::update_racer_pos()
+		Will not add racer's that aren't on lapNum
  */
-bool update_all_racer_pos(tgpRacer_ptr* racer_arr);
+bool update_all_racer_pos(tgpRacer_ptr* racer_arr, hcCartCoord_ptr headNode, int lapNum);
 
 
 /*
@@ -137,14 +140,17 @@ bool update_all_racer_pos(tgpRacer_ptr* racer_arr);
 	INPUT
 		racer_ptr - Pointer to a tgpRacer struct representing the racer
 			to update
+		headNode - First coordinate point on the track, in case the racer makes a lap
+		lapNum - Current lap number of the leader
 	OUTPUT
 		On success, true
 		On failure, false
 	NOTES
 		Calls Thread_Racer::remove_racer_from_track()
 		Calls Thread_Racer::add_racer_to_track()
+		Will not add racer's that aren't on lapNum`
  */
-bool update_racer_pos(tgpRacer_ptr racer_ptr);
+bool update_racer_pos(tgpRacer_ptr racer_ptr, hcCartCoord_ptr headNode, int lapNum);
 
 
 /*
@@ -185,6 +191,7 @@ bool clear_racer_flag(hcCartCoord_ptr hcCoord, int racerNum);
 	INPUT
 		racer_ptr - Pointer to a tgpRacer struct representing the racer
 			to update
+		headNode - First coordinate point on the track, in case the racer makes a lap
 	OUTPUT
 		On success, true
 		On failure, false
@@ -193,7 +200,7 @@ bool clear_racer_flag(hcCartCoord_ptr hcCoord, int racerNum);
 		Calls Thread_Racer::set_racer_flag()
 		Calls Thread_Racer::update_coord_graphic()
  */
-bool add_racer_to_track(tgpRacer_ptr racer_ptr);
+bool add_racer_to_track(tgpRacer_ptr racer_ptr, hcCartCoord_ptr headNode);
 
 
 /*
@@ -292,7 +299,7 @@ bool sort_racers(tgpRacer_ptr* racerArr_ptr, tgpRacer_ptr* rankedRacer_arr);
 		On success, the lap number
 		On failure, -1
  */
-int highest_lap(racerArr_ptr);
+int highest_lap(tgpRacer_ptr* racerArr_ptr);
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////// GRAND PRIX FUNCTIONS STOP /////////////////////////
