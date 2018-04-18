@@ -125,7 +125,7 @@ IDEAS
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
-#define SLEEPY_OFFICIALS .5	// Number of seconds for the main thread to sleep each evaluation
+#define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
 #define SLEEPY_RACER 0  	// Number of seconds for racer_sleepy_func() to sleep
 #define FAST_RACER 10000		// Multiple to increase the number of calculations, minimum 1
 #define SLEEPY_BUFF 20  	// Local buffer size
@@ -202,8 +202,8 @@ int main(int argc, char** argv)
 	int numF1s = 10;  // Number of 'racing' threads to be spawned
 	int raceLen = 162;  // Length of the race in miles, rounded up
 	int upInterval = 1;  // Frequency of main thread updates
-	int numLaps = 78;  // Number of the laps the 'racing' threads must take
-	// int numLaps = 2;  // Number of the laps the 'racing' threads must take
+	// int numLaps = 78;  // Number of the laps the 'racing' threads must take
+	int numLaps = 2;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
 	int retVal = 0;  // Function's return value, also holds ncurses return values
 	int errNum = 0;  // Holds errno returned from read_a_pipe()
@@ -817,7 +817,7 @@ int main(int argc, char** argv)
 		getch();  // Wait for the user to press a key
 		clear();  // Clear the screen
 		// Print race results page
-		if (false == update_results_win(stdWin->win_ptr, racerArr_ptr))
+		if (false == update_results_win(stdWin, racerArr_ptr))
 		{
 			HARKLE_ERROR(Grand_Prix.c, main, update_results_win failed);
 			success = false;
