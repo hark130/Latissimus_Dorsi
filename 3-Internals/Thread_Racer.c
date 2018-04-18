@@ -1258,10 +1258,10 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 	int currPrintRow = 1;  // Keep track of which row is currently being printed
 	char currentRacer = 0;  // Store the current racer's 'symbol' (hex digit) here
 	char offRes1[] = {"   ____  _________      _       __   ____                  ____      "};
-	char offRes2[] = {"  / __ \/ __/ __(_)____(_)___ _/ /  / __ \___  _______  __/ / /______"};
-	char offRes3[] = {" / / / / /_/ /_/ / ___/ / __ `/ /  / /_/ / _ \/ ___/ / / / / __/ ___/"};
+	char offRes2[] = {"  / __ \\/ __/ __(_)____(_)___ _/ /  / __ \\___  _______  __/ / /______"};
+	char offRes3[] = {" / / / / /_/ /_/ / ___/ / __ `/ /  / /_/ / _ \\/ ___/ / / / / __/ ___/"};
 	char offRes4[] = {"/ /_/ / __/ __/ / /__/ / /_/ / /  / _, _/  __(__  ) /_/ / / /_(__  ) "};
-	char offRes5[] = {"\____/_/ /_/ /_/\___/_/\__,_/_/  /_/ |_|\___/____/\__,_/_/\__/____/  "};
+	char offRes5[] = {"\\____/_/ /_/ /_/\\___/_/\\__,_/_/  /_/ |_|\\___/____/\\__,_/_/\\__/____/  "};
 	char* offResLines[] = { offRes1, offRes2, offRes3, offRes4, offRes5, NULL };
 	char** tmp_arr = NULL;  // Temp variable to hold an array of chars
 
@@ -1271,14 +1271,14 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 		HARKLE_ERROR(Thread_Racer, update_results_win, NULL struct pointer);
 		retVal = false;
 	}
-	else if (!(rankWin_ptr->win_ptr))
+	else if (!(resWin_ptr->win_ptr))
 	{
 		HARKLE_ERROR(Thread_Racer, update_results_win, NULL WINDOW pointer);
 		retVal = false;
 	}
 	// "Official Results" is 69 characters long
 	// 2 spaces are required on either side 'readability'
-	else if (rankWin_ptr->nCols < ((sizeof(offRes2)/sizeof(*offRes2)) + 4)
+	else if (resWin_ptr->nCols < ((sizeof(offRes4)/sizeof(*offRes4)) + 4))
 	{
 		HARKLE_ERROR(Thread_Racer, update_results_win, Invalid number of columns);
 		retVal = false;
@@ -1286,7 +1286,7 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 	// TR_MAX_RACERS to print all the results for all the racers
 	// 5 for the "Official Results"
 	// 2 for an empty upper and lower line
-	else if (rankWin_ptr->nRows < (TR_MAX_RACERS + 5 + 2))
+	else if (resWin_ptr->nRows < (TR_MAX_RACERS + 5 + 2))
 	{
 		HARKLE_ERROR(Thread_Racer, update_results_win, Invalid number of rows);
 		retVal = false;
@@ -1294,8 +1294,8 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 	else
 	{
 		tWin_ptr = resWin_ptr->win_ptr;  // Ease of reference
-		maxWid = rankWin_ptr->nCols - 4;  // Empty buffer
-		maxLen = rankWin_ptr->nRows - 4;  // Empty buffer
+		maxWid = resWin_ptr->nCols - 4;  // Empty buffer
+		maxLen = resWin_ptr->nRows - 4;  // Empty buffer
 	}	
 	
 	// SORT THE RACERS
@@ -1374,12 +1374,12 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 						// 2.3. Setup temp buffer one with the temp buffer two and the time
 						if (i > 0)
 						{
-							snprintf(tmpString1, TR_BUFF_SIZE, %-*s  -%05lu", tmpString2, \
-							         maxWid - 8, rankedRacerArr[i]->relPos);
+							snprintf(tmpString1, TR_BUFF_SIZE, "%-*s  -%05lu", maxWid - 8, \
+							         tmpString2, rankedRacerArr[i]->relPos);
 						}
 						else
 						{
-							snprintf(tmpString1, TR_BUFF_SIZE, %-*s", tmpString2, maxWid);
+							snprintf(tmpString1, TR_BUFF_SIZE, "%-*s", maxWid, tmpString2);
 						}									 
 					}
 					
