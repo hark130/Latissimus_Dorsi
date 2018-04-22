@@ -60,23 +60,23 @@
 [ ] Rank Bar
 	[X] Draw it
 	[X] Dynamically size it
-	[ ] Populate it
-		[ ] Thread names
+	[X] Populate it
+		[X] Thread names
 		[ ] Thread colors
-		[ ] Thread details
-			[ ] Thread placing
-			[ ] Thread name
-			[ ] Thread lap
-			[ ] Iterations behind leader
+		[X] Thread details
+			[X] Thread placing
+			[X] Thread name
+			[X] Thread lap
+			[X] Iterations behind leader
 [ ] Final Results
-	[ ] Draw it
-	[ ] Dynamically size it
+	[X] Draw it
+	[X] Dynamically size it
 	[ ] Populate it
-		[ ] Thread names
+		[X] Thread names
 		[ ] Thread colors
-		[ ] Thread details
-			[ ] Thread placing
-			[ ] Thread total time
+		[X] Thread details
+			[X] Thread placing
+			[X] Thread total time
 
 // TO DO 
 BUGS
@@ -106,11 +106,14 @@ IDEAS
 #include "Memoroad.h"
 #include <ncurses.h>			// initscr(), refresh(), endwin()
 #include "Rando.h"				// rando_a_uint()
+#include <signal.h>
 #include <string.h>				// memset()
 #include <stdbool.h>			// bool, true, false
 #include <stdint.h>				// intptr_t
 #include <stdio.h>				// printf
 #include <stdlib.h>				// calloc()
+#include <sys/syscall.h>		// syscall
+#include <sys/types.h>
 #include "Thread_Racer.h"
 #include <unistd.h>				// sleep()
 
@@ -125,15 +128,13 @@ IDEAS
 #define GRAND_PRIX_MAX_TRIES 3
 #endif // GRAND_PRIX_MAX_TRIES
 
+#define SIG_START SIGUSR1	// This signal will start the threads racing
 #define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
 #define SLEEPY_RACER 0  	// Number of seconds for racer_sleepy_func() to sleep
-#define FAST_RACER 10000		// Multiple to increase the number of calculations, minimum 1
+#define FAST_RACER 10000	// Multiple to increase the number of calculations, minimum 1
 #define SLEEPY_BUFF 20  	// Local buffer size
 
-// typedef struct threadGrandPrixRace
-// {
-// 	hThrDetails_ptr F1Details;		// Detail regarding a 'racing' thread
-// } tgpRacer, *tgpRacer_ptr;
+// bool startTheRace = false;  // Global variable for the signal handler to set
 
 
 /*
@@ -195,6 +196,17 @@ void racer_sleepy_func(tgpRacer_ptr threadDets);
 void racer_rando_prime(tgpRacer_ptr threadDets);
 
 
+// void starting_gun(int shot)
+// {
+// 	if (shot == SIG_START)
+// 	{
+// 		startTheRace = true;
+// 	}
+// 	// printf("GOT IT!");  // DEBUGGING
+// 	return;
+// }
+
+
 int main(int argc, char** argv)
 {
 	// LOCAL VARIABLES
@@ -205,6 +217,8 @@ int main(int argc, char** argv)
 	// int numLaps = 78;  // Number of the laps the 'racing' threads must take
 	int numLaps = 2;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
+
+	// Main thread
 	int retVal = 0;  // Function's return value, also holds ncurses return values
 	int errNum = 0;  // Holds errno returned from read_a_pipe()
 	bool foundWinner = false;  // Update to true if any thread wins
@@ -218,6 +232,7 @@ int main(int argc, char** argv)
 	int j = 0;  // Iterating variable
 	int numTries = 0;  // Counter for memory allocation function calls
 	int tmpInt = 0;  // Holds various return values
+	struct sigaction sigact;  // Used to specify actions for specific signals
 	
 	// Race Cars
 	tgpRacer_ptr* racerArr_ptr = NULL;  // Array of racer struct pointers
@@ -574,6 +589,16 @@ int main(int argc, char** argv)
 		// tgpRacer_ptr racer_ptr = NULL;  // Index from the array of racer struct pointers
 		// spawn_harklethread(racert_ptr);
 
+		// 0. Register the signal handler
+		// Register signal handler before going multithread
+		// if (SIG_ERR == signal(SIG_START, starting_gun))
+		// {
+		// 	errNum = errno;
+		// 	HARKLE_ERROR(Grand_Prix, main, signal failed);
+		// 	fprintf(stderr, "signal() returned errno:\t%s\n", strerror(errNum));
+		// 	success = false;
+		// }
+
 		// 1. Line Up The Cars
 		for (i = 0; i < numF1s; i++)
 		{
@@ -595,7 +620,51 @@ int main(int argc, char** argv)
 		}
 
 		// 2. Green Light
-		/////////////////////////////////////// IMPLEMENT LATER ///////////////////////////////////////
+		if (true == success)
+		{
+			///////////////// IMPLEMENT SIGNAL HANDLING LATER ////////////////
+			// getch();  // Wait for the user to press a key
+			// startTheRace = true;
+
+			// // Ignore my own signal
+			// sigemptyset(&sigact.sa_mask);  // Zeroize the mask of signals which should be blocked
+			// sigact.sa_flags = 0;  // Can't think of any good flags to add for what I'm doing
+			// sigact.sa_handler = SIG_IGN;  // Ignore this signal
+
+			// // rt_sigaction() doesn't work as (barely) documented
+			// // Reading sigaction() source code leads me to believe that rt_sigaction wants
+			// // 	SIGRTMAX / 8 as the fourth argument (NOT sizeof(sigset_t) like the man page says).
+			// // It works.  For more details, read:
+			// //	https://github.com/hark130/Latissimus_Dorsi/blob/practice/Research_Documents/3-4-1-rt_sigaction.txt
+			// if (-1 == syscall(SYS_rt_sigaction, SIG_START, &sigact, NULL, SIGRTMAX / 8))
+			// {
+			// 	errNum = errno;
+			// 	HARKLE_ERROR(Grand_Prix, main, syscall failed);
+			// 	fprintf(stderr, "syscall(%d, %d, &sigact, NULL, %lu) set errno to %d:\t%s\n", SYS_rt_sigaction, \
+			// 																				  SIG_START, \
+			// 																				  (size_t)(SIGRTMAX / 8), \
+			// 																				  errNum, \
+			// 																				  strerror(errNum));
+			// 	success = false;
+			// }
+
+			// if (true == success)
+			// {
+			// 	// getch();  // Wait for the user to press a key
+			// 	for (i = 0; i < 3; i++)
+			// 	{
+			// 		sleep(1);
+			// 	}
+			// 	// Send the SIG_START signal to every process in the process group
+			// 	if (0 != kill(0, SIG_START))
+			// 	{
+			// 		errNum = errno;
+			// 		HARKLE_ERROR(Grand_Prix, main, kill failed);
+			// 		fprintf(stderr, "kill() returned errno:\t%s\n", strerror(errNum));
+			// 		success = false;
+			// 	}
+			// }
+		}
 
 		// 3. RACE!
 		while (true == success)
@@ -1352,6 +1421,8 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 	// unsigned long tmpVar = 5;  // Used to check for prime
 	unsigned long long tmpVar = 5;  // Used to check for prime
 	//////////////////////////////////////////////////////////////////////////
+	sigset_t newMask;  // This mask will be set to block on SIG_START
+	sigset_t oldMask;  // This is the old mask
 	
 	// INPUT VALIDATION
 	if (!threadDets)
@@ -1376,6 +1447,62 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 		}
 	}
 
+	// WAIT FOR THE STARTING GUN
+	if (true == success)
+	{
+		/////////////////// IMPLEMENT SIGNAL HANDLING LATER //////////////////
+		// while (false == startTheRace)
+		// {
+		// 	// Do nothing
+		// }
+
+		// // 1. Setup the new and old masks
+		// // 1.1. New mask
+		// if (0 != sigemptyset(&newMask))
+		// {
+		// 	HARKLE_ERROR(Grand_Prix, racer_rando_prime, sigemptyset failed);
+		// 	success = false;
+		// }
+		// // 1.2. Existing mask
+		// if (true == success && 0 != sigemptyset(&oldMask))
+		// {
+		// 	HARKLE_ERROR(Grand_Prix, racer_rando_prime, sigemptyset failed);
+		// 	success = false;
+		// }
+		
+		// // 2. Configure the new mask
+		// if (true == success && 0 != sigaddset(&newMask, SIG_START))
+		// {
+		// 	HARKLE_ERROR(Grand_Prix, racer_rando_prime, sigaddset failed);
+		// 	success = false;
+		// }
+
+		// // 3. Set the new mask to block
+		// if (true == success && 0 != pthread_sigmask(SIG_BLOCK, &newMask, &oldMask))
+		// // if (true == success && 0 != sigprocmask(SIG_BLOCK, &newMask, &oldMask))
+		// {
+		// 	HARKLE_ERROR(Grand_Prix, racer_rando_prime, pthread_sigmask block failed);
+		// 	// HARKLE_ERROR(Grand_Prix, racer_rando_prime, sigprocmask block failed);
+		// 	success = false;
+		// }
+
+		// // 4. Wait to start
+		// while (true == success && false == startTheRace)
+		// {
+		// 	sigsuspend(&oldMask);
+		// }
+
+		// // 5. Back to normal
+		// if (true == success && 0 != pthread_sigmask(SIG_UNBLOCK, &newMask, NULL))
+		// // if (true == success && 0 != sigprocmask(SIG_UNBLOCK, &newMask, NULL))
+		// {
+		// 	HARKLE_ERROR(Grand_Prix, racer_rando_prime, pthread_sigmask unblock failed);
+		// 	// HARKLE_ERROR(Grand_Prix, racer_rando_prime, sigprocmask unblock failed);
+		// 	success = false;
+		// }
+	}
+
+	// START RACING
 	if (true == success)
 	{
 		while (counter != threadDets->trackLen || currentLap != threadDets->numLaps)
