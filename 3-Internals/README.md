@@ -21,7 +21,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] 15. Demonstrate and understanding of the difference between virtual and physical File Systems (2c)
 * [ ] 16. Gain knowledge from the proc and sys VFSs and manipulate the system using them (3c)
 * [ ] 17. Understand the role of, interactions between, differences between, and be able to move data between user space and kernel space. (3c)
-* [ ] 18. Create a multi-threaded application and use synchronization primitives (3c)
+* [X] 18. Create a multi-threaded application and use synchronization primitives (3c)
 * [ ] 19. Understand the reason for and send ioctols to a kernel device (3c)
 * [ ] 20. Use ptrace to manipulate flow control and data in a remote application (3c)
 * [ ] 21. Use BSD sockets for network communication (2c)
