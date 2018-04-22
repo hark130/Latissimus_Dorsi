@@ -262,26 +262,42 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 
 ### 3-18-1 Monaco Grand Prix Thread Racing
 
-* [ ] Spawn threads with dedicated pipes (F1)
+#### Original List
+* [X] Spawn threads with dedicated pipes (F1)
 * [ ] Send a signal to the thread group to start (green light)
-* [ ] Threads begin process something (ZOOM) to be determined later
-* [ ] Main thread begins looping over pipes (track status)
-* [ ] Main thread prints status w/ ncurses (track indicator)
-* [ ] Continue until the first thread finishes 260.286 km / 161.734 mi (winner) 
+* [X] Threads begin process something (ZOOM) to be determined later
+* [X] Main thread begins looping over pipes (track status)
+* [X] Main thread prints status w/ ncurses (track indicator)
+* [X] Continue until the first thread finishes 260.286 km / 161.734 mi (winner) 
 * [ ] Send a signal to the thread group to stop (race is over)
-* [ ] Report on the race results
+* [X] Report on the race results
 
-### 3-18 IDEAS
+#### Current Functionality
 
-* Monaco Grand Prix Thread Racing
-	* Spawn a bunch of threads (horses) with dedicated pipes
-	* Send a signal to the process group to start (starting gun)
-	* Begin looping over pipes (race track status)
-	* Update status w/ ncurses (print updating race track)
-	* Wait for the first process to finish (winner)
-	* Send a signal to the process group to stop (race is over) -or-
-	* Wait for the rest to finish (race is over)
-	* Visually report on the status of each horse (Mario Kart)
+* [X] Instantiates ncurses windows
+* [X] Plots an ellipse race track
+* [X] All windows are dynamically sized based on the terminal size
+* [X] Starts threads
+* [X] Adds them to the track
+* [X] Updates the status in the rank window
+* [X] Races the threads a certain number of laps
+* [X] Temporarily ignores any threads not on the same lap as the front-runner
+* [X] Reports on the results of the race
+
+### 3-18-2 Monaco Grand Prix Thread Racing (continued)
+
+* [ ] Color/bold formatting
+    * [ ] Winner on the track
+    * [ ] Winner in the rank window
+    * [ ] Window titles
+* [ ] Implement a signal as the "starting gun" for the thread group
+* [ ] Take CLI arguments to specify details of the race
+    * [ ] Number of threads
+    * [ ] Number of laps
+* [ ] More functional testing
+    * [ ] Oddly sized terminals
+    * [ ] Better error handling
+    * [ ] Better estimations of necessary sizes
 
 ### NOTES
 
