@@ -215,6 +215,43 @@ bool write_oper_mode_flags(fdDetails_ptr updateThis_ptr, int setTheseFlags);
 long get_file_len(int fileDesc);
 
 
+/*
+	PURPOSE - Read the file descriptor flags for fileDesc
+	INPUT
+		fileDesc - An open file descriptor
+	OUTPUT
+		On success, the file descriptor flags for fileDesc
+		On failure, errno value returned by fcntl()
+	NOTES
+		This function calls fcntl() on fileDesc
+		This function will not attempt to close fileDesc
+ */
+int get_fd_flags(int fileDesc);
+
+
+/*
+	PURPOSE - Set the file descriptor flags for fileDesc
+	INPUT
+		fileDesc - An open file descriptor
+		newFlags - The flags to set for fileDesc
+		addFlags - True to 'add on' newFlags, otherwise newFlags will replace
+			current flags
+	OUTPUT
+		On success, the file descriptor flags for fileDesc
+		On failure, errno value returned by fcntl()
+	NOTES
+		This function calls fcntl() on fileDesc
+		This function will not attempt to close fileDesc
+		If addFlags is true, this function will:
+			- Get the current flags
+			- Add newFlags
+			- Set them all
+			- Get the new flags again
+			- Return the full set of flags
+ */
+int set_fd_flags(int fileDesc, int newFlags, bool addFlags);
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// GENERAL FUNCTIONS STOP ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
