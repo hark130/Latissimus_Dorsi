@@ -214,8 +214,8 @@ int main(int argc, char** argv)
 	int numF1s = 10;  // Number of 'racing' threads to be spawned
 	int raceLen = 162;  // Length of the race in miles, rounded up
 	int upInterval = 1;  // Frequency of main thread updates
-	// int numLaps = 78;  // Number of the laps the 'racing' threads must take
-	int numLaps = 2;  // Number of the laps the 'racing' threads must take
+	int numLaps = 78;  // Number of the laps the 'racing' threads must take
+	// int numLaps = 2;  // Number of the laps the 'racing' threads must take
 	//////////////////////////////////////////////////////////////////////////
 
 	// Main thread
