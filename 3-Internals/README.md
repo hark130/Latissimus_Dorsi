@@ -25,6 +25,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] 19. Understand the reason for and send ioctols to a kernel device (3c)
 * [ ] 20. Use ptrace to manipulate flow control and data in a remote application (3c)
 * [ ] 21. Use BSD sockets for network communication (2c)
+* [ ] 22. Inject code into a running process (This is a requirement for the eval)
 
 **NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
