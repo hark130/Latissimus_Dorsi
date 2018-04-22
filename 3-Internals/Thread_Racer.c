@@ -17,7 +17,7 @@
 #define THREADRACER_MAX_TRIES 3
 #endif  // THREADRACER_MAX_TRIES
 
-#define TR_BUFF_SIZE 64  // Default buffer size
+#define TR_BUFF_SIZE 256  // Default buffer size
 
 // MACRO DEFINING THE RACER FLAGS FOR struct hcCartesianCoordinate.hcFlags
 #define TR_RACER_FLAG(n) (n >= 0x0 && 0xF >= n) ? (1 << n) : (0)
@@ -1332,6 +1332,7 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 				tmp_arr++;
 			}
 		}
+		currPrintRow++;  // Skip a row for spacing
 		
 		// 2. Print the racers
 		if (true == retVal)
@@ -1380,11 +1381,14 @@ bool update_results_win(winDetails_ptr resWin_ptr, tgpRacer_ptr* racerArr_ptr)
 						else
 						{
 							snprintf(tmpString1, TR_BUFF_SIZE, "%-*s", maxWid, tmpString2);
-						}									 
+						}
+						// fprintf(stderr, "i:\t%d\n", i);  // DEBUGGING
+						// fprintf(stderr, "tmpString1:\t%s\n", tmpString1);  // DEBUGGING
+						// fprintf(stderr, "tmpString2:\t%s\n", tmpString2);  // DEBUGGING
 					}
 					
 					// 2.3. Print the line
-					if (OK != mvwprintw(tWin_ptr, currPrintRow + i, 2, "%*s", maxWid, tmpString1))
+					if (OK != mvwprintw(tWin_ptr, currPrintRow + i, 2, "%-*s", maxWid, tmpString1))
 					{
 						HARKLE_ERROR(Thread_Racer, update_results_win, mvwprintw failed);
 						retVal = false;
