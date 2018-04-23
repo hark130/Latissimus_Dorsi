@@ -54,6 +54,14 @@ CC = gcc
 	$(CC) -c 3-18_Threading_Practice-1_Grand_Prix.c
 	$(CC) -o grand_prix.exe -pthread Fileroad.o Fileroad_Descriptors.o Harklecurse.o Harklemath.o Harklepipe.o Harklethread.o Memoroad.o Rando.o Thread_Racer.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses -lm
 
+3221:
+	$(CC) -c Harkledir.c
+	$(CC) -c Harkleproc.c
+	$(CC) -c Memoroad.c
+	$(CC) -c Fileroad.c
+	$(CC) -c 3-22_Process_Injection-1_injector.c
+	$(CC) -o injector.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-22_Process_Injection-1_injector.o
+
 tests:
 	$(CC) -c Fileroad.c
 	$(CC) -c Harklemath.c
