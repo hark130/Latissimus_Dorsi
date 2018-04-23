@@ -1,9 +1,12 @@
-#include "Harklerror.h"	// HARKLE_ERROR
+#define _GNU_SOURCE							// process_vm_readv() and process_vm_writev() are only available when GNU extensions are enabled
+#include <errno.h>							// errno
+#include "Harklerror.h"						// HARKLE_ERROR
 #include "Memoroad.h"
-#include <stdbool.h>	// bool, true, false
-#include <stdio.h>		// fprintf
-#include <stdlib.h>		// calloc
-#include <string.h>		// memset, memcpy
+#include <stdbool.h>						// bool, true, false
+#include <stdio.h>							// fprintf
+#include <stdlib.h>							// calloc
+#include <string.h>							// memset, memcpy
+#include <sys/uio.h>						// process_vm_readv(), process_vm_writev()
 
 #ifndef MEMOROAD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -526,7 +529,7 @@ struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes)
 		//                          const struct iovec *remote_iov,
 		//                          unsigned long riovcnt,
 		//                          unsigned long flags);
-		pvrRetVal = process_vm_readv(pid, &retVal, 1, remMem, 1, 0);
+		pvrRetVal = process_vm_readv(pid, retVal, 1, remMem, 1, 0);
 
 		if (-1 == pvrRetVal)
 		{

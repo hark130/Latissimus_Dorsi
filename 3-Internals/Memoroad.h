@@ -1,6 +1,7 @@
 #ifndef __MEMOROAD__
 #define __MEMOROAD__
 
+#define _GNU_SOURCE							// process_vm_readv() and process_vm_writev() are only available when GNU extensions are enabled
 #include <stdbool.h>						// bool, true, false
 #include <stddef.h>							// size_t
 #include <sys/uio.h>						// struct iovec
