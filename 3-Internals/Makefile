@@ -1,4 +1,5 @@
 CC = gcc
+PMP = ../../proc_maps_parser/
 
 331:
 	$(CC) -c Fileroad.c
@@ -59,8 +60,9 @@ CC = gcc
 	$(CC) -c Harkleproc.c
 	$(CC) -c Memoroad.c
 	$(CC) -c Fileroad.c
-	$(CC) -c 3-22_Process_Injection-1_injector.c
-	$(CC) -o injector.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-22_Process_Injection-1_injector.o
+	$(CC) -o pmparser.o -c $(PMP)pmparser.c
+	$(CC) -I $(PMP) -c 3-22_Process_Injection-1_injector.c
+	$(CC) -o injector.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o pmparser.o 3-22_Process_Injection-1_injector.o
 
 tests:
 	$(CC) -c Fileroad.c
