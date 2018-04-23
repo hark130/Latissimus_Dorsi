@@ -429,3 +429,136 @@ bool free_iovec_struct(struct iovec** oldStruct_ptr, bool freeAll)
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FREE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// MEM TRANSFER FUNCTIONS START ////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	Purpose - Allocate enough memory 'locally' to copy "numBytes" from "pid"s
+		memory allocated at remoteMem.  The heap-allocated pointer and size
+		of the memory will be returned in a struct iovec pointer.
+	Input
+		pid - PID from which to copy the memory
+		remoteMem - Address from which to start copying
+		numBytes - The amount of memory to copy from remoteMem
+	Output
+		On success, a heap-allocated iovec struct pointer.  iov_base will
+			point to heap-allocated memory space containing the information
+			copied from remoteMem.  iov_len will be the size of the memory
+			allocated at iov_base.
+		On failure, NULL
+	Notes:
+		It is the caller's responsibility to free() the memory located at
+			iov_base in addition to free()ing the struct pointer itself
+ */
+struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes)
+{
+	// LOCAL VARIABLES
+	struct iovec* retVal = NULL;
+	bool success = true;  // Make this false if anything fails
+	int numTries = 0;  // Keep count of allocation attempts
+	ssize_t pvrRetVal = 0;  // Return value from process_vm_readv() call
+	struct iovec remMem[1];  // iovec struct array to hold the remote copy info
+	int errNum = 0;  // Capture errno here
+
+	// INPUT VALIDATION
+	if (pid < 1)
+	{
+		HARKLE_ERROR(Memoroad, copy_remote_to_local, Invalid PID);
+		success = false;
+	}
+	else if (!remoteMem)
+	{
+		HARKLE_ERROR(Memoroad, copy_remote_to_local, NULL pointer);
+		success = false;
+	}
+	else if (numBytes < 1)
+	{
+		HARKLE_ERROR(Memoroad, copy_remote_to_local, Invalid number of bytes);
+		success = false;
+	}
+
+	// ALLOCATE A STRUCT
+	if (true == success)
+	{
+		retVal = allocate_iovec_struct();
+
+		if (!retVal)
+		{
+			HARKLE_ERROR(Memoroad, copy_remote_to_local, allocate_iovec_struct failed);
+			success = false;
+		}
+	}
+
+	// ALLOCATE MEMORY
+	if (true == success)
+	{
+		while (NULL == retVal->iov_base && numTries < MEMOROAD_MAX_TRIES)
+		{
+			retVal->iov_base = (void*)calloc(numBytes, 1);
+
+			if (retVal->iov_base)
+			{
+				retVal->iov_len = numBytes;
+				numTries++;
+			}
+		}
+
+		if (NULL == retVal->iov_base)
+		{
+			HARKLE_ERROR(Memoroad, copy_remote_to_local, calloc failed);
+			success = false;
+		}
+	}
+
+	// COPY THE MEMORY
+	if (true == success)
+	{
+		// Prepare the remote struct pointer
+		remMem[0].iov_base = remoteMem;
+		remMem[0].iov_len = numBytes;
+
+		// ssize_t process_vm_readv(pid_t pid,
+		//                          const struct iovec *local_iov,
+		//                          unsigned long liovcnt,
+		//                          const struct iovec *remote_iov,
+		//                          unsigned long riovcnt,
+		//                          unsigned long flags);
+		pvrRetVal = process_vm_readv(pid, &retVal, 1, remMem, 1, 0);
+
+		if (-1 == pvrRetVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Memoroad, copy_remote_to_local, process_vm_readv failed);
+			fprintf(stderr, "process_vm_readv() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else if (pvrRetVal != numBytes)
+		{
+			HARKLE_ERROR(Memoroad, copy_remote_to_local, process_vm_readv only made a partial read);
+			success = false;
+		}
+	}
+
+	// CLEAN UP
+	if (false == success)
+	{
+		if (retVal)
+		{
+			if (false == free_iovec_struct(&retVal, true))
+			{
+				HARKLE_ERROR(Memoroad, copy_remote_to_local, free_iovec_struct failed);
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// MEM TRANSFER FUNCTIONS STOP /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
