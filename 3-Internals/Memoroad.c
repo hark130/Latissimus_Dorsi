@@ -313,7 +313,7 @@ bool free_char_arr(char*** charArr_ptr)
 
 						if (currLen > 0)
 						{
-							temp_ptr = memset(currChar_ptr, 0x0, currLen);
+							temp_ptr = memset(currChar_ptr, MEMSET_DEFAULT, currLen);
 
 							if (temp_ptr != currChar_ptr)
 							{
@@ -362,19 +362,7 @@ bool free_char_arr(char*** charArr_ptr)
 }
 
 
-/*
-	Purpose - Free a pointer to an iovec struct
-	Input
-		oldStruct_ptr - Pointer to a heap-allocated iovec struct pointer
-	Output
-		On success, true
-		On failure, false
-	Notes:
-		This function will zeroize the struct members before free()ing
-			the pointer
-		This function will not attempt to free iov_base
- */
-bool free_iovec_struct(struct iovec** oldStruct_ptr)
+bool free_iovec_struct(struct iovec** oldStruct_ptr, bool freeAll)
 {
 	// LOCAL VARIABLES
 	bool retVal = true;  // Default... prove it wrong
@@ -400,6 +388,26 @@ bool free_iovec_struct(struct iovec** oldStruct_ptr)
 	if (true == retVal)
 	{
 		// 1. Clear void *iov_base;    /* Starting address */
+		if (true == freeAll && iovec_ptr->iov_base)
+		{
+			// 1.1. memset the memory
+			if (iovec_ptr->iov_len > 0)
+			{
+				temp_ptr = memset(iovec_ptr->iov_base, MEMSET_DEFAULT, iovec_ptr->iov_len);
+
+				if (temp_ptr != iovec_ptr->iov_base)
+				{
+					HARKLE_ERROR(Memoroad, free_iovec_struct, memset failed);
+					retVal = false;
+				}
+				else
+				{
+					temp_ptr = NULL;
+				}
+			}
+			// 1.2. free() the memory
+			free(iovec_ptr->iov_base);
+		}
 		iovec_ptr->iov_base = NULL;
 
 		// 2. Clear size_t iov_len;     /* Number of bytes to transfer */
