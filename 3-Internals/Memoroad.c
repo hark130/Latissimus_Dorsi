@@ -5,10 +5,10 @@
 #include <stdlib.h>		// calloc
 #include <string.h>		// memset, memcpy
 
-#ifndef MEMROAD_MAX_TRIES
+#ifndef MEMOROAD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
-#define MEMROAD_MAX_TRIES 3
-#endif  // MEMROAD_MAX_TRIES
+#define MEMOROAD_MAX_TRIES 3
+#endif  // MEMOROAD_MAX_TRIES
 
 #ifndef MEMSET_DEFAULT
 #define MEMSET_DEFAULT 0x0
@@ -41,7 +41,7 @@ char* get_me_a_buffer(size_t length)
     // ALLOCATION
     if (success == true)
     {
-        while (retVal == NULL && numTries < MEMROAD_MAX_TRIES)
+        while (retVal == NULL && numTries < MEMOROAD_MAX_TRIES)
         {
             retVal = (char*)calloc(length + 1, sizeof(char));
             numTries++;
@@ -84,7 +84,7 @@ char** get_me_a_buffer_array(size_t arraySize, bool nullTerm)
 		}
 		
 		// Allocate
-		while (!retVal && numTries < MEMROAD_MAX_TRIES)
+		while (!retVal && numTries < MEMOROAD_MAX_TRIES)
 		{
 			retVal = (char**)calloc(actualArrSize, sizeof(char*));
 			numTries++;
@@ -157,6 +157,32 @@ char* copy_a_string(const char* char_ptr)
         }
     }
     
+    // DONE
+    return retVal;
+}
+
+
+struct iovec* allocate_iovec_struct(void)
+{
+    // LOCAL VARIABLES
+    int numTries = 0;  // Max number to calloc attempts
+    struct iovec* retVal = NULL;
+    void* temp_ptr = NULL;  // Holds string.h function return values
+    bool success = true;  // If anything fails, this is becomes false
+
+    // ALLOCATION
+    while (retVal == NULL && numTries < MEMOROAD_MAX_TRIES)
+    {
+        retVal = (struct iovec*)calloc(1, sizeof(struct iovec));
+        numTries++;
+    }
+
+    if (!retVal)
+    {
+    	HARKLE_ERROR(Memoroad, allocate_iovec_struct, calloc failed);
+    	success = false;
+    }
+
     // DONE
     return retVal;
 }
@@ -329,6 +355,62 @@ bool free_char_arr(char*** charArr_ptr)
 	{
 		HARKLE_ERROR(Memoroad, free_char_arr, NULL pointer);
 		retVal = false;
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+/*
+	Purpose - Free a pointer to an iovec struct
+	Input
+		oldStruct_ptr - Pointer to a heap-allocated iovec struct pointer
+	Output
+		On success, true
+		On failure, false
+	Notes:
+		This function will zeroize the struct members before free()ing
+			the pointer
+		This function will not attempt to free iov_base
+ */
+bool free_iovec_struct(struct iovec** oldStruct_ptr)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;  // Default... prove it wrong
+	struct iovec* iovec_ptr = NULL;  // Easier to deal with it this way
+	void* temp_ptr = NULL;  // Return value from string.h function calls
+
+	// INPUT VALIDATION
+	if (!oldStruct_ptr)
+	{
+		HARKLE_ERROR(Fileroad, free_iovec_struct, NULL pointer);
+		retVal = false;
+	}
+	else if (!(*oldStruct_ptr))
+	{
+		HARKLE_ERROR(Fileroad, free_iovec_struct, NULL pointer);
+		retVal = false;
+	}
+	else
+	{
+		iovec_ptr = *oldStruct_ptr;
+	}
+
+	if (true == retVal)
+	{
+		// 1. Clear void *iov_base;    /* Starting address */
+		iovec_ptr->iov_base = NULL;
+
+		// 2. Clear size_t iov_len;     /* Number of bytes to transfer */
+		iovec_ptr->iov_len = 0;
+
+		// 3. Free the struct pointer
+		free(iovec_ptr);
+
+		// 4. NULL the variables
+		iovec_ptr = NULL;
+		*oldStruct_ptr = NULL;
 	}
 
 	// DONE
