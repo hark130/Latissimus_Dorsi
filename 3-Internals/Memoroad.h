@@ -113,6 +113,7 @@ bool free_char_arr(char*** charArr_ptr);
 	Purpose - Free a pointer to an iovec struct
 	Input
 		oldStruct_ptr - Pointer to a heap-allocated iovec struct pointer
+		freeAll - If true, this function will attempt to free() iov_base
 	Output
 		On success, true
 		On failure, false
@@ -121,11 +122,41 @@ bool free_char_arr(char*** charArr_ptr);
 			the pointer
 		This function will not attempt to free iov_base
  */
-bool free_iovec_struct(struct iovec** oldStruct_ptr);
+bool free_iovec_struct(struct iovec** oldStruct_ptr, bool freeAll);
 
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FREE FUNCTIONS STOP /////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// MEM TRANSFER FUNCTIONS START ////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	Purpose - Allocate enough memory 'locally' to copy "numBytes" from "pid"s
+		memory allocated at remoteMem.  The heap-allocated pointer and size
+		of the memory will be returned in a struct iovec pointer.
+	Input
+		pid - PID from which to copy the memory
+		remoteMem - Address from which to start copying
+		numBytes - The amount of memory to copy from remoteMem
+	Output
+		On success, a heap-allocated iovec struct pointer.  iov_base will
+			point to heap-allocated memory space containing the information
+			copied from remoteMem.  iov_len will be the size of the memory
+			allocated at iov_base.
+		On failure, NULL
+	Notes:
+		It is the caller's responsibility to free() the memory located at
+			iov_base in addition to free()ing the struct pointer itself
+ */
+struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes);
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// MEM TRANSFER FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 #endif  // __MEMOROAD__
