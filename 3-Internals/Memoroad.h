@@ -1,8 +1,9 @@
 #ifndef __MEMOROAD__
 #define __MEMOROAD__
 
-#include <stdbool.h>	// bool, true, false
-#include <stddef.h>		// size_t
+#include <stdbool.h>						// bool, true, false
+#include <stddef.h>							// size_t
+#include <sys/uio.h>						// struct iovec
 
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////// ALLOCATION FUNCTIONS START /////////////////////////
@@ -46,6 +47,18 @@ char** get_me_a_buffer_array(size_t arraySize, bool nullTerm);
         	this function
  */
 char* copy_a_string(const char* char_ptr);
+
+
+/*
+	Purpose - Allocate a pointer to an iovec struct
+	Input - None
+	Output
+		On success, a pointer to a heap-allocated iovec struct
+		On failure, NULL
+	Notes:
+		It is the caller's responsibility to free() this memory
+ */
+struct iovec* allocate_iovec_struct(void);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,6 +107,21 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize);
 		The array of C-strings will then be free()d and made NULL
  */
 bool free_char_arr(char*** charArr_ptr);
+
+
+/*
+	Purpose - Free a pointer to an iovec struct
+	Input
+		oldStruct_ptr - Pointer to a heap-allocated iovec struct pointer
+	Output
+		On success, true
+		On failure, false
+	Notes:
+		This function will zeroize the struct members before free()ing
+			the pointer
+		This function will not attempt to free iov_base
+ */
+bool free_iovec_struct(struct iovec** oldStruct_ptr);
 
 
 //////////////////////////////////////////////////////////////////////////////
