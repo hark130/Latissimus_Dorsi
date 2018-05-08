@@ -96,6 +96,19 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize);
 bool free_char_arr(char*** charArr_ptr);
 
 
+/*
+	Purpose - This function represents an attempt at wrapping memset in
+		such a way that it will not get optimized out when memset is
+		used on a pointer about to be free()d.
+	Input
+		s - Memory area to memset
+		c - Constant byte to set the memory area "s" to
+		n - Number of bytes to set
+	Output - None
+ */
+void harkleset(void* s, int c, size_t n);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FREE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
