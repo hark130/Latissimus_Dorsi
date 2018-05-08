@@ -104,9 +104,9 @@ bool free_char_arr(char*** charArr_ptr);
 		s - Memory area to memset
 		c - Constant byte to set the memory area "s" to
 		n - Number of bytes to set
-	Output - None
+	Output - A pointer to the memory area "s" on success.
  */
-void harkleset(void* s, int c, size_t n);
+void* harkleset(void* s, int c, size_t n);
 
 
 //////////////////////////////////////////////////////////////////////////////
