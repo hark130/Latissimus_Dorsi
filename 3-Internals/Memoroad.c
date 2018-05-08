@@ -336,16 +336,6 @@ bool free_char_arr(char*** charArr_ptr)
 }
 
 
-/*
-	Purpose - This function represents an attempt at wrapping memset in
-		such a way that it will not get optimized out when memset is
-		used on a pointer about to be free()d.
-	Input
-		s - Memory area to memset
-		c - Constant byte to set the memory area "s" to
-		n - Number of bytes to set
-	Output - A pointer to the memory area "s" on success.
- */
 void* harkleset(void* s, int c, size_t n)
 {
 	// LOCAL VARIABLES
