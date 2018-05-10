@@ -438,24 +438,6 @@ bool free_iovec_struct(struct iovec** oldStruct_ptr, bool freeAll)
 //////////////////////////////////////////////////////////////////////////////
 
 
-/*
-	Purpose - Allocate enough memory 'locally' to copy "numBytes" from "pid"s
-		memory allocated at remoteMem.  The heap-allocated pointer and size
-		of the memory will be returned in a struct iovec pointer.
-	Input
-		pid - PID from which to copy the memory
-		remoteMem - Address from which to start copying
-		numBytes - The amount of memory to copy from remoteMem
-	Output
-		On success, a heap-allocated iovec struct pointer.  iov_base will
-			point to heap-allocated memory space containing the information
-			copied from remoteMem.  iov_len will be the size of the memory
-			allocated at iov_base.
-		On failure, NULL
-	Notes:
-		It is the caller's responsibility to free() the memory located at
-			iov_base in addition to free()ing the struct pointer itself
- */
 struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes)
 {
 	// LOCAL VARIABLES
@@ -557,6 +539,71 @@ struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes)
 		}
 	}
 
+	// DONE
+	return retVal;
+}
+
+
+int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numBytes)
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	bool success = true;  // Make this false if anything fails
+	int numTries = 0;  // Keep count of allocation attempts
+	ssize_t pvwRetVal = 0;  // Return value from process_vm_writev() call
+	struct iovec locMem[1];  // iovec struct array to hold the local memory info
+	struct iovec remMem[1];  // iovec struct array to hold the remote memory info
+
+	// INPUT VALIDATION
+	if (pid < 1)
+	{
+		HARKLE_ERROR(Memoroad, copy_local_to_remote, Invalid PID);
+		success = false;
+	}
+	else if (!remoteMem || !localMem)
+	{
+		HARKLE_ERROR(Memoroad, copy_local_to_remote, NULL pointer);
+		success = false;
+	}
+	else if (numBytes < 1)
+	{
+		HARKLE_ERROR(Memoroad, copy_local_to_remote, Invalid number of bytes);
+		success = false;
+	}
+	
+	// COPY THE MEMORY
+	if (true == success)
+	{
+		// Prepare the local struct pointer
+		locMem[0].iov_base = localMem;
+		locMem[0].iov_len = numBytes;
+		
+		// Prepare the remote struct pointer
+		remMem[0].iov_base = remoteMem;
+		remMem[0].iov_len = numBytes;
+
+		// ssize_t process_vm_writev(pid_t pid,
+		//                           const struct iovec *local_iov,
+		//                           unsigned long liovcnt,
+		//                           const struct iovec *remote_iov,
+		//                           unsigned long riovcnt,
+		//                           unsigned long flags);
+		pvwRetVal = process_vm_writev(pid, locMem, 1, remMem, 1, 0);
+		
+		if (-1 == pvwRetVal)
+		{
+			retVal = errno;
+			HARKLE_ERROR(Memoroad, copy_local_to_remote, process_vm_writev failed);
+			fprintf(stderr, "process_vm_writev() returned errno:\t%s\n", strerror(retVal));
+			success = false;
+		}
+		else if (pvwRetVal != numBytes)
+		{
+			HARKLE_ERROR(Memoroad, copy_local_to_remote, process_vm_writev only made a partial write);
+			success = false;
+		}
+	}
+	
 	// DONE
 	return retVal;
 }
