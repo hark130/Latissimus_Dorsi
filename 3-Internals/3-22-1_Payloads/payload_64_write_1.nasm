@@ -12,7 +12,8 @@ start:
 	pop		rsi				; Retrieve the return instruction pointer as arg2
 	xor 	rdx, rdx		; Zeroize rdx (arg3)
 	mov		dl, message_len	; Move string length into arg3
-	syscall					; Make the 'write' syscall	
+	syscall					; Make the 'write' syscall
+	int 3                   ; Software interrupt
 	
 message_ptr:
 	; The processor pushes the value of the EIP register 
