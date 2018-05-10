@@ -156,6 +156,20 @@ bool free_iovec_struct(struct iovec** oldStruct_ptr, bool freeAll);
 struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes);
 
 
+/*
+	Purpose - Copy "numBytes" from localMem to "pid"s memory location at remoteMem
+	Input
+		pid - PID which own the memory to copy into
+		remoteMem - Address to start copying into
+		localMem - Address to start copying from
+		numBytes - The amount of memory to copy from localMem into remoteMem
+	Output
+		On success, 0
+		On failure, the errno set by the system call to process_vm_writev()
+ */
+int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numBytes);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////// MEM TRANSFER FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
