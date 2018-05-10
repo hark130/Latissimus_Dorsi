@@ -90,6 +90,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Linux ptrace introduction AKA injecting into sshd for fun](https://blog.xpnsec.com/linux-process-injection-aka-injecting-into-sshd-for-fun/)
 	* [Dynamically Inject a Shared Library Into a Running Process on Android/ARM](https://www.evilsocket.net/2015/05/01/dynamically-inject-a-shared-library-into-a-running-process-on-androidarm/)
 	* [Executable Code Injection in Linux](http://www.i-programmer.info/programming/cc/3978-executable-code-injection-in-linux.html?start=1)
+* [Compile with nasm](https://ccm.net/faq/1559-compiling-an-assembly-program-with-nasm)
 
 ## TO DO
 
