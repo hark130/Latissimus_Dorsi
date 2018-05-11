@@ -185,7 +185,9 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 	Input - None
 	Output
 		On success, memory page size
-		On failure, -1
+		On failure...
+			If the limit was indeterminate, -2
+			All other errors, -1
  */
 long get_page_size(void);
 
