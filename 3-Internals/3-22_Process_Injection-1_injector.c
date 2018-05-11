@@ -52,6 +52,7 @@
  */
 
 #include <errno.h>							// errno
+#include "Fileroad.h"						// os_path_join(), fread_a_file()
 #include "Harklerror.h"						// HARKLE_ERROR
 #include "Harkleproc.h"						// is_it_a_PID(), make_PID_into_proc()
 #include "Memoroad.h"						// release_a_string()
@@ -61,6 +62,7 @@
 #include <string.h>							// strcmp()
 #include <sys/ptrace.h>						// ptrace()
 #include <sys/user.h>						// struct user_regs_struct
+#include <sys/wait.h>						// waitpid()
 
 int main(int argc, char* argv[])
 {
@@ -156,7 +158,18 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			fprintf(stdout, "[*] Attched to PID\n");  // DEBUGGING
+			// Wait for PID to stop
+			if (-1 == waitpid(vicPID->pidNum, &errNum, WUNTRACED))
+			{
+				errNum = errno;
+				HARKLE_ERROR(injector, main, waitpid failed);
+				fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "[*] Attched to PID\n");  // DEBUGGING
+			}
 		}
 	}
 
@@ -373,7 +386,7 @@ int main(int argc, char* argv[])
 		if (copy_local_to_remote(vicPID->pidNum, \
 								 tmpPM_ptr->addr_start, \
 								 localBackup, \
-								 strlen(localBackup)))
+								 localBackup->iov_len))
 		{
 			HARKLE_ERROR(injector, main, copy_local_to_remote failed);
 			success = false;
