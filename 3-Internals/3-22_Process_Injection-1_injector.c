@@ -262,7 +262,7 @@ int main(int argc, char* argv[])
 	if (true == success)
 	{
 		// 6.1. Determine payload locaiton
-		payloadFilename = os_path_join("3-22-1_Payloads", "payload_64_write_1.o", true);
+		payloadFilename = os_path_join("./3-22-1_Payloads", "payload_64_write_1.o", true);
 		
 		if (!payloadFilename)
 		{
@@ -271,8 +271,11 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
+			// fprintf(stdout, "Filename is %s\n", payloadFilename);  // DEBUGGING
+
 			// 6.2. Read the payload in
-			payloadContents = fread_a_file(payloadFilename);
+			// payloadContents = fread_a_file(payloadFilename);
+			payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
 			
 			if (!payloadContents)
 			{
