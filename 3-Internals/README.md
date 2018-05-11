@@ -91,6 +91,10 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Dynamically Inject a Shared Library Into a Running Process on Android/ARM](https://www.evilsocket.net/2015/05/01/dynamically-inject-a-shared-library-into-a-running-process-on-androidarm/)
 	* [Executable Code Injection in Linux](http://www.i-programmer.info/programming/cc/3978-executable-code-injection-in-linux.html?start=1)
 * [Compile with nasm](https://ccm.net/faq/1559-compiling-an-assembly-program-with-nasm)
+* Example Exploits
+	* From [A proc PID mem vulnerability](https://lwn.net/Articles/476947/)
+        * [Linux Local Root Exploit "Mempodipper"](https://git.zx2c4.com/CVE-2012-0056/tree/mempodipper.c)
+	    * [Aedla's proof-of-concept](http://kodu.ut.ee/~asd/exp-0-aedla/exp-0-aedla.c)
 
 ## TO DO
 
