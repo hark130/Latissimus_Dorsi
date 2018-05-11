@@ -7,6 +7,7 @@
 #include <stdio.h>							// fprintf
 #include <stdlib.h>							// calloc
 #include <string.h>							// memset, memcpy
+#include <sys/mman.h>						// mprotect()
 #include <sys/uio.h>						// process_vm_readv(), process_vm_writev()
 #include <unistd.h>							// sysconf()
 
@@ -614,6 +615,66 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////// MEM TRANSFER FUNCTIONS STOP /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// MAPPED MEM FUNCTIONS START /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+int change_mmap_prot(void* mem_ptr, size_t memLen, int newProt)
+{
+	// LOCAL VARIABLES
+	int retVal = 0;
+	long pageSize = get_page_size();
+	
+	// INPUT VALIDATION
+	if (!mem_ptr)
+	{
+		HARKLE_ERROR(Memoroad, change_mmap_prot, NULL pointer);
+		retVal = EINVAL;
+	}
+	else if (memLen < 1)
+	{
+		HARKLE_ERROR(Memoroad, change_mmap_prot, Invalid page length);
+		retVal = EINVAL;
+	}
+	else if (pageSize > 0 && (memLen % pageSize))
+	{
+		HARKLE_ERROR(Memoroad, change_mmap_prot, Memory length is not page aligned);
+		retVal = EINVAL;
+	}
+	else if (newProt && 0 == (newProt & \
+			 (MROAD_PROT_NONE | MROAD_PROT_READ | MROAD_PROT_WRITE | \
+			  MROAD_PROT_EXEC | MROAD_PROT_SEM | MROAD_PROT_SAO | \
+			  MROAD_PROT_GROWSUP | MROAD_PROT_GROWSDOWN)))
+	{
+		HARKLE_ERROR(Memoroad, change_mmap_prot, Unrecognized protection setting);
+		retVal = EINVAL;
+	}
+	
+	// SYSTEM CALL
+	if (0 == retVal)
+	{
+		retVal = mprotect(mem_ptr, memLen, newProt);
+		
+		if (-1 == retVal)
+		{
+			retVal = errno;
+			HARKLE_ERROR(Memoroad, change_mmap_prot, mprotect failed);
+			fprintf(stderr, "mprotect() returned errno:\t%s\n", strerror(retVal));			
+		}		
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// MAPPED MEM FUNCTIONS STOP //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// HELPER FUNCTIONS START ///////////////////////////
