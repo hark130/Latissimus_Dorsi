@@ -296,3 +296,7 @@ char* clean_filename(char* dirtyFile, bool inPlace);
 //////////////////////////////////////////////////////////////////////////////
 
 #endif  // __FILEROAD__
+
+
+/* BUGS */
+// os_path_join("./3-22-1_Payloads", "payload_64_write_1.o", true) becomes "/./3-22-1_Payloads/payload_64_write_1.o"
