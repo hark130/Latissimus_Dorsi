@@ -1,4 +1,5 @@
 #define _GNU_SOURCE							// process_vm_readv() and process_vm_writev() are only available when GNU extensions are enabled
+#include <asm/page.h>						// PAGE_SIZE
 #include <errno.h>							// errno
 #include "Harklerror.h"						// HARKLE_ERROR
 #include "Memoroad.h"
@@ -641,7 +642,12 @@ long get_page_size(void)
 		{
 			HARKLE_ERROR(Memoroad, get_page_size, sysconf failed);
 			fprintf(stderr, "sysconf() returned errno:\t%s\n", strerror(errNum));
+			retVal = -1;
 		}
+
+#ifdef PAGE_SIZE
+		retVal = PAGE_SIZE;
+#endif  // PAGE_SIZE
 	}
 		
 	// DONE
