@@ -7,6 +7,7 @@
 #include <stdlib.h>							// calloc
 #include <string.h>							// memset, memcpy
 #include <sys/uio.h>						// process_vm_readv(), process_vm_writev()
+#include <unistd.h>							// sysconf()
 
 #ifndef MEMOROAD_MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -611,4 +612,43 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////// MEM TRANSFER FUNCTIONS STOP /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// HELPER FUNCTIONS START ///////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+long get_page_size(void)
+{
+	// LOCAL VARIABLES
+	long retVal = -1;
+	int errNum = 0;  // Store errno here in an error condition
+	errno = 0;  // Zeroize errno prior to the call to best determine results
+	
+	// SYSTEM CALL
+	retVal = sysconf(_SC_PAGE_SIZE);
+	
+	if (-1 == retVal)
+	{
+		errNum = errno;
+		if (0 == errNum)
+		{
+			HARKLE_ERROR(Memoroad, get_page_size, sysconf indicated the limit was indeterminate);
+			retVal = -2;
+		}
+		else
+		{
+			HARKLE_ERROR(Memoroad, get_page_size, sysconf failed);
+			fprintf(stderr, "sysconf() returned errno:\t%s\n", strerror(errNum));
+		}
+	}
+		
+	// DONE
+	return retVal;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+/////////////////////////// HELPER FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
