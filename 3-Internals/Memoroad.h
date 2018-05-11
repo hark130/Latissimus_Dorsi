@@ -6,6 +6,63 @@
 #include <stddef.h>							// size_t
 #include <sys/uio.h>						// struct iovec
 
+/* change_mmap_prot() "newProt" MACRO FLAGS */
+// MROAD_PROT_NONE
+#ifdef PROT_NONE
+#define MROAD_PROT_NONE PROT_NONE
+#else
+#define MROAD_PROT_NONE 0
+#endif  // PROT_NONE
+
+// MROAD_PROT_READ
+#ifdef PROT_READ
+#define MROAD_PROT_READ PROT_READ
+#else
+#define MROAD_PROT_READ 0
+#endif  // PROT_READ
+
+// MROAD_PROT_WRITE
+#ifdef PROT_WRITE
+#define MROAD_PROT_WRITE PROT_WRITE
+#else
+#define MROAD_PROT_WRITE 0
+#endif  // PROT_WRITE
+
+// MROAD_PROT_EXEC
+#ifdef PROT_EXEC
+#define MROAD_PROT_EXEC PROT_EXEC
+#else
+#define MROAD_PROT_EXEC 0
+#endif  // PROT_EXEC
+
+// MROAD_PROT_SEM
+#ifdef PROT_SEM
+#define MROAD_PROT_SEM PROT_SEM
+#else
+#define MROAD_PROT_SEM 0
+#endif  // PROT_SEM
+
+// MROAD_PROT_SAO
+#ifdef PROT_SAO
+#define MROAD_PROT_SAO PROT_SAO
+#else
+#define MROAD_PROT_SAO 0
+#endif  // PROT_SAO
+
+// MROAD_PROT_GROWSUP
+#ifdef PROT_GROWSUP
+#define MROAD_PROT_GROWSUP PROT_GROWSUP
+#else
+#define MROAD_PROT_GROWSUP 0
+#endif  // PROT_GROWSUP
+
+// MROAD_PROT_GROWSDOWN
+#ifdef PROT_GROWSUP
+#define MROAD_PROT_GROWSDOWN PROT_GROWSDOWN
+#else
+#define MROAD_PROT_GROWSDOWN 0
+#endif  // PROT_GROWSDOWN
+
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////// ALLOCATION FUNCTIONS START /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -175,6 +232,31 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
+///////////////////////// MAPPED MEM FUNCTIONS START /////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+/*
+	Purpose - Wrap the function call to mprotect()
+	Input
+		mem_ptr - Address to the beginning of an mmap'd address range that
+			is also aligned to a page boundary
+		memLen - The length of mem_ptr in bytes
+		newProt - The new protections for mem_ptr.  Use the "newProt" 
+			MROAD MACRO FLAGS defined here or utilize the original PROT 
+			flags found in <sys/mman.h>
+	Output
+		On success, 0
+		On failure, the errno value returned by mprotect()
+ */
+int change_mmap_prot(void* mem_ptr, size_t memLen, int newProt);
+
+
+//////////////////////////////////////////////////////////////////////////////
+///////////////////////// MAPPED MEM FUNCTIONS STOP //////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
 /////////////////////////// HELPER FUNCTIONS START ///////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -186,8 +268,12 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 	Output
 		On success, memory page size
 		On failure...
-			If the limit was indeterminate, -2
+			If the limit was indeterminate/unsupported, -2
 			All other errors, -1
+	Notes:
+		If the call to sysconf() fails and PAGE_SIZE is defined in 
+			<asm/page.h>, this function will return PAGE_SIZE instead of an
+			error code.
  */
 long get_page_size(void);
 
