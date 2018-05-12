@@ -9,13 +9,13 @@ start:
 	xor		rax, rax		; Zeroize rax
 ;	mov 	al, SYS_WRITE	; Move syscall number into rax
 	mov 	al, 1			; Move syscall number into rax
-	mov 	rdi, rax		; Move syscall number into arg1
+	mov 	rdi, 1  		; Move stdout fd into arg1
 	pop		rsi				; Retrieve the return instruction pointer as arg2
 	xor 	rdx, rdx		; Zeroize rdx (arg3)
 ;	mov		dl, message_len	; Move string length into arg3
 	mov		dl, 41			; Move string length into arg3
 	syscall					; Make the 'write' syscall
-	int 3                   ; Software interrupt
+	int3                    ; Software interrupt
 	
 message_ptr:
 	; The processor pushes the value of the EIP register 
