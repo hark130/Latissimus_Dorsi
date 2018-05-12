@@ -95,6 +95,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* From [A proc PID mem vulnerability](https://lwn.net/Articles/476947/)
         * [Linux Local Root Exploit "Mempodipper"](https://git.zx2c4.com/CVE-2012-0056/tree/mempodipper.c)
 	    * [Aedla's proof-of-concept](http://kodu.ut.ee/~asd/exp-0-aedla/exp-0-aedla.c)
+* [Understanding the Memory Layout of Linux Executables](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
 
 ## TO DO
 
