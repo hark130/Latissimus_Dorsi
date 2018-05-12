@@ -1,5 +1,6 @@
 #define _GNU_SOURCE							// process_vm_readv() and process_vm_writev() are only available when GNU extensions are enabled
-#include <asm/page.h>						// PAGE_SIZE
+// #include <asm/page.h>						// PAGE_SIZE
+// #include <asm-generic/page.h>				// PAGE_SIZE
 #include <errno.h>							// errno
 #include "Harklerror.h"						// HARKLE_ERROR
 #include "Memoroad.h"
