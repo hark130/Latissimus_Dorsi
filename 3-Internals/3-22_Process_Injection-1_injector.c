@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 	                0x76, 0x65, 0x20, 0x67, 0x6F, 0x74, 0x74, 0x61, 0x20, 0x67, 0x6F, 0x2E, 0x20, 0x50, 0x69, 0x6E, \
 	                0x6B, 0x20, 0x73, 0x6C, 0x69, 0x70, 0x2E, 0x20, 0x2D, 0x43, 0x61, 0x72, 0x64, 0x69, 0x20, 0x42, \
 	                0x0A, 0x00 };
+	char* codeStart = NULL;  // Pointer to the beginning of the executable shell code                
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -318,6 +319,7 @@ int main(int argc, char* argv[])
 					// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
 					fprintf(stdout, "[*] Modified mapped memory permissions\n");  // DEBUGGING
 					// getchar();  // DEBUGGING
+					// getchar();  // DEBUGGING
 					// 6.4. Write the payload to memory
 					if (copy_local_to_remote(vicPID->pidNum, \
 											 tmpPM_ptr->addr_start, \
@@ -352,11 +354,15 @@ int main(int argc, char* argv[])
 
 	// 6. Update RIP to point to the injected code
 	if (true == success)
-	{
+	{		
 		// 6.1. Modify existing registers to reflect the new RIP
 // 		newRegs.rip = (unsigned long long)buf;
 		// newRegs.rip = (unsigned long long)code;
-		newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
+		// newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start;
+		newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start + 0x0180;  // Temp hard-coded value to test a theory
+		//////////////////////////////////////////////// HERE ////////////////////////////////////////////////
+		// Do a strstr on nopnopnop (909090) and set RIP there
+
 		
 		// 6.2. Update the victim PID's process registers
 		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &newRegs);
