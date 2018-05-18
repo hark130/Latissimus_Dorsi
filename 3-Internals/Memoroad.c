@@ -30,7 +30,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
-char* get_me_a_buffer(size_t length)
+/*
+	Purpose - Allocate a buffer of size length
+	Input
+		length - The length of what you want to store
+	Ouput - Heap-allocated, memset, buffer of size length
+	Notes:
+        It is the caller's responsibility to free the char* returned by 
+        	this function
+		There is no extra space allocated in this buffer
+ */
+void* get_me_memory(size_t length)
 {
     // LOCAL VARIABLES
     int numTries = 0;  // Max number to calloc attempts
@@ -41,7 +51,7 @@ char* get_me_a_buffer(size_t length)
     // INPUT VALIDATION
     if (length < 1)
     {
-    	HARKLE_ERROR(Memoroad, get_me_a_buffer, Invalid buffer length);
+    	HARKLE_ERROR(Memoroad, get_me_memory, Invalid buffer length);
     	success = false;
     }
 
@@ -56,9 +66,39 @@ char* get_me_a_buffer(size_t length)
 
         if (!retVal)
         {
-	    	HARKLE_ERROR(Memoroad, get_me_a_buffer, calloc failed);
+	    	HARKLE_ERROR(Memoroad, get_me_memory, calloc failed);
 	    	success = false;
         }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+char* get_me_a_buffer(size_t length)
+{
+    // LOCAL VARIABLES
+    char* retVal = NULL;  // Allocated char array
+    bool success = true;  // If anything fails, this is becomes false
+
+    // INPUT VALIDATION
+    if (length < 1)
+    {
+    	HARKLE_ERROR(Memoroad, get_me_a_buffer, Invalid buffer length);
+    	success = false;
+    }
+
+    // ALLOCATION
+    if (success == true)
+    {
+		retVal = (char*)get_me_memory(length + 1);
+		
+		if (!retVal)
+		{
+	    	HARKLE_ERROR(Memoroad, get_me_a_buffer, get_me_memory failed);
+	    	success = false;
+		}
     }
 
     // DONE
