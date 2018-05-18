@@ -19,6 +19,7 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 {
 	// LOCAL VARIABLES
 	void* retVal = NULL;
+	void* tmp_ptr = NULL;  // Return value from string.h function calls
 	bool success = true;
 	size_t i = 0;  // Iterating variable
 	long ptRetVal = 0;  // Store the ptrace() return value here
@@ -32,7 +33,8 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	else
 	{
 		*errNum = 0;  // Clear errNum	
-	
+		
+		// Error Checking
 		if (pid < 1)
 		{
 			HARKLE_ERROR(Harkletrace, htrace_read_data, Invalid PID);
@@ -51,20 +53,42 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 			success = false;
 			*errNum = EINVAL;
 		}
-		else if (!(srcLen % sizeof(void*)))
+		
+		// Warnings
+		if (!(srcLen % sizeof(void*)))
 		{
 			// I'm not sure if this is a big deal or not.
 			// This may not ever happen.
 			// If it ever does, I'm sure I should do something about it.
 			fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
 		}
+		
+		if (sizeof(void*) != sizeof(ptRetVal))
+		{			
+			fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - Size mismatch between a void* and a 'word'");  // DEBUGGING	
+		}
 	}
 	
 	// ALLOCATE MEMORY
 	if (true == success)
 	{
-		// Implement later
-		success = false;  // Go no further
+		errno = 0;  // Reset errno
+		retVal = get_me_memory(srcLen);
+		
+		if (!retVal)
+		{
+			if (errno)
+			{
+				*errNum = errno;
+			}
+			else
+			{
+				*errNum = ENOMEM;
+			}
+			
+			HARKLE_ERROR(Harkletrace, htrace_read_data, get_me_memory failed);
+			success = false;
+		}
 	}
 	
 	// LOOP PTRACE
@@ -84,7 +108,16 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 			}
 			else
 			{
-				(*(retVal + i)) = ptRetVal;	
+				tmp_ptr = memcpy((*(retVal + i)), &ptRetVal, sizeof(ptRetVal));
+				
+				if (tmp_ptr != (*(retVal + i)))
+				{
+					*errNum = errno;
+					HARKLE_ERROR(Harkletrace, htrace_read_data, memcpy failed);
+					fprintf(stderr, "memcpy() returned errno:\t%s\n", strerror(*errNum));
+					success = false;
+					break;
+				}
 			}
 		}		
 	}
