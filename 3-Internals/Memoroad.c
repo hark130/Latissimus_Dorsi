@@ -727,7 +727,7 @@ long get_page_size(void)
 	// LOCAL VARIABLES
 	long retVal = -1;
 	int errNum = 0;  // Store errno here in an error condition
-	errno = 0;  // Zeroize errno prior to the call to best determine results
+	errno = 0;  // Zeroize errno prior to the call for the best determine results
 	
 	// SYSTEM CALL
 	retVal = sysconf(_SC_PAGE_SIZE);
@@ -743,7 +743,8 @@ long get_page_size(void)
 		else
 		{
 			HARKLE_ERROR(Memoroad, get_page_size, sysconf failed);
-			fprintf(stderr, "sysconf() returned errno:\t%s\n", strerror(errNum));
+			// fprintf(stderr, "sysconf() returned errno:\t%s\n", strerror(errNum));
+			HARKLE_ERRNO(Memoroad, sysconf, errNum);
 			retVal = -1;
 		}
 
