@@ -293,6 +293,26 @@ int change_mmap_prot(void* mem_ptr, size_t memLen, int newProt);
 long get_page_size(void);
 
 
+/*
+	Purpose - Match a snippet of memory (needle) in a larger 'blob' of memory
+	Input
+		haystack_ptr - A pointer to a memory area of length haystackLen
+		needle_ptr - A pointer to a memory area of length needleLen
+		haystackLen - The size of the memory area haystack_ptr points to
+		needleLen - The size of the memory area needle_ptr points to
+	Output
+		On success...
+			A pointer to the first occurrence of needle_ptr in haystack_ptr
+			-or-
+			NULL if needle_ptr is not found in haystack_ptr
+		On failure, NULL	
+	Notes:
+		If this function sounds like strstr() and memcmp() had a child, then you
+			understand what I'm trying to do here.
+ */
+void* mem_hunt(void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t needleLen);
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// HELPER FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
