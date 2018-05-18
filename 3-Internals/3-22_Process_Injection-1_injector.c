@@ -323,8 +323,15 @@ int main(int argc, char* argv[])
 	if (true == success)
 	{
 		// 6.1. Change the permissions on the memory
+		// Current working theory... some Linux OSs won't permit mapped memory space
+		//	to be rwxp.  If this is true, I'll have to flip permissions on the PID's
+		//	memory space depending on what I want to do in that moment.
+// 		tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+// 									  MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
+		// It's possible that some Linux implementations won't allow mapped memory space
+		//	to contain both write *AND* execute permissions at the same time.
 		tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-									  MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
+									  MROAD_PROT_READ | MROAD_PROT_WRITE);
 
 		// getchar();  // DEBUGGING
 		if (tempRetVal)
@@ -336,7 +343,7 @@ int main(int argc, char* argv[])
 		else
 		{
 			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
-			fprintf(stdout, "[*] Modified mapped memory permissions\n");  // DEBUGGING
+			fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
 			// getchar();  // DEBUGGING
 			// getchar();  // DEBUGGING
 			// 6.2. Write the payload to memory
@@ -371,6 +378,21 @@ int main(int argc, char* argv[])
 			else
 			{
 				fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+				
+				// 6.3. Change the permissions on the memory back to r-xp
+				tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+											  MROAD_PROT_READ | MROAD_PROT_EXEC);
+
+				if (tempRetVal)
+				{
+					HARKLE_ERROR(injector, main, change_mmap_prot failed);
+					fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+					success = false;
+				}
+				else
+				{
+					fprintf(stdout, "[*] Modified mapped memory permissions (r-xp)\n");  // DEBUGGING
+				}
 			}
 		}
 	}
