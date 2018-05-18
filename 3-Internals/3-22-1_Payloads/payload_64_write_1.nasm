@@ -3,6 +3,10 @@ use64
 
 ;SYS_WRITE	= 0x01
 
+nop
+nop
+nop
+
 start:
 	jmp		message_ptr
 @back_again:
