@@ -1,5 +1,5 @@
-#include "Harklerror.h"								// HARKLE_ERROR, HARKLE_ERRNO, HARKLE_WARNG
-#include <stdbool.h>								// bool, true, false
+#include "Harklerror.h"							// HARKLE_ERROR, HARKLE_ERRNO, HARKLE_WARNG
+#include <stdbool.h>							// bool, true, false
 
 
 /*
@@ -149,8 +149,10 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	// LOCAL VARIABLES
 	int retVal = 0;
 	bool success = true;
+	bool unaligned = false;  // Set this to true if src_ptr's length violates the page alignment
 	size_t i = 0;  // Iterating variable
 	long ptRetVal = 0;  // Store the ptrace() return value here
+	void* lastAddr = NULL;  // Staging area for last 'uneven' write
 	
 	// INPUT VALIDATION
 	if (pid < 1)
@@ -171,13 +173,14 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 		success = false;
 		retVal = EINVAL;
 	}
-	else if (!(srcLen % sizeof(void*)))
+	else if (!(srcLen % sizeof(long)))
 	{
 		// I'm not sure if this is a big deal or not.
 		// This may not ever happen.
 		// If it ever does, I'm sure I should do something about it.
 		// fprintf(stderr, "¿¿¿WARNING??? - htrace_write_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
 		HARKLE_WARNG(Harkletrace, htrace_write_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
+		unaligned = true;
 	}
 	
 	// LOOP PTRACE
@@ -185,7 +188,38 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	{
 		for (i = 0; i < srcLen; i++)
 		{
-			ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
+			// Handle that last awkward bit
+			if (true == unaligned && i > (srcLen - (srcLen % sizeof(long))))
+			{
+				lastAddr = htrace_read_data(pid, dest_ptr + i, sizeof(long), &retVal);
+				
+				if (!lastAddr || retVal)
+				{
+					HARKLE_ERROR(Harkletrace, htrace_write_data, htrace_read_data failed);
+					HARKLE_ERRNO(Harkletrace, htrace_read_data, retVal);				
+					success = false;
+					break;
+				}
+				else
+				{
+					if (lastAddr != memcpy(lastAddr, src_ptr, srcLen % sizeof(long)))
+					{
+						retVal = errno;
+						HARKLE_ERROR(Harkletrace, htrace_write_data, memcpy failed);
+						HARKLE_ERRNO(Harkletrace, memcpy, retVal);				
+						success = false;
+						break;						
+					}
+					else
+					{
+						ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, lastAddr);
+					}
+				}
+			}
+			else
+			{
+				ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
+			}
 			
 			if (ptRetVal == -1)
 			{
@@ -197,7 +231,16 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 				break;
 			}
 		}
-	}	
+	}
+	
+	// CLEAN UP
+	if (lastAddr)
+	{
+		if (false == release_a_string_len(&lastAddr, sizeof(long))
+		{
+			HARKLE_ERROR(Harkletrace, htrace_write_data, release_a_string_len failed);
+		}
+	}
 	
 	// DONE
 	return retVal;
