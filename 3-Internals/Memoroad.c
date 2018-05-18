@@ -758,6 +758,61 @@ long get_page_size(void)
 }
 
 
+/*
+	Purpose - Match a snippet of memory (needle) in a larger 'blob' of memory
+	Input
+		haystack_ptr - A pointer to a memory area of length haystackLen
+		needle_ptr - A pointer to a memory area of length needleLen
+		haystackLen - The size of the memory area haystack_ptr points to
+		needleLen - The size of the memory area needle_ptr points to
+	Output
+		On success...
+			A pointer to the first occurrence of needle_ptr in haystack_ptr
+			-or-
+			NULL if needle_ptr is not found in haystack_ptr
+		On failure, NULL	
+	Notes:
+		If this function sounds like strstr() and memcmp() had a child, then you
+			understand what I'm trying to do here.
+ */
+void* mem_hunt(void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t needleLen)
+{
+	// LOCAL VARIABLES
+	void* retVal = NULL;
+	bool success = true;  // Make this false if anything fails
+	void* tempRetVal = NULL;  // Store string.h function calls here
+	int i = 0;  // Iterating variable
+	
+	// INPUT VALIDATION
+	if (!haystack_ptr || !needle_ptr)
+	{
+		HARKLE_ERROR(Memoroad, mem_hunt, NULL pointer);
+		success = false;
+	}
+	else if (haystackLen < 1 || needleLen < 1 || needleLen > haystackLen)
+	{
+		HARKLE_ERROR(Memoroad, mem_hunt, Invalid length);
+		success = false;
+	}
+	
+	// FIND IT
+	if (true == success)
+	{
+		for (i = 0; i <= (haystackLen - needleLen); i++)
+		{
+			if (0 == memcmp(haystack_ptr + i, needle_ptr, needlelen))
+			{
+				retVal = haystack_ptr + i;
+				break;
+			}
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////// HELPER FUNCTIONS STOP ////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
