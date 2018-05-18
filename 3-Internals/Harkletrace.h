@@ -11,6 +11,22 @@
 
 
 /*
+	Purpose - Read a 'blob' from a PID's memory address using ptrace(PTRACE_PEEKDATA)
+	Input
+		pid - The "tracee" PID (see: ptrace(2))
+		src_ptr - Offset into the "tracee"s USER area
+		srcLen - Length of the 'blob'
+		errNum [Out] - Pointer to an integer in which to store errno on error
+	Output
+		On success, pointer to the 'blob' being read
+		On failure, NULL is returned and errno is assigned to errNum
+	Notes:
+		The void* returned by this function is NOT nul-terminated
+ */
+void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum);
+
+
+/*
 	Purpose - Write a 'blob' to a PID's memory address using ptrace(PTRACE_POKEDATA)
 	Input
 		pid - The "tracee" PID (see: ptrace(2))
