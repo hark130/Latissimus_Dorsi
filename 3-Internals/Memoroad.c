@@ -727,7 +727,7 @@ long get_page_size(void)
 	// LOCAL VARIABLES
 	long retVal = -1;
 	int errNum = 0;  // Store errno here in an error condition
-	errno = 0;  // Zeroize errno prior to the call for the best determine results
+	errno = 0;  // Zeroize errno prior to the call for the best results
 	
 	// SYSTEM CALL
 	retVal = sysconf(_SC_PAGE_SIZE);
