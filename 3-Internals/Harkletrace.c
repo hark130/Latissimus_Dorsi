@@ -1,4 +1,4 @@
-#include "Harklerror.h"								// HARKLE_ERROR
+#include "Harklerror.h"								// HARKLE_ERROR, HARKLE_ERRNO, HARKLE_WARNG
 #include <stdbool.h>								// bool, true, false
 
 
@@ -60,12 +60,14 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 			// I'm not sure if this is a big deal or not.
 			// This may not ever happen.
 			// If it ever does, I'm sure I should do something about it.
-			fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
+			// fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - The length of the 'blob' is not word-aligned");  // DEBUGGING
+			HARKLE_WARNG(Harkletrace, htrace_read_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
 		}
 		
 		if (sizeof(void*) != sizeof(ptRetVal))
-		{			
-			fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - Size mismatch between a void* and a 'word'");  // DEBUGGING	
+		{
+			HARKLE_WARNG(Harkletrace, htrace_read_data, Size mismatch between a void* and a 'word');  // DEBUGGING
+			// fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - Size mismatch between a void* and a 'word'");  // DEBUGGING	
 		}
 	}
 	
@@ -102,7 +104,8 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 			{
 				*errNum = errno;
 				HARKLE_ERROR(Harkletrace, htrace_read_data, ptrace failed);
-				fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(*errNum));
+				// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(*errNum));
+				HARKLE_ERRNO(Harkletrace, ptrace, *errNum);
 				success = false;
 				break;
 			}
@@ -114,7 +117,8 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 				{
 					*errNum = errno;
 					HARKLE_ERROR(Harkletrace, htrace_read_data, memcpy failed);
-					fprintf(stderr, "memcpy() returned errno:\t%s\n", strerror(*errNum));
+					// fprintf(stderr, "memcpy() returned errno:\t%s\n", strerror(*errNum));
+					HARKLE_ERRNO(Harkletrace, memcpy, *errNum);
 					success = false;
 					break;
 				}
@@ -172,7 +176,8 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 		// I'm not sure if this is a big deal or not.
 		// This may not ever happen.
 		// If it ever does, I'm sure I should do something about it.
-		fprintf(stderr, "¿¿¿WARNING??? - htrace_write_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
+		// fprintf(stderr, "¿¿¿WARNING??? - htrace_write_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
+		HARKLE_WARNG(Harkletrace, htrace_write_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
 	}
 	
 	// LOOP PTRACE
@@ -186,7 +191,8 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 			{
 				retVal = errno;
 				HARKLE_ERROR(Harkletrace, htrace_write_data, ptrace failed);
-				fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(retVal));
+				// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(retVal));
+				HARKLE_ERRNO(Harkletrace, ptrace, retVal);				
 				success = false;
 				break;
 			}
