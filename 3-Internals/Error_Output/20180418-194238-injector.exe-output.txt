@@ -1,0 +1,15 @@
+
+Parsing /proc/3971/ (./Waiting.exe)
+[*] Located /proc/PID/
+[*] Attched to PID
+[*] Backed up PID's processor registers
+[*] Found r-xp PID memory
+[*] Successfully backed up PID memory
+[*] Modified mapped memory permissions (rw-p)
+[*] Overwrote PID memory space
+[*] Modified mapped memory permissions (r-xp)
+[*] Successfully updated RIP
+[*] PID's execution resumed
+[*] PID terminated
+[*] Successfully restored registers
+[*] PID detached
