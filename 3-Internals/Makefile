@@ -58,12 +58,13 @@ PMP = ../../proc_maps_parser/
 3221:
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
+	$(CC) -c Harkletrace.c
 	$(CC) -c Memoroad.c
 	$(CC) -c Fileroad.c
 	$(CC) -o pmparser.o -c $(PMP)pmparser.c
 	nasm -f elf64 3-22-1_Payloads/payload_64_write_1.nasm
 	$(CC) -I $(PMP) -c 3-22_Process_Injection-1_injector.c
-	$(CC) -o injector.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o pmparser.o 3-22_Process_Injection-1_injector.o
+	$(CC) -o injector.exe Harkledir.o Harkleproc.o Harkletrace.o Memoroad.o Fileroad.o pmparser.o 3-22_Process_Injection-1_injector.o
 
 tests:
 	$(CC) -c Fileroad.c
