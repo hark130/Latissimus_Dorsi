@@ -800,7 +800,7 @@ void* mem_hunt(void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t 
 	{
 		for (i = 0; i <= (haystackLen - needleLen); i++)
 		{
-			if (0 == memcmp(haystack_ptr + i, needle_ptr, needlelen))
+			if (0 == memcmp(haystack_ptr + i, needle_ptr, needleLen))
 			{
 				retVal = haystack_ptr + i;
 				break;
