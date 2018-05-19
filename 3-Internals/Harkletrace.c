@@ -1,5 +1,9 @@
+#include <errno.h>								// errno
 #include "Harklerror.h"							// HARKLE_ERROR, HARKLE_ERRNO, HARKLE_WARNG
+#include "Memoroad.h"							// get_me_memory()
 #include <stdbool.h>							// bool, true, false
+#include <sys/ptrace.h>							// ptrace()
+#include <sys/types.h>							// pid_t
 
 
 /*
@@ -98,7 +102,7 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	{
 		for (i = 0; i < srcLen; i++)
 		{
-			ptRetVal = ptrace(PTRACE_PEEKDATA, pid, dest_ptr + i, NULL);
+			ptRetVal = ptrace(PTRACE_PEEKDATA, pid, src_ptr + i, NULL);
 			
 			if (ptRetVal == -1)
 			{
@@ -111,9 +115,9 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 			}
 			else
 			{
-				tmp_ptr = memcpy((*(retVal + i)), &ptRetVal, sizeof(ptRetVal));
+				tmp_ptr = memcpy(retVal + i, &ptRetVal, sizeof(ptRetVal));
 				
-				if (tmp_ptr != (*(retVal + i)))
+				if (tmp_ptr != retVal + i)
 				{
 					*errNum = errno;
 					HARKLE_ERROR(Harkletrace, htrace_read_data, memcpy failed);
@@ -132,7 +136,7 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 		// retVal
 		if (retVal)
 		{
-			if (false == release_a_string_len(&retVal, srcLen))
+			if (false == release_a_string_len((char**)&retVal, srcLen))
 			{
 				HARKLE_ERROR(Harkletrace, htrace_read_data, release_a_string_len failed);
 			}
@@ -236,7 +240,7 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	// CLEAN UP
 	if (lastAddr)
 	{
-		if (false == release_a_string_len(&lastAddr, sizeof(long))
+		if (false == release_a_string_len((char**)&lastAddr, sizeof(long)))
 		{
 			HARKLE_ERROR(Harkletrace, htrace_write_data, release_a_string_len failed);
 		}
