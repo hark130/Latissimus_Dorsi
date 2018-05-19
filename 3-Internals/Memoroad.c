@@ -21,10 +21,6 @@
 #define MEMSET_DEFAULT 0x0
 #endif  // MEMSET_DEFAULT
 
-#ifndef HARKLE_ERROR
-#define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
-#endif  // HARKLE_ERROR
-
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////// ALLOCATION FUNCTIONS START /////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -561,7 +557,8 @@ struct iovec* copy_remote_to_local(pid_t pid, void* remoteMem, size_t numBytes)
 		{
 			errNum = errno;
 			HARKLE_ERROR(Memoroad, copy_remote_to_local, process_vm_readv failed);
-			fprintf(stderr, "process_vm_readv() returned errno:\t%s\n", strerror(errNum));
+			HARKLE_ERRNO(Memoroad, process_vm_readv, errNum);
+			// fprintf(stderr, "process_vm_readv() returned errno:\t%s\n", strerror(errNum));
 			success = false;
 		}
 		else if (pvrRetVal != numBytes)
@@ -638,7 +635,8 @@ int copy_local_to_remote(pid_t pid, void* remoteMem, void* localMem, size_t numB
 		{
 			retVal = errno;
 			HARKLE_ERROR(Memoroad, copy_local_to_remote, process_vm_writev failed);
-			fprintf(stderr, "process_vm_writev() returned errno:\t%s\n", strerror(retVal));
+			HARKLE_ERRNO(Memoroad, process_vm_writev, retVal);
+			// fprintf(stderr, "process_vm_writev() returned errno:\t%s\n", strerror(retVal));
 			success = false;
 		}
 		else if (pvwRetVal != numBytes)
@@ -703,7 +701,8 @@ int change_mmap_prot(void* mem_ptr, size_t memLen, int newProt)
 		{
 			retVal = errno;
 			HARKLE_ERROR(Memoroad, change_mmap_prot, mprotect failed);
-			fprintf(stderr, "mprotect() returned errno:\t%s\n", strerror(retVal));			
+			HARKLE_ERRNO(Memoroad, mprotect, retVal);
+			// fprintf(stderr, "mprotect() returned errno:\t%s\n", strerror(retVal));
 		}		
 	}
 	
