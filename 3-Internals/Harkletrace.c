@@ -206,7 +206,7 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 				}
 				else
 				{
-					if (lastAddr != memcpy(lastAddr, src_ptr, srcLen % sizeof(long)))
+					if (lastAddr != memcpy(lastAddr, src_ptr + i, srcLen % sizeof(long)))
 					{
 						retVal = errno;
 						HARKLE_ERROR(Harkletrace, htrace_write_data, memcpy failed);
@@ -217,12 +217,20 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 					else
 					{
 						ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, lastAddr);
+						for (int j = 0; j < sizeof(unsigned long); j++)
+						{
+							fprintf(stdout, "%02X", (*(((unsigned char*)lastAddr) + j)));  // DEBUGGING
+						}
 					}
 				}
 			}
 			else
 			{
 				ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
+				for (int j = 0; j < sizeof(unsigned long); j++)
+				{
+					fprintf(stdout, "%02X", (*(((unsigned char*)src_ptr) + i + j)));  // DEBUGGING
+				}
 			}
 			
 			if (ptRetVal == -1)
