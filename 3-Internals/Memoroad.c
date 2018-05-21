@@ -793,6 +793,22 @@ void* mem_hunt(void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t 
 		HARKLE_ERROR(Memoroad, mem_hunt, Invalid length);
 		success = false;
 	}
+
+	// fprintf(stdout, "needleLen is %zu\n", needleLen);  // DEBUGGING
+	// // char* temp = (char*)needle_ptr;
+	// for (int i = 0; i < needleLen; i++)
+	// {
+	// 	// fprintf(stdout, "%02X", temp[i]);
+	// 	fprintf(stdout, "%02X", (*(((unsigned char*)needle_ptr) + i)));
+	// 	// fprintf(stdout, "%c", (*((unsigned char*)needle_ptr + i)));
+	// }
+	// fprintf(stdout, "\n");
+
+	// for (int i = 0; i < haystackLen; i++)
+	// {
+	// 	fprintf(stdout, "%02X", (*(((unsigned char*)haystack_ptr) + i)));
+	// }
+	// fprintf(stdout, "\n");
 	
 	// FIND IT
 	if (true == success)
