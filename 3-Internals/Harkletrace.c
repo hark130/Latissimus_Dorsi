@@ -190,7 +190,7 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	// LOOP PTRACE
 	if (true == success)
 	{
-		for (i = 0; i < srcLen; i++)
+		for (i = 0; i < srcLen; i+= sizeof(long))
 		{
 			// Handle that last awkward bit
 			if (true == unaligned && i > (srcLen - (srcLen % sizeof(long))))
@@ -216,21 +216,44 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 					}
 					else
 					{
+						fprintf(stdout, "htrace_write_data() is attempting to write this FINAL data:\t");  // DEBUGGING
 						ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, lastAddr);
 						for (int j = 0; j < sizeof(unsigned long); j++)
 						{
 							fprintf(stdout, "%02X", (*(((unsigned char*)lastAddr) + j)));  // DEBUGGING
 						}
+						fprintf(stdout, "\n");
 					}
 				}
 			}
 			else
 			{
-				ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
-				for (int j = 0; j < sizeof(unsigned long); j++)
-				{
-					fprintf(stdout, "%02X", (*(((unsigned char*)src_ptr) + i + j)));  // DEBUGGING
-				}
+				/* DEBUGGING */
+				// fprintf(stdout, "Attempting to write this data: ");  // DEBUGGING
+				// for (int j = 0; j < sizeof(unsigned long); j++)
+				// {
+				// 	fprintf(stdout, "%02X", (*(((unsigned char*)dest_ptr) + i + j)));  // DEBUGGING
+				// }
+				// fprintf(stdout, " with this: ");
+				// for (int j = 0; j < sizeof(unsigned long); j++)
+				// {
+				// 	fprintf(stdout, "%02X", (*(((unsigned char*)src_ptr) + i + j)));  // DEBUGGING
+				// }
+
+				// errno = 0;  // DEBUGGING... just a test
+
+				// ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
+				ptRetVal = ptrace(PTRACE_POKETEXT, pid, dest_ptr + i, src_ptr + i);
+
+				// HARKLE_ERRNO(Harkletrace, ptrace, errno);
+
+				/* DEBUGGING */
+				// fprintf(stdout, " and this happened: ");
+				// for (int j = 0; j < sizeof(unsigned long); j++)
+				// {
+				// 	fprintf(stdout, "%02X", (*(((unsigned char*)dest_ptr) + i + j)));  // DEBUGGING
+				// }
+				// fprintf(stdout, "\n");
 			}
 			
 			if (ptRetVal == -1)
