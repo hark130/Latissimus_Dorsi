@@ -99,6 +99,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Linux Journal: Playing with ptrace [Part I](https://www.linuxjournal.com/article/6100) and [Part II](https://www.linuxjournal.com/article/6210)
 * Phrack: [Building ptrace injecting shellcodes](http://phrack.org/issues/59/12.html)
 * [How to translate virtual to physical addresses through /proc/pid/pagemap](http://fivelinesofcode.blogspot.in/2014/03/how-to-translate-virtual-to-physical.html)
+* [Writing a Self-Mutating x86_64 C Program](https://shanetully.com/2013/12/writing-a-self-mutating-x86_64-c-program/)
 
 ## TO DO
 
