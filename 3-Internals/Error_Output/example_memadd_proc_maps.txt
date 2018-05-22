@@ -1,0 +1,18 @@
+00400000-00401000 r-xp 00000000 08:21 49689695                           /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/memadd.exe
+00600000-00601000 r--p 00000000 08:21 49689695                           /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/memadd.exe
+00601000-00602000 rw-p 00001000 08:21 49689695                           /home/joe/Documents/Personal/Programming/Latissimus_Dorsi/3-Internals/memadd.exe
+00eea000-00f0c000 rw-p 00000000 00:00 0                                  [heap]
+7f5a8692f000-7f5a86aef000 r-xp 00000000 08:01 6029587                    /lib/x86_64-linux-gnu/libc-2.23.so
+7f5a86aef000-7f5a86cef000 ---p 001c0000 08:01 6029587                    /lib/x86_64-linux-gnu/libc-2.23.so
+7f5a86cef000-7f5a86cf3000 r--p 001c0000 08:01 6029587                    /lib/x86_64-linux-gnu/libc-2.23.so
+7f5a86cf3000-7f5a86cf5000 rw-p 001c4000 08:01 6029587                    /lib/x86_64-linux-gnu/libc-2.23.so
+7f5a86cf5000-7f5a86cf9000 rw-p 00000000 00:00 0 
+7f5a86cf9000-7f5a86d1f000 r-xp 00000000 08:01 6029581                    /lib/x86_64-linux-gnu/ld-2.23.so
+7f5a86ef8000-7f5a86efb000 rw-p 00000000 00:00 0 
+7f5a86f1e000-7f5a86f1f000 r--p 00025000 08:01 6029581                    /lib/x86_64-linux-gnu/ld-2.23.so
+7f5a86f1f000-7f5a86f20000 rw-p 00026000 08:01 6029581                    /lib/x86_64-linux-gnu/ld-2.23.so
+7f5a86f20000-7f5a86f21000 rw-p 00000000 00:00 0 
+7fff2521c000-7fff2523d000 rw-p 00000000 00:00 0                          [stack]
+7fff25395000-7fff25398000 r--p 00000000 00:00 0                          [vvar]
+7fff25398000-7fff2539a000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
