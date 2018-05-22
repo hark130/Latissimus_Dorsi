@@ -703,7 +703,11 @@ int change_mmap_prot(void* mem_ptr, size_t memLen, int newProt)
 			HARKLE_ERROR(Memoroad, change_mmap_prot, mprotect failed);
 			HARKLE_ERRNO(Memoroad, mprotect, retVal);
 			// fprintf(stderr, "mprotect() returned errno:\t%s\n", strerror(retVal));
-		}		
+		}
+		else
+		{
+			// fprintf(stdout, "[*] mprotect returned %d\n", retVal);  // DEBUGGING
+		}
 	}
 	
 	// DONE
