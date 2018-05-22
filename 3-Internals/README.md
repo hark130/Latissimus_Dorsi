@@ -98,6 +98,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [Understanding the Memory Layout of Linux Executables](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
 * Linux Journal: Playing with ptrace [Part I](https://www.linuxjournal.com/article/6100) and [Part II](https://www.linuxjournal.com/article/6210)
 * Phrack: [Building ptrace injecting shellcodes](http://phrack.org/issues/59/12.html)
+* [How to translate virtual to physical addresses through /proc/pid/pagemap](http://fivelinesofcode.blogspot.in/2014/03/how-to-translate-virtual-to-physical.html)
 
 ## TO DO
 
