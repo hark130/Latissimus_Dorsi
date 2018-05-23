@@ -100,6 +100,9 @@ Developers will have an in-depth working knowledge of Linux Internals
 * Phrack: [Building ptrace injecting shellcodes](http://phrack.org/issues/59/12.html)
 * [How to translate virtual to physical addresses through /proc/pid/pagemap](http://fivelinesofcode.blogspot.in/2014/03/how-to-translate-virtual-to-physical.html)
 * [Writing a Self-Mutating x86_64 C Program](https://shanetully.com/2013/12/writing-a-self-mutating-x86_64-c-program/)
+* [Linux - Infecting Running Processes](https://0x00sec.org/t/linux-infecting-running-processes/1097) and again [here](https://www.real0day.com/hacking-tutorials/2017/11/6/injecting-a-running-process-linux)
+* [Read this later](https://github.com/eklitzke/ptrace-syscall) and then read [this](https://eklitzke.org/ptrace) and [this](https://eklitzke.org/ptrace-continued)
+* [The “ptrace” Solution to Stack Integrity Attacks in GNU/Linux Systems](http://www.ubishops.ca/wp-content/uploads/leon20150504.pdf)
 
 ## TO DO
 
