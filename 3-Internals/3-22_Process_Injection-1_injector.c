@@ -502,8 +502,8 @@ int main(int argc, char* argv[])
 			// newRegs.rip = (unsigned long long)tmpPM_ptr->addr_start + 0x0180;  // Temp hard-coded value to test a theory
 			//////////////////////////////////////////////// HERE ////////////////////////////////////////////////
 			// Do a strstr on nopnopnop (909090) and set RIP there
-			// newRegs.rip = (unsigned long long)codeStart + 2;  // Is RIP being decremented upon resume?!
-			newRegs.rip = (unsigned long long)codeStart;
+			newRegs.rip = (unsigned long long)codeStart + 2;  // Is RIP being decremented upon resume?!
+			// newRegs.rip = (unsigned long long)codeStart;
 			fprintf(stdout, "RIP: \t%llx\n", newRegs.rip);  // DEBUGGING
 			fprintf(stdout, "Code:\t%llx\n", (unsigned long long)codeStart);  // DEBUGGING
 
@@ -545,26 +545,26 @@ int main(int argc, char* argv[])
 		fprintf(stdout, "RDI:\t%llx\n", newRegs.rdi);  // DEBUGGING
 		fprintf(stdout, "RIP:\t%llx\n", newRegs.rip);  // DEBUGGING
 		fprintf(stdout, "RSP:\t%llx\n", newRegs.rsp);  // DEBUGGING
-		getchar();  // DEBUGGING
+		// getchar();  // DEBUGGING
 	}	
 
 	// 8. Resume execution
-	if (true == success)
-	{
-		ptRetVal = ptrace(PTRACE_CONT, vicPID->pidNum, NULL, NULL);
+	// if (true == success)
+	// {
+	// 	ptRetVal = ptrace(PTRACE_CONT, vicPID->pidNum, NULL, NULL);
 		
-		if (-1 == ptRetVal)
-		{
-			errNum = errno;
-			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
-			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
-			success = false;
-		}
-		else
-		{
-			fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
-		}
-	}
+	// 	if (-1 == ptRetVal)
+	// 	{
+	// 		errNum = errno;
+	// 		HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+	// 		fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+	// 		success = false;
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
+	// 	}
+	// }
 	// getchar();  // DEBUGGING
 
 	// 9. Wait until the injected code finishes running and hits a SIGTRAP
