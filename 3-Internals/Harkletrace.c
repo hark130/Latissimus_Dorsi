@@ -6,19 +6,6 @@
 #include <sys/types.h>							// pid_t
 
 
-/*
-	Purpose - Read a 'blob' from a PID's memory address using ptrace(PTRACE_PEEKDATA)
-	Input
-		pid - The "tracee" PID (see: ptrace(2))
-		src_ptr - Offset into the "tracee"s USER area
-		srcLen - Length of the 'blob'
-		errNum [Out] - Pointer to an integer in which to store errno on error
-	Output
-		On success, pointer to the 'blob' being read
-		On failure, NULL is returned and errno is assigned to errNum
-	Notes:
-		The void* returned by this function is NOT nul-terminated
- */
 void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 {
 	// LOCAL VARIABLES
@@ -27,6 +14,7 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	bool success = true;
 	size_t i = 0;  // Iterating variable
 	long ptRetVal = 0;  // Store the ptrace() return value here
+	// size_t newSrcLen = 0;  // Word-align the source
 	
 	// INPUT VALIDATION
 	if (!errNum)
@@ -59,13 +47,17 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 		}
 		
 		// Warnings
-		if (!(srcLen % sizeof(void*)))
+		if (srcLen % sizeof(void*))
 		{
 			// I'm not sure if this is a big deal or not.
 			// This may not ever happen.
 			// If it ever does, I'm sure I should do something about it.
 			// fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - The length of the 'blob' is not word-aligned");  // DEBUGGING
 			HARKLE_WARNG(Harkletrace, htrace_read_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
+			// HARKLE_WARNG(Harkletrace, htrace_read_data, Padding the 'blob');  // DEBUGGING
+			// fprintf(stdout, "Reading %zu bytes\n", srcLen);  // DEBUGGING
+			// newSrcLen = srcLen + (srcLen % sizeof(void*));
+			// fprintf(stdout, "Now at  %zu bytes\n", newSrcLen);  // DEBUGGING
 		}
 		
 		if (sizeof(void*) != sizeof(ptRetVal))
@@ -100,8 +92,10 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	// LOOP PTRACE
 	if (true == success)
 	{
-		for (i = 0; i < srcLen; i++)
+		for (i = 0; i < (srcLen - sizeof(void*)); i++)  // Errors reading from the last 8 bytes?!
+		// for (i = 0; i < srcLen; i++)
 		{
+			// fprintf(stdout, "Peeking into PID %d's %p which is %zu length.\n", pid, src_ptr + i, srcLen);  // DEBUGGING
 			ptRetVal = ptrace(PTRACE_PEEKDATA, pid, src_ptr + i, NULL);
 			
 			if (ptRetVal == -1)
@@ -274,6 +268,113 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 		if (false == release_a_string_len((char**)&lastAddr, sizeof(long)))
 		{
 			HARKLE_ERROR(Harkletrace, htrace_write_data, release_a_string_len failed);
+		}
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
+/*
+	Purpose - Match a snippet of memory (needle) in a PID's larger 'blob' of memory
+	Input
+		pid - The PID of the target process
+		haystack_ptr - A pointer to a memory area of length haystackLen
+		needle_ptr - A pointer to a memory area of length needleLen
+		haystackLen - The size of the memory area haystack_ptr points to
+		needleLen - The size of the memory area needle_ptr points to
+	Output
+		On success...
+			Offset to the first occurrence of needle_ptr in haystack_ptr
+			-or-
+			-1 if needle_ptr is not found in haystack_ptr
+		On failure, -2
+	Notes:
+		If this function sounds like strstr() and memcmp() had a child and then married
+			ptrace(PTRACE_POKEDATA), then you understand what I'm trying to do here.
+ */
+size_t pid_mem_hunt(pid_t pid, void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t needleLen)
+{
+	// LOCAL VARIABLES
+	size_t retVal = -1;
+	bool success = true;  // Make this false if anything fails
+	// void* tempRetVal = NULL;  // Store string.h function calls here
+	size_t i = 0;  // Iterating variable
+	void* pidHaystack_ptr = NULL;  // Read the PID's memory here
+	int errNum = 0;  // Store errnos here
+	
+	// INPUT VALIDATION
+	if (pid < 1)
+	{
+		HARKLE_ERROR(Harkletrace, pid_mem_hunt, Invalid PID);
+		success = false;
+	}
+	else if (!haystack_ptr || !needle_ptr)
+	{
+		HARKLE_ERROR(Harkletrace, pid_mem_hunt, NULL pointer);
+		success = false;
+	}
+	else if (haystackLen < 1 || needleLen < 1 || needleLen > haystackLen)
+	{
+		HARKLE_ERROR(Harkletrace, pid_mem_hunt, Invalid length);
+		success = false;
+	}
+
+	// READ HAYSTACK LOCALLY
+	if (true == success)
+	{
+		pidHaystack_ptr = htrace_read_data(pid, haystack_ptr, haystackLen, &errNum);
+
+		if (!pidHaystack_ptr && errNum)
+		{
+			HARKLE_ERROR(Harkletrace, pid_mem_hunt, htrace_read_data failed);
+			HARKLE_ERRNO(Harkletrace, htrace_read_data, errNum);
+			success = false;
+			retVal = -2;
+		}
+		else if (pidHaystack_ptr && !errNum)
+		{
+			if (haystack_ptr > pidHaystack_ptr)
+			{
+				HARKLE_ERROR(Harkletrace, pid_mem_hunt, htrace_read_data failed out of bounds);
+				HARKLE_ERRNO(Harkletrace, htrace_read_data, errNum);
+				success = false;
+			retVal = -2;
+			}
+			else
+			{
+				retVal = pidHaystack_ptr - haystack_ptr;
+			}
+		}
+		else  // How did we get here?!
+		{
+			HARKLE_ERROR(Harkletrace, pid_mem_hunt, Haystack logic failed);
+			HARKLE_ERRNO(Harkletrace, htrace_read_data, errNum);
+			success = false;
+			retVal = -2;
+		}
+	}
+
+	// FIND IT
+	if (true == success)
+	{
+		for (i = 0; i <= (haystackLen - needleLen); i++)
+		{
+			if (0 == memcmp(pidHaystack_ptr + i, needle_ptr, needleLen))
+			{
+				retVal = i;
+				break;
+			}
+		}
+	}
+
+	// CLEAN UP
+	if (pidHaystack_ptr)
+	{
+		if (false == release_a_string_len((char**)&pidHaystack_ptr, haystackLen))
+		{
+			HARKLE_ERROR(Harkletrace, pid_mem_hunt, release_a_string_len failed);
 		}
 	}
 	
