@@ -1,22 +1,49 @@
 # MEMSET RESEARCH
 
 ## BACKGROUND
+
 Reportedly, attempts to memset() memory that is no longer utilized is optimized out by most compilers.
+
 [MSC06-C. Beware of compiler optimizations](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
 
 ## RESEARCH
+
 I wish to find a way to properly (see: compliant code) 'clear' memory before it is released, free()d, or otherwise left behind.
 
 ## PLAN
+
+### Situations
+
 I have devised a thorough combination of situations I wish to attempt to attain this goal.  
-- Thing - A list of different "things" to attempt to memset (e.g., stack memory, heap memory, mmap()'d memory)
+- Thing - A list of different "things" to attempt to memset
+    1. Local scope (stack memory)
+    2. Global scope (stack memory)
+    3. Heap memory
+    4. mmap() memory
 - Trick - A list of "tricks" to attempt (e.g., volatile, explicit_bzero)
+	1. None
+	2. Volatile keyword
+	3. pragma optimize()
+	4. memset_s()
+	5. "do nothing" function
+	6. read/write/replace
+	7. explicit_bzero()
 - Object - A list of "objects" to call memset (e.g., function, goto, inline assembly)
+	1. Function
+	2. Goto label
+	3. Inline assembly
 - Scheme - A list of compilation schemes to attempt (e.g., linked object code, shared object)
+	1. main()
+	2. local function()
+	3. Header/definition compiled and linked together all at once
+	4. Header/definition and main.c compiled separate but linked together
+	5. Shared object
+	
+### Results Sheet
 	
 Here is the combination of all my ideas into a chart.  That way, I can track my progress and record my results.
 
-| Source Filename | What          | Trick                   | Object          | Scheme            | Results |
+| Source Filename | Thing         | Trick                   | Object          | Scheme            | Results |
 | :-------------- | :-----------: | :---------------------: | :-------------: | :---------------: | :-----: |
 |                 | Local scope   | None                    | Function        | main()            | 
 |                 | Global scope  | None                    | Function        | main()            | 
@@ -438,3 +465,17 @@ Here is the combination of all my ideas into a chart.  That way, I can track my 
 |                 | Global scope  | explicit_bzero          | Inline Assembly | Shared Object     |
 |                 | Heap memory   | explicit_bzero          | Inline Assembly | Shared Object     |
 |                 | mmap() memory | explicit_bzero          | Inline Assembly | Shared Object     |
+
+### Testing Steps
+
+1. Write and source-control the code file
+2. Add the code filename to the chart (zeroize-main/header/def-WXYZ.c
+	- W == Thing number
+	- X == Trick number
+	- Y == Object number
+	- Z == Scheme number
+	- Example: Utilizing inline assembly, with the volatile keyword, that has been compiled into a shared library, on a variable of local scope would use the WXYZ number of 1235.  1 for "local scope", 2 for "volatile", 3 for "assembly", and 5 for "shared object".
+3. Add the necessary recipe to the Makefile
+4. Update the test file
+5. Run the tests
+6. Record the results in the chart above
