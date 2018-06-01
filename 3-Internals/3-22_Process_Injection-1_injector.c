@@ -558,9 +558,10 @@ int main(int argc, char* argv[])
 	}
 
 	// 9. Update RIP to point to the injected code
-	if (true == success && true == modifiedPerms)
+	if (true == success)
 	{
 		// 9.1. Find nopnopnop slide in the opcode
+		codeStart = NULL;  // For safety
 		codeStartOffset = pid_mem_hunt(vicPID->pidNum, (void*)tmpPM_ptr->addr_start, (void*)nopCanary, tmpPM_ptr->length, sizeof(nopCanary) / sizeof(*nopCanary));
 
 		if (-1 == codeStartOffset)
@@ -603,7 +604,8 @@ int main(int argc, char* argv[])
 			{
 				errNum = errno;
 				HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
-				fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+				HARKLE_ERRNO(injector, ptrace, errNum);
+				// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
 				success = false;
 			}
 			else
@@ -664,7 +666,8 @@ int main(int argc, char* argv[])
 		{
 			errNum = errno;
 			HARKLE_ERROR(injector, main, waitpid failed);
-			fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
+			HARKLE_ERRNO(injector, waitpid, errNum);
+			// fprintf(stderr, "waitpid() returned errno:\t%s\n", strerror(errNum));
 			success = false;
 		}
 		else
@@ -702,74 +705,84 @@ int main(int argc, char* argv[])
 	// getchar();  // DEBUGGING
 
 	// 12. Restore the process back to its original state
-// 	if (true == success)
-// 	{
-// 		// 12.1. Restore the registers
-// 		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &oldRegs);
+ 	if (true == success)
+ 	{
+ 		// 12.1. Restore the registers
+ 		ptRetVal = ptrace(PTRACE_SETREGS, vicPID->pidNum, NULL, &oldRegs);
 
-// 		if (-1 == ptRetVal)
-// 		{
-// 			errNum = errno;
-// 			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
-// 			fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
-// 			success = false;
-// 		}
-// 		else
-// 		{
-// 			fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
-// 		}
-// 		// getchar();  // DEBUGGING
+ 		if (-1 == ptRetVal)
+ 		{
+ 			errNum = errno;
+ 			HARKLE_ERROR(injector, main, PTRACE_SETREGS failed);
+			HARKLE_ERRNO(injector, ptrace, errNum);
+ 			// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(errNum));
+ 			success = false;
+ 		}
+ 		else
+ 		{
+ 			fprintf(stdout, "[*] Successfully restored registers\n");  // DEBUGGING
+ 		}
+ 		// getchar();  // DEBUGGING
 
-	// 	// 12.2. Change memory to write permissions
-	// 	tempRetVal = 0;
-	// 	// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-	// 	// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
-
-	// 	// getchar();  // DEBUGGING
-	// 	if (tempRetVal)
-	// 	{
-	// 		HARKLE_ERROR(injector, main, change_mmap_prot failed);
-	// 		fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
-	// 		success = false;
-	// 	}
-	// 	else
+		// 12.2. Change memory to write permissions
+		if (true == success && true == modifiedPerms)
 		{
-	// 		// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
-	// 		fprintf(stdout, "[*] REmodified mapped memory permissions (rw-p)\n");  // DEBUGGING
-		
-	// 		// 12.3. Restore the mapped memory
-	// 		if (copy_local_to_remote(vicPID->pidNum, \
-	// 								 tmpPM_ptr->addr_start, \
-	// 								 localBackup->iov_base, \
-	// 								 localBackup->iov_len))
-	// 		{
-	// 			HARKLE_ERROR(injector, main, copy_local_to_remote failed);
-	// 			success = false;
-	// 		}
-	// 		else
-	// 		{
-	// 			fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
+			tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+										  MROAD_PROT_READ | MROAD_PROT_WRITE);
 
-	// 			// 12.4. Change the permissions on the memory back to r-xp
-	// 			tempRetVal = 0;
-	// 			// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-	// 			// 							  MROAD_PROT_READ | MROAD_PROT_EXEC);
-
-	// 			if (tempRetVal)
-	// 			{
-	// 				HARKLE_ERROR(injector, main, change_mmap_prot failed);
-	// 				HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
-	// 				success = false;
-	// 			}
-	// 			else
-	// 			{
-	// 				fprintf(stdout, "[*] REmodified mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
-	// 			}
-	// 		}
-	// 		// getchar();  // DEBUGGING
-	// 	}
+			// getchar();  // DEBUGGING
+			if (tempRetVal)
+			{
+				HARKLE_ERROR(injector, main, change_mmap_prot failed);
+				HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
+				// fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+				success = false;
+			}
+			else
+			{
+				// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
+				fprintf(stdout, "[*] REmodified mapped memory permissions (rw-p)\n");  // DEBUGGING
+			}
+		}
 		
-		// 12.4. Detack from the process to resume execution
+		// 12.3. Restore the mapped memory
+		if (true == success)
+		{
+			if (copy_local_to_remote(vicPID->pidNum, \
+									 tmpPM_ptr->addr_start, \
+									 localBackup->iov_base, \
+									 localBackup->iov_len))
+			{
+				HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
+			}
+		}
+		
+		// 12.4. Change the permissions on the memory back to r-xp
+		if (true == success && true == modifiedPerms)
+		{
+				tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+											  MROAD_PROT_READ | MROAD_PROT_EXEC);
+
+				if (tempRetVal)
+				{
+					HARKLE_ERROR(injector, main, change_mmap_prot failed);
+					HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
+					success = false;
+				}
+				else
+				{
+					fprintf(stdout, "[*] Restored mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
+				}
+			}
+			// getchar();  // DEBUGGING
+		}
+		
+		// 12.4. Detach from the process to resume execution
 		ptRetVal = ptrace(PTRACE_DETACH, vicPID->pidNum, NULL, NULL);
 
 		if (-1 == ptRetVal)
