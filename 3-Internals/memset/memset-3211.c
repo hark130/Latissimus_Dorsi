@@ -26,6 +26,7 @@
 #define NO_REALLY_I_MEAN_IT(thing) #thing
 #define SOURCE_NAME memset-3211
 
+
 int main(void)
 {	
 	char* buff = NULL;

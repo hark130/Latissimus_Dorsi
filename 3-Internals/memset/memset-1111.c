@@ -21,10 +21,14 @@
 #include <stdio.h>			// puts()
 #include <string.h>			// memset()
 
+#define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
+#define NO_REALLY_I_MEAN_IT(thing) #thing
+#define SOURCE_NAME memset-1111
+
 
 int main(void)
 {
-	char buff[] = { "memset-1111.c" };
+	char buff[] = { WRAP_IT(SOURCE_NAME) };
 	size_t buffLen = sizeof(buff);
 	int i = 0;
 	
@@ -34,7 +38,7 @@ int main(void)
 	// 2. memset() it
 	if (buff != memset(buff, 'H', buffLen))
 	{
-		HARKLE_ERROR(memset 1111, main, memset failed);
+		HARKLE_ERROR(SOURCE_NAME, main, memset failed);
 	}
 	
 	// 3. Done

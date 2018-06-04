@@ -22,7 +22,12 @@
 #include <stdio.h>			// puts()
 #include <string.h>			// memset()
 
-char buff[] = { "memset-2111.c" };
+#define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
+#define NO_REALLY_I_MEAN_IT(thing) #thing
+#define SOURCE_NAME memset-2111
+
+char buff[] = { WRAP_IT(SOURCE_NAME) };
+
 
 int main(void)
 {	
@@ -35,7 +40,7 @@ int main(void)
 	// 2. memset() it
 	if (buff != memset(buff, 'H', buffLen))
 	{
-		HARKLE_ERROR(memset 2111, main, memset failed);
+		HARKLE_ERROR(SOURCE_NAME, main, memset failed);
 	}
 	
 	// 3. Done
