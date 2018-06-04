@@ -31,7 +31,12 @@ int main(void)
 	size_t buffLen = sizeof(buff);
 
 	// 1. Use it
-	puts(buff);
+	// puts(buff);
+	for (int i = 0; i < (buffLen / sizeof(*buff)); i++)
+	{
+		putchar((*(buff + i)));
+	}
+	putchar('\n');
 
 	// 2. memset() it
 	if (buff != memset(buff, 'H', buffLen))
