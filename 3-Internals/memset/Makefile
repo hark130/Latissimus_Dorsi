@@ -37,3 +37,5 @@ all:
 	
 clean: 
 	rm -f *.o *.exe *.so
+
+# clear; make clean; make all; for x in `ls *.exe`; do ./$x; done
