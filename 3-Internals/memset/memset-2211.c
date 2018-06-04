@@ -25,7 +25,7 @@
 #define NO_REALLY_I_MEAN_IT(thing) #thing
 #define SOURCE_NAME memset-2211
 
-char buff[] = { WRAP_IT(SOURCE_NAME) };
+volatile char buff[] = { WRAP_IT(SOURCE_NAME) };
 
 
 int main(void)
