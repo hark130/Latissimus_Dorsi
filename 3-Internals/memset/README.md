@@ -50,7 +50,7 @@ Here is the combination of all my ideas into a chart.  That way, I can track my 
 | memset-3111.c   | Heap memory   | None                    | Function        | main()            | 
 |                 | mmap() memory | None                    | Function        | main()            | 
 | memset-1211.c   | Local scope   | Volatile                | Function        | main()            |
-|                 | Global scope  | Volatile                | Function        | main()            |
+| memset-2211.c   | Global scope  | Volatile                | Function        | main()            |
 |                 | Heap memory   | Volatile                | Function        | main()            |
 |                 | mmap() memory | Volatile                | Function        | main()            |
 |                 | Local scope   | pragma                  | Function        | main()            |
