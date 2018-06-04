@@ -1,3 +1,4 @@
+
 /*
  * 'SUB-OPTIMAL MEMSET' RESEARCH
  * Reportedly, the memset of memory that is about to be free()d is 'optimized' out
@@ -21,29 +22,38 @@
 #include <stdio.h>			// puts()
 #include <string.h>			// memset()
 
+#define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
+#define NO_REALLY_I_MEAN_IT(thing) #thing
+#define SOURCE_NAME memset-3111
 
 int main(void)
 {	
 	char* buff = NULL;
-	size_t buffLen = strlen("memset-3111.c");
-	int i = 0;
+	size_t buffLen = strlen(WRAP_IT(SOURCE_NAME));
 	
 	// 0. Allocate it
 	buff = (char*)calloc(buffLen + 1, sizeof(char));
 	
 	if (!buff)
 	{
-		HARKLE_ERROR(memset-3111, main, calloc failed);
+		HARKLE_ERROR(SOURCE_NAME, main, calloc failed);
 	}
 	else
 	{
 		// 1. Use it
-		puts(buff);
-
-		// 2. memset() it
-		if (buff != memset(buff, 'H', buffLen))
+		if (buff != strcpy(buff, WRAP_IT(SOURCE_NAME), buffLen))
 		{
-			HARKLE_ERROR(memset-3111, main, memset failed);
+			HARKLE_ERROR(SOURCE_NAME, main, strcpy failed);
+		}
+		else
+		{
+			puts(buff);
+
+			// 2. memset() it
+			if (buff != memset(buff, 'H', buffLen))
+			{
+				HARKLE_ERROR(SOURCE_NAME, main, memset failed);
+			}
 		}
 	}
 	
