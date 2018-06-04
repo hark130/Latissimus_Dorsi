@@ -133,7 +133,7 @@ Here is the combination of all my ideas into a chart.  That way, I can track my 
 |                 | Global scope  | None                    | Function        | Local func()      |
 |                 | Heap memory   | None                    | Function        | Local func()      |
 |                 | mmap() memory | None                    | Function        | Local func()      |
-|                 | Local scope   | Volatile                | Function        | Local func()      |
+| memset-1212*    | Local scope   | Volatile                | Function        | Local func()      |
 |                 | Global scope  | Volatile                | Function        | Local func()      |
 |                 | Heap memory   | Volatile                | Function        | Local func()      |
 |                 | mmap() memory | Volatile                | Function        | Local func()      |
