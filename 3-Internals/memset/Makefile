@@ -5,6 +5,9 @@ CC = gcc
 
 1111:
 	$(CC) -o memset-1111.exe memset-1111.c
+	
+1211:
+	$(CC) -o memset-1211.exe memset-1211.c
 
 2111:
 	$(CC) -o memset-2111.exe memset-2111.c
@@ -15,6 +18,7 @@ CC = gcc
 all:
 	$(MAKE) 0000
 	$(MAKE) 1111
+	$(MAKE) 1211
 	$(MAKE) 2111
 	$(MAKE) 3111
 
