@@ -23,27 +23,34 @@
 #include <stdio.h>			// puts()
 #include <string.h>			// memset()
 
+#define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
+#define NO_REALLY_I_MEAN_IT(thing) #thing
+#define SOURCE_NAME memset-0000
+
 
 int main(void)
 {
-	char buff[] = { "3-memset_Example-01_control.c" };
-	size_t buffLen = sizeof(buff) / sizeof(*buff);
+	char buff[] = { WRAP_IT(SOURCE_NAME) };
+	size_t buffLen = sizeof(buff);
 	int i = 0;
 	
 	// 1. Use it
 	puts(buff);
 	
 	// 2. memset() it
-	if (buff != memset(buff, '1', buffLen))
+	if (buff != memset(buff, 'H', buffLen - 1))
 	{
-		HARKLE_ERROR(memset Example 01, main, memset failed);
+		HARKLE_ERROR(SOURCE_NAME, main, memset failed);
 	}
 	else
 	{
-		// 3. use it again
-		for (i = 0; i < buffLen; i++)
+		// 3. Print it
+		puts(buff);
+
+		// 4. Use it again
+		for (i = 0; i < buffLen - 1; i++)
 		{
-			buff[i] = 'H';
+			buff[i] = 'a';
 		}
 		
 		puts(buff);
