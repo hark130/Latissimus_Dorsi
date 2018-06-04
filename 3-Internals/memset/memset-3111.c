@@ -19,6 +19,7 @@
 
 #include "Harklerror.h"		// HARKLE_ERROR
 #include <stdio.h>			// puts()
+#include <stdlib.h>			// calloc()
 #include <string.h>			// memset()
 
 #define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
@@ -40,7 +41,7 @@ int main(void)
 	else
 	{
 		// 1. Use it
-		if (buff != strcpy(buff, WRAP_IT(SOURCE_NAME), buffLen))
+		if (buff != strncpy(buff, WRAP_IT(SOURCE_NAME), buffLen))
 		{
 			HARKLE_ERROR(SOURCE_NAME, main, strcpy failed);
 		}
