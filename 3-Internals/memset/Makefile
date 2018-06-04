@@ -12,6 +12,9 @@ CC = gcc
 2111:
 	$(CC) -o memset-2111.exe memset-2111.c
 
+2211:
+	$(CC) -o memset-2211.exe memset-2211.c
+	
 3111:
 	$(CC) -o memset-3111.exe memset-3111.c
 
@@ -20,7 +23,8 @@ all:
 	$(MAKE) 1111
 	$(MAKE) 1211
 	$(MAKE) 2111
-	$(MAKE) 3111
-
+	$(MAKE) 2211
+	$(MAKE) 3111	
+	
 clean: 
 	rm -f *.o *.exe *.so
