@@ -25,6 +25,7 @@ Developers will demonstrate a comprehensive knowledge and ability to correctly i
 ## RESEARCH SOURCES
 
 * [Special Devices and File Systems](https://www.cs.rutgers.edu/~pxk/416/notes/14-specialfs.html)
+* [Intro to x86_64 Reverse Engineering](https://leotindall.com/tutorial/an-intro-to-x86_64-reverse-engineering/)
 
 ## TO DO
 
