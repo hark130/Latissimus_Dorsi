@@ -25,6 +25,11 @@ UP = ../
 3211:
 	$(CC) -o memset-3211.exe -I $(UP) memset-3211.c
 
+testing:
+	$(CC) -o Memoroad.o -I $(UP) -c $(UP)Memoroad.c
+	$(CC) -o Timeroad.o -I $(UP) -c $(UP)Timeroad.c
+	$(CC) -o memset-experiment.exe -I $(UP) Memoroad.o Timeroad.o automate_memset_experiment.c
+
 all:
 	$(MAKE) 0000
 	$(MAKE) 1111
@@ -33,7 +38,8 @@ all:
 	$(MAKE) 2111
 	$(MAKE) 2211
 	$(MAKE) 3111
-	$(MAKE) 3211	
+	$(MAKE) 3211
+	$(MAKE) testing
 	
 clean: 
 	rm -f *.o *.exe *.so
