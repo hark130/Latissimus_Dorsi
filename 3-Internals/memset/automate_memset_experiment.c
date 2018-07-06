@@ -8,7 +8,7 @@
 #include "Harklerror.h"							// HARKLE_ERROR
 #include "Memoroad.h"							// release_a_string()
 #include <stdbool.h>							// bool, true, false
-#include <stdio.h>								// sprintf()
+#include <stdio.h>								// sprintf(), fopen()
 #include "Timeroad.h"							// build_timestamp()
 
 /*
@@ -61,6 +61,13 @@
 #define OUTPUT_MEMSET_FOUND 	"Found"
 #define OUTPUT_MEMSET_MISSING	"Absent"
 #define OUTPUT_FILE_MISSING 	"No File"
+#define LOG_COL_1 "Source"
+#define LOG_COL_2 "Filename"
+#define LOG_COL_3 "Thing"
+#define LOG_COL_4 "Trick"
+#define LOG_COL_5 "Object"
+#define LOG_COL_6 "Scheme"
+#define LOG_COL_7 "Results"
 
 
 /*
@@ -70,6 +77,17 @@
  *		templateFname will be modified in-place
  */
 bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int nScheme, int nOpt);
+
+
+/*
+ *	PURPOSE - Log gathered information into a pre-opened .md formatted log file pointer
+ *	NOTES
+ *		Column alignment is hard-coded inside this function
+ *		If header is true, this function will automatically print a line to align the columns
+ */
+bool log_exp_entry(FILE *log_ptr, const char *col1, const char *col2, const char *col3, \
+	               const char *col4, const char *col5, const char *col6, const char *col7, \
+	               bool header);
 
 
 int main(void)
@@ -86,6 +104,8 @@ int main(void)
 	char logFilename[] = { "YYYYMMDD-HHMMSS_memset_results.md" };  // Log filename
 	char *tmp_ptr = NULL;  // Store return values here
 	int errNum = 0;  // Store errno here
+	errno = 0;
+	FILE *logFile = NULL;  // Opened log file
 
 	// INPUT VALIDATION
 	if (numTricks < 1 || numTricks < 1 || numObjects < 1 || numSchemes < 1 || numOpts < 1)
@@ -135,16 +155,45 @@ int main(void)
 		if (true == success)
 		{
 			puts(logFilename);  // DEBUGGING
+			logFile = fopen(logFilename, "w");
+
+			if (!logFile)
+			{
+				errNum = errno;
+				HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
+				HARKLE_ERRNO(automate_memset_experiment, fopen, errNum);
+				retVal = false;
+			}
+			else
+			{
+				if (false == log_exp_entry(logFile, LOG_COL_1, LOG_COL_2, LOG_COL_3, LOG_COL_4, \
+					                       LOG_COL_5, LOG_COL_6, LOG_COL_7, true))
+				{
+					HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
+					retVal = false;
+				}
+			}			
 		}
 	}
 
 	// Loop Input
-	// 	2. Update input filename
-	// 	3. Map input filename
-	// 	4. Parse mapped input file
-	// 	5. Print results to stdout
-	// 	6. Unmap input filename
+	// 		2. Update input filename
+	// 		3. Map input filename
+	// 		4. Parse mapped input file
+	// 		5. Print results to stdout
+	// 		6. Unmap input filename
+
 	// 7. Clean up
+	if (logFile)
+	{
+		if (EOF == fclose(logFile))
+		{
+			errNum = errno;
+			HARKLE_ERROR(automate_memset_experiment, main, fclose failed);
+			HARKLE_ERRNO(automate_memset_experiment, fclose, errNum);
+		}
+		logFile = NULL;
+	}
 
 	// DONE
 	return retVal;
@@ -162,6 +211,7 @@ bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int 
 	char *tmp_ptr = NULL;  // Store return values here
 	int tmpInt = 0;  // Store return values here
 	int errNum = 0;  // Store errno here
+	errno = 0;
 
 	// INPUT VALIDATION
 	if (!templateFname)
@@ -223,6 +273,58 @@ bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int 
 					errNum = errno;
 					HARKLE_ERROR(automate_memset_experiment, update_filename, sprintf failed);
 					HARKLE_ERRNO(automate_memset_experiment, memcpy, errNum);
+					retVal = false;
+				}
+			}
+		}
+	}
+
+	// DONE
+	return retVal;
+}
+
+
+bool log_exp_entry(FILE *log_ptr, const char *col1, const char *col2, const char *col3, \
+	               const char *col4, const char *col5, const char *col6, const char *col7, \
+	               bool header)
+{
+	// LOCAL VARIABLES
+	bool retVal = true;
+	int errNum = 0;  // Store errno here
+	errno = 0;
+
+	// INPUT VALIDATION
+	if (!log_ptr || !col1 || !col2 || !col3 || !col4 || !col5 || !col6 || !col7)
+	{
+		HARKLE_ERROR(automate_memset_experiment, log_exp_entry, NULL pointer);
+		retVal = false;
+	}
+	else if (!(*col1) || !(*col2) || !(*col3) || !(*col4) || !(*col5) || !(*col6) || !(*col7))
+	{
+		HARKLE_ERROR(automate_memset_experiment, log_exp_entry, Empty string);
+		retVal = false;
+	}
+
+	// LOG IT
+	if (true == retVal)
+	{
+		if (1 > fprintf(log_ptr, "| %s | %s | %s | %s | %s | %s | %s |\n", \
+			            col1, col2, col3, col4, col5, col6, col7))
+		{
+			errNum = errno;
+			HARKLE_ERROR(automate_memset_experiment, log_exp_entry, fprintf failed);
+			HARKLE_ERRNO(automate_memset_experiment, fprintf, errNum);
+			retVal = false;
+		}
+		else
+		{
+			if (true == header)
+			{
+				if (1 > fprintf(log_ptr, "| :- | :-: | :-: | :-: | :-: | :-: | :-: |\n"))
+				{
+					errNum = errno;
+					HARKLE_ERROR(automate_memset_experiment, log_exp_entry, fprintf failed);
+					HARKLE_ERRNO(automate_memset_experiment, fprintf, errNum);
 					retVal = false;
 				}
 			}
