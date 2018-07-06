@@ -4,8 +4,11 @@
  *	https://github.com/hark130/Latissimus_Dorsi/tree/memset/3-Internals/memset
  */
 
+#include <errno.h>								// errno
 #include "Harklerror.h"							// HARKLE_ERROR
+#include "Memoroad.h"							// release_a_string()
 #include <stdbool.h>							// bool, true, false
+#include <stdio.h>								// sprintf()
 #include "Timeroad.h"							// build_timestamp()
 
 /*
@@ -81,7 +84,8 @@ int main(void)
 	int numOpts = OPTIMIZATION_UPPER_LIMIT;
 	char tempFilename[] = { INPUT_FILE_PATH INPUT_FILE_TEMPLATE };  // Template input filename
 	char logFilename[] = { "YYYYMMDD-HHMMSS_memset_results.md" };  // Log filename
-	char *tmp_ptr = NULL;
+	char *tmp_ptr = NULL;  // Store return values here
+	int errNum = 0;  // Store errno here
 
 	// INPUT VALIDATION
 	if (numTricks < 1 || numTricks < 1 || numObjects < 1 || numSchemes < 1 || numOpts < 1)
@@ -95,13 +99,43 @@ int main(void)
 	if (true == success)
 	{
 		// Get timestamp
+		tmp_ptr = build_timestamp();
+
+		if (!tmp_ptr)
+		{
+			HARKLE_ERROR(automate_memset_experiment, main, build_timestamp failed);
+			success = false;
+		}
 
 		// Update logFilename
+		if (true == success)
+		{
+			if (logFilename != memcpy(logFilename, tmp_ptr, strlen(tmp_ptr)))
+			{
+				errNum = errno;
+				HARKLE_ERROR(automate_memset_experiment, main, strstr failed);
+				HARKLE_ERRNO(automate_memset_experiment, strstr, errNum);
+				retVal = false;
+			}
+		}
 
 		// Free timestamp
+		if (tmp_ptr)
+		{
+			if (false == release_a_string(&tmp_ptr))
+			{
+				HARKLE_ERROR(automate_memset_experiment, main, release_a_string failed);
+				retVal = false;
+				tmp_ptr = NULL;
+			}
+		}
 
 		// Create file
 		// Existing Harklemodule?
+		if (true == success)
+		{
+			puts(logFilename);  // DEBUGGING
+		}
 	}
 
 	// Loop Input
@@ -122,8 +156,11 @@ bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int 
 	// LOCAL VARIABLES
 	bool retVal = true;
 	char tempFnameStr[] = { "memset-" };
-	size_t tempFnameStrLen = sizeof(tempFnameStr) / sizeof(*tempFnameStr);
+	char tempNumStr[] = { "00000" };
+	size_t tempFnameStrLen = (sizeof(tempFnameStr) / sizeof(*tempFnameStr)) - 1;
+	size_t tempNumStrLen = (sizeof(tempNumStr) / sizeof(*tempNumStr)) - 1;
 	char *tmp_ptr = NULL;  // Store return values here
+	int tmpInt = 0;  // Store return values here
 	int errNum = 0;  // Store errno here
 
 	// INPUT VALIDATION
@@ -137,7 +174,7 @@ bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int 
 		HARKLE_ERROR(automate_memset_experiment, update_filename, Empty string);
 		retVal = false;
 	}
-	else if (strlen(templateFname) < (tempFnameStrLen + 5))
+	else if (strlen(templateFname) < (tempFnameStrLen + tempNumStrLen))
 	{
 		HARKLE_ERROR(automate_memset_experiment, update_filename, String too short);
 		retVal = false;
@@ -161,9 +198,34 @@ bool update_filename(char* templateFname, int nThing, int nTrick, int nObj, int 
 
 		if (!tmp_ptr)
 		{
-			// ERRNO
+			errNum = errno;
 			HARKLE_ERROR(automate_memset_experiment, update_filename, strstr failed);
+			HARKLE_ERRNO(automate_memset_experiment, strstr, errNum);
 			retVal = false;
+		}
+		else
+		{
+			tmp_ptr += tempFnameStrLen;  // Advance the pointer past the "needle" str
+
+			tmpInt = sprintf(tempNumStr, "%1d%1d%1d%1d%1d", nThing, nTrick, nObj, nScheme, nOpt);
+
+			if (tmpInt != tempNumStrLen)
+			{
+				errNum = errno;
+				HARKLE_ERROR(automate_memset_experiment, update_filename, sprintf failed);
+				HARKLE_ERRNO(automate_memset_experiment, sprintf, errNum);
+				retVal = false;
+			}
+			else
+			{
+				if (tmp_ptr != memcpy(tmp_ptr, tempNumStr, tempNumStrLen * sizeof(*tempNumStr)))
+				{
+					errNum = errno;
+					HARKLE_ERROR(automate_memset_experiment, update_filename, sprintf failed);
+					HARKLE_ERRNO(automate_memset_experiment, memcpy, errNum);
+					retVal = false;
+				}
+			}
 		}
 	}
 
