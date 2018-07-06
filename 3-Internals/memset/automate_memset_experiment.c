@@ -204,8 +204,8 @@ int main(void)
 						// 3. Map input filename
 						if (true == success)
 						{
-							// mapInFile_ptr = map_file_mode(tempFilename, O_RDONLY);
-							mapInFile_ptr = map_file_mode(tempFilename, O_RDWR);
+							mapInFile_ptr = map_file_mode(tempFilename, O_RDONLY);
+							// mapInFile_ptr = map_file_mode(tempFilename, O_RDWR);
 
 							if (!mapInFile_ptr)
 							{
