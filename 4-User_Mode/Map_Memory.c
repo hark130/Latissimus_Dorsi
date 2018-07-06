@@ -84,7 +84,18 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 		else
 		{
 			// 2. Get file descriptor for filename
-			fileDesc = open(filename, O_RDWR);
+			// Determine read-only permissions
+			if (O_RDONLY == (flags & O_RDONLY) && flags)
+			{
+				retVal->readOnly = true;
+			}
+			else
+			{
+				retVal->readOnly = false;
+			}
+
+			fileDesc = open(filename, flags);
+			// fileDesc = open(filename, O_RDWR);
 			if (0 > fileDesc)
 			{
 				fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to open '%s'!\n", filename);
@@ -123,12 +134,24 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 											 int fd,
 											 off_t offset);
 							 */
-							retVal->fileMem_ptr = mmap(NULL, \
-													   retVal->memSize, \
-													   PROT_READ | PROT_WRITE | PROT_EXEC, \
-													   MAP_SHARED, \
-													   fileDesc, \
-													   0);
+							if (true == retVal->readOnly)
+							{
+								retVal->fileMem_ptr = mmap(NULL, \
+														   retVal->memSize, \
+														   PROT_READ | PROT_EXEC, \
+														   MAP_SHARED, \
+														   fileDesc, \
+														   0);
+							}
+							else
+							{
+								retVal->fileMem_ptr = mmap(NULL, \
+														   retVal->memSize, \
+														   PROT_READ | PROT_WRITE | PROT_EXEC, \
+														   MAP_SHARED, \
+														   fileDesc, \
+														   0);
+							}
 							if (NULL == retVal->fileMem_ptr)
 							{
 								fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - mmap failed to map file descriptor %d into memory!\n", fileDesc);
@@ -169,15 +192,6 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 }
 
 
-/*
-	Purpose - Unmap a file's contents from memory
-	Input
-		memStruct_ptr - mappedMemory pointer
-		syncMem - if true, msync to file
-	Output - true on *total* success, otherwise false
-	Notes:
-		Calling function is responsible for free()'ing memStruct_ptr on success
- */
 bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 {
 	// LOCAL VARIABLES
@@ -189,7 +203,7 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 		if (NULL != memStruct_ptr->fileMem_ptr && memStruct_ptr->memSize > 0)
 		{
 			// 1. Sync memory with the file IAW syncMem
-			if (true == syncMem)
+			if (true == syncMem && false == memStruct_ptr->readOnly)
 			{
 				if (msync(memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize, MS_INVALIDATE | MS_SYNC))
 				{

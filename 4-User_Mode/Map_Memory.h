@@ -18,6 +18,7 @@ typedef struct mappedMemory
 	char* fileMem_ptr;
 	size_t memSize;
 	int memType;
+	bool readOnly;  // true if mapped with O_RDONLY
 } mapMem, *mapMem_ptr;
 /*
 	NOTE: Updates to the mappedMemory struct and/or memory type macros
@@ -73,7 +74,7 @@ mapMem_ptr map_file_mode(const char* filename, int flags);
 	Purpose - Unmap a file's contents from memory
 	Input
 		memStruct_ptr - mappedMemory pointer
-		syncMem - if true, msync to file
+		syncMem - if true, msync to file (unless memStruct_ptr->readOnly is true)
 	Output - true on success, otherwise false
 	Notes:
 		Calling function is responsible for free()'ing memStruct_ptr on success
