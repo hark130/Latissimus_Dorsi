@@ -5,7 +5,9 @@
  */
 
 #include <errno.h>								// errno
+#include <fcntl.h>								// open() flags
 #include "Harklerror.h"							// HARKLE_ERROR
+#include "Map_Memory.h"							// map_file_mode(), unmap_file(), free_struct()
 #include "Memoroad.h"							// release_a_string()
 #include <stdbool.h>							// bool, true, false
 #include <stdio.h>								// sprintf(), fopen()
@@ -106,6 +108,12 @@ int main(void)
 	int errNum = 0;  // Store errno here
 	errno = 0;
 	FILE *logFile = NULL;  // Opened log file
+	int nthThing = 1;  // Starting thing number
+	int nthTrick = 1;  // Starting trick number
+	int nthObject = 1;  // Starting object number
+	int nthScheme = 1;  // Starting scheme number
+	int nthOptim = 0;  // Starting optimization number
+	mapMem_ptr mapInFile_ptr = NULL;  // map_file_mode() input files here
 
 	// INPUT VALIDATION
 	if (numTricks < 1 || numTricks < 1 || numObjects < 1 || numSchemes < 1 || numOpts < 1)
@@ -162,7 +170,7 @@ int main(void)
 				errNum = errno;
 				HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
 				HARKLE_ERRNO(automate_memset_experiment, fopen, errNum);
-				retVal = false;
+				success = false;
 			}
 			else
 			{
@@ -170,20 +178,74 @@ int main(void)
 					                       LOG_COL_5, LOG_COL_6, LOG_COL_7, true))
 				{
 					HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
-					retVal = false;
+					success = false;
 				}
 			}			
 		}
 	}
 
 	// Loop Input
-	// 		2. Update input filename
-	// 		3. Map input filename
-	// 		4. Parse mapped input file
-	// 		5. Print results to stdout
-	// 		6. Unmap input filename
+	for (int i = nthThing; i <= numThings && true == success; i++)
+	{
+		for (int j = nthTrick; j <= numTricks && true == success; j++)
+		{
+			for (int k = nthObject; k <= numObjects && true == success; k++)
+			{
+				for (int l = nthScheme; l <= numSchemes && true == success; l++)
+				{
+					for (int m = nthOptim; m < numOpts && true == success; m++)
+					{
+						// 2. Update input filename
+						if (false == update_filename(tempFilename, i, j, k, l, m))
+						{
+							HARKLE_ERROR(automate_memset_experiment, main, update_filename failed);
+							success = false;
+						}
+						// 3. Map input filename
+						if (true == success)
+						{
+							// mapInFile_ptr = map_file_mode(tempFilename, O_RDONLY);
+							mapInFile_ptr = map_file_mode(tempFilename, O_RDWR);
 
-	// 7. Clean up
+							if (!mapInFile_ptr)
+							{
+								// 5. Print results to stdout
+								fprintf(stdout, "%s:\tUnable to map to memory\n", tempFilename);
+							}
+							else
+							{								
+								// 4. Parse mapped input file
+								// IMPLEMENT LATER
+
+								// 5. Print results to stdout
+								fprintf(stdout, "%s:\tPLACEHOLDER\n", tempFilename);
+
+								// 6. Log the results
+								// IMPLEMENT LATER
+
+								// 7. Unmap input filename
+								if (mapInFile_ptr)
+								{
+									// Unmap the memory
+									if (false == unmap_file(mapInFile_ptr, false))
+									{
+										HARKLE_ERROR(automate_memset_experiment, main, unmap_file failed);
+										success = false;
+									}
+									// Free the struct pointer
+									free_struct(&mapInFile_ptr);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	// 8. Clean up
+	// logFile
 	if (logFile)
 	{
 		if (EOF == fclose(logFile))
@@ -193,6 +255,17 @@ int main(void)
 			HARKLE_ERRNO(automate_memset_experiment, fclose, errNum);
 		}
 		logFile = NULL;
+	}
+	// mapInFile_ptr
+	if (mapInFile_ptr)
+	{
+		// Unmap the memory
+		if (false == unmap_file(mapInFile_ptr, false))
+		{
+			HARKLE_ERROR(automate_memset_experiment, main, unmap_file failed);
+		}
+		// Free the struct pointer
+		free_struct(&mapInFile_ptr);
 	}
 
 	// DONE
