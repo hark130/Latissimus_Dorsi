@@ -61,9 +61,9 @@
 /*
  *	OUTPUT MACROS
  */
-#define OUTPUT_MEMSET_FOUND 	"Found"
-#define OUTPUT_MEMSET_MISSING	"Absent"
-#define OUTPUT_FILE_MISSING 	"No File"
+#define OUTPUT_MEMSET_FOUND 	"memset Found"
+#define OUTPUT_MEMSET_MISSING	"memset Absent"
+#define OUTPUT_FILE_MISSING 	"No Source File"
 #define LOG_COL_1 "Source"
 #define LOG_COL_2 "Filename"
 #define LOG_COL_3 "Thing"
