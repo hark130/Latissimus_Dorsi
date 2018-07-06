@@ -16,8 +16,7 @@ struct tm* get_localtime(void);
 
 /*
 	Purpose - Translate the current local time into a YYYYMMDD-HHMMSS string format
-	Input
-		dtStruct - Pointer to a tm struct
+	Input - None
 	Output
 		On succes, heap-allocated, nul-terminated, datetime-stamp formatted string
 		On failure, NULL
