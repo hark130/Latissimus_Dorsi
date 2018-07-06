@@ -16,7 +16,7 @@
 
 #ifdef HARKLE_DEBUG
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
-#define HARKLE_ERRNO(header, funcName, errorNum) if (errno) { fprintf(stderr, "<<<ERROR>>> - %s - %s() returned errno:\t%s\n", #header, #funcName, strerror(errorNum)); }
+#define HARKLE_ERRNO(header, funcName, errorNum) if (errorNum) { fprintf(stderr, "<<<ERROR>>> - %s - %s() returned errno:\t%s\n", #header, #funcName, strerror(errorNum)); }
 #define HARKLE_WARNG(header, funcName, msg) do { fprintf(stderr, "¿¿¿WARNING??? - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
 #else
 #define HARKLE_ERROR(header, funcName, msg) ;;;
