@@ -1,13 +1,15 @@
+#include <errno.h>								// errno
+#include "Harklerror.h"							// HARKLE_ERROR
 #include "Map_Memory.h"
-#include <stdbool.h>		// bool, true, false
+#include <stdbool.h>							// bool, true, false
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/mman.h>		// mmap, msync, munmap
-#include <sys/stat.h>		// fstat
-#include <inttypes.h>		// intmax_t
-#include <fcntl.h>			// open
-#include <unistd.h>			// close
+#include <sys/mman.h>							// mmap, msync, munmap
+#include <sys/stat.h>							// fstat
+#include <inttypes.h>							// intmax_t
+#include <fcntl.h>								// open
+#include <unistd.h>								// close
 
 #ifndef MAX_TRIES
 // MACRO to limit repeated allocation attempts
@@ -53,24 +55,29 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 	int fileDesc = -1;  // Set to error value by default for the purposes of clean-up
 	struct stat fileStat;
 	int minFlags = O_RDONLY | O_WRONLY | O_RDWR;
+	int errNum = 0;  // Store errno here
+	errno = 0;
 
 	// fprintf(stdout, "Min Flags:\t%d\n", minFlags);  // DEBUGGING
 	// fprintf(stdout, "int flags:\t%d\n", flags);  // DEBUGGING	
 	// INPUT VALIDATION
 	if (NULL == filename)
 	{
-		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is NULL!\n");
-		return retVal;
+		HARKLE_ERROR(Map_Memory, map_file_mode, filename is NULL);
+		// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is NULL!\n");
+		// return retVal;
 	}
 	else if (0 == strlen(filename))
 	{
-		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is empty!\n");
-		return retVal;
+		HARKLE_ERROR(Map_Memory, map_file_mode, filename is empty);
+		// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - filename is empty!\n");
+		// return retVal;
 	}
 	else if (!(flags & minFlags) && flags != 0)
 	{
-		fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file_mode() - minimum flags missing!\n");
-		return retVal;
+		HARKLE_ERROR(Map_Memory, map_file_mode, minimum flags missing);
+		// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file_mode() - minimum flags missing!\n");
+		// return retVal;
 	}
 	else
 	{	
@@ -79,13 +86,14 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 		retVal = create_mapMem_ptr();
 		if (NULL == retVal)
 		{
-			fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - create_mapMem_ptr() returned NULL!\n");
+			HARKLE_ERROR(Map_Memory, map_file_mode, create_mapMem_ptr failed);
+			// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - create_mapMem_ptr() returned NULL!\n");
 		}
 		else
 		{
 			// 2. Get file descriptor for filename
 			// Determine read-only permissions
-			if (O_RDONLY == (flags & O_RDONLY) && flags)
+			if (O_RDONLY == (flags & O_RDONLY) || O_RDONLY == flags)
 			{
 				retVal->readOnly = true;
 			}
@@ -94,11 +102,12 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 				retVal->readOnly = false;
 			}
 
-			fileDesc = open(filename, flags);
-			// fileDesc = open(filename, O_RDWR);
+			// fileDesc = open(filename, flags);
+			fileDesc = open(filename, O_RDWR);
 			if (0 > fileDesc)
 			{
-				fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to open '%s'!\n", filename);
+				HARKLE_ERROR(Map_Memory, map_file_mode, Unable to open filename);
+				// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to open '%s'!\n", filename);
 			}
 			else
 			{
@@ -106,20 +115,23 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 				// 3.1. Get the file status
 				if (0 != fstat(fileDesc, &fileStat))
 				{
-					fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to fstat '%s'!\n", filename);
+					HARKLE_ERROR(Map_Memory, map_file_mode, Unable to fstat filename);
+					// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - unable to fstat '%s'!\n", filename);
 				}
 				else
 				{
 					// 3.2. Verify the file status indicates this is a regular file
 					if (!S_ISREG(fileStat.st_mode))
 					{
-						fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - '%s' is not a regular file!\n", filename);
+						HARKLE_ERROR(Map_Memory, map_file_mode, Not a regular file);
+						// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - '%s' is not a regular file!\n", filename);
 					}
 					else
 					{
 						if (0 >= fileStat.st_size)
 						{
-							fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - Invalid size of %jd for '%s'!\n", (intmax_t)fileStat.st_size, filename);
+							HARKLE_ERROR(Map_Memory, map_file_mode, Invalid file size);
+							// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - Invalid size of %jd for '%s'!\n", (intmax_t)fileStat.st_size, filename);
 						}
 						else
 						{
@@ -138,7 +150,7 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 							{
 								retVal->fileMem_ptr = mmap(NULL, \
 														   retVal->memSize, \
-														   PROT_READ | PROT_EXEC, \
+														   PROT_READ | PROT_WRITE | PROT_EXEC, \
 														   MAP_SHARED, \
 														   fileDesc, \
 														   0);
@@ -152,9 +164,13 @@ mapMem_ptr map_file_mode(const char* filename, int flags)
 														   fileDesc, \
 														   0);
 							}
-							if (NULL == retVal->fileMem_ptr)
+							if (NULL == retVal->fileMem_ptr || MAP_FAILED == retVal->fileMem_ptr)
 							{
-								fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - mmap failed to map file descriptor %d into memory!\n", fileDesc);
+								errNum = errno;
+								retVal->fileMem_ptr = NULL;
+								HARKLE_ERROR(Map_Memory, map_file_mode, mmap failed);
+								// fprintf(stderr, "<<<ERROR>>> - Map_Memory - map_file() - mmap failed to map file descriptor %d into memory!\n", fileDesc);
+								HARKLE_ERRNO(Map_Memory, mmap, errNum);
 							}
 							else
 							{
@@ -196,6 +212,8 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 {
 	// LOCAL VARIABLES
 	bool retVal = false;
+	int errNum = 0;  // Store errno here
+	errno = 0;
 	
 	// INPUT VALIDATION
 	if (NULL != memStruct_ptr)
@@ -203,11 +221,15 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 		if (NULL != memStruct_ptr->fileMem_ptr && memStruct_ptr->memSize > 0)
 		{
 			// 1. Sync memory with the file IAW syncMem
+			// if (true == syncMem)
 			if (true == syncMem && false == memStruct_ptr->readOnly)
 			{
 				if (msync(memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize, MS_INVALIDATE | MS_SYNC))
 				{
-					fprintf(stderr, "unmap_file() - unable to msync mem to file\n");
+					errNum = errno;
+					HARKLE_ERROR(Map_Memory, unmap_file, msync failed);
+					// fprintf(stderr, "unmap_file() - unable to msync mem to file\n");
+					HARKLE_ERRNO(Map_Memory, msync, errNum);
 				}
 				else
 				{
@@ -218,7 +240,11 @@ bool unmap_file(mapMem_ptr memStruct_ptr, bool syncMem)
 			// 2. Unmap mem
 			if (munmap(memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize))
 			{
-				fprintf(stderr, "unmap_file() - munmap() failed\n");
+				// fprintf(stderr, "memStruct_ptr->fileMem_ptr:\t%p\nmemStruct_ptr->memSize:\t%lu\n", memStruct_ptr->fileMem_ptr, memStruct_ptr->memSize);  // DEBUGGING
+				errNum = errno;
+				HARKLE_ERROR(Map_Memory, unmap_file, munmap failed);
+				// fprintf(stderr, "unmap_file() - munmap() failed\n");
+				HARKLE_ERRNO(Map_Memory, munmap, errNum);
 			}
 			else
 			{
