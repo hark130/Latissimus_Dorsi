@@ -6,6 +6,7 @@
 
 #include <errno.h>								// errno
 #include <fcntl.h>								// open() flags
+#include "Fileroad.h"							// os_path_isfile()
 #include "Harklerror.h"							// HARKLE_ERROR
 #include "Map_Memory.h"							// map_file_mode(), unmap_file(), free_struct()
 #include "Memoroad.h"							// release_a_string()
@@ -45,7 +46,7 @@
 #define SCHEME4 "Linked Together"
 #define SCHEME5 "Shared Object"
 // Optimization
-#define OPTIMIZATION_UPPER_LIMIT 4
+#define OPTIMIZATION_UPPER_LIMIT 4  // Update this if you support another level of optimization
 #define OPTIMIZATION0 "None"
 #define OPTIMIZATION1 "-O1"
 #define OPTIMIZATION2 "-O2"
@@ -114,6 +115,11 @@ int main(void)
 	int nthScheme = 1;  // Starting scheme number
 	int nthOptim = 0;  // Starting optimization number
 	mapMem_ptr mapInFile_ptr = NULL;  // map_file_mode() input files here
+	char *thing_arr[THING_UPPER_LIMIT + 1] = { NULL, THING1, THING2, THING3, THING4 };
+	char *trick_arr[TRICK_UPPER_LIMIT + 1] = { NULL, TRICK1, TRICK2, TRICK3, TRICK4, TRICK5, TRICK6, TRICK7 };
+	char *object_arr[OBJECT_UPPER_LIMIT + 1] = { NULL, OBJECT1, OBJECT2, OBJECT3 };
+	char *scheme_arr[SCHEME_UPPER_LIMIT + 1] = { NULL, SCHEME1, SCHEME2, SCHEME3, SCHEME4, SCHEME5 };
+	char *optim_arr[OPTIMIZATION_UPPER_LIMIT + 1] = { OPTIMIZATION0, OPTIMIZATION1, OPTIMIZATION2, OPTIMIZATION3 };
 
 	// INPUT VALIDATION
 	if (numTricks < 1 || numTricks < 1 || numObjects < 1 || numSchemes < 1 || numOpts < 1)
@@ -201,39 +207,54 @@ int main(void)
 							HARKLE_ERROR(automate_memset_experiment, main, update_filename failed);
 							success = false;
 						}
-						// 3. Map input filename
+						// 3. Does the file exist?
 						if (true == success)
 						{
-							mapInFile_ptr = map_file_mode(tempFilename, O_RDONLY);
-							// mapInFile_ptr = map_file_mode(tempFilename, O_RDWR);
-
-							if (!mapInFile_ptr)
+							if (false == os_path_isfile(tempFilename))
 							{
-								// 5. Print results to stdout
-								fprintf(stdout, "%s:\tUnable to map to memory\n", tempFilename);
+								// 6. Print results to stdout
+								// fprintf(stdout, "%s:\tDoes not exist\n", tempFilename);
+
+								// 7. Log the results
+								log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+									          object_arr[k], scheme_arr[l], optim_arr[m], \
+									          OUTPUT_FILE_MISSING, false);
 							}
+							// 4. Map input filename
 							else
-							{								
-								// 4. Parse mapped input file
-								// IMPLEMENT LATER
+							{
+								mapInFile_ptr = map_file_mode(tempFilename, O_RDONLY);
+								// mapInFile_ptr = map_file_mode(tempFilename, O_RDWR);
 
-								// 5. Print results to stdout
-								fprintf(stdout, "%s:\tPLACEHOLDER\n", tempFilename);
-
-								// 6. Log the results
-								// IMPLEMENT LATER
-
-								// 7. Unmap input filename
-								if (mapInFile_ptr)
+								if (!mapInFile_ptr)
 								{
-									// Unmap the memory
-									if (false == unmap_file(mapInFile_ptr, false))
+									// 6. Print results to stdout
+									fprintf(stdout, "%s:\tUnable to map to memory\n", tempFilename);
+								}
+								else
+								{								
+									// 5. Parse mapped input file
+									// IMPLEMENT LATER
+
+									// 6. Print results to stdout
+									fprintf(stdout, "%s:\tPLACEHOLDER\n", tempFilename);
+									// fprintf(stderr, "mapInFile_ptr->fileMem_ptr:\t%p\nmapInFile_ptr->memSize:\t%lu\n", mapInFile_ptr->fileMem_ptr, mapInFile_ptr->memSize);  // DEBUGGING
+
+									// 7. Log the results
+									// IMPLEMENT LATER
+
+									// 8. Unmap input filename
+									if (mapInFile_ptr)
 									{
-										HARKLE_ERROR(automate_memset_experiment, main, unmap_file failed);
-										success = false;
+										// Unmap the memory
+										if (false == unmap_file(mapInFile_ptr, false))
+										{
+											HARKLE_ERROR(automate_memset_experiment, main, unmap_file failed);
+											success = false;
+										}
+										// Free the struct pointer
+										free_struct(&mapInFile_ptr);
 									}
-									// Free the struct pointer
-									free_struct(&mapInFile_ptr);
 								}
 							}
 						}
@@ -243,8 +264,7 @@ int main(void)
 		}
 	}
 
-
-	// 8. Clean up
+	// 9. Clean up
 	// logFile
 	if (logFile)
 	{
