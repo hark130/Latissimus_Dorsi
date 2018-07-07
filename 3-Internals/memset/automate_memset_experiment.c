@@ -6,6 +6,7 @@
 
 #include <errno.h>								// errno
 #include <fcntl.h>								// open() flags
+#include "Elf_Manipulation.h"					// search_sect_hdr64_und_func()
 #include "Fileroad.h"							// os_path_isfile()
 #include "Harklerror.h"							// HARKLE_ERROR
 #include "Map_Memory.h"							// map_file_mode(), unmap_file(), free_struct()
@@ -234,14 +235,26 @@ int main(void)
 								else
 								{								
 									// 5. Parse mapped input file
-									// IMPLEMENT LATER
+									if (true == search_sect_hdr64_und_func(mapInFile_ptr, "memset"))
+									{
+										// 6. Print results to stdout
+										fprintf(stdout, "%s:\t%s\n", tempFilename, OUTPUT_MEMSET_FOUND);
 
-									// 6. Print results to stdout
-									fprintf(stdout, "%s:\tPLACEHOLDER\n", tempFilename);
-									// fprintf(stderr, "mapInFile_ptr->fileMem_ptr:\t%p\nmapInFile_ptr->memSize:\t%lu\n", mapInFile_ptr->fileMem_ptr, mapInFile_ptr->memSize);  // DEBUGGING
+										// 7. Log the results
+										log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+											          object_arr[k], scheme_arr[l], optim_arr[m], \
+											          OUTPUT_MEMSET_FOUND, false);
+									}
+									else
+									{
+										// 6. Print results to stdout
+										fprintf(stdout, "%s:\t%s\n", tempFilename, OUTPUT_MEMSET_MISSING);
 
-									// 7. Log the results
-									// IMPLEMENT LATER
+										// 7. Log the results
+										log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+											          object_arr[k], scheme_arr[l], optim_arr[m], \
+											          OUTPUT_MEMSET_MISSING, false);
+									}
 
 									// 8. Unmap input filename
 									if (mapInFile_ptr)
