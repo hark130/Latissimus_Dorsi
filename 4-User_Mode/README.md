@@ -29,6 +29,9 @@ Developers will apply standard ___ techniques to Linux system programming
 * [Modifying a Dynamic Library Without Changing the Source Code](http://www.linuxjournal.com/article/7795)
 * [Magic of LD_PRELOAD for Userland Rootkits](http://fluxius.handgrep.se/2011/10/31/the-magic-of-ld_preload-for-userland-rootkits/)
 * [Tutorial - Write a System Call](https://brennan.io/2016/11/14/kernel-dev-ep3/)... sounds like an idea?
+* [Ian Lance Taylor - Linkers 20 part series](http://a3f.at/lists/linkers)
+* [PLT and GOT - the key to code sharing and dynamic libraries](https://www.technovelty.org/linux/plt-and-got-the-key-to-code-sharing-and-dynamic-libraries.html)
+* [Global Offset Tables](http://bottomupcs.sourceforge.net/csbu/x3824.htm)
 
 ## TO DO
 
