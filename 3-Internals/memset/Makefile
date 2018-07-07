@@ -51,11 +51,12 @@ CC = gcc
 	$(CC) -o memset-32113.exe -O3 -I $(3) memset-3211.c
 
 testing:
+	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
 	$(CC) -o Fileroad.o -I $(3) -c $(3)Fileroad.c
 	$(CC) -o Map_Memory.o -I $(3) -I $(4) -c $(4)Map_Memory.c
 	$(CC) -o Memoroad.o -I $(3) -c $(3)Memoroad.c
 	$(CC) -o Timeroad.o -I $(3) -c $(3)Timeroad.c
-	$(CC) -o memset-experiment.exe -I $(3) -I $(4) Fileroad.o Map_Memory.o Memoroad.o Timeroad.o automate_memset_experiment.c
+	$(CC) -o memset-experiment.exe -I $(3) -I $(4) Elf_Manipulation.o Fileroad.o Map_Memory.o Memoroad.o Timeroad.o automate_memset_experiment.c
 
 all:
 	$(MAKE) 0000
