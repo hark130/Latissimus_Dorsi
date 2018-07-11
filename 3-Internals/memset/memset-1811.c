@@ -23,7 +23,7 @@
 
 #define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
 #define NO_REALLY_I_MEAN_IT(thing) #thing
-#define SOURCE_NAME memset-1111
+#define SOURCE_NAME memset-1811
 
 
 int main(void)
