@@ -26,6 +26,12 @@ CC = gcc
 	$(CC) -o memset-12122.exe -O2 -I $(3) memset-1212.c
 	$(CC) -o memset-12123.exe -O3 -I $(3) memset-1212.c
 	
+1213:
+	$(CC) -o memset-12130.exe -I $(3) harkleset.c memset-1213.c
+	$(CC) -o memset-12131.exe -O1 -I $(3) harkleset.c memset-1213.c
+	$(CC) -o memset-12132.exe -O2 -I $(3) harkleset.c memset-1213.c
+	$(CC) -o memset-12133.exe -O3 -I $(3) harkleset.c memset-1213.c
+	
 1711:
 	$(CC) -o memset-17110.exe -I $(3) memset-1711.c
 	$(CC) -o memset-17111.exe -O1 -I $(3) memset-1711.c
@@ -55,6 +61,12 @@ CC = gcc
 	$(CC) -o memset-22111.exe -O1 -I $(3) memset-2211.c
 	$(CC) -o memset-22112.exe -O2 -I $(3) memset-2211.c
 	$(CC) -o memset-22113.exe -O3 -I $(3) memset-2211.c
+	
+2213:
+	$(CC) -o memset-22130.exe -I $(3) harkleset.c memset-2213.c
+	$(CC) -o memset-22131.exe -O1 -I $(3) harkleset.c memset-2213.c
+	$(CC) -o memset-22132.exe -O2 -I $(3) harkleset.c memset-2213.c
+	$(CC) -o memset-22133.exe -O3 -I $(3) harkleset.c memset-2213.c
 	
 2711:
 	$(CC) -o memset-27110.exe -I $(3) memset-2711.c
@@ -113,11 +125,13 @@ all:
 	$(MAKE) 1111
 	$(MAKE) 1211
 	$(MAKE) 1212
+	$(MAKE) 1213
 	$(MAKE) 1711
 	$(MAKE) 1712
 	$(MAKE) 1811
 	$(MAKE) 2111
 	$(MAKE) 2211
+	$(MAKE) 1213
 	$(MAKE) 2711
 	$(MAKE) 2712
 	$(MAKE) 2811
