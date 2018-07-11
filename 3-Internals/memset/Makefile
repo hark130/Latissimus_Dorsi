@@ -25,6 +25,12 @@ CC = gcc
 	$(CC) -o memset-12121.exe -O1 -I $(3) memset-1212a.c
 	$(CC) -o memset-12122.exe -O2 -I $(3) memset-1212a.c
 	$(CC) -o memset-12123.exe -O3 -I $(3) memset-1212a.c
+	
+1711:
+	$(CC) -o memset-17110.exe -I $(3) memset-1711.c
+	$(CC) -o memset-17111.exe -O1 -I $(3) memset-1711.c
+	$(CC) -o memset-17112.exe -O2 -I $(3) memset-1711.c
+	$(CC) -o memset-17113.exe -O3 -I $(3) memset-1711.c
 
 2111:
 	$(CC) -o memset-21110.exe -I $(3) memset-2111.c
@@ -62,6 +68,7 @@ all:
 	$(MAKE) 0000
 	$(MAKE) 1111
 	$(MAKE) 1211
+	$(MAKE) 1711
 	$(MAKE) 1212
 	$(MAKE) 2111
 	$(MAKE) 2211
