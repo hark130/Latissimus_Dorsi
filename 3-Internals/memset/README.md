@@ -47,15 +47,14 @@ Here is the combination of all my ideas into a chart.  That way, I can track my 
 
 ### Testing Steps
 
-1. Write and source-control the code file
-2. Add the code filename to the chart (zeroize-main/header/def-WXYZ.c
+1. Write and source-control the code file (zeroize-main/header/def-WXYZ.c
 	- W == Thing number
 	- X == Trick number
 	- Y == Object number
 	- Z == Scheme number
 	- Example: Utilizing inline assembly, with the volatile keyword, that has been compiled into a shared library, on a variable of local scope would use the WXYZ number of 1235.  1 for "local scope", 2 for "volatile", 3 for "assembly", and 5 for "shared object".
-3. Add a new recipe to the Makefile (with additional entries for -O1, -O2, and -O3)
-4. Add that new recipe to the "all" Makefile recipe
-5. ```make all```
-6. ```./memset-experiment.exe```
-7. Update the "Current experiment results" link above with most recent source-controlled YYYYMMDD-HHMMSS_memset_results.md
+2. Add a new recipe to the Makefile (with additional entries for -O1, -O2, and -O3)
+3. Add that new recipe to the "all" Makefile recipe
+4. ```make all```
+5. ```./memset-experiment.exe```
+6. Update the "Current experiment results" link above with most recent source-controlled YYYYMMDD-HHMMSS_memset_results.md
