@@ -16,10 +16,10 @@ I wish to find a way to properly (see: compliant code) 'clear' memory before it 
 
 I have devised a thorough combination of situations I wish to attempt to attain this goal.  
 - Thing - A list of different "things" to attempt to memset
-    1. Local scope (stack memory)
-    2. Global scope (stack memory)
-    3. Heap memory
-    4. mmap() memory
+	1. Local scope (stack memory)
+	2. Global scope (stack memory)
+	3. Heap memory
+	4. mmap() memory
 - Trick - A list of "tricks" to attempt (e.g., volatile, explicit_bzero)
 	1. None
 	2. Volatile keyword
@@ -28,6 +28,7 @@ I have devised a thorough combination of situations I wish to attempt to attain 
 	5. "do nothing" function
 	6. read/write/replace
 	7. explicit_bzero()
+	8. ["Touching Memory"](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
 - Object - A list of "objects" to call memset (e.g., function, goto, inline assembly)
 	1. Function
 	2. Goto label
