@@ -26,7 +26,7 @@
 #define SOURCE_NAME memset-1212a
 
 
-volatile char* volatile_memset(volatile char* oldBuff, char newChar, size_t buffLen);
+volatile char* volatile_harkleset(volatile char* oldBuff, char newChar, size_t buffLen);
 
 
 int main(void)
@@ -42,8 +42,8 @@ int main(void)
 	}
 	putchar('\n');
 
-	// 2. volatile_memset() it
-	if (buff != volatile_memset(buff, 'H', buffLen))
+	// 2. volatile_harkleset() it
+	if (buff != volatile_harkleset(buff, 'H', buffLen))
 	{
 		HARKLE_ERROR(SOURCE_NAME, main, volatile_memset failed);
 	}
@@ -53,7 +53,7 @@ int main(void)
 }
 
 
-volatile char* volatile_memset(volatile char* oldBuff, char newChar, size_t buffLen)
+volatile char* volatile_harkleset(volatile char* oldBuff, char newChar, size_t buffLen)
 {
 	// LOCAL VARIABLES
 	volatile char* retVal = NULL;
