@@ -92,6 +92,13 @@ CC = gcc
 	$(CC) -o memset-38112.exe -O2 -I $(3) memset-3811.c
 	$(CC) -o memset-38113.exe -O3 -I $(3) memset-3811.c
 
+harkleset:
+	$(CC) -o harkleset.o -c harkleset.c
+	$(CC) -o harkleset0.o -c harkleset.c
+	$(CC) -o harkleset1.o -O1 -c harkleset.c
+	$(CC) -o harkleset2.o -O2 -c harkleset.c
+	$(CC) -o harkleset3.o -O3 -c harkleset.c
+
 testing:
 	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
 	$(CC) -o Fileroad.o -I $(3) -c $(3)Fileroad.c
@@ -101,6 +108,7 @@ testing:
 	$(CC) -o memset-experiment.exe -I $(3) -I $(4) Elf_Manipulation.o Fileroad.o Map_Memory.o Memoroad.o Timeroad.o automate_memset_experiment.c
 
 all:
+	$(MAKE) harkleset
 	$(MAKE) 0000
 	$(MAKE) 1111
 	$(MAKE) 1211
