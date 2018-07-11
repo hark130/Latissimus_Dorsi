@@ -20,6 +20,12 @@ CC = gcc
 	$(CC) -o memset-12112.exe -O2 -I $(3) memset-1211.c
 	$(CC) -o memset-12113.exe -O3 -I $(3) memset-1211.c
 
+1811:
+	$(CC) -o memset-18110.exe -I $(3) memset-1811.c
+	$(CC) -o memset-18111.exe -O1 -I $(3) memset-1811.c
+	$(CC) -o memset-18112.exe -O2 -I $(3) memset-1811.c
+	$(CC) -o memset-18113.exe -O3 -I $(3) memset-1811.c
+
 1212:
 	$(CC) -o memset-12120.exe -I $(3) memset-1212a.c
 	$(CC) -o memset-12121.exe -O1 -I $(3) memset-1212a.c
@@ -61,6 +67,12 @@ CC = gcc
 	$(CC) -o memset-27121.exe -O1 -I $(3) memset-2712.c
 	$(CC) -o memset-27122.exe -O2 -I $(3) memset-2712.c
 	$(CC) -o memset-27123.exe -O3 -I $(3) memset-2712.c
+	
+2811:
+	$(CC) -o memset-28110.exe -I $(3) memset-2811.c
+	$(CC) -o memset-28111.exe -O1 -I $(3) memset-2811.c
+	$(CC) -o memset-28112.exe -O2 -I $(3) memset-2811.c
+	$(CC) -o memset-28113.exe -O3 -I $(3) memset-2811.c
 
 3111:
 	$(CC) -o memset-31110.exe -I $(3) memset-3111.c
@@ -73,6 +85,12 @@ CC = gcc
 	$(CC) -o memset-32111.exe -O1 -I $(3) memset-3211.c
 	$(CC) -o memset-32112.exe -O2 -I $(3) memset-3211.c
 	$(CC) -o memset-32113.exe -O3 -I $(3) memset-3211.c
+	
+3811:
+	$(CC) -o memset-38110.exe -I $(3) memset-3811.c
+	$(CC) -o memset-38111.exe -O1 -I $(3) memset-3811.c
+	$(CC) -o memset-38112.exe -O2 -I $(3) memset-3811.c
+	$(CC) -o memset-38113.exe -O3 -I $(3) memset-3811.c
 
 testing:
 	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
@@ -86,15 +104,18 @@ all:
 	$(MAKE) 0000
 	$(MAKE) 1111
 	$(MAKE) 1211
+	$(MAKE) 1212
 	$(MAKE) 1711
 	$(MAKE) 1712
-	$(MAKE) 1212
+	$(MAKE) 1811
 	$(MAKE) 2111
 	$(MAKE) 2211
 	$(MAKE) 2711
 	$(MAKE) 2712
+	$(MAKE) 2811
 	$(MAKE) 3111
 	$(MAKE) 3211
+	$(MAKE) 3811
 	$(MAKE) testing
 	
 clean: 
