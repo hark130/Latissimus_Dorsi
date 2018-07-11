@@ -14,7 +14,7 @@
  *	Thing -  1. Local scope
  *	Trick -  2. Volatile
  *	Object - 1. memset is called from a function
- *	Scheme - 1. memset is called from main()
+ *	Scheme - 2. memset is called from a local function
  */
 
 #include "Harklerror.h"		// HARKLE_ERROR
