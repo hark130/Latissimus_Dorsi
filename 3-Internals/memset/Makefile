@@ -131,7 +131,7 @@ all:
 	$(MAKE) 1811
 	$(MAKE) 2111
 	$(MAKE) 2211
-	$(MAKE) 1213
+	$(MAKE) 2213
 	$(MAKE) 2711
 	$(MAKE) 2712
 	$(MAKE) 2811
