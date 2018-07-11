@@ -1,5 +1,3 @@
- 49 lines (38 sloc) 1.14 KB
-
 /*
  * 'SUB-OPTIMAL MEMSET' RESEARCH
  * Reportedly, the memset of memory that is about to be free()d is 'optimized' out
