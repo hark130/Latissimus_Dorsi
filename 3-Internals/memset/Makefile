@@ -20,17 +20,11 @@ CC = gcc
 	$(CC) -o memset-12112.exe -O2 -I $(3) memset-1211.c
 	$(CC) -o memset-12113.exe -O3 -I $(3) memset-1211.c
 
-1811:
-	$(CC) -o memset-18110.exe -I $(3) memset-1811.c
-	$(CC) -o memset-18111.exe -O1 -I $(3) memset-1811.c
-	$(CC) -o memset-18112.exe -O2 -I $(3) memset-1811.c
-	$(CC) -o memset-18113.exe -O3 -I $(3) memset-1811.c
-
 1212:
-	$(CC) -o memset-12120.exe -I $(3) memset-1212a.c
-	$(CC) -o memset-12121.exe -O1 -I $(3) memset-1212a.c
-	$(CC) -o memset-12122.exe -O2 -I $(3) memset-1212a.c
-	$(CC) -o memset-12123.exe -O3 -I $(3) memset-1212a.c
+	$(CC) -o memset-12120.exe -I $(3) memset-1212.c
+	$(CC) -o memset-12121.exe -O1 -I $(3) memset-1212.c
+	$(CC) -o memset-12122.exe -O2 -I $(3) memset-1212.c
+	$(CC) -o memset-12123.exe -O3 -I $(3) memset-1212.c
 	
 1711:
 	$(CC) -o memset-17110.exe -I $(3) memset-1711.c
@@ -43,6 +37,12 @@ CC = gcc
 	$(CC) -o memset-17121.exe -O1 -I $(3) memset-1712.c
 	$(CC) -o memset-17122.exe -O2 -I $(3) memset-1712.c
 	$(CC) -o memset-17123.exe -O3 -I $(3) memset-1712.c
+	
+1811:
+	$(CC) -o memset-18110.exe -I $(3) memset-1811.c
+	$(CC) -o memset-18111.exe -O1 -I $(3) memset-1811.c
+	$(CC) -o memset-18112.exe -O2 -I $(3) memset-1811.c
+	$(CC) -o memset-18113.exe -O3 -I $(3) memset-1811.c
 	
 2111:
 	$(CC) -o memset-21110.exe -I $(3) memset-2111.c
