@@ -172,12 +172,8 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 		success = false;
 		retVal = EINVAL;
 	}
-	else if (!(srcLen % sizeof(long)))
+	else if (srcLen % sizeof(long))
 	{
-		// I'm not sure if this is a big deal or not.
-		// This may not ever happen.
-		// If it ever does, I'm sure I should do something about it.
-		// fprintf(stderr, "¿¿¿WARNING??? - htrace_write_data - The length of the 'blob' is not word-aligned.");  // DEBUGGING
 		HARKLE_WARNG(Harkletrace, htrace_write_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
 		unaligned = true;
 	}
@@ -185,8 +181,6 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	// LOOP PTRACE
 	if (true == success)
 	{
-		// for (i = 0; i < (srcLen / sizeof(long)); i+= 1)
-		// for (i = 0; i < srcLen; i+= 1)
 		for (i = 0; i < srcLen; i+= sizeof(long))
 		{
 			// Handle that last awkward bit
@@ -213,63 +207,20 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 					}
 					else
 					{
-						// fprintf(stdout, "htrace_write_data() is attempting to write this FINAL data:\t");  // DEBUGGING
 						ptRetVal = ptrace(PTRACE_POKEDATA, pid, (unsigned long)dest_ptr + i, lastAddr);
-						// for (int j = 0; j < sizeof(unsigned long); j++)
-						// {
-						// 	fprintf(stdout, "%02X", (*(((unsigned char*)lastAddr) + j)));  // DEBUGGING
-						// }
-						// fprintf(stdout, "\n");
 					}
 				}
 			}
 			else
 			{
-				/* DEBUGGING */
-				// fprintf(stdout, "Attempting to 'htrace' write this data: ");  // DEBUGGING
-				// for (int j = 0; j < sizeof(unsigned long); j++)
-				// {
-				// 	fprintf(stdout, "%02X", (*(((unsigned char*)dest_ptr) + i + j)));  // DEBUGGING
-				// }
-				// fprintf(stdout, " with this: ");
-				// for (int j = 0; j < sizeof(unsigned long); j++)
-				// {
-				// 	fprintf(stdout, "%02X", (*(((unsigned char*)src_ptr) + i + j)));  // DEBUGGING
-				// }
-				// fprintf(stdout, "%016lX", (*((signed long*)tmp_ptr)));  // DEBUGGING
-				// fprintf(stdout, "%016lX", (*((signed long*)src_ptr + i)));  // DEBUGGING
-				// fprintf(stdout, " to 0x%016p\n", (void*)(dest_ptr + i));
-
-				// errno = 0;  // DEBUGGING... just a test
-
-				// ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
-				// ptRetVal = ptrace(PTRACE_POKETEXT, pid, dest_ptr + i, src_ptr + i);
-				///////////////////////////////////////////////////////////////////////////////////
-				// THIS WORKS!
-				///////////////////////////////////////////////////////////////////////////////////
 				ptRetVal = ptrace(PTRACE_POKETEXT, pid, (unsigned long)dest_ptr + i, (*((signed long*)tmp_ptr)));
 				tmp_ptr += sizeof(long);
-				///////////////////////////////////////////////////////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////
-				///////////////////////////////////////////////////////////////////////////////////
-				// ptRetVal = ptrace(PTRACE_POKETEXT, pid, (unsigned long)dest_ptr + i, (*((signed long*)src_ptr + (size_t)i)));
-
-				// HARKLE_ERRNO(Harkletrace, ptrace, errno);
-
-				/* DEBUGGING */
-				// fprintf(stdout, " and this happened: ");
-				// for (int j = 0; j < sizeof(unsigned long); j++)
-				// {
-				// 	fprintf(stdout, "%02X", (*(((unsigned char*)dest_ptr) + i + j)));  // DEBUGGING
-				// }
-				// fprintf(stdout, "\n");
 			}
 			
 			if (ptRetVal == -1)
 			{
 				retVal = errno;
 				HARKLE_ERROR(Harkletrace, htrace_write_data, ptrace failed);
-				// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(retVal));
 				HARKLE_ERRNO(Harkletrace, ptrace, retVal);				
 				success = false;
 				break;
