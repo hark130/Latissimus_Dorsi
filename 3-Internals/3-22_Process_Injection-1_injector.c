@@ -272,7 +272,7 @@ int main(int argc, char* argv[])
 		{			
 			// 5.2. Size the payload
 			// ↓↓↓ COMMENTED OUT BECAUSE OF A BUG IN os_path_join() ↓↓↓
-			// payloadContents = fread_a_file(payloadFilename, &tempRetVal);
+			// payloadSize = size_a_file(payloadFilename, &tempRetVal);
 			payloadSize = size_a_file("./3-22-1_Payloads/payload_64_write_1.o", &tempRetVal);
 			
 			if (-1 == payloadSize)
