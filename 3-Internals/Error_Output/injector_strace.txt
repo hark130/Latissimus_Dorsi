@@ -1,0 +1,1018 @@
+28415 19:39:11.013972 execve("./injector.exe", ["./injector.exe", "28063"], [/* 60 vars */]) = 0
+28415 19:39:11.014763 brk(NULL)         = 0x1286000
+28415 19:39:11.015017 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+28415 19:39:11.015280 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+28415 19:39:11.015449 open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+28415 19:39:11.015564 fstat(3, {st_mode=S_IFREG|0644, st_size=142678, ...}) = 0
+28415 19:39:11.015705 mmap(NULL, 142678, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7feddfead000
+28415 19:39:11.015805 close(3)          = 0
+28415 19:39:11.015903 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+28415 19:39:11.015995 open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+28415 19:39:11.016069 read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\t\2\0\0\0\0\0"..., 832) = 832
+28415 19:39:11.016149 fstat(3, {st_mode=S_IFREG|0755, st_size=1868984, ...}) = 0
+28415 19:39:11.016235 mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7feddfeac000
+28415 19:39:11.016302 mmap(NULL, 3971488, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7feddf8e1000
+28415 19:39:11.016344 mprotect(0x7feddfaa1000, 2097152, PROT_NONE) = 0
+28415 19:39:11.016385 mmap(0x7feddfca1000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c0000) = 0x7feddfca1000
+28415 19:39:11.016433 mmap(0x7feddfca7000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7feddfca7000
+28415 19:39:11.016479 close(3)          = 0
+28415 19:39:11.016528 mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7feddfeab000
+28415 19:39:11.016569 mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7feddfeaa000
+28415 19:39:11.016608 arch_prctl(ARCH_SET_FS, 0x7feddfeab700) = 0
+28415 19:39:11.016699 mprotect(0x7feddfca1000, 16384, PROT_READ) = 0
+28415 19:39:11.016744 mprotect(0x60e000, 4096, PROT_READ) = 0
+28415 19:39:11.016785 mprotect(0x7feddfed0000, 4096, PROT_READ) = 0
+28415 19:39:11.016822 munmap(0x7feddfead000, 142678) = 0
+28415 19:39:11.016931 brk(NULL)         = 0x1286000
+28415 19:39:11.016965 brk(0x12a7000)    = 0x12a7000
+28415 19:39:11.017013 open("/proc", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 3
+28415 19:39:11.017058 fstat(3, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+28415 19:39:11.017105 getdents(3, /* 298 entries */, 32768) = 7728
+28415 19:39:11.017478 readlink("/proc/net", "self/net", 4096) = 8
+28415 19:39:11.017547 readlink("/proc/mounts", "self/mounts", 4096) = 11
+28415 19:39:11.017623 readlink("/proc/self", "28415", 4096) = 5
+28415 19:39:11.017673 readlink("/proc/thread-self", "28415/task/28415", 4096) = 16
+28415 19:39:11.017877 getdents(3, /* 0 entries */, 32768) = 0
+28415 19:39:11.017916 close(3)          = 0
+28415 19:39:11.017968 open("/proc/1/cmdline", O_RDONLY) = 3
+28415 19:39:11.018014 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018057 read(3, "/sbin/init\0splash\0", 1025) = 18
+28415 19:39:11.018103 close(3)          = 0
+28415 19:39:11.018143 open("/proc/2/cmdline", O_RDONLY) = 3
+28415 19:39:11.018186 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018226 read(3, "", 1025) = 0
+28415 19:39:11.018263 close(3)          = 0
+28415 19:39:11.018301 open("/proc/3/cmdline", O_RDONLY) = 3
+28415 19:39:11.018343 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018384 read(3, "", 1025) = 0
+28415 19:39:11.018421 close(3)          = 0
+28415 19:39:11.018458 open("/proc/5/cmdline", O_RDONLY) = 3
+28415 19:39:11.018500 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018540 read(3, "", 1025) = 0
+28415 19:39:11.018577 close(3)          = 0
+28415 19:39:11.018615 open("/proc/7/cmdline", O_RDONLY) = 3
+28415 19:39:11.018657 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018698 read(3, "", 1025) = 0
+28415 19:39:11.018734 close(3)          = 0
+28415 19:39:11.018772 open("/proc/8/cmdline", O_RDONLY) = 3
+28415 19:39:11.018814 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.018862 read(3, "", 1025) = 0
+28415 19:39:11.018900 close(3)          = 0
+28415 19:39:11.018938 open("/proc/9/cmdline", O_RDONLY) = 3
+28415 19:39:11.018998 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019057 read(3, "", 1025) = 0
+28415 19:39:11.019098 close(3)          = 0
+28415 19:39:11.019141 open("/proc/10/cmdline", O_RDONLY) = 3
+28415 19:39:11.019185 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019226 read(3, "", 1025) = 0
+28415 19:39:11.019262 close(3)          = 0
+28415 19:39:11.019300 open("/proc/11/cmdline", O_RDONLY) = 3
+28415 19:39:11.019343 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019384 read(3, "", 1025) = 0
+28415 19:39:11.019421 close(3)          = 0
+28415 19:39:11.019459 open("/proc/12/cmdline", O_RDONLY) = 3
+28415 19:39:11.019501 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019545 read(3, "", 1025) = 0
+28415 19:39:11.019582 close(3)          = 0
+28415 19:39:11.019620 open("/proc/13/cmdline", O_RDONLY) = 3
+28415 19:39:11.019662 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019703 read(3, "", 1025) = 0
+28415 19:39:11.019740 close(3)          = 0
+28415 19:39:11.019777 open("/proc/15/cmdline", O_RDONLY) = 3
+28415 19:39:11.019820 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.019860 read(3, "", 1025) = 0
+28415 19:39:11.019897 close(3)          = 0
+28415 19:39:11.019935 open("/proc/16/cmdline", O_RDONLY) = 3
+28415 19:39:11.019977 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020018 read(3, "", 1025) = 0
+28415 19:39:11.020055 close(3)          = 0
+28415 19:39:11.020093 open("/proc/17/cmdline", O_RDONLY) = 3
+28415 19:39:11.020134 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020178 read(3, "", 1025) = 0
+28415 19:39:11.020214 close(3)          = 0
+28415 19:39:11.020252 open("/proc/18/cmdline", O_RDONLY) = 3
+28415 19:39:11.020294 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020335 read(3, "", 1025) = 0
+28415 19:39:11.020372 close(3)          = 0
+28415 19:39:11.020409 open("/proc/20/cmdline", O_RDONLY) = 3
+28415 19:39:11.020452 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020493 read(3, "", 1025) = 0
+28415 19:39:11.020529 close(3)          = 0
+28415 19:39:11.020567 open("/proc/21/cmdline", O_RDONLY) = 3
+28415 19:39:11.020608 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020649 read(3, "", 1025) = 0
+28415 19:39:11.020686 close(3)          = 0
+28415 19:39:11.020724 open("/proc/22/cmdline", O_RDONLY) = 3
+28415 19:39:11.020766 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020811 read(3, "", 1025) = 0
+28415 19:39:11.020848 close(3)          = 0
+28415 19:39:11.020886 open("/proc/23/cmdline", O_RDONLY) = 3
+28415 19:39:11.020929 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.020970 read(3, "", 1025) = 0
+28415 19:39:11.021006 close(3)          = 0
+28415 19:39:11.021044 open("/proc/25/cmdline", O_RDONLY) = 3
+28415 19:39:11.021086 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021127 read(3, "", 1025) = 0
+28415 19:39:11.021164 close(3)          = 0
+28415 19:39:11.021228 open("/proc/26/cmdline", O_RDONLY) = 3
+28415 19:39:11.021291 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021342 read(3, "", 1025) = 0
+28415 19:39:11.021378 close(3)          = 0
+28415 19:39:11.021415 open("/proc/27/cmdline", O_RDONLY) = 3
+28415 19:39:11.021457 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021496 read(3, "", 1025) = 0
+28415 19:39:11.021531 close(3)          = 0
+28415 19:39:11.021567 open("/proc/28/cmdline", O_RDONLY) = 3
+28415 19:39:11.021607 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021646 read(3, "", 1025) = 0
+28415 19:39:11.021681 close(3)          = 0
+28415 19:39:11.021718 open("/proc/29/cmdline", O_RDONLY) = 3
+28415 19:39:11.021760 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021801 read(3, "", 1025) = 0
+28415 19:39:11.021845 close(3)          = 0
+28415 19:39:11.021882 open("/proc/30/cmdline", O_RDONLY) = 3
+28415 19:39:11.021923 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.021964 read(3, "", 1025) = 0
+28415 19:39:11.021999 close(3)          = 0
+28415 19:39:11.022034 open("/proc/31/cmdline", O_RDONLY) = 3
+28415 19:39:11.022075 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022114 read(3, "", 1025) = 0
+28415 19:39:11.022149 close(3)          = 0
+28415 19:39:11.022184 open("/proc/32/cmdline", O_RDONLY) = 3
+28415 19:39:11.022224 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022263 read(3, "", 1025) = 0
+28415 19:39:11.022297 close(3)          = 0
+28415 19:39:11.022333 open("/proc/33/cmdline", O_RDONLY) = 3
+28415 19:39:11.022372 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022411 read(3, "", 1025) = 0
+28415 19:39:11.022446 close(3)          = 0
+28415 19:39:11.022482 open("/proc/34/cmdline", O_RDONLY) = 3
+28415 19:39:11.022521 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022560 read(3, "", 1025) = 0
+28415 19:39:11.022594 close(3)          = 0
+28415 19:39:11.022629 open("/proc/35/cmdline", O_RDONLY) = 3
+28415 19:39:11.022669 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022707 read(3, "", 1025) = 0
+28415 19:39:11.022741 close(3)          = 0
+28415 19:39:11.022777 open("/proc/36/cmdline", O_RDONLY) = 3
+28415 19:39:11.022818 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.022856 read(3, "", 1025) = 0
+28415 19:39:11.022891 close(3)          = 0
+28415 19:39:11.022926 open("/proc/37/cmdline", O_RDONLY) = 3
+28415 19:39:11.022966 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023007 read(3, "", 1025) = 0
+28415 19:39:11.023042 close(3)          = 0
+28415 19:39:11.023077 open("/proc/38/cmdline", O_RDONLY) = 3
+28415 19:39:11.023117 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023156 read(3, "", 1025) = 0
+28415 19:39:11.023202 close(3)          = 0
+28415 19:39:11.023238 open("/proc/39/cmdline", O_RDONLY) = 3
+28415 19:39:11.023278 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023316 read(3, "", 1025) = 0
+28415 19:39:11.023350 close(3)          = 0
+28415 19:39:11.023386 open("/proc/40/cmdline", O_RDONLY) = 3
+28415 19:39:11.023426 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023464 read(3, "", 1025) = 0
+28415 19:39:11.023498 close(3)          = 0
+28415 19:39:11.023534 open("/proc/46/cmdline", O_RDONLY) = 3
+28415 19:39:11.023573 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023614 read(3, "", 1025) = 0
+28415 19:39:11.023649 close(3)          = 0
+28415 19:39:11.023684 open("/proc/47/cmdline", O_RDONLY) = 3
+28415 19:39:11.023724 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023763 read(3, "", 1025) = 0
+28415 19:39:11.023797 close(3)          = 0
+28415 19:39:11.023832 open("/proc/48/cmdline", O_RDONLY) = 3
+28415 19:39:11.023872 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.023910 read(3, "", 1025) = 0
+28415 19:39:11.023944 close(3)          = 0
+28415 19:39:11.023980 open("/proc/49/cmdline", O_RDONLY) = 3
+28415 19:39:11.024020 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.024060 read(3, "", 1025) = 0
+28415 19:39:11.024095 close(3)          = 0
+28415 19:39:11.024130 open("/proc/65/cmdline", O_RDONLY) = 3
+28415 19:39:11.024171 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.024248 read(3, "", 1025) = 0
+28415 19:39:11.024289 close(3)          = 0
+28415 19:39:11.024332 open("/proc/66/cmdline", O_RDONLY) = 3
+28415 19:39:11.024433 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.024488 read(3, "", 1025) = 0
+28415 19:39:11.024538 close(3)          = 0
+28415 19:39:11.024586 open("/proc/67/cmdline", O_RDONLY) = 3
+28415 19:39:11.024639 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.024680 read(3, "", 1025) = 0
+28415 19:39:11.024719 close(3)          = 0
+28415 19:39:11.024765 open("/proc/68/cmdline", O_RDONLY) = 3
+28415 19:39:11.024809 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.024852 read(3, "", 1025) = 0
+28415 19:39:11.024888 close(3)          = 0
+28415 19:39:11.024924 open("/proc/69/cmdline", O_RDONLY) = 3
+28415 19:39:11.024964 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025003 read(3, "", 1025) = 0
+28415 19:39:11.025039 close(3)          = 0
+28415 19:39:11.025114 open("/proc/70/cmdline", O_RDONLY) = 3
+28415 19:39:11.025219 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025273 read(3, "", 1025) = 0
+28415 19:39:11.025311 close(3)          = 0
+28415 19:39:11.025356 open("/proc/71/cmdline", O_RDONLY) = 3
+28415 19:39:11.025408 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025472 read(3, "", 1025) = 0
+28415 19:39:11.025517 close(3)          = 0
+28415 19:39:11.025558 open("/proc/72/cmdline", O_RDONLY) = 3
+28415 19:39:11.025603 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025655 read(3, "", 1025) = 0
+28415 19:39:11.025703 close(3)          = 0
+28415 19:39:11.025744 open("/proc/73/cmdline", O_RDONLY) = 3
+28415 19:39:11.025790 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025831 read(3, "", 1025) = 0
+28415 19:39:11.025867 close(3)          = 0
+28415 19:39:11.025904 open("/proc/74/cmdline", O_RDONLY) = 3
+28415 19:39:11.025945 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.025999 read(3, "", 1025) = 0
+28415 19:39:11.026035 close(3)          = 0
+28415 19:39:11.026073 open("/proc/75/cmdline", O_RDONLY) = 3
+28415 19:39:11.026115 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026157 read(3, "", 1025) = 0
+28415 19:39:11.026193 close(3)          = 0
+28415 19:39:11.026228 open("/proc/76/cmdline", O_RDONLY) = 3
+28415 19:39:11.026269 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026308 read(3, "", 1025) = 0
+28415 19:39:11.026343 close(3)          = 0
+28415 19:39:11.026378 open("/proc/77/cmdline", O_RDONLY) = 3
+28415 19:39:11.026418 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026456 read(3, "", 1025) = 0
+28415 19:39:11.026490 close(3)          = 0
+28415 19:39:11.026564 open("/proc/78/cmdline", O_RDONLY) = 3
+28415 19:39:11.026618 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026661 read(3, "", 1025) = 0
+28415 19:39:11.026697 close(3)          = 0
+28415 19:39:11.026736 open("/proc/80/cmdline", O_RDONLY) = 3
+28415 19:39:11.026776 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026819 read(3, "", 1025) = 0
+28415 19:39:11.026855 close(3)          = 0
+28415 19:39:11.026891 open("/proc/81/cmdline", O_RDONLY) = 3
+28415 19:39:11.026932 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.026971 read(3, "", 1025) = 0
+28415 19:39:11.027005 close(3)          = 0
+28415 19:39:11.027042 open("/proc/82/cmdline", O_RDONLY) = 3
+28415 19:39:11.027084 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027125 read(3, "", 1025) = 0
+28415 19:39:11.027162 close(3)          = 0
+28415 19:39:11.027197 open("/proc/83/cmdline", O_RDONLY) = 3
+28415 19:39:11.027238 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027276 read(3, "", 1025) = 0
+28415 19:39:11.027311 close(3)          = 0
+28415 19:39:11.027346 open("/proc/90/cmdline", O_RDONLY) = 3
+28415 19:39:11.027386 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027428 read(3, "", 1025) = 0
+28415 19:39:11.027463 close(3)          = 0
+28415 19:39:11.027499 open("/proc/104/cmdline", O_RDONLY) = 3
+28415 19:39:11.027539 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027578 read(3, "", 1025) = 0
+28415 19:39:11.027617 close(3)          = 0
+28415 19:39:11.027661 open("/proc/105/cmdline", O_RDONLY) = 3
+28415 19:39:11.027706 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027746 read(3, "", 1025) = 0
+28415 19:39:11.027781 close(3)          = 0
+28415 19:39:11.027817 open("/proc/109/cmdline", O_RDONLY) = 3
+28415 19:39:11.027865 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.027909 read(3, "", 1025) = 0
+28415 19:39:11.027944 close(3)          = 0
+28415 19:39:11.027980 open("/proc/112/cmdline", O_RDONLY) = 3
+28415 19:39:11.028021 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028059 read(3, "", 1025) = 0
+28415 19:39:11.028094 close(3)          = 0
+28415 19:39:11.028185 open("/proc/113/cmdline", O_RDONLY) = 3
+28415 19:39:11.028228 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028267 read(3, "", 1025) = 0
+28415 19:39:11.028302 close(3)          = 0
+28415 19:39:11.028338 open("/proc/114/cmdline", O_RDONLY) = 3
+28415 19:39:11.028379 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028418 read(3, "", 1025) = 0
+28415 19:39:11.028453 close(3)          = 0
+28415 19:39:11.028488 open("/proc/115/cmdline", O_RDONLY) = 3
+28415 19:39:11.028528 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028571 read(3, "", 1025) = 0
+28415 19:39:11.028606 close(3)          = 0
+28415 19:39:11.028641 open("/proc/116/cmdline", O_RDONLY) = 3
+28415 19:39:11.028682 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028721 read(3, "", 1025) = 0
+28415 19:39:11.028756 close(3)          = 0
+28415 19:39:11.028792 open("/proc/164/cmdline", O_RDONLY) = 3
+28415 19:39:11.028831 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.028870 read(3, "", 1025) = 0
+28415 19:39:11.028904 close(3)          = 0
+28415 19:39:11.028940 open("/proc/165/cmdline", O_RDONLY) = 3
+28415 19:39:11.028979 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029018 read(3, "", 1025) = 0
+28415 19:39:11.029052 close(3)          = 0
+28415 19:39:11.029088 open("/proc/168/cmdline", O_RDONLY) = 3
+28415 19:39:11.029128 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029169 read(3, "", 1025) = 0
+28415 19:39:11.029224 close(3)          = 0
+28415 19:39:11.029265 open("/proc/169/cmdline", O_RDONLY) = 3
+28415 19:39:11.029309 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029349 read(3, "", 1025) = 0
+28415 19:39:11.029384 close(3)          = 0
+28415 19:39:11.029420 open("/proc/173/cmdline", O_RDONLY) = 3
+28415 19:39:11.029460 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029499 read(3, "", 1025) = 0
+28415 19:39:11.029534 close(3)          = 0
+28415 19:39:11.029569 open("/proc/174/cmdline", O_RDONLY) = 3
+28415 19:39:11.029609 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029651 read(3, "", 1025) = 0
+28415 19:39:11.029686 close(3)          = 0
+28415 19:39:11.029721 open("/proc/251/cmdline", O_RDONLY) = 3
+28415 19:39:11.029762 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029801 read(3, "", 1025) = 0
+28415 19:39:11.029836 close(3)          = 0
+28415 19:39:11.029871 open("/proc/252/cmdline", O_RDONLY) = 3
+28415 19:39:11.029911 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.029949 read(3, "", 1025) = 0
+28415 19:39:11.029984 close(3)          = 0
+28415 19:39:11.030020 open("/proc/286/cmdline", O_RDONLY) = 3
+28415 19:39:11.030060 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030098 read(3, "", 1025) = 0
+28415 19:39:11.030133 close(3)          = 0
+28415 19:39:11.030168 open("/proc/302/cmdline", O_RDONLY) = 3
+28415 19:39:11.030208 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030249 read(3, "/lib/systemd/systemd-journald\0", 1025) = 30
+28415 19:39:11.030291 close(3)          = 0
+28415 19:39:11.030327 open("/proc/325/cmdline", O_RDONLY) = 3
+28415 19:39:11.030367 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030406 read(3, "/lib/systemd/systemd-udevd\0", 1025) = 27
+28415 19:39:11.030445 close(3)          = 0
+28415 19:39:11.030481 open("/proc/400/cmdline", O_RDONLY) = 3
+28415 19:39:11.030521 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030560 read(3, "", 1025) = 0
+28415 19:39:11.030595 close(3)          = 0
+28415 19:39:11.030630 open("/proc/435/cmdline", O_RDONLY) = 3
+28415 19:39:11.030676 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030716 read(3, "", 1025) = 0
+28415 19:39:11.030751 close(3)          = 0
+28415 19:39:11.030787 open("/proc/563/cmdline", O_RDONLY) = 3
+28415 19:39:11.030826 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.030867 read(3, "", 1025) = 0
+28415 19:39:11.030903 close(3)          = 0
+28415 19:39:11.030938 open("/proc/564/cmdline", O_RDONLY) = 3
+28415 19:39:11.030979 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031018 read(3, "", 1025) = 0
+28415 19:39:11.031052 close(3)          = 0
+28415 19:39:11.031088 open("/proc/669/cmdline", O_RDONLY) = 3
+28415 19:39:11.031128 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031167 read(3, "", 1025) = 0
+28415 19:39:11.031201 close(3)          = 0
+28415 19:39:11.031237 open("/proc/670/cmdline", O_RDONLY) = 3
+28415 19:39:11.031277 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031317 read(3, "", 1025) = 0
+28415 19:39:11.031352 close(3)          = 0
+28415 19:39:11.031388 open("/proc/724/cmdline", O_RDONLY) = 3
+28415 19:39:11.031431 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031473 read(3, "", 1025) = 0
+28415 19:39:11.031507 close(3)          = 0
+28415 19:39:11.031544 open("/proc/803/cmdline", O_RDONLY) = 3
+28415 19:39:11.031585 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031622 read(3, "", 1025) = 0
+28415 19:39:11.031656 close(3)          = 0
+28415 19:39:11.031691 open("/proc/804/cmdline", O_RDONLY) = 3
+28415 19:39:11.031730 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031770 read(3, "", 1025) = 0
+28415 19:39:11.031804 close(3)          = 0
+28415 19:39:11.031840 open("/proc/805/cmdline", O_RDONLY) = 3
+28415 19:39:11.031881 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.031917 brk(0x12c8000)    = 0x12c8000
+28415 19:39:11.031957 read(3, "", 1025) = 0
+28415 19:39:11.031991 close(3)          = 0
+28415 19:39:11.032028 open("/proc/806/cmdline", O_RDONLY) = 3
+28415 19:39:11.032071 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032110 read(3, "", 1025) = 0
+28415 19:39:11.032145 close(3)          = 0
+28415 19:39:11.032180 open("/proc/807/cmdline", O_RDONLY) = 3
+28415 19:39:11.032220 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032257 read(3, "", 1025) = 0
+28415 19:39:11.032291 close(3)          = 0
+28415 19:39:11.032326 open("/proc/858/cmdline", O_RDONLY) = 3
+28415 19:39:11.032365 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032402 read(3, "/lib/systemd/systemd-timesyncd\0", 1025) = 31
+28415 19:39:11.032441 close(3)          = 0
+28415 19:39:11.032477 open("/proc/972/cmdline", O_RDONLY) = 3
+28415 19:39:11.032516 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032556 read(3, "/usr/lib/accountsservice/account"..., 1025) = 41
+28415 19:39:11.032594 close(3)          = 0
+28415 19:39:11.032629 open("/proc/975/cmdline", O_RDONLY) = 3
+28415 19:39:11.032669 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032774 read(3, "/sbin/cgmanager\0-m\0name=systemd\0", 1025) = 32
+28415 19:39:11.032820 close(3)          = 0
+28415 19:39:11.032860 open("/proc/993/cmdline", O_RDONLY) = 3
+28415 19:39:11.032904 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.032943 read(3, "/usr/sbin/cron\0-f\0", 1025) = 18
+28415 19:39:11.032985 close(3)          = 0
+28415 19:39:11.033021 open("/proc/1008/cmdline", O_RDONLY) = 3
+28415 19:39:11.033061 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033102 read(3, "/usr/sbin/acpid\0", 1025) = 16
+28415 19:39:11.033140 close(3)          = 0
+28415 19:39:11.033176 open("/proc/1011/cmdline", O_RDONLY) = 3
+28415 19:39:11.033255 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033300 read(3, "/usr/bin/freshclam\0-d\0--foregrou"..., 1025) = 40
+28415 19:39:11.033342 close(3)          = 0
+28415 19:39:11.033382 open("/proc/1012/cmdline", O_RDONLY) = 3
+28415 19:39:11.033425 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033474 read(3, "avahi-daemon: running [Sistemang"..., 1025) = 44
+28415 19:39:11.033517 close(3)          = 0
+28415 19:39:11.033555 open("/proc/1017/cmdline", O_RDONLY) = 3
+28415 19:39:11.033598 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033639 read(3, "/usr/bin/dbus-daemon\0--system\0--"..., 1025) = 91
+28415 19:39:11.033680 close(3)          = 0
+28415 19:39:11.033718 open("/proc/1041/cmdline", O_RDONLY) = 3
+28415 19:39:11.033761 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033805 read(3, "avahi-daemon: chroot helper", 1025) = 27
+28415 19:39:11.033846 close(3)          = 0
+28415 19:39:11.033885 open("/proc/1046/cmdline", O_RDONLY) = 3
+28415 19:39:11.033928 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.033969 read(3, "/usr/bin/vmware-usbarbitrator\0", 1025) = 30
+28415 19:39:11.034010 close(3)          = 0
+28415 19:39:11.034049 open("/proc/1057/cmdline", O_RDONLY) = 3
+28415 19:39:11.034091 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.034132 read(3, "/usr/sbin/NetworkManager\0--no-da"..., 1025) = 37
+28415 19:39:11.034174 close(3)          = 0
+28415 19:39:11.034212 open("/proc/1061/cmdline", O_RDONLY) = 3
+28415 19:39:11.034254 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.034295 read(3, "/usr/sbin/ModemManager\0", 1025) = 23
+28415 19:39:11.034336 close(3)          = 0
+28415 19:39:11.034374 open("/proc/1067/cmdline", O_RDONLY) = 3
+28415 19:39:11.034417 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.034460 read(3, "/lib/systemd/systemd-logind\0", 1025) = 28
+28415 19:39:11.034501 close(3)          = 0
+28415 19:39:11.034539 open("/proc/1069/cmdline", O_RDONLY) = 3
+28415 19:39:11.034585 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.034650 read(3, "/usr/sbin/rsyslogd\0-n\0", 1025) = 22
+28415 19:39:11.034741 close(3)          = 0
+28415 19:39:11.034800 open("/proc/1071/cmdline", O_RDONLY) = 3
+28415 19:39:11.034859 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035007 read(3, "/usr/lib/snapd/snapd\0", 1025) = 21
+28415 19:39:11.035066 close(3)          = 0
+28415 19:39:11.035122 open("/proc/1110/cmdline", O_RDONLY) = 3
+28415 19:39:11.035172 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035220 read(3, "/usr/lib/colord/colord\0", 1025) = 23
+28415 19:39:11.035263 close(3)          = 0
+28415 19:39:11.035303 open("/proc/1118/cmdline", O_RDONLY) = 3
+28415 19:39:11.035347 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035388 read(3, "/usr/sbin/lightdm\0", 1025) = 18
+28415 19:39:11.035429 close(3)          = 0
+28415 19:39:11.035467 open("/proc/1123/cmdline", O_RDONLY) = 3
+28415 19:39:11.035510 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035551 read(3, "/usr/sbin/irqbalance\0--pid=/var/"..., 1025) = 51
+28415 19:39:11.035593 close(3)          = 0
+28415 19:39:11.035631 open("/proc/1138/cmdline", O_RDONLY) = 3
+28415 19:39:11.035674 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035714 read(3, "/usr/lib/policykit-1/polkitd\0--n"..., 1025) = 40
+28415 19:39:11.035756 close(3)          = 0
+28415 19:39:11.035794 open("/proc/1149/cmdline", O_RDONLY) = 3
+28415 19:39:11.035836 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.035880 read(3, "/usr/lib/xorg/Xorg\0-core\0:0\0-sea"..., 1025) = 101
+28415 19:39:11.036001 close(3)          = 0
+28415 19:39:11.036050 open("/proc/1160/cmdline", O_RDONLY) = 3
+28415 19:39:11.036099 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036167 read(3, "/usr/sbin/sshd\0-D\0", 1025) = 18
+28415 19:39:11.036211 close(3)          = 0
+28415 19:39:11.036252 open("/proc/1194/cmdline", O_RDONLY) = 3
+28415 19:39:11.036298 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036339 read(3, "/usr/bin/nvidia-persistenced\0--u"..., 1025) = 88
+28415 19:39:11.036381 close(3)          = 0
+28415 19:39:11.036420 open("/proc/1195/cmdline", O_RDONLY) = 3
+28415 19:39:11.036470 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036513 read(3, "", 1025) = 0
+28415 19:39:11.036550 close(3)          = 0
+28415 19:39:11.036588 open("/proc/1196/cmdline", O_RDONLY) = 3
+28415 19:39:11.036631 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036674 read(3, "", 1025) = 0
+28415 19:39:11.036712 close(3)          = 0
+28415 19:39:11.036750 open("/proc/1214/cmdline", O_RDONLY) = 3
+28415 19:39:11.036793 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036834 read(3, "/sbin/dhclient\0-d\0-q\0-sf\0/usr/li"..., 1025) = 244
+28415 19:39:11.036875 close(3)          = 0
+28415 19:39:11.036914 open("/proc/1264/cmdline", O_RDONLY) = 3
+28415 19:39:11.036956 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.036997 read(3, "lightdm\0--session-child\00012\00019\0", 1025) = 30
+28415 19:39:11.037039 close(3)          = 0
+28415 19:39:11.037077 open("/proc/1312/cmdline", O_RDONLY) = 3
+28415 19:39:11.037120 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.037163 read(3, "/usr/sbin/dnsmasq\0--no-resolv\0--"..., 1025) = 300
+28415 19:39:11.037217 close(3)          = 0
+28415 19:39:11.037259 open("/proc/1367/cmdline", O_RDONLY) = 3
+28415 19:39:11.037304 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.037345 read(3, "/usr/lib/rtkit/rtkit-daemon\0", 1025) = 28
+28415 19:39:11.037386 close(3)          = 0
+28415 19:39:11.037424 open("/proc/1384/cmdline", O_RDONLY) = 3
+28415 19:39:11.037467 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.037507 read(3, "/usr/lib/upower/upowerd\0", 1025) = 24
+28415 19:39:11.037548 close(3)          = 0
+28415 19:39:11.037586 open("/proc/1510/cmdline", O_RDONLY) = 3
+28415 19:39:11.037628 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.037671 read(3, "/sbin/dhclient\0-d\0-q\0-6\0-N\0-sf\0/"..., 1025) = 253
+28415 19:39:11.037714 close(3)          = 0
+28415 19:39:11.037754 open("/proc/1532/cmdline", O_RDONLY) = 3
+28415 19:39:11.037798 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.037841 read(3, "/usr/bin/whoopsie\0-f\0", 1025) = 21
+28415 19:39:11.037882 close(3)          = 0
+28415 19:39:11.037920 open("/proc/1551/cmdline", O_RDONLY) = 3
+28415 19:39:11.037963 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038004 read(3, "/sbin/agetty\0--noclear\0tty1\0linu"..., 1025) = 34
+28415 19:39:11.038046 close(3)          = 0
+28415 19:39:11.038090 open("/proc/1674/cmdline", O_RDONLY) = 3
+28415 19:39:11.038136 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038177 read(3, "/usr/lib/vmware/bin/vmware-vmblo"..., 1025) = 120
+28415 19:39:11.038222 close(3)          = 0
+28415 19:39:11.038261 open("/proc/1704/cmdline", O_RDONLY) = 3
+28415 19:39:11.038304 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038345 read(3, "/usr/bin/vmnet-bridge\0-s\0006\0-d\0/v"..., 1025) = 63
+28415 19:39:11.038386 close(3)          = 0
+28415 19:39:11.038427 open("/proc/1905/cmdline", O_RDONLY) = 3
+28415 19:39:11.038473 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038514 read(3, "/usr/bin/vmnet-netifup\0-s\0006\0-d\0/"..., 1025) = 84
+28415 19:39:11.038555 close(3)          = 0
+28415 19:39:11.038594 open("/proc/2193/cmdline", O_RDONLY) = 3
+28415 19:39:11.038636 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038677 read(3, "/usr/bin/vmnet-dhcpd\0-s\0006\0-cf\0/e"..., 1025) = 151
+28415 19:39:11.038718 close(3)          = 0
+28415 19:39:11.038756 open("/proc/2214/cmdline", O_RDONLY) = 3
+28415 19:39:11.038799 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.038839 read(3, "/usr/bin/vmnet-natd\0-s\0006\0-m\0/etc"..., 1025) = 90
+28415 19:39:11.038880 close(3)          = 0
+28415 19:39:11.038918 open("/proc/2216/cmdline", O_RDONLY) = 3
+28415 19:39:11.038960 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039003 read(3, "/usr/bin/vmnet-netifup\0-s\0006\0-d\0/"..., 1025) = 84
+28415 19:39:11.039044 close(3)          = 0
+28415 19:39:11.039083 open("/proc/2231/cmdline", O_RDONLY) = 3
+28415 19:39:11.039133 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039174 read(3, "/usr/bin/vmnet-dhcpd\0-s\0006\0-cf\0/e"..., 1025) = 151
+28415 19:39:11.039216 close(3)          = 0
+28415 19:39:11.039254 open("/proc/2249/cmdline", O_RDONLY) = 3
+28415 19:39:11.039297 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039337 read(3, "/usr/sbin/vmware-authdlauncher\0", 1025) = 31
+28415 19:39:11.039379 close(3)          = 0
+28415 19:39:11.039417 open("/proc/2560/cmdline", O_RDONLY) = 3
+28415 19:39:11.039459 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039500 read(3, "/usr/sbin/cupsd\0-l\0", 1025) = 19
+28415 19:39:11.039541 close(3)          = 0
+28415 19:39:11.039579 open("/proc/2562/cmdline", O_RDONLY) = 3
+28415 19:39:11.039622 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039668 read(3, "/usr/sbin/cups-browsed\0", 1025) = 23
+28415 19:39:11.039709 close(3)          = 0
+28415 19:39:11.039747 open("/proc/2567/cmdline", O_RDONLY) = 3
+28415 19:39:11.039791 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039831 read(3, "/usr/lib/cups/notifier/dbus\0dbus"..., 1025) = 37
+28415 19:39:11.039872 close(3)          = 0
+28415 19:39:11.039910 open("/proc/2655/cmdline", O_RDONLY) = 3
+28415 19:39:11.039952 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.039993 read(3, "/lib/systemd/systemd\0--user\0", 1025) = 28
+28415 19:39:11.040034 close(3)          = 0
+28415 19:39:11.040072 open("/proc/2656/cmdline", O_RDONLY) = 3
+28415 19:39:11.040114 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040155 read(3, "(sd-pam)\0\0\0\0\0\0\0\0\0\0", 1025) = 18
+28415 19:39:11.040196 close(3)          = 0
+28415 19:39:11.040237 open("/proc/2662/cmdline", O_RDONLY) = 3
+28415 19:39:11.040280 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040322 read(3, "/usr/bin/gnome-keyring-daemon\0--"..., 1025) = 50
+28415 19:39:11.040363 close(3)          = 0
+28415 19:39:11.040401 open("/proc/2664/cmdline", O_RDONLY) = 3
+28415 19:39:11.040444 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040485 read(3, "/sbin/upstart\0--user\0", 1025) = 21
+28415 19:39:11.040525 close(3)          = 0
+28415 19:39:11.040563 open("/proc/2750/cmdline", O_RDONLY) = 3
+28415 19:39:11.040606 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040646 read(3, "upstart-udev-bridge\0--daemon\0--u"..., 1025) = 36
+28415 19:39:11.040688 close(3)          = 0
+28415 19:39:11.040725 open("/proc/2752/cmdline", O_RDONLY) = 3
+28415 19:39:11.040768 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040811 read(3, "dbus-daemon\0--fork\0--session\0--a"..., 1025) = 74
+28415 19:39:11.040852 close(3)          = 0
+28415 19:39:11.040890 open("/proc/2764/cmdline", O_RDONLY) = 3
+28415 19:39:11.040933 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.040974 read(3, "/usr/lib/x86_64-linux-gnu/hud/wi"..., 1025) = 50
+28415 19:39:11.041015 close(3)          = 0
+28415 19:39:11.041053 open("/proc/2789/cmdline", O_RDONLY) = 3
+28415 19:39:11.041096 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041136 read(3, "upstart-dbus-bridge\0--daemon\0--s"..., 1025) = 63
+28415 19:39:11.041178 close(3)          = 0
+28415 19:39:11.041216 open("/proc/2790/cmdline", O_RDONLY) = 3
+28415 19:39:11.041276 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041319 read(3, "upstart-dbus-bridge\0--daemon\0--s"..., 1025) = 65
+28415 19:39:11.041361 close(3)          = 0
+28415 19:39:11.041399 open("/proc/2797/cmdline", O_RDONLY) = 3
+28415 19:39:11.041441 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041485 read(3, "/usr/bin/ibus-daemon\0--daemonize"..., 1025) = 71
+28415 19:39:11.041526 close(3)          = 0
+28415 19:39:11.041564 open("/proc/2806/cmdline", O_RDONLY) = 3
+28415 19:39:11.041607 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041647 read(3, "upstart-file-bridge\0--daemon\0--u"..., 1025) = 36
+28415 19:39:11.041694 close(3)          = 0
+28415 19:39:11.041733 open("/proc/2819/cmdline", O_RDONLY) = 3
+28415 19:39:11.041776 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041817 read(3, "/usr/lib/gvfs/gvfsd\0", 1025) = 20
+28415 19:39:11.041858 close(3)          = 0
+28415 19:39:11.041896 open("/proc/2824/cmdline", O_RDONLY) = 3
+28415 19:39:11.041938 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.041979 read(3, "/usr/lib/gvfs/gvfsd-fuse\0/run/us"..., 1025) = 62
+28415 19:39:11.042019 close(3)          = 0
+28415 19:39:11.042060 open("/proc/2833/cmdline", O_RDONLY) = 3
+28415 19:39:11.042103 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042143 read(3, "/usr/lib/ibus/ibus-dconf\0", 1025) = 25
+28415 19:39:11.042184 close(3)          = 0
+28415 19:39:11.042222 open("/proc/2834/cmdline", O_RDONLY) = 3
+28415 19:39:11.042265 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042305 read(3, "/usr/lib/ibus/ibus-ui-gtk3\0", 1025) = 27
+28415 19:39:11.042346 close(3)          = 0
+28415 19:39:11.042384 open("/proc/2838/cmdline", O_RDONLY) = 3
+28415 19:39:11.042426 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042467 read(3, "/usr/lib/ibus/ibus-x11\0--kill-da"..., 1025) = 37
+28415 19:39:11.042508 close(3)          = 0
+28415 19:39:11.042546 open("/proc/2856/cmdline", O_RDONLY) = 3
+28415 19:39:11.042588 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042631 read(3, "/usr/lib/unity-settings-daemon/u"..., 1025) = 53
+28415 19:39:11.042672 close(3)          = 0
+28415 19:39:11.042710 open("/proc/2857/cmdline", O_RDONLY) = 3
+28415 19:39:11.042753 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042794 read(3, "/usr/lib/x86_64-linux-gnu/bamf/b"..., 1025) = 42
+28415 19:39:11.042835 close(3)          = 0
+28415 19:39:11.042873 open("/proc/2866/cmdline", O_RDONLY) = 3
+28415 19:39:11.042916 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.042957 read(3, "/usr/lib/ibus/ibus-engine-simple"..., 1025) = 33
+28415 19:39:11.043000 close(3)          = 0
+28415 19:39:11.043040 open("/proc/2871/cmdline", O_RDONLY) = 3
+28415 19:39:11.043084 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043125 read(3, "/usr/lib/at-spi2-core/at-spi-bus"..., 1025) = 63
+28415 19:39:11.043166 close(3)          = 0
+28415 19:39:11.043204 open("/proc/2872/cmdline", O_RDONLY) = 3
+28415 19:39:11.043246 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043289 read(3, "/usr/lib/gnome-session/gnome-ses"..., 1025) = 61
+28415 19:39:11.043330 close(3)          = 0
+28415 19:39:11.043368 open("/proc/2880/cmdline", O_RDONLY) = 3
+28415 19:39:11.043411 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043453 read(3, "/usr/bin/dbus-daemon\0--config-fi"..., 1025) = 94
+28415 19:39:11.043494 close(3)          = 0
+28415 19:39:11.043532 open("/proc/2882/cmdline", O_RDONLY) = 3
+28415 19:39:11.043574 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043615 read(3, "/usr/lib/x86_64-linux-gnu/hud/hu"..., 1025) = 42
+28415 19:39:11.043656 close(3)          = 0
+28415 19:39:11.043694 open("/proc/2888/cmdline", O_RDONLY) = 3
+28415 19:39:11.043736 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043780 read(3, "/usr/lib/x86_64-linux-gnu/unity/"..., 1025) = 52
+28415 19:39:11.043821 close(3)          = 0
+28415 19:39:11.043859 open("/proc/2915/cmdline", O_RDONLY) = 3
+28415 19:39:11.043901 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.043942 read(3, "/usr/lib/at-spi2-core/at-spi2-re"..., 1025) = 60
+28415 19:39:11.043983 close(3)          = 0
+28415 19:39:11.044020 open("/proc/2939/cmdline", O_RDONLY) = 3
+28415 19:39:11.044062 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044102 read(3, "/usr/bin/pulseaudio\0--start\0--lo"..., 1025) = 48
+28415 19:39:11.044143 close(3)          = 0
+28415 19:39:11.044181 open("/proc/2950/cmdline", O_RDONLY) = 3
+28415 19:39:11.044223 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044272 read(3, "/usr/lib/dconf/dconf-service\0", 1025) = 29
+28415 19:39:11.044314 close(3)          = 0
+28415 19:39:11.044353 open("/proc/2958/cmdline", O_RDONLY) = 3
+28415 19:39:11.044395 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044439 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+28415 19:39:11.044480 close(3)          = 0
+28415 19:39:11.044518 open("/proc/2959/cmdline", O_RDONLY) = 3
+28415 19:39:11.044561 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044601 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 74
+28415 19:39:11.044642 close(3)          = 0
+28415 19:39:11.044680 open("/proc/2960/cmdline", O_RDONLY) = 3
+28415 19:39:11.044728 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044770 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 66
+28415 19:39:11.044811 close(3)          = 0
+28415 19:39:11.044850 open("/proc/2963/cmdline", O_RDONLY) = 3
+28415 19:39:11.044892 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.044932 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+28415 19:39:11.044974 close(3)          = 0
+28415 19:39:11.045012 open("/proc/2968/cmdline", O_RDONLY) = 3
+28415 19:39:11.045054 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045098 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 82
+28415 19:39:11.045139 close(3)          = 0
+28415 19:39:11.045177 open("/proc/2969/cmdline", O_RDONLY) = 3
+28415 19:39:11.045278 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045325 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 66
+28415 19:39:11.045363 close(3)          = 0
+28415 19:39:11.045398 open("/proc/2971/cmdline", O_RDONLY) = 3
+28415 19:39:11.045437 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045474 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+28415 19:39:11.045511 close(3)          = 0
+28415 19:39:11.045545 open("/proc/2972/cmdline", O_RDONLY) = 3
+28415 19:39:11.045583 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045622 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 70
+28415 19:39:11.045660 close(3)          = 0
+28415 19:39:11.045694 open("/proc/3011/cmdline", O_RDONLY) = 3
+28415 19:39:11.045733 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045770 read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 78
+28415 19:39:11.045807 close(3)          = 0
+28415 19:39:11.045841 open("/proc/3013/cmdline", O_RDONLY) = 3
+28415 19:39:11.045880 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.045916 read(3, "/usr/lib/evolution/evolution-sou"..., 1025) = 45
+28415 19:39:11.045953 close(3)          = 0
+28415 19:39:11.045988 open("/proc/3030/cmdline", O_RDONLY) = 3
+28415 19:39:11.046025 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046062 read(3, "compiz\0", 1025) = 7
+28415 19:39:11.046099 close(3)          = 0
+28415 19:39:11.046133 open("/proc/3056/cmdline", O_RDONLY) = 3
+28415 19:39:11.046171 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046210 read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 46
+28415 19:39:11.046248 close(3)          = 0
+28415 19:39:11.046282 open("/proc/3070/cmdline", O_RDONLY) = 3
+28415 19:39:11.046321 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046357 read(3, "nautilus\0-n\0", 1025) = 12
+28415 19:39:11.046395 close(3)          = 0
+28415 19:39:11.046429 open("/proc/3071/cmdline", O_RDONLY) = 3
+28415 19:39:11.046467 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046503 read(3, "/usr/bin/gnome-software\0--gappli"..., 1025) = 47
+28415 19:39:11.046541 close(3)          = 0
+28415 19:39:11.046576 open("/proc/3079/cmdline", O_RDONLY) = 3
+28415 19:39:11.046613 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046650 read(3, "/usr/lib/policykit-1-gnome/polki"..., 1025) = 63
+28415 19:39:11.046687 close(3)          = 0
+28415 19:39:11.046721 open("/proc/3083/cmdline", O_RDONLY) = 3
+28415 19:39:11.046759 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046805 read(3, "nm-applet\0", 1025) = 10
+28415 19:39:11.046843 close(3)          = 0
+28415 19:39:11.046877 open("/proc/3084/cmdline", O_RDONLY) = 3
+28415 19:39:11.046916 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.046953 read(3, "/usr/lib/unity-settings-daemon/u"..., 1025) = 59
+28415 19:39:11.046990 close(3)          = 0
+28415 19:39:11.047024 open("/proc/3109/cmdline", O_RDONLY) = 3
+28415 19:39:11.047062 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047099 read(3, "/usr/lib/gvfs/gvfs-udisks2-volum"..., 1025) = 42
+28415 19:39:11.047136 close(3)          = 0
+28415 19:39:11.047170 open("/proc/3112/cmdline", O_RDONLY) = 3
+28415 19:39:11.047208 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047247 read(3, "/usr/lib/udisks2/udisksd\0--no-de"..., 1025) = 36
+28415 19:39:11.047284 close(3)          = 0
+28415 19:39:11.047318 open("/proc/3123/cmdline", O_RDONLY) = 3
+28415 19:39:11.047357 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047393 read(3, "/usr/lib/gvfs/gvfs-gphoto2-volum"..., 1025) = 42
+28415 19:39:11.047431 close(3)          = 0
+28415 19:39:11.047465 open("/proc/3129/cmdline", O_RDONLY) = 3
+28415 19:39:11.047503 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047540 read(3, "/usr/lib/gvfs/gvfs-afc-volume-mo"..., 1025) = 38
+28415 19:39:11.047577 close(3)          = 0
+28415 19:39:11.047611 open("/proc/3135/cmdline", O_RDONLY) = 3
+28415 19:39:11.047649 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047686 read(3, "/usr/lib/gvfs/gvfs-mtp-volume-mo"..., 1025) = 38
+28415 19:39:11.047723 close(3)          = 0
+28415 19:39:11.047757 open("/proc/3141/cmdline", O_RDONLY) = 3
+28415 19:39:11.047795 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047835 read(3, "/usr/lib/gvfs/gvfs-goa-volume-mo"..., 1025) = 38
+28415 19:39:11.047872 close(3)          = 0
+28415 19:39:11.047906 open("/proc/3142/cmdline", O_RDONLY) = 3
+28415 19:39:11.047945 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.047983 read(3, "/usr/lib/x86_64-linux-gnu/fwupd/"..., 1025) = 38
+28415 19:39:11.048022 close(3)          = 0
+28415 19:39:11.048058 open("/proc/3192/cmdline", O_RDONLY) = 3
+28415 19:39:11.048096 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.048133 read(3, "/home/joe/.dropbox-dist/dropbox-"..., 1025) = 59
+28415 19:39:11.048171 close(3)          = 0
+28415 19:39:11.048206 open("/proc/3202/cmdline", O_RDONLY) = 3
+28415 19:39:11.048253 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.048324 read(3, "/usr/lib/gvfs/gvfsd-burn\0--spawn"..., 1025) = 66
+28415 19:39:11.048363 close(3)          = 0
+28415 19:39:11.048477 open("/proc/3212/cmdline", O_RDONLY) = 3
+28415 19:39:11.048540 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.048586 read(3, "/usr/lib/gvfs/gvfsd-trash\0--spaw"..., 1025) = 67
+28415 19:39:11.048625 close(3)          = 0
+28415 19:39:11.048662 open("/proc/3220/cmdline", O_RDONLY) = 3
+28415 19:39:11.048703 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.048740 read(3, "/usr/lib/gvfs/gvfsd-metadata\0", 1025) = 29
+28415 19:39:11.048778 close(3)          = 0
+28415 19:39:11.048812 open("/proc/3255/cmdline", O_RDONLY) = 3
+28415 19:39:11.048857 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.048895 read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 231
+28415 19:39:11.048935 close(3)          = 0
+28415 19:39:11.048972 open("/proc/3265/cmdline", O_RDONLY) = 3
+28415 19:39:11.049011 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049051 read(3, "/usr/lib/evolution/evolution-add"..., 1025) = 49
+28415 19:39:11.049088 close(3)          = 0
+28415 19:39:11.049123 open("/proc/3267/cmdline", O_RDONLY) = 3
+28415 19:39:11.049163 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049215 read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 228
+28415 19:39:11.049270 close(3)          = 0
+28415 19:39:11.049305 open("/proc/3280/cmdline", O_RDONLY) = 3
+28415 19:39:11.049351 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049389 read(3, "/usr/lib/evolution/evolution-add"..., 1025) = 237
+28415 19:39:11.049427 close(3)          = 0
+28415 19:39:11.049461 open("/proc/3309/cmdline", O_RDONLY) = 3
+28415 19:39:11.049500 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049536 read(3, "/usr/lib/x86_64-linux-gnu/notify"..., 1025) = 37
+28415 19:39:11.049573 close(3)          = 0
+28415 19:39:11.049608 open("/proc/3391/cmdline", O_RDONLY) = 3
+28415 19:39:11.049646 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049685 read(3, "/usr/sbin/uuidd\0--socket-activat"..., 1025) = 36
+28415 19:39:11.049722 close(3)          = 0
+28415 19:39:11.049757 open("/proc/3397/cmdline", O_RDONLY) = 3
+28415 19:39:11.049795 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049832 read(3, "/usr/lib/firefox/firefox\0", 1025) = 25
+28415 19:39:11.049869 close(3)          = 0
+28415 19:39:11.049903 open("/proc/3421/cmdline", O_RDONLY) = 3
+28415 19:39:11.049941 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.049978 read(3, "zeitgeist-datahub\0", 1025) = 18
+28415 19:39:11.050015 close(3)          = 0
+28415 19:39:11.050049 open("/proc/3428/cmdline", O_RDONLY) = 3
+28415 19:39:11.050087 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050124 read(3, "/bin/sh\0-c\0/usr/lib/x86_64-linux"..., 1025) = 97
+28415 19:39:11.050161 close(3)          = 0
+28415 19:39:11.050195 open("/proc/3432/cmdline", O_RDONLY) = 3
+28415 19:39:11.050233 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050275 read(3, "/usr/bin/zeitgeist-daemon\0", 1025) = 26
+28415 19:39:11.050311 close(3)          = 0
+28415 19:39:11.050346 open("/proc/3439/cmdline", O_RDONLY) = 3
+28415 19:39:11.050384 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050421 read(3, "/usr/lib/x86_64-linux-gnu/zeitge"..., 1025) = 40
+28415 19:39:11.050458 close(3)          = 0
+28415 19:39:11.050492 open("/proc/3470/cmdline", O_RDONLY) = 3
+28415 19:39:11.050530 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050566 read(3, "/usr/lib/gnome-terminal/gnome-te"..., 1025) = 46
+28415 19:39:11.050603 close(3)          = 0
+28415 19:39:11.050637 open("/proc/3476/cmdline", O_RDONLY) = 3
+28415 19:39:11.050675 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050714 read(3, "bash\0", 1025) = 5
+28415 19:39:11.050751 close(3)          = 0
+28415 19:39:11.050785 open("/proc/3522/cmdline", O_RDONLY) = 3
+28415 19:39:11.050823 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.050860 read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+28415 19:39:11.050898 close(3)          = 0
+28415 19:39:11.050932 open("/proc/3555/cmdline", O_RDONLY) = 3
+28415 19:39:11.050970 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051007 read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+28415 19:39:11.051045 close(3)          = 0
+28415 19:39:11.051079 open("/proc/3609/cmdline", O_RDONLY) = 3
+28415 19:39:11.051117 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051159 read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+28415 19:39:11.051201 close(3)          = 0
+28415 19:39:11.051238 open("/proc/3615/cmdline", O_RDONLY) = 3
+28415 19:39:11.051278 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051318 read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+28415 19:39:11.051356 close(3)          = 0
+28415 19:39:11.051390 open("/proc/3764/cmdline", O_RDONLY) = 3
+28415 19:39:11.051429 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051465 read(3, "/opt/sublime_text/sublime_text\0", 1025) = 31
+28415 19:39:11.051503 close(3)          = 0
+28415 19:39:11.051537 open("/proc/3779/cmdline", O_RDONLY) = 3
+28415 19:39:11.051576 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051612 read(3, "/opt/sublime_text/plugin_host\00037"..., 1025) = 52
+28415 19:39:11.051649 close(3)          = 0
+28415 19:39:11.051689 open("/proc/3783/cmdline", O_RDONLY) = 3
+28415 19:39:11.051729 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051765 read(3, "update-notifier\0", 1025) = 16
+28415 19:39:11.051803 close(3)          = 0
+28415 19:39:11.051837 open("/proc/4549/cmdline", O_RDONLY) = 3
+28415 19:39:11.051876 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.051911 brk(0x12e9000)    = 0x12e9000
+28415 19:39:11.051950 read(3, "/usr/lib/x86_64-linux-gnu/deja-d"..., 1025) = 52
+28415 19:39:11.051986 close(3)          = 0
+28415 19:39:11.052021 open("/proc/4557/cmdline", O_RDONLY) = 3
+28415 19:39:11.052059 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052097 read(3, "bash\0", 1025) = 5
+28415 19:39:11.052133 close(3)          = 0
+28415 19:39:11.052168 open("/proc/4847/cmdline", O_RDONLY) = 3
+28415 19:39:11.052206 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052243 read(3, "bash\0", 1025) = 5
+28415 19:39:11.052280 close(3)          = 0
+28415 19:39:11.052314 open("/proc/13558/cmdline", O_RDONLY) = 3
+28415 19:39:11.052353 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052391 read(3, "", 1025) = 0
+28415 19:39:11.052425 close(3)          = 0
+28415 19:39:11.052458 open("/proc/13559/cmdline", O_RDONLY) = 3
+28415 19:39:11.052497 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052534 read(3, "", 1025) = 0
+28415 19:39:11.052567 close(3)          = 0
+28415 19:39:11.052601 open("/proc/13568/cmdline", O_RDONLY) = 3
+28415 19:39:11.052639 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052675 read(3, "", 1025) = 0
+28415 19:39:11.052708 close(3)          = 0
+28415 19:39:11.052742 open("/proc/13569/cmdline", O_RDONLY) = 3
+28415 19:39:11.052780 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052816 read(3, "", 1025) = 0
+28415 19:39:11.052849 close(3)          = 0
+28415 19:39:11.052883 open("/proc/13570/cmdline", O_RDONLY) = 3
+28415 19:39:11.052923 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.052964 read(3, "", 1025) = 0
+28415 19:39:11.053000 close(3)          = 0
+28415 19:39:11.053034 open("/proc/13571/cmdline", O_RDONLY) = 3
+28415 19:39:11.053072 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053109 read(3, "", 1025) = 0
+28415 19:39:11.053143 close(3)          = 0
+28415 19:39:11.053176 open("/proc/13572/cmdline", O_RDONLY) = 3
+28415 19:39:11.053254 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053292 read(3, "", 1025) = 0
+28415 19:39:11.053326 close(3)          = 0
+28415 19:39:11.053360 open("/proc/13573/cmdline", O_RDONLY) = 3
+28415 19:39:11.053399 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053436 read(3, "", 1025) = 0
+28415 19:39:11.053470 close(3)          = 0
+28415 19:39:11.053503 open("/proc/13610/cmdline", O_RDONLY) = 3
+28415 19:39:11.053541 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053580 read(3, "", 1025) = 0
+28415 19:39:11.053614 close(3)          = 0
+28415 19:39:11.053648 open("/proc/27431/cmdline", O_RDONLY) = 3
+28415 19:39:11.053686 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053722 read(3, "", 1025) = 0
+28415 19:39:11.053755 close(3)          = 0
+28415 19:39:11.053789 open("/proc/27617/cmdline", O_RDONLY) = 3
+28415 19:39:11.053827 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.053864 read(3, "", 1025) = 0
+28415 19:39:11.053897 close(3)          = 0
+28415 19:39:11.053931 open("/proc/27742/cmdline", O_RDONLY) = 3
+28415 19:39:11.053969 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054008 read(3, "", 1025) = 0
+28415 19:39:11.054042 close(3)          = 0
+28415 19:39:11.054075 open("/proc/27743/cmdline", O_RDONLY) = 3
+28415 19:39:11.054114 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054151 read(3, "", 1025) = 0
+28415 19:39:11.054183 close(3)          = 0
+28415 19:39:11.054217 open("/proc/27899/cmdline", O_RDONLY) = 3
+28415 19:39:11.054256 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054298 read(3, "", 1025) = 0
+28415 19:39:11.054332 close(3)          = 0
+28415 19:39:11.054366 open("/proc/27907/cmdline", O_RDONLY) = 3
+28415 19:39:11.054405 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054442 read(3, "/usr/lib/gvfs/gvfsd-network\0--sp"..., 1025) = 69
+28415 19:39:11.054479 close(3)          = 0
+28415 19:39:11.054514 open("/proc/27938/cmdline", O_RDONLY) = 3
+28415 19:39:11.054552 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054590 read(3, "/usr/lib/gvfs/gvfsd-dnssd\0--spaw"..., 1025) = 67
+28415 19:39:11.054666 close(3)          = 0
+28415 19:39:11.054729 open("/proc/28063/cmdline", O_RDONLY) = 3
+28415 19:39:11.054773 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054811 read(3, "./Waiting.exe\0", 1025) = 14
+28415 19:39:11.054849 close(3)          = 0
+28415 19:39:11.054885 open("/proc/28084/cmdline", O_RDONLY) = 3
+28415 19:39:11.054925 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.054961 read(3, "", 1025) = 0
+28415 19:39:11.054995 close(3)          = 0
+28415 19:39:11.055028 open("/proc/28085/cmdline", O_RDONLY) = 3
+28415 19:39:11.055066 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055103 read(3, "", 1025) = 0
+28415 19:39:11.055136 close(3)          = 0
+28415 19:39:11.055170 open("/proc/28162/cmdline", O_RDONLY) = 3
+28415 19:39:11.055207 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055246 read(3, "", 1025) = 0
+28415 19:39:11.055280 close(3)          = 0
+28415 19:39:11.055314 open("/proc/28307/cmdline", O_RDONLY) = 3
+28415 19:39:11.055352 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055388 read(3, "", 1025) = 0
+28415 19:39:11.055421 close(3)          = 0
+28415 19:39:11.055455 open("/proc/28399/cmdline", O_RDONLY) = 3
+28415 19:39:11.055493 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055530 read(3, "", 1025) = 0
+28415 19:39:11.055563 close(3)          = 0
+28415 19:39:11.055596 open("/proc/28413/cmdline", O_RDONLY) = 3
+28415 19:39:11.055638 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055677 read(3, "strace\0-f\0-tt\0-o\0Error_Output/in"..., 1025) = 71
+28415 19:39:11.055714 close(3)          = 0
+28415 19:39:11.055749 open("/proc/28415/cmdline", O_RDONLY) = 3
+28415 19:39:11.055789 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.055826 read(3, "./injector.exe\00028063\0", 1025) = 21
+28415 19:39:11.055862 close(3)          = 0
+28415 19:39:11.055961 fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 18), ...}) = 0
+28415 19:39:11.056009 write(1, "\n", 1) = 1
+28415 19:39:11.056052 write(1, "Parsing /proc/28063/ (./Waiting."..., 37) = 37
+28415 19:39:11.056102 write(1, "[*] Located /proc/PID/\n", 23) = 23
+28415 19:39:11.056149 ptrace(PTRACE_ATTACH, 28063, NULL, NULL) = 0
+28415 19:39:11.056189 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_TRAPPED, si_pid=28063, si_uid=1000, si_status=SIGSTOP, si_utime=0, si_stime=2} ---
+28415 19:39:11.056213 wait4(28063, [{WIFSTOPPED(s) && WSTOPSIG(s) == SIGSTOP}], WSTOPPED, NULL) = 28063
+28415 19:39:11.056250 write(1, "[*] Attched to PID\n", 19) = 19
+28415 19:39:11.056287 ptrace(PTRACE_GETREGS, 28063, NULL, 0x7ffe27ddf780) = 0
+28415 19:39:11.056320 write(1, "[*] Backed up PID's processor re"..., 40) = 40
+28415 19:39:11.056366 open("/proc/28063/maps", O_RDONLY) = 3
+28415 19:39:11.056412 fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+28415 19:39:11.056450 read(3, "00400000-00401000 r-xp 00000000 "..., 1024) = 1024
+28415 19:39:11.056535 read(3, " \n7fa9e432d000-7fa9e4353000 r-xp"..., 1024) = 743
+28415 19:39:11.056606 read(3, "", 1024) = 0
+28415 19:39:11.056639 write(1, "[*] Found rw-p PID memory\n", 26) = 26
+28415 19:39:11.056680 process_vm_readv(28063, [{"(\16`\0\0\0\0\0hAU\344\251\177\0\0PN4\344\251\177\0\0\220B\375\343\251\177\0\0"..., 4096}], 1, [{0x601000, 4096}], 1, 0) = 4096
+28415 19:39:11.056724 write(1, "[*] Successfully backed up PID m"..., 38) = 38
+28415 19:39:11.056764 open("./3-22-1_Payloads/payload_64_write_1.o", O_RDWR) = 4
+28415 19:39:11.056811 fstat(4, {st_mode=S_IFREG|0664, st_size=768, ...}) = 0
+28415 19:39:11.056851 mmap(NULL, 768, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED, 4, 0) = 0x7feddfecf000
+28415 19:39:11.056891 close(4)          = 0
+28415 19:39:11.056922 write(1, "[*] Shellcode mapped into memory"..., 33) = 33
+28415 19:39:11.056977 ptrace(PTRACE_SETREGS, 28063, NULL, 0x7ffe27ddf860) = 0
+28415 19:39:11.057010 write(1, "90[*] Successfully updated RIP\n", 31) = 31
+28415 19:39:11.057047 ptrace(PTRACE_CONT, 28063, NULL, SIG_0) = 0
+28415 19:39:11.057081 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_TRAPPED, si_pid=28063, si_uid=1000, si_status=SIGSEGV, si_utime=0, si_stime=2} ---
+28415 19:39:11.057102 write(1, "[*] PID's execution resumed\n", 28) = 28
+28415 19:39:11.057139 wait4(28063, [{WIFSTOPPED(s) && WSTOPSIG(s) == SIGSEGV}], WSTOPPED, NULL) = 28063
+28415 19:39:11.057174 write(1, "[*] PID terminated\n", 19) = 19
+28415 19:39:11.057305 write(2, "<<<ERROR>>> - injector - main() "..., 53) = 53
+28415 19:39:11.057352 write(1, "Stopped due to receiving signal "..., 35) = 35
+28415 19:39:11.057390 ptrace(PTRACE_SETREGS, 28063, NULL, 0x7ffe27ddf780) = 0
+28415 19:39:11.057423 write(1, "[*] Successfully restored regist"..., 36) = 36
+28415 19:39:11.057459 write(1, "[*] REmodified mapped memory per"..., 48) = 48
+28415 19:39:11.057497 process_vm_writev(28063, [{"(\16`\0\0\0\0\0hAU\344\251\177\0\0PN4\344\251\177\0\0\220B\375\343\251\177\0\0"..., 4096}], 1, [{0x601000, 4096}], 1, 0) = 4096
+28415 19:39:11.057540 write(1, "[*] Restored PID memory space\n", 30) = 30
+28415 19:39:11.057604 write(1, "[*] REmodified mapped memory per"..., 62) = 62
+28415 19:39:11.057739 ptrace(PTRACE_DETACH, 28063, NULL, SIG_0) = 0
+28415 19:39:11.057805 write(1, "[*] PID detached\n", 17) = 17
+28415 19:39:11.057959 msync(0x7feddfecf000, 768, MS_SYNC|MS_INVALIDATE) = 0
+28415 19:39:11.058220 munmap(0x7feddfecf000, 768) = 0
+28415 19:39:11.058266 exit_group(0)     = ?
+28415 19:39:11.058378 +++ exited with 0 +++

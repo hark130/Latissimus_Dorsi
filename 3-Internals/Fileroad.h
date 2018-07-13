@@ -220,6 +220,8 @@ bool os_path_exists(char* path_ptr);
 		path_ptr == "/proc", join_ptr == "31337", isFile == true, returns "/proc/31337"
 		path_ptr == "/proc/", join_ptr == "/31337/", isFile == false, returns "/proc/31337/"
 		path_ptr == "/proc/", join_ptr == "/31337/", isFile == true, returns "/proc/31337"
+	BUGS:
+		If recipe 3221 injector.c is any indication, os_path_join() doesn't like relative paths!
  */
 char* os_path_join(char* path_ptr, char* join_ptr, bool isFile);
 
@@ -296,3 +298,7 @@ char* clean_filename(char* dirtyFile, bool inPlace);
 //////////////////////////////////////////////////////////////////////////////
 
 #endif  // __FILEROAD__
+
+
+/* BUGS */
+// os_path_join("./3-22-1_Payloads", "payload_64_write_1.o", true) becomes "/./3-22-1_Payloads/payload_64_write_1.o"

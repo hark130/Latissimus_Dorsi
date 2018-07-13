@@ -90,6 +90,19 @@ Developers will have an in-depth working knowledge of Linux Internals
 	* [Linux ptrace introduction AKA injecting into sshd for fun](https://blog.xpnsec.com/linux-process-injection-aka-injecting-into-sshd-for-fun/)
 	* [Dynamically Inject a Shared Library Into a Running Process on Android/ARM](https://www.evilsocket.net/2015/05/01/dynamically-inject-a-shared-library-into-a-running-process-on-androidarm/)
 	* [Executable Code Injection in Linux](http://www.i-programmer.info/programming/cc/3978-executable-code-injection-in-linux.html?start=1)
+* [Compile with nasm](https://ccm.net/faq/1559-compiling-an-assembly-program-with-nasm)
+* Example Exploits
+	* From [A proc PID mem vulnerability](https://lwn.net/Articles/476947/)
+        * [Linux Local Root Exploit "Mempodipper"](https://git.zx2c4.com/CVE-2012-0056/tree/mempodipper.c)
+	    * [Aedla's proof-of-concept](http://kodu.ut.ee/~asd/exp-0-aedla/exp-0-aedla.c)
+* [Understanding the Memory Layout of Linux Executables](https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4)
+* Linux Journal: Playing with ptrace [Part I](https://www.linuxjournal.com/article/6100) and [Part II](https://www.linuxjournal.com/article/6210)
+* Phrack: [Building ptrace injecting shellcodes](http://phrack.org/issues/59/12.html)
+* [How to translate virtual to physical addresses through /proc/pid/pagemap](http://fivelinesofcode.blogspot.in/2014/03/how-to-translate-virtual-to-physical.html)
+* [Writing a Self-Mutating x86_64 C Program](https://shanetully.com/2013/12/writing-a-self-mutating-x86_64-c-program/)
+* [Linux - Infecting Running Processes](https://0x00sec.org/t/linux-infecting-running-processes/1097) and again [here](https://www.real0day.com/hacking-tutorials/2017/11/6/injecting-a-running-process-linux)
+* [Read this later](https://github.com/eklitzke/ptrace-syscall) and then read [this](https://eklitzke.org/ptrace) and [this](https://eklitzke.org/ptrace-continued)
+* [The “ptrace” Solution to Stack Integrity Attacks in GNU/Linux Systems](http://www.ubishops.ca/wp-content/uploads/leon20150504.pdf)
 
 ## TO DO
 

@@ -1,0 +1,7 @@
+
+Parsing /proc/26678/ (./Waiting.exe)
+[*] Located /proc/PID/
+[*] Attched to PID
+[*] Backed up PID's processor registers
+[*] Found r-xp PID memory
+[*] Successfully backed up PID memory
