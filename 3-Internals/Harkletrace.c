@@ -151,6 +151,7 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	size_t i = 0;  // Iterating variable
 	long ptRetVal = 0;  // Store the ptrace() return value here
 	void* lastAddr = NULL;  // Staging area for last 'uneven' write
+	void* tmp_ptr = src_ptr;  // Iterating variable
 	
 	// INPUT VALIDATION
 	if (pid < 1)
@@ -184,6 +185,8 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 	// LOOP PTRACE
 	if (true == success)
 	{
+		// for (i = 0; i < (srcLen / sizeof(long)); i+= 1)
+		// for (i = 0; i < srcLen; i+= 1)
 		for (i = 0; i < srcLen; i+= sizeof(long))
 		{
 			// Handle that last awkward bit
@@ -210,20 +213,20 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 					}
 					else
 					{
-						fprintf(stdout, "htrace_write_data() is attempting to write this FINAL data:\t");  // DEBUGGING
-						ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, lastAddr);
-						for (int j = 0; j < sizeof(unsigned long); j++)
-						{
-							fprintf(stdout, "%02X", (*(((unsigned char*)lastAddr) + j)));  // DEBUGGING
-						}
-						fprintf(stdout, "\n");
+						// fprintf(stdout, "htrace_write_data() is attempting to write this FINAL data:\t");  // DEBUGGING
+						ptRetVal = ptrace(PTRACE_POKEDATA, pid, (unsigned long)dest_ptr + i, lastAddr);
+						// for (int j = 0; j < sizeof(unsigned long); j++)
+						// {
+						// 	fprintf(stdout, "%02X", (*(((unsigned char*)lastAddr) + j)));  // DEBUGGING
+						// }
+						// fprintf(stdout, "\n");
 					}
 				}
 			}
 			else
 			{
 				/* DEBUGGING */
-				// fprintf(stdout, "Attempting to write this data: ");  // DEBUGGING
+				// fprintf(stdout, "Attempting to 'htrace' write this data: ");  // DEBUGGING
 				// for (int j = 0; j < sizeof(unsigned long); j++)
 				// {
 				// 	fprintf(stdout, "%02X", (*(((unsigned char*)dest_ptr) + i + j)));  // DEBUGGING
@@ -233,11 +236,23 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 				// {
 				// 	fprintf(stdout, "%02X", (*(((unsigned char*)src_ptr) + i + j)));  // DEBUGGING
 				// }
+				// fprintf(stdout, "%016lX", (*((signed long*)tmp_ptr)));  // DEBUGGING
+				// fprintf(stdout, "%016lX", (*((signed long*)src_ptr + i)));  // DEBUGGING
+				// fprintf(stdout, " to 0x%016p\n", (void*)(dest_ptr + i));
 
 				// errno = 0;  // DEBUGGING... just a test
 
 				// ptRetVal = ptrace(PTRACE_POKEDATA, pid, dest_ptr + i, src_ptr + i);
-				ptRetVal = ptrace(PTRACE_POKETEXT, pid, dest_ptr + i, src_ptr + i);
+				// ptRetVal = ptrace(PTRACE_POKETEXT, pid, dest_ptr + i, src_ptr + i);
+				///////////////////////////////////////////////////////////////////////////////////
+				// THIS WORKS!
+				///////////////////////////////////////////////////////////////////////////////////
+				ptRetVal = ptrace(PTRACE_POKETEXT, pid, (unsigned long)dest_ptr + i, (*((signed long*)tmp_ptr)));
+				tmp_ptr += sizeof(long);
+				///////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////
+				// ptRetVal = ptrace(PTRACE_POKETEXT, pid, (unsigned long)dest_ptr + i, (*((signed long*)src_ptr + (size_t)i)));
 
 				// HARKLE_ERRNO(Harkletrace, ptrace, errno);
 
