@@ -14,7 +14,6 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	bool success = true;
 	size_t i = 0;  // Iterating variable
 	long ptRetVal = 0;  // Store the ptrace() return value here
-	// size_t newSrcLen = 0;  // Word-align the source
 	
 	// INPUT VALIDATION
 	if (!errNum)
@@ -49,21 +48,12 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 		// Warnings
 		if (srcLen % sizeof(void*))
 		{
-			// I'm not sure if this is a big deal or not.
-			// This may not ever happen.
-			// If it ever does, I'm sure I should do something about it.
-			// fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - The length of the 'blob' is not word-aligned");  // DEBUGGING
 			HARKLE_WARNG(Harkletrace, htrace_read_data, The length of the 'blob' is not word-aligned);  // DEBUGGING
-			// HARKLE_WARNG(Harkletrace, htrace_read_data, Padding the 'blob');  // DEBUGGING
-			// fprintf(stdout, "Reading %zu bytes\n", srcLen);  // DEBUGGING
-			// newSrcLen = srcLen + (srcLen % sizeof(void*));
-			// fprintf(stdout, "Now at  %zu bytes\n", newSrcLen);  // DEBUGGING
 		}
 		
 		if (sizeof(void*) != sizeof(ptRetVal))
 		{
 			HARKLE_WARNG(Harkletrace, htrace_read_data, Size mismatch between a void* and a 'word');  // DEBUGGING
-			// fprintf(stderr, "¿¿¿WARNING??? - htrace_read_data - Size mismatch between a void* and a 'word'");  // DEBUGGING	
 		}
 	}
 	
@@ -93,16 +83,13 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 	if (true == success)
 	{
 		for (i = 0; i < (srcLen - sizeof(void*)); i++)  // Errors reading from the last 8 bytes?!
-		// for (i = 0; i < srcLen; i++)
 		{
-			// fprintf(stdout, "Peeking into PID %d's %p which is %zu length.\n", pid, src_ptr + i, srcLen);  // DEBUGGING
 			ptRetVal = ptrace(PTRACE_PEEKDATA, pid, src_ptr + i, NULL);
 			
 			if (ptRetVal == -1)
 			{
 				*errNum = errno;
 				HARKLE_ERROR(Harkletrace, htrace_read_data, ptrace failed);
-				// fprintf(stderr, "ptrace() returned errno:\t%s\n", strerror(*errNum));
 				HARKLE_ERRNO(Harkletrace, ptrace, *errNum);
 				success = false;
 				break;
@@ -115,7 +102,6 @@ void* htrace_read_data(pid_t pid, void* src_ptr, size_t srcLen, int* errNum)
 				{
 					*errNum = errno;
 					HARKLE_ERROR(Harkletrace, htrace_read_data, memcpy failed);
-					// fprintf(stderr, "memcpy() returned errno:\t%s\n", strerror(*errNum));
 					HARKLE_ERRNO(Harkletrace, memcpy, *errNum);
 					success = false;
 					break;
@@ -242,24 +228,6 @@ int htrace_write_data(pid_t pid, void* dest_ptr, void* src_ptr, size_t srcLen)
 }
 
 
-/*
-	Purpose - Match a snippet of memory (needle) in a PID's larger 'blob' of memory
-	Input
-		pid - The PID of the target process
-		haystack_ptr - A pointer to a memory area of length haystackLen
-		needle_ptr - A pointer to a memory area of length needleLen
-		haystackLen - The size of the memory area haystack_ptr points to
-		needleLen - The size of the memory area needle_ptr points to
-	Output
-		On success...
-			Offset to the first occurrence of needle_ptr in haystack_ptr
-			-or-
-			-1 if needle_ptr is not found in haystack_ptr
-		On failure, -2
-	Notes:
-		If this function sounds like strstr() and memcmp() had a child and then married
-			ptrace(PTRACE_POKEDATA), then you understand what I'm trying to do here.
- */
 size_t pid_mem_hunt(pid_t pid, void* haystack_ptr, void* needle_ptr, size_t haystackLen, size_t needleLen)
 {
 	// LOCAL VARIABLES
