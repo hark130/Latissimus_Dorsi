@@ -486,7 +486,7 @@ int main(int argc, char* argv[])
 		// 12.3. Restore the mapped memory
 		if (true == success)
 		{
-			htrace_write_data(vicPID->pidNum, (unsigned long)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
+			htrace_write_data(vicPID->pidNum, (void*)tmpPM_ptr->addr_start, (void*)localBackup->iov_base, (int)localBackup->iov_len);
 		}
 		
 		// 12.4. Change the permissions on the memory back to r-xp
