@@ -1,6 +1,7 @@
 #ifndef __MAP_MEMORY__
 #define __MAP_MEMORY__
 
+#include <sys/mman.h>		// MAP_SHARED, MAP_SHARED_VALIDATE
 #include <stdbool.h>		// bool, true, false
 #include <stdlib.h>			// size_t
 
@@ -12,6 +13,12 @@
 #define MM_TYPE_HEAP ((int)1)	// Anonymous memory
 #define MM_TYPE_MMAP ((int)2)	// File mmap'd memory
 #define MM_TYPE_CAVE ((int)3)	// code cave... mem not owned by this struct
+
+#ifdef MAP_SHARED_VALIDATE
+#define HMAP_SHARED_VALIDATE MAP_SHARED_VALIDATE
+#else
+#define HMAP_SHARED_VALIDATE MAP_SHARED
+#endif  // HMAP_SHARED_VALIDATE
 
 typedef struct mappedMemory 
 {

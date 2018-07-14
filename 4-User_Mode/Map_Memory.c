@@ -1,6 +1,6 @@
 #include <errno.h>								// errno
 #include "Harklerror.h"							// HARKLE_ERROR
-#include "Map_Memory.h"
+#include "Map_Memory.h"							// HMAP_SHARED_VALIDATE
 #include <stdbool.h>							// bool, true, false
 #include <stdlib.h>
 #include <stdio.h>
@@ -41,7 +41,7 @@ mapMem_ptr map_anon(size_t length, int prot, int flags)
 	mapMem_ptr retVal = NULL;
 	int errNum = 0;  // Store errno here
 	int minProt = PROT_EXEC | PROT_READ | PROT_WRITE;  // Minimum protections
-	int minFlags = MAP_SHARED | MAP_SHARED_VALIDATE | MAP_PRIVATE;  // Minimum flags
+	int minFlags = MAP_SHARED | HMAP_SHARED_VALIDATE | MAP_PRIVATE;  // Minimum flags
 	int actualFlags = flags | MAP_ANONYMOUS;  // Update the parameter flags with MAP_ANONYMOUS
 	errno = 0;
 	bool success = true;  // Make this false if anything fails
