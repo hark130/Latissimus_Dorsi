@@ -28,7 +28,7 @@
 char buff[] = { WRAP_IT(SOURCE_NAME) };
 	
 
-void *harkleset(void *s, int c, size_t n);
+void *harklexplicit(void *s, int c, size_t n);
 
 
 int main(void)
@@ -40,9 +40,9 @@ int main(void)
 	puts(buff);
 	
 	// 2. memset() it
-	if (buff != harkleset(buff, 'H', buffLen))
+	if (buff != harklexplicit(buff, 'H', buffLen))
 	{
-		HARKLE_ERROR(SOURCE_NAME, main, harkleset failed);
+		HARKLE_ERROR(SOURCE_NAME, main, harklexplicit failed);
 	}
 	
 	// 3. Done
@@ -50,7 +50,7 @@ int main(void)
 }
 
 
-void *harkleset(void *s, int c, size_t n)
+void *harklexplicit(void *s, int c, size_t n)
 {
 	void *(*func_ptr)(void*, int, size_t) = memset;
 	return func_ptr(s, c, n);

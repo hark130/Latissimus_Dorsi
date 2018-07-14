@@ -33,15 +33,15 @@ int main(void)
 	// 0. Local Variables
 	char buff[] = { WRAP_IT(SOURCE_NAME) };
 	size_t buffLen = sizeof(buff);
-	void *(*harkleset)(void*, int, size_t) = memset;
+	void *(*harklexplicit)(void*, int, size_t) = memset;
 	
 	// 1. Use it
 	puts(buff);
 	
 	// 2. memset() it
-	if (buff != harkleset(buff, 'H', buffLen))
+	if (buff != harklexplicit(buff, 'H', buffLen))
 	{
-		HARKLE_ERROR(SOURCE_NAME, main, harkleset failed);
+		HARKLE_ERROR(SOURCE_NAME, main, harklexplicit failed);
 	}
 	
 	// 3. Done
