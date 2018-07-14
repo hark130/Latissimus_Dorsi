@@ -41,18 +41,22 @@
 #define OBJECT2 "Goto"
 #define OBJECT3 "Inline Assembly"
 // Scheme - A list of compilation schemes to attempt (e.g., linked object code, shared object)
-#define SCHEME_UPPER_LIMIT 5  // Update this if you add another scheme
+#define SCHEME_UPPER_LIMIT 4  // Update this if you add another scheme
 #define SCHEME1 "main()"
 #define SCHEME2 "Local func()"
 #define SCHEME3 "Compiled Together"
 #define SCHEME4 "Linked Together"
-#define SCHEME5 "Shared Object"
+#define SCHEME5 "Shared Object"  // memset will only appear in the .so's dynsym.  Hard code them.
 // Optimization
 #define OPTIMIZATION_UPPER_LIMIT 4  // Update this if you support another level of optimization
 #define OPTIMIZATION0 "None"
 #define OPTIMIZATION1 "-O1"
 #define OPTIMIZATION2 "-O2"
 #define OPTIMIZATION3 "-O3"
+// General Use
+#define UNDEFINED "Undefined"
+#define NOT_APPLICABLE "N/A"
+#define INDETERMINATE "Indeterminate"
 
 /*
  *	ENVIRONMENT MACROS
@@ -123,8 +127,12 @@ int main(void)
 	char *thing_arr[THING_UPPER_LIMIT + 1] = { NULL, THING1, THING2, THING3, THING4 };
 	char *trick_arr[TRICK_UPPER_LIMIT + 1] = { NULL, TRICK1, TRICK2, TRICK3, TRICK4, TRICK5, TRICK6, TRICK7, TRICK8 };
 	char *object_arr[OBJECT_UPPER_LIMIT + 1] = { NULL, OBJECT1, OBJECT2, OBJECT3 };
-	char *scheme_arr[SCHEME_UPPER_LIMIT + 1] = { NULL, SCHEME1, SCHEME2, SCHEME3, SCHEME4, SCHEME5 };
+	char *scheme_arr[SCHEME_UPPER_LIMIT + 1] = { NULL, SCHEME1, SCHEME2, SCHEME3, SCHEME4 };
 	char *optim_arr[OPTIMIZATION_UPPER_LIMIT + 1] = { OPTIMIZATION0, OPTIMIZATION1, OPTIMIZATION2, OPTIMIZATION3 };
+	char *manualEntries_arr[] = { "libhset.so", "libhset0.so", \
+	                              "libhset1.so", "libhset2.so", \
+	                              "libhset3.so", \
+	                              NULL };
 
 	// INPUT VALIDATION
 	if (numTricks < 1 || numTricks < 1 || numObjects < 1 || numSchemes < 1 || numOpts < 1)
@@ -318,7 +326,81 @@ int main(void)
 		}
 	}
 
-	// 9. Clean up
+	// 9. Check libraries
+	for (size_t i = 0; i < (sizeof(manualEntries_arr) / sizeof(*manualEntries_arr)); i++)
+	{
+		// 2. Get the library name
+		tmp_ptr = (*(manualEntries_arr + i));
+		// Previous array implementation was NULL-terminated to facilitate while loop
+		if (!tmp_ptr)
+		{
+			break;
+		}
+		// 3. Does the file exist?
+		if (false == os_path_isfile(tmp_ptr))
+		{
+			// 6. Print results to stdout
+			// fprintf(stdout, "%s:\tDoes not exist\n", tmp_ptr);
+
+			// 7. Log the results
+			log_exp_entry(resultsLogFile, tmp_ptr, NOT_APPLICABLE, UNDEFINED, \
+				          OBJECT1, SCHEME5, INDETERMINATE, \
+				          OUTPUT_FILE_MISSING, false);
+		}
+		// 4. Map input filename
+		else
+		{
+			mapInFile_ptr = map_file_mode(tmp_ptr, O_RDONLY);
+
+			if (!mapInFile_ptr)
+			{
+				// 6. Print results to stdout
+				fprintf(stdout, "%s:\tUnable to map to memory\n", tmp_ptr);
+			}
+			else
+			{								
+				// 5. Parse mapped input file
+				if (true == search_sect_hdr64_und_func(mapInFile_ptr, "memset"))
+				{
+					// 6. Print results to stdout
+					fprintf(stdout, "%s:\t%s\n", tmp_ptr, OUTPUT_MEMSET_FOUND);
+
+					// 7. Log the results
+					log_exp_entry(resultsLogFile, tmp_ptr, NOT_APPLICABLE, UNDEFINED, \
+				          		  OBJECT1, SCHEME5, INDETERMINATE, \
+						          OUTPUT_MEMSET_FOUND, false);
+					log_exp_entry(successLogFile, tmp_ptr, NOT_APPLICABLE, UNDEFINED, \
+						          OBJECT1, SCHEME5, INDETERMINATE, \
+						          OUTPUT_MEMSET_FOUND, false);
+				}
+				else
+				{
+					// 6. Print results to stdout
+					fprintf(stdout, "%s:\t%s\n", tmp_ptr, OUTPUT_MEMSET_MISSING);
+
+					// 7. Log the results
+					log_exp_entry(resultsLogFile, tmp_ptr, NOT_APPLICABLE, UNDEFINED, \
+						          OBJECT1, SCHEME5, INDETERMINATE, \
+						          OUTPUT_MEMSET_MISSING, false);
+				}
+
+				// 8. Unmap input filename
+				if (mapInFile_ptr)
+				{
+					// Unmap the memory
+					if (false == unmap_file(mapInFile_ptr, false))
+					{
+						HARKLE_ERROR(automate_memset_experiment, main, unmap_file failed);
+						success = false;
+					}
+					// Free the struct pointer
+					free_struct(&mapInFile_ptr);
+				}
+			}
+		}
+	}
+
+	// 10. Clean up
 	// resultsLogFile
 	if (resultsLogFile)
 	{
@@ -459,6 +541,7 @@ bool log_exp_entry(FILE *log_ptr, const char *col1, const char *col2, const char
 	}
 	else if (!(*col1) || !(*col2) || !(*col3) || !(*col4) || !(*col5) || !(*col6) || !(*col7))
 	{
+		// fprintf(stdout, "Col1:\t%s\nCol2:\t%s\nCol3:\t%s\nCol4:\t%s\nCol5:\t%s\nCol6:\t%s\nCol7:\t%s\n", col1, col2, col3, col4, col5, col6, col7);  // DEBUGGING
 		HARKLE_ERROR(automate_memset_experiment, log_exp_entry, Empty string);
 		retVal = false;
 	}
