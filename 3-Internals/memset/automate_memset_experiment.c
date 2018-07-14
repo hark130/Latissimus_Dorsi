@@ -106,11 +106,13 @@ int main(void)
 	int numSchemes = SCHEME_UPPER_LIMIT;
 	int numOpts = OPTIMIZATION_UPPER_LIMIT;
 	char tempFilename[] = { INPUT_FILE_PATH INPUT_FILE_TEMPLATE };  // Template input filename
-	char logFilename[] = { "YYYYMMDD-HHMMSS_memset_results.md" };  // Log filename
+	char resultsLogFilename[] = { "YYYYMMDD-HHMMSS_memset_results.md" };  // Filename of the log with all the results
+	char successLogFilename[] = { "YYYYMMDD-HHMMSS_memset_success.md" };  // Filename of the log containing just the "found" results
 	char *tmp_ptr = NULL;  // Store return values here
 	int errNum = 0;  // Store errno here
 	errno = 0;
-	FILE *logFile = NULL;  // Opened log file
+	FILE *resultsLogFile = NULL;  // Opened full results log file
+	FILE *successLogFile = NULL;  // Opened just success log file
 	int nthThing = 1;  // Starting thing number
 	int nthTrick = 1;  // Starting trick number
 	int nthObject = 1;  // Starting object number
@@ -144,10 +146,22 @@ int main(void)
 			success = false;
 		}
 
-		// Update logFilename
+		// Update resultsLogFilename
 		if (true == success)
 		{
-			if (logFilename != memcpy(logFilename, tmp_ptr, strlen(tmp_ptr)))
+			if (resultsLogFilename != memcpy(resultsLogFilename, tmp_ptr, strlen(tmp_ptr)))
+			{
+				errNum = errno;
+				HARKLE_ERROR(automate_memset_experiment, main, strstr failed);
+				HARKLE_ERRNO(automate_memset_experiment, strstr, errNum);
+				retVal = false;
+			}
+		}
+
+		// Update successLogFilename
+		if (true == success)
+		{
+			if (resultsLogFilename != memcpy(successLogFilename, tmp_ptr, strlen(tmp_ptr)))
 			{
 				errNum = errno;
 				HARKLE_ERROR(automate_memset_experiment, main, strstr failed);
@@ -168,13 +182,13 @@ int main(void)
 		}
 
 		// Create file
-		// Existing Harklemodule?
+		// resultsLogFilename
 		if (true == success)
 		{
-			puts(logFilename);  // DEBUGGING
-			logFile = fopen(logFilename, "w");
+			puts(resultsLogFilename);  // DEBUGGING
+			resultsLogFile = fopen(resultsLogFilename, "w");
 
-			if (!logFile)
+			if (!resultsLogFile)
 			{
 				errNum = errno;
 				HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
@@ -183,7 +197,30 @@ int main(void)
 			}
 			else
 			{
-				if (false == log_exp_entry(logFile, LOG_COL_1, LOG_COL_2, LOG_COL_3, LOG_COL_4, \
+				if (false == log_exp_entry(resultsLogFile, LOG_COL_1, LOG_COL_2, LOG_COL_3, LOG_COL_4, \
+					                       LOG_COL_5, LOG_COL_6, LOG_COL_7, true))
+				{
+					HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
+					success = false;
+				}
+			}			
+		}
+		// successLogFilename
+		if (true == success)
+		{
+			puts(successLogFilename);  // DEBUGGING
+			successLogFile = fopen(successLogFilename, "w");
+
+			if (!successLogFile)
+			{
+				errNum = errno;
+				HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
+				HARKLE_ERRNO(automate_memset_experiment, fopen, errNum);
+				success = false;
+			}
+			else
+			{
+				if (false == log_exp_entry(successLogFile, LOG_COL_1, LOG_COL_2, LOG_COL_3, LOG_COL_4, \
 					                       LOG_COL_5, LOG_COL_6, LOG_COL_7, true))
 				{
 					HARKLE_ERROR(automate_memset_experiment, main, fopen failed);
@@ -219,7 +256,7 @@ int main(void)
 								// fprintf(stdout, "%s:\tDoes not exist\n", tempFilename);
 
 								// 7. Log the results
-								log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+								log_exp_entry(resultsLogFile, tempFilename, thing_arr[i], trick_arr[j], \
 									          object_arr[k], scheme_arr[l], optim_arr[m], \
 									          OUTPUT_FILE_MISSING, false);
 							}
@@ -242,7 +279,10 @@ int main(void)
 										fprintf(stdout, "%s:\t%s\n", tempFilename, OUTPUT_MEMSET_FOUND);
 
 										// 7. Log the results
-										log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+										log_exp_entry(resultsLogFile, tempFilename, thing_arr[i], trick_arr[j], \
+											          object_arr[k], scheme_arr[l], optim_arr[m], \
+											          OUTPUT_MEMSET_FOUND, false);
+										log_exp_entry(successLogFile, tempFilename, thing_arr[i], trick_arr[j], \
 											          object_arr[k], scheme_arr[l], optim_arr[m], \
 											          OUTPUT_MEMSET_FOUND, false);
 									}
@@ -252,7 +292,7 @@ int main(void)
 										fprintf(stdout, "%s:\t%s\n", tempFilename, OUTPUT_MEMSET_MISSING);
 
 										// 7. Log the results
-										log_exp_entry(logFile, tempFilename, thing_arr[i], trick_arr[j], \
+										log_exp_entry(resultsLogFile, tempFilename, thing_arr[i], trick_arr[j], \
 											          object_arr[k], scheme_arr[l], optim_arr[m], \
 											          OUTPUT_MEMSET_MISSING, false);
 									}
@@ -279,16 +319,27 @@ int main(void)
 	}
 
 	// 9. Clean up
-	// logFile
-	if (logFile)
+	// resultsLogFile
+	if (resultsLogFile)
 	{
-		if (EOF == fclose(logFile))
+		if (EOF == fclose(resultsLogFile))
 		{
 			errNum = errno;
 			HARKLE_ERROR(automate_memset_experiment, main, fclose failed);
 			HARKLE_ERRNO(automate_memset_experiment, fclose, errNum);
 		}
-		logFile = NULL;
+		resultsLogFile = NULL;
+	}
+	// successLogFile
+	if (successLogFile)
+	{
+		if (EOF == fclose(successLogFile))
+		{
+			errNum = errno;
+			HARKLE_ERROR(automate_memset_experiment, main, fclose failed);
+			HARKLE_ERRNO(automate_memset_experiment, fclose, errNum);
+		}
+		successLogFile = NULL;
 	}
 	// mapInFile_ptr
 	if (mapInFile_ptr)
