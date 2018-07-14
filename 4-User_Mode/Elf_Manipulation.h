@@ -107,7 +107,7 @@ mapMem_ptr find_code_cave(mapMem_ptr elfBinary);
 
 /*
  *	PURPOSE - Search a 64-bit ELF binary's section headers looking for an
- *		undefined global function named "undFuncName"
+ *		undefined global (see: binding) function named "undFuncName"
  *	INPUT
  *		elf64File - mapMem struct pointer of a memory mapped ELF file
  *		undFuncName - Name of the function to search for
