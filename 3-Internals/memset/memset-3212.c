@@ -53,10 +53,10 @@ int main(void)
 		{
 			puts(buff);
 
-			// 2. memset() it
-			if (buff != memset(buff, 'H', buffLen))
+			// 2. volatile_harkleset() it
+			if (buff != volatile_harkleset(buff, 'H', buffLen))
 			{
-				HARKLE_ERROR(SOURCE_NAME, main, memset failed);
+				HARKLE_ERROR(SOURCE_NAME, main, volatile_harkleset failed);
 			}
 		}
 	}
