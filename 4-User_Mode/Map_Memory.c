@@ -35,6 +35,101 @@ mapMem_ptr create_mapMem_ptr(void)
 }
 
 
+mapMem_ptr map_anon(size_t length, int prot, int flags)
+{
+	// LOCAL VARIABLES
+	mapMem_ptr retVal = NULL;
+	int errNum = 0;  // Store errno here
+	int minProt = PROT_EXEC | PROT_READ | PROT_WRITE;  // Minimum protections
+	int minFlags = MAP_SHARED | MAP_SHARED_VALIDATE | MAP_PRIVATE;  // Minimum flags
+	int actualFlags = flags | MAP_ANONYMOUS;  // Update the parameter flags with MAP_ANONYMOUS
+	errno = 0;
+	bool success = true;  // Make this false if anything fails
+
+	// INPUT VALIDATION
+	if (length < 1)
+	{
+		HARKLE_ERROR(Map_Memory, map_anon, Invalid length);
+		success = false;
+	}
+	else if (!(prot & minProt) && prot != PROT_NONE)
+	{
+		HARKLE_ERROR(Map_Memory, map_anon, Minimum protections missing);
+		success = false;
+	}
+	else if (!(flags & minFlags) && flags != 0)
+	{
+		HARKLE_ERROR(Map_Memory, map_anon, Minimum flags missing);
+		success = false;
+	}
+
+	// MAP IT
+	// 1. Create mapMem_ptr
+	retVal = create_mapMem_ptr();
+	if (NULL == retVal)
+	{
+		HARKLE_ERROR(Map_Memory, map_anon, create_mapMem_ptr failed);
+		success = false;
+	}
+	else
+	{
+		// 2. Determine read-only permissions
+		if (PROT_WRITE != (prot & PROT_WRITE))
+		{
+			retVal->readOnly = true;
+		}
+		else
+		{
+			retVal->readOnly = false;
+		}
+
+		// 3. Store size
+		retVal->memSize = length;
+	}
+	
+	// 4. Map memory
+	if (true == success)
+	{
+		/*
+			void * mmap (void *addr,
+						 size_t len,
+						 int prot,
+						 int flags,
+						 int fd,
+						 off_t offset);
+		 */
+		retVal->fileMem_ptr = mmap(NULL, \
+								   retVal->memSize, \
+								   prot, \
+								   actualFlags, \
+								   -1, \
+								   0);
+
+		if (NULL == retVal->fileMem_ptr || MAP_FAILED == retVal->fileMem_ptr)
+		{
+			errNum = errno;
+			retVal->fileMem_ptr = NULL;
+			HARKLE_ERROR(Map_Memory, map_anon, mmap failed);
+			HARKLE_ERRNO(Map_Memory, mmap, errNum);
+		}
+		else
+		{
+			retVal->memType = MM_TYPE_HEAP;
+		}
+	}
+	
+	// CLEANUP
+	if (false == success && retVal)
+	{
+		// Something went wrong while populating the struct
+		free_struct(&retVal);
+	}
+
+	// DONE
+	return retVal;
+}
+
+
 mapMem_ptr map_file(const char* filename)
 {
 	// LOCAL VARIABLES
