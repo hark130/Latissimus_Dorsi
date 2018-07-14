@@ -135,6 +135,34 @@ CC = gcc
 	$(CC) -o memset-32111.exe -O1 -I $(3) memset-3211.c
 	$(CC) -o memset-32112.exe -O2 -I $(3) memset-3211.c
 	$(CC) -o memset-32113.exe -O3 -I $(3) memset-3211.c
+
+3212:
+	$(CC) -o memset-32120.exe -I $(3) memset-3212.c
+	$(CC) -o memset-32121.exe -O1 -I $(3) memset-3212.c
+	$(CC) -o memset-32122.exe -O2 -I $(3) memset-3212.c
+	$(CC) -o memset-32123.exe -O3 -I $(3) memset-1212.c
+	
+3213:
+	$(CC) -o memset-32130.exe -I $(3) harkleset.c memset-3213.c
+	$(CC) -o memset-32131.exe -O1 -I $(3) harkleset.c memset-3213.c
+	$(CC) -o memset-32132.exe -O2 -I $(3) harkleset.c memset-3213.c
+	$(CC) -o memset-32133.exe -O3 -I $(3) harkleset.c memset-1213.c
+	
+3214:
+	$(CC) -c -o memset-32140.o -I $(3) memset-3214.c
+	$(CC) -c -o memset-32141.o -O1 -I $(3) memset-3214.c
+	$(CC) -c -o memset-32142.o -O2 -I $(3) memset-3214.c
+	$(CC) -c -o memset-32143.o -O3 -I $(3) memset-3214.c
+	$(CC) -o memset-32140.exe -I $(3) harkleset0.o memset-32140.o
+	$(CC) -o memset-32141.exe -O1 -I $(3) harkleset1.o memset-32141.o
+	$(CC) -o memset-32142.exe -O2 -I $(3) harkleset2.o memset-32142.o
+	$(CC) -o memset-32143.exe -O3 -I $(3) harkleset3.o memset-32143.o
+
+3215:
+	$(CC) -L./ -o memset-32150.exe -I $(3) memset-3215.c -lhset0
+	$(CC) -L./ -o memset-32151.exe -O1 -I $(3) memset-3215.c -lhset1
+	$(CC) -L./ -o memset-32152.exe -O2 -I $(3) memset-3215.c -lhset2
+	$(CC) -L./ -o memset-32153.exe -O3 -I $(3) memset-3215.c -lhset3
 	
 3811:
 	$(CC) -o memset-38110.exe -I $(3) memset-3811.c
@@ -192,6 +220,10 @@ all:
 	$(MAKE) 2811
 	$(MAKE) 3111
 	$(MAKE) 3211
+	$(MAKE) 3212
+	$(MAKE) 3213
+	$(MAKE) 3214
+	$(MAKE) 3215
 	$(MAKE) 3811
 	$(MAKE) testing
 	
