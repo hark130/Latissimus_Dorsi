@@ -42,8 +42,14 @@ volatile char* volatile_harkleset(volatile char* oldBuff, char newChar, size_t b
 }
 
 
-void *harkleset(void *s, int c, size_t n)
+void *harklexplicit(void *s, int c, size_t n)
 {
 	void *(*func_ptr)(void*, int, size_t) = memset;
 	return func_ptr(s, c, n);
+}
+
+
+void *harkleset(void *s, int c, size_t n)
+{
+	return memset(s, c, n);
 }
