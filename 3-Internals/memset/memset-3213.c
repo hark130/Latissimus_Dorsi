@@ -45,7 +45,7 @@ int main(void)
 		// 1. Use it
 		if (buff != strncpy(buff, WRAP_IT(SOURCE_NAME), buffLen))
 		{
-			HARKLE_ERROR(SOURCE_NAME, main, strcpy failed);
+			HARKLE_ERROR(SOURCE_NAME, main, strncpy failed);
 		}
 		else
 		{
