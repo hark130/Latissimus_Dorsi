@@ -29,7 +29,7 @@
 
 int main(void)
 {	
-	char* buff = NULL;
+	volatile char* buff = NULL;
 	size_t buffLen = strlen(WRAP_IT(SOURCE_NAME));
 	
 	// 0. Allocate it
