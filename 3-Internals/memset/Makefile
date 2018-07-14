@@ -170,6 +170,62 @@ CC = gcc
 	$(CC) -o memset-38112.exe -O2 -I $(3) memset-3811.c
 	$(CC) -o memset-38113.exe -O3 -I $(3) memset-3811.c
 
+4112:
+	$(CC) -o memset-41120.exe -I $(3) memset-4112.c
+	$(CC) -o memset-41121.exe -O1 -I $(3) memset-4112.c
+	$(CC) -o memset-41122.exe -O2 -I $(3) memset-4112.c
+	$(CC) -o memset-41123.exe -O3 -I $(3) memset-4112.c
+
+4113:
+	$(CC) -o memset-41130.exe -I $(3) harkleset.c memset-4113.c
+	$(CC) -o memset-41131.exe -O1 -I $(3) harkleset.c memset-4113.c
+	$(CC) -o memset-41132.exe -O2 -I $(3) harkleset.c memset-4113.c
+	$(CC) -o memset-41133.exe -O3 -I $(3) harkleset.c memset-4113.c
+
+4114:
+	$(CC) -c -o memset-41140.o -I $(3) memset-4114.c
+	$(CC) -c -o memset-41141.o -O1 -I $(3) memset-4114.c
+	$(CC) -c -o memset-41142.o -O2 -I $(3) memset-4114.c
+	$(CC) -c -o memset-41143.o -O3 -I $(3) memset-4114.c
+	$(CC) -o memset-41140.exe -I $(3) harkleset0.o memset-41140.o
+	$(CC) -o memset-41141.exe -O1 -I $(3) harkleset1.o memset-41141.o
+	$(CC) -o memset-41142.exe -O2 -I $(3) harkleset2.o memset-41142.o
+	$(CC) -o memset-41143.exe -O3 -I $(3) harkleset3.o memset-41143.o
+
+4115:
+	$(CC) -L./ -o memset-41150.exe -I $(3) memset-4115.c -lhset0
+	$(CC) -L./ -o memset-41151.exe -O1 -I $(3) memset-4115.c -lhset1
+	$(CC) -L./ -o memset-41152.exe -O2 -I $(3) memset-4115.c -lhset2
+	$(CC) -L./ -o memset-41153.exe -O3 -I $(3) memset-4115.c -lhset3
+
+4212:
+	$(CC) -o memset-42120.exe -I $(3) memset-4212.c
+	$(CC) -o memset-42121.exe -O1 -I $(3) memset-4212.c
+	$(CC) -o memset-42122.exe -O2 -I $(3) memset-4212.c
+	$(CC) -o memset-42123.exe -O3 -I $(3) memset-4212.c
+	
+4213:
+	$(CC) -o memset-42130.exe -I $(3) harkleset.c memset-4213.c
+	$(CC) -o memset-42131.exe -O1 -I $(3) harkleset.c memset-4213.c
+	$(CC) -o memset-42132.exe -O2 -I $(3) harkleset.c memset-4213.c
+	$(CC) -o memset-42133.exe -O3 -I $(3) harkleset.c memset-4213.c
+
+4214:
+	$(CC) -c -o memset-42140.o -I $(3) memset-4214.c
+	$(CC) -c -o memset-42141.o -O1 -I $(3) memset-4214.c
+	$(CC) -c -o memset-42142.o -O2 -I $(3) memset-4214.c
+	$(CC) -c -o memset-42143.o -O3 -I $(3) memset-4214.c
+	$(CC) -o memset-42140.exe -I $(3) harkleset0.o memset-42140.o
+	$(CC) -o memset-42141.exe -O1 -I $(3) harkleset1.o memset-42141.o
+	$(CC) -o memset-42142.exe -O2 -I $(3) harkleset2.o memset-42142.o
+	$(CC) -o memset-42143.exe -O3 -I $(3) harkleset3.o memset-42143.o
+
+4215:
+	$(CC) -L./ -o memset-42150.exe -I $(3) memset-4215.c -lhset0
+	$(CC) -L./ -o memset-42151.exe -O1 -I $(3) memset-4215.c -lhset1
+	$(CC) -L./ -o memset-42152.exe -O2 -I $(3) memset-4215.c -lhset2
+	$(CC) -L./ -o memset-42153.exe -O3 -I $(3) memset-4215.c -lhset3
+
 harkleset:
 	$(CC) -o harkleset.o -c harkleset.c
 	$(CC) -o harkleset0.o -c harkleset.c
@@ -225,6 +281,14 @@ all:
 	$(MAKE) 3214
 	$(MAKE) 3215
 	$(MAKE) 3811
+	$(MAKE) 4112
+	$(MAKE) 4113
+	$(MAKE) 4114
+	$(MAKE) 4115
+	$(MAKE) 4212
+	$(MAKE) 4213
+	$(MAKE) 4214
+	$(MAKE) 4215
 	$(MAKE) testing
 	
 clean: 
