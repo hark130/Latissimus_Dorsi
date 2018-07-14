@@ -66,12 +66,12 @@
 #define OUTPUT_MEMSET_FOUND 	"memset Found"
 #define OUTPUT_MEMSET_MISSING	"memset Absent"
 #define OUTPUT_FILE_MISSING 	"No Source File"
-#define LOG_COL_1 "Source"
-#define LOG_COL_2 "Filename"
-#define LOG_COL_3 "Thing"
-#define LOG_COL_4 "Trick"
-#define LOG_COL_5 "Object"
-#define LOG_COL_6 "Scheme"
+#define LOG_COL_1 "Filename"
+#define LOG_COL_2 "Thing"
+#define LOG_COL_3 "Trick"
+#define LOG_COL_4 "Object"
+#define LOG_COL_5 "Scheme"
+#define LOG_COL_6 "Optimization"
 #define LOG_COL_7 "Results"
 
 
@@ -152,8 +152,8 @@ int main(void)
 			if (resultsLogFilename != memcpy(resultsLogFilename, tmp_ptr, strlen(tmp_ptr)))
 			{
 				errNum = errno;
-				HARKLE_ERROR(automate_memset_experiment, main, strstr failed);
-				HARKLE_ERRNO(automate_memset_experiment, strstr, errNum);
+				HARKLE_ERROR(automate_memset_experiment, main, memcpy failed);
+				HARKLE_ERRNO(automate_memset_experiment, memcpy, errNum);
 				retVal = false;
 			}
 		}
@@ -161,11 +161,11 @@ int main(void)
 		// Update successLogFilename
 		if (true == success)
 		{
-			if (resultsLogFilename != memcpy(successLogFilename, tmp_ptr, strlen(tmp_ptr)))
+			if (successLogFilename != memcpy(successLogFilename, tmp_ptr, strlen(tmp_ptr)))
 			{
 				errNum = errno;
-				HARKLE_ERROR(automate_memset_experiment, main, strstr failed);
-				HARKLE_ERRNO(automate_memset_experiment, strstr, errNum);
+				HARKLE_ERROR(automate_memset_experiment, main, memcpy failed);
+				HARKLE_ERRNO(automate_memset_experiment, memcpy, errNum);
 				retVal = false;
 			}
 		}
