@@ -44,9 +44,9 @@ I have devised a thorough combination of situations I wish to attempt to attain 
 	
 Here is the combination of all my ideas into a chart.  That way, I can track my progress and record my results.
 
-[Full experiment results](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180614-113748_memset_results.md)
+[Full experiment results](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180614-125211_memset_results.md)
 
-[Just experiment success](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180614-113748_memset_success.md)
+[Just experiment success](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180614-125211_memset_success.md)
 
 ### Testing Steps
 
