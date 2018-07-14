@@ -20,7 +20,6 @@
 #include "Harklerror.h"		// HARKLE_ERROR
 #include "harkleset.h"		// harklexplicit()
 #include <stdio.h>			// puts()
-#include <string.h>			// memset()
 
 #define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
 #define NO_REALLY_I_MEAN_IT(thing) #thing
