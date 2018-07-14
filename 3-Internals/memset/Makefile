@@ -32,6 +32,22 @@ CC = gcc
 	$(CC) -o memset-12132.exe -O2 -I $(3) harkleset.c memset-1213.c
 	$(CC) -o memset-12133.exe -O3 -I $(3) harkleset.c memset-1213.c
 	
+1214:
+	$(CC) -c -o memset-12140.o -I $(3) memset-1214.c
+	$(CC) -c -o memset-12141.o -O1 -I $(3) memset-1214.c
+	$(CC) -c -o memset-12142.o -O2 -I $(3) memset-1214.c
+	$(CC) -c -o memset-12143.o -O3 -I $(3) memset-1214.c
+	$(CC) -o memset-12140.exe -I $(3) harkleset0.o memset-12140.o
+	$(CC) -o memset-12141.exe -O1 -I $(3) harkleset1.o memset-12141.o
+	$(CC) -o memset-12142.exe -O2 -I $(3) harkleset2.o memset-12142.o
+	$(CC) -o memset-12143.exe -O3 -I $(3) harkleset3.o memset-12143.o
+
+1215:
+	$(CC) -L./ -o memset-12150.exe -I $(3) memset-1215.c -lhset0
+	$(CC) -L./ -o memset-12151.exe -O1 -I $(3) memset-1215.c -lhset1
+	$(CC) -L./ -o memset-12152.exe -O2 -I $(3) memset-1215.c -lhset2
+	$(CC) -L./ -o memset-12153.exe -O3 -I $(3) memset-1215.c -lhset3
+
 1711:
 	$(CC) -o memset-17110.exe -I $(3) memset-1711.c
 	$(CC) -o memset-17111.exe -O1 -I $(3) memset-1711.c
@@ -110,6 +126,18 @@ harkleset:
 	$(CC) -o harkleset1.o -O1 -c harkleset.c
 	$(CC) -o harkleset2.o -O2 -c harkleset.c
 	$(CC) -o harkleset3.o -O3 -c harkleset.c
+	$(CC) -fPIC -o harklesetpic.o -c harkleset.c
+	$(CC) -fPIC -o harkleset0pic.o -c harkleset.c
+	$(CC) -fPIC -o harkleset1pic.o -O1 -c harkleset.c
+	$(CC) -fPIC -o harkleset2pic.o -O2 -c harkleset.c
+	$(CC) -fPIC -o harkleset3pic.o -O3 -c harkleset.c
+	$(CC) -shared -o libhset.so harklesetpic.o
+	$(CC) -shared -o libhset0.so harkleset0pic.o
+	$(CC) -shared -o libhset1.so harkleset1pic.o
+	$(CC) -shared -o libhset2.so harkleset2pic.o
+	$(CC) -shared -o libhset3.so harkleset3pic.o
+	# "Easy Button" to get the local binaries to load the local shared objects
+	# export LD_LIBRARY_PATH="$PWD":$LD_LIBRARY_PATH
 
 testing:
 	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
@@ -126,6 +154,8 @@ all:
 	$(MAKE) 1211
 	$(MAKE) 1212
 	$(MAKE) 1213
+	$(MAKE) 1214
+	$(MAKE) 1215
 	$(MAKE) 1711
 	$(MAKE) 1712
 	$(MAKE) 1811
