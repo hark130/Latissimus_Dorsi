@@ -132,6 +132,9 @@ int main(void)
 	char *manualEntries_arr[] = { "libhset.so", "libhset0.so", \
 	                              "libhset1.so", "libhset2.so", \
 	                              "libhset3.so", \
+	                              "libhset-x115.so", "libhset-x1150.so", \
+	                              "libhset-x1151.so", "libhset-x1152.so", \
+	                              "libhset-x1153.so", \
 	                              "libhset-x215.so", "libhset-x2150.so", \
 	                              "libhset-x2151.so", "libhset-x2152.so", \
 	                              "libhset-x2153.so", \

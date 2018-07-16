@@ -13,6 +13,34 @@ CC = gcc
 	$(CC) -o memset-11111.exe -O1 -I $(3) memset-1111.c
 	$(CC) -o memset-11112.exe -O2 -I $(3) memset-1111.c
 	$(CC) -o memset-11113.exe -O3 -I $(3) memset-1111.c
+
+1112:
+	$(CC) -o memset-11120.exe -I $(3) memset-1112.c
+	$(CC) -o memset-11121.exe -O1 -I $(3) memset-1112.c
+	$(CC) -o memset-11122.exe -O2 -I $(3) memset-1112.c
+	$(CC) -o memset-11123.exe -O3 -I $(3) memset-1112.c
+	
+1113:
+	$(CC) -o memset-11130.exe -I $(3) harkleset-x115.c memset-1113.c
+	$(CC) -o memset-11131.exe -O1 -I $(3) harkleset-x115.c memset-1113.c
+	$(CC) -o memset-11132.exe -O2 -I $(3) harkleset-x115.c memset-1113.c
+	$(CC) -o memset-11133.exe -O3 -I $(3) harkleset-x115.c memset-1113.c
+	
+1114:
+	$(CC) -c -o memset-11140.o -I $(3) memset-1114.c
+	$(CC) -c -o memset-11141.o -O1 -I $(3) memset-1114.c
+	$(CC) -c -o memset-11142.o -O2 -I $(3) memset-1114.c
+	$(CC) -c -o memset-11143.o -O3 -I $(3) memset-1114.c
+	$(CC) -o memset-11140.exe -I $(3) harkleset-x1150.o memset-11140.o
+	$(CC) -o memset-11141.exe -O1 -I $(3) harkleset-x1151.o memset-11141.o
+	$(CC) -o memset-11142.exe -O2 -I $(3) harkleset-x1152.o memset-11142.o
+	$(CC) -o memset-11143.exe -O3 -I $(3) harkleset-x1153.o memset-11143.o
+
+1115:
+	$(CC) -L./ -o memset-11150.exe -I $(3) memset-1115.c -lhset-x1150
+	$(CC) -L./ -o memset-11151.exe -O1 -I $(3) memset-1115.c -lhset-x1151
+	$(CC) -L./ -o memset-11152.exe -O2 -I $(3) memset-1115.c -lhset-x1152
+	$(CC) -L./ -o memset-11153.exe -O3 -I $(3) memset-1115.c -lhset-x1153
 	
 1211:
 	$(CC) -o memset-12110.exe -I $(3) memset-1211.c
@@ -184,13 +212,13 @@ CC = gcc
 	$(CC) -o memset-32120.exe -I $(3) memset-3212.c
 	$(CC) -o memset-32121.exe -O1 -I $(3) memset-3212.c
 	$(CC) -o memset-32122.exe -O2 -I $(3) memset-3212.c
-	$(CC) -o memset-32123.exe -O3 -I $(3) memset-1212.c
+	$(CC) -o memset-32123.exe -O3 -I $(3) memset-3212.c
 	
 3213:
 	$(CC) -o memset-32130.exe -I $(3) harkleset.c memset-3213.c
 	$(CC) -o memset-32131.exe -O1 -I $(3) harkleset.c memset-3213.c
 	$(CC) -o memset-32132.exe -O2 -I $(3) harkleset.c memset-3213.c
-	$(CC) -o memset-32133.exe -O3 -I $(3) harkleset.c memset-1213.c
+	$(CC) -o memset-32133.exe -O3 -I $(3) harkleset.c memset-3213.c
 	
 3214:
 	$(CC) -c -o memset-32140.o -I $(3) memset-3214.c
@@ -357,6 +385,23 @@ harkleset:
 	# "Easy Button" to get the local binaries to load the local shared objects
 	# export LD_LIBRARY_PATH="$PWD":$LD_LIBRARY_PATH
 
+harklesetx115:
+	$(CC) -o harkleset-x115.o -c harkleset.c
+	$(CC) -o harkleset-x1150.o -c harkleset.c
+	$(CC) -o harkleset-x1151.o -O1 -c harkleset.c
+	$(CC) -o harkleset-x1152.o -O2 -c harkleset.c
+	$(CC) -o harkleset-x1153.o -O3 -c harkleset.c
+	$(CC) -fPIC -o harklesetpic-x115.o -c harkleset-x115.c
+	$(CC) -fPIC -o harklesetpic-x1150.o -c harkleset-x115.c
+	$(CC) -fPIC -o harklesetpic-x1151.o -O1 -c harkleset-x115.c
+	$(CC) -fPIC -o harklesetpic-x1152.o -O2 -c harkleset-x115.c
+	$(CC) -fPIC -o harklesetpic-x1153.o -O3 -c harkleset-x115.c
+	$(CC) -shared -o libhset-x115.so harklesetpic-x115.o
+	$(CC) -shared -o libhset-x1150.so harklesetpic-x1150.o
+	$(CC) -shared -o libhset-x1151.so harklesetpic-x1151.o
+	$(CC) -shared -o libhset-x1152.so harklesetpic-x1152.o
+	$(CC) -shared -o libhset-x1153.so harklesetpic-x1153.o
+
 harklesetx215:
 	$(CC) -fPIC -o harklesetpic-x215.o -c harkleset-x215.c
 	$(CC) -fPIC -o harklesetpic-x2150.o -c harkleset-x215.c
@@ -391,10 +436,15 @@ testing:
 
 all:
 	$(MAKE) harkleset
+	$(MAKE) harklesetx115
 	$(MAKE) harklesetx215
 	$(MAKE) harklesetx715
 	$(MAKE) 0000
 	$(MAKE) 1111
+	$(MAKE) 1112
+	$(MAKE) 1113
+	$(MAKE) 1114
+	$(MAKE) 1115
 	$(MAKE) 1211
 	$(MAKE) 1212
 	$(MAKE) 1213
