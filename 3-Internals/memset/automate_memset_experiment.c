@@ -132,6 +132,12 @@ int main(void)
 	char *manualEntries_arr[] = { "libhset.so", "libhset0.so", \
 	                              "libhset1.so", "libhset2.so", \
 	                              "libhset3.so", \
+	                              "libhset-x215.so", "libhset-x2150.so", \
+	                              "libhset-x2151.so", "libhset-x2152.so", \
+	                              "libhset-x2153.so", \
+	                              "libhset-x715.so", "libhset-x7150.so", \
+	                              "libhset-x7151.so", "libhset-x7152.so", \
+	                              "libhset-x7153.so", \
 	                              NULL };
 
 	// INPUT VALIDATION

@@ -357,6 +357,30 @@ harkleset:
 	# "Easy Button" to get the local binaries to load the local shared objects
 	# export LD_LIBRARY_PATH="$PWD":$LD_LIBRARY_PATH
 
+harklesetx215:
+	$(CC) -fPIC -o harklesetpic-x215.o -c harkleset-x215.c
+	$(CC) -fPIC -o harklesetpic-x2150.o -c harkleset-x215.c
+	$(CC) -fPIC -o harklesetpic-x2151.o -O1 -c harkleset-x215.c
+	$(CC) -fPIC -o harklesetpic-x2152.o -O2 -c harkleset-x215.c
+	$(CC) -fPIC -o harklesetpic-x2153.o -O3 -c harkleset-x215.c
+	$(CC) -shared -o libhset-x215.so harklesetpic-x215.o
+	$(CC) -shared -o libhset-x2150.so harklesetpic-x2150.o
+	$(CC) -shared -o libhset-x2151.so harklesetpic-x2151.o
+	$(CC) -shared -o libhset-x2152.so harklesetpic-x2152.o
+	$(CC) -shared -o libhset-x2153.so harklesetpic-x2153.o
+
+harklesetx715:
+	$(CC) -fPIC -o harklesetpic-x715.o -c harkleset-x715.c
+	$(CC) -fPIC -o harklesetpic-x7150.o -c harkleset-x715.c
+	$(CC) -fPIC -o harklesetpic-x7151.o -O1 -c harkleset-x715.c
+	$(CC) -fPIC -o harklesetpic-x7152.o -O2 -c harkleset-x715.c
+	$(CC) -fPIC -o harklesetpic-x7153.o -O3 -c harkleset-x715.c
+	$(CC) -shared -o libhset-x715.so harklesetpic-x715.o
+	$(CC) -shared -o libhset-x7150.so harklesetpic-x7150.o
+	$(CC) -shared -o libhset-x7151.so harklesetpic-x7151.o
+	$(CC) -shared -o libhset-x7152.so harklesetpic-x7152.o
+	$(CC) -shared -o libhset-x7153.so harklesetpic-x7153.o
+
 testing:
 	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
 	$(CC) -o Fileroad.o -I $(3) -c $(3)Fileroad.c
@@ -367,6 +391,8 @@ testing:
 
 all:
 	$(MAKE) harkleset
+	$(MAKE) harklesetx215
+	$(MAKE) harklesetx715
 	$(MAKE) 0000
 	$(MAKE) 1111
 	$(MAKE) 1211
