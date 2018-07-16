@@ -43,7 +43,9 @@ int main(void)
 	
 	if (!mapMem_ptr)
 	{
-		HARKLE_ERROR(SOURCE_NAME, main, map_anon failed);
+		errNum = errno;
+		HARKLE_ERROR(SOURCE_NAME, main, mmap failed);
+		HARKLE_ERRNO(SOURCE_NAME, mmap, errNum);
 	}
 	else
 	{
@@ -70,7 +72,7 @@ int main(void)
 		if (munmap(mapMem_ptr, buffLen + 1))
 		{
 			errNum = errno;
-			HARKLE_ERROR(SOURCE_NAME, main, volatile_harkleset failed);
+			HARKLE_ERROR(SOURCE_NAME, main, munmap failed);
 			HARKLE_ERRNO(SOURCE_NAME, munmap, errNum);
 		}
 	}
