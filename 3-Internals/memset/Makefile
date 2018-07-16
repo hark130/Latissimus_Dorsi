@@ -122,6 +122,34 @@ CC = gcc
 	$(CC) -o memset-21112.exe -O2 -I $(3) memset-2111.c
 	$(CC) -o memset-21113.exe -O3 -I $(3) memset-2111.c
 
+2112:
+	$(CC) -o memset-21120.exe -I $(3) memset-2112.c
+	$(CC) -o memset-21121.exe -O1 -I $(3) memset-2112.c
+	$(CC) -o memset-21122.exe -O2 -I $(3) memset-2112.c
+	$(CC) -o memset-21123.exe -O3 -I $(3) memset-2112.c
+
+2113:
+	$(CC) -o memset-21130.exe -I $(3) harkleset.c memset-2113.c
+	$(CC) -o memset-21131.exe -O1 -I $(3) harkleset.c memset-2113.c
+	$(CC) -o memset-21132.exe -O2 -I $(3) harkleset.c memset-2113.c
+	$(CC) -o memset-21133.exe -O3 -I $(3) harkleset.c memset-2113.c
+	
+2114:
+	$(CC) -c -o memset-21140.o -I $(3) memset-2114.c
+	$(CC) -c -o memset-21141.o -O1 -I $(3) memset-2114.c
+	$(CC) -c -o memset-21142.o -O2 -I $(3) memset-2114.c
+	$(CC) -c -o memset-21143.o -O3 -I $(3) memset-2114.c
+	$(CC) -o memset-21140.exe -I $(3) harkleset-x1150.o memset-21140.o
+	$(CC) -o memset-21141.exe -O1 -I $(3) harkleset-x1150.o memset-21141.o
+	$(CC) -o memset-21142.exe -O2 -I $(3) harkleset-x1150.o memset-21142.o
+	$(CC) -o memset-21143.exe -O3 -I $(3) harkleset-x1150.o memset-21143.o
+
+2115:
+	$(CC) -L./ -o memset-21150.exe -I $(3) memset-2115.c -lhset-x1150
+	$(CC) -L./ -o memset-21151.exe -O1 -I $(3) memset-2115.c -lhset-x1151
+	$(CC) -L./ -o memset-21152.exe -O2 -I $(3) memset-2115.c -lhset-x1152
+	$(CC) -L./ -o memset-21153.exe -O3 -I $(3) memset-2115.c -lhset-x1153
+
 2211:
 	$(CC) -o memset-22110.exe -I $(3) memset-2211.c
 	$(CC) -o memset-22111.exe -O1 -I $(3) memset-2211.c
@@ -457,6 +485,10 @@ all:
 	$(MAKE) 1715
 	$(MAKE) 1811
 	$(MAKE) 2111
+	$(MAKE) 2112
+	$(MAKE) 2113
+	$(MAKE) 2114
+	$(MAKE) 2115
 	$(MAKE) 2211
 	$(MAKE) 2212
 	$(MAKE) 2213
