@@ -43,6 +43,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 			#else
 			retVal = pipe(emptyPipes);
 			#endif  // _GNU_SOURCE && __USE_GNU
+			// retVal = pipe(emptyPipes);
 		}
 		else
 		{
@@ -57,23 +58,24 @@ int make_a_pipe(int emptyPipes[2], int flags)
 
 			if (flags)
 			{
-				#ifdef _GNU_SOURCE
+				#if defined _GNU_SOURCE && defined __USE_GNU
 				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe2 failed);
 				#else
 				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe failed);
-				#endif  // _GNU_SOURCE
+				#endif  // _GNU_SOURCE && __USE_GNU
+				// HARKLE_ERROR(Harklepipe, make_a_pipe, pipe failed);
 			}
 			else
 			{
 				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe failed);
 			}
-			fprintf(stderr, "Function call returned errno:\t%s\n", strerror(errNum));
+			HARKLE_ERRNO(Harklepipe, pipe, errNum);
 		}
 		else
 		{
 			if (flags)
 			{
-				#ifndef _GNU_SOURCE
+				#if defined _GNU_SOURCE && defined __USE_GNU
 				errNum = set_fd_flags(emptyPipes[HPIPE_READ], flags, true);
 
 				if (errNum)
@@ -93,7 +95,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 						success = false;
 					}
 				}
-				#endif  // _GNU_SOURCE
+				#endif  // _GNU_SOURCE && __USE_GNU
 			}
 		}
 	}
@@ -157,8 +159,8 @@ char* read_a_pipe(int readFD, char stop, int* errNumber)
 		{
 			errNum = errno;
 			*errNumber = errno;
-			// HARKLE_ERROR(Harklepipe, read_a_pipe, read failed);
-			// fprintf(stderr, "read() returned errno:\t%s\n", strerror(errNum));
+			HARKLE_ERROR(Harklepipe, read_a_pipe, read failed);
+			HARKLE_ERRNO(Harklepipe, read, errNum);
 			success = false;
 		}
 		else if (numBytes != readRetVal)

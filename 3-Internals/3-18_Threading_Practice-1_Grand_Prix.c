@@ -149,7 +149,7 @@ IDEAS
 #define SIG_START SIGUSR1	// This signal will start the threads racing
 #define SLEEPY_OFFICIALS 0	// Number of seconds for the main thread to sleep each evaluation
 #define SLEEPY_RACER 0  	// Number of seconds for racer_sleepy_func() to sleep
-#define FAST_RACER 10000	// Multiple to increase the number of calculations, minimum 1
+#define FAST_RACER 10	// Multiple to increase the number of calculations, minimum 1
 #define SLEEPY_BUFF 20  	// Local buffer size
 
 // bool startTheRace = false;  // Global variable for the signal handler to set
@@ -1523,6 +1523,10 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 	// START RACING
 	if (true == success)
 	{
+		if (threadDets->F1Details->tNum == 1)
+		{
+			fprintf(stderr, "Thread #%d's trackLen == %d and numLaps == %d\n", threadDets->F1Details->tNum, threadDets->trackLen, threadDets->numLaps);  // DEBUGGING
+		}
 		while (counter != threadDets->trackLen || currentLap != threadDets->numLaps)
 		{
 			// 𝄞 Why are you sleepy? ♬
@@ -1575,14 +1579,26 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 
 				if (true == isThisPrime)
 				{
+					if (threadDets->F1Details->tNum == 1)
+					{
+						fprintf(stderr, "PRIME: Thread #%d's counter == %d and subCounter == %d\n", threadDets->F1Details->tNum, counter, subCounter);  // DEBUGGING
+					}
 					subCounter++;
 					if (0 == subCounter % fastMult)
 					{
+						if (threadDets->F1Details->tNum == 1)
+						{
+							fprintf(stderr, "PREROLL: Thread #%d's counter == %d and subCounter == %d\n", threadDets->F1Details->tNum, counter, subCounter);  // DEBUGGING
+						}
 						// counter++;
 						subCounter = 0;  // Reset temp var
 
 						if (counter == threadDets->trackLen && currentLap < threadDets->numLaps)
 						{
+							if (threadDets->F1Details->tNum == 1)
+							{
+								fprintf(stderr, "PRELAP: Thread #%d's counter == %d and subCounter == %d\n", threadDets->F1Details->tNum, counter, subCounter);  // DEBUGGING
+							}
 							counter = 1;
 							currentLap++;
 							// threadDets->currLap++;
@@ -1590,20 +1606,32 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 							// {
 							// 	fprintf(stderr, "Thread #%d is looping at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
 							// }
+							if (threadDets->F1Details->tNum == 1)
+							{
+								fprintf(stderr, "POSTLAP: Thread #%d's counter == %d and subCounter == %d\n", threadDets->F1Details->tNum, counter, subCounter);  // DEBUGGING
+							}
 						}
 						else
 						{
 							counter++;
-							// if (threadDets->F1Details->tNum == 1)
-							// {
-							// 	fprintf(stderr, "Thread #%d is at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
-							// }
+							if (threadDets->F1Details->tNum == 1)
+							{
+								fprintf(stderr, "Thread #%d is at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
+							}
+						}
+						if (threadDets->F1Details->tNum == 1)
+						{
+							fprintf(stderr, "POSTROLL: Thread #%d's counter == %d and subCounter == %d\n", threadDets->F1Details->tNum, counter, subCounter);  // DEBUGGING
 						}
 						break;
 					}
 					// fprintf(stdout, "Thread #%d found prime #%d:\t%u.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
 					// fprintf(stdout, "Thread #%d found prime #%d:\t%lu.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
 					// fprintf(stdout, "Thread #%d found prime #%d:\t%llu.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
+					if (threadDets->F1Details->tNum == 1)
+					{
+						fprintf(stdout, "Thread #%d found prime #%d:\t%llu.\n", threadDets->F1Details->tNum, counter, randoNum);  // DEBUGGING
+					}
 				}
 			}
 
@@ -1639,6 +1667,7 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 				else
 				{
 					// 2.2. Write that string to the pipe
+					// puts("WRITING TO PIPE");  // DEBUGGING
 					errNum = write_a_pipe(threadDets->F1Details->pipeFDs[HPIPE_WRITE], (void*)localNum, numBytes);
 
 					if (errNum)
@@ -1664,10 +1693,10 @@ void racer_rando_prime(tgpRacer_ptr threadDets)
 		}
 	}
 
-	// if (threadDets->F1Details->tNum == 1)
-	// {
-	// 	fprintf(stderr, "Thread #%d is exiting at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
-	// }
+	if (threadDets->F1Details->tNum == 1)
+	{
+		fprintf(stderr, "Thread #%d is exiting at lap %d, position %d.\n", threadDets->F1Details->tNum, currentLap, counter);  // DEBUGGING
+	}
 
 	return;
 }
