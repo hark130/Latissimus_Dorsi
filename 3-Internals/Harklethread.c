@@ -83,29 +83,32 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 		retVal->strtFunc = start_routine;
 		
 		// 1.4. arg
-		retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
-		
-		if (!(retVal->tArgvString))
+		if (argSize > 0)
 		{
-			HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, get_me_a_buffer failed);
-			success = false;
-		}
-		else
-		{
-			tmp_ptr = memcpy(retVal->tArgvString, &arg, argSize);
-
-			if (tmp_ptr != retVal->tArgvString)
+			retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
+			
+			if (!(retVal->tArgvString))
 			{
-				HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, memcpy failed);
+				HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, get_me_a_buffer failed);
 				success = false;
 			}
 			else
 			{
-				// 1.5. argSize
-				retVal->tArgSize = argSize;
+				tmp_ptr = memcpy(retVal->tArgvString, &arg, argSize);
+
+				if (tmp_ptr != retVal->tArgvString)
+				{
+					HARKLE_ERROR(Harklethread, create_a_hThrDetails_ptr, memcpy failed);
+					success = false;
+				}
+				else
+				{
+					// 1.5. argSize
+					retVal->tArgSize = argSize;
+				}
+				
+				tmp_ptr = NULL;  // Reset temp variable
 			}
-			
-			tmp_ptr = NULL;  // Reset temp variable
 		}
 	}
 
@@ -295,7 +298,8 @@ int spawn_harklethread(hThrDetails_ptr babyThread)
 		if (retVal)
 		{
 			HARKLE_ERROR(Harklethread, spawn_harklethread, NULL struct pointer);
-			fprintf(stderr, "pthread_create() returned errno:\t%s\n", strerror(retVal));
+			HARKLE_ERRNO(Harklethread, pthread_create, retVal);
+			// fprintf(stderr, "pthread_create() returned errno:\t%s\n", strerror(retVal));
 			success = false;
 		}
 	}
