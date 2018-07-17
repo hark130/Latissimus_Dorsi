@@ -19,9 +19,8 @@
 
 #include <errno.h>			// errno
 #include "Harklerror.h"		// HARKLE_ERROR
-#include "harkleset.h"		// volatile_harkleset()
+#include "harkleset-x115.h"	// harkleset()
 #include <stdio.h>			// puts()
-#include <string.h>			// memset()
 #include <sys/mman.h>		// mmap macros
 
 #define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
