@@ -38,11 +38,11 @@ int make_a_pipe(int emptyPipes[2], int flags)
 		// Conditional call
 		if (flags)
 		{
-			#ifdef _GNU_SOURCE
+			#if defined _GNU_SOURCE && defined __USE_GNU
 			retVal = pipe2(emptyPipes, flags);
 			#else
 			retVal = pipe(emptyPipes);
-			#endif  // _GNU_SOURCE
+			#endif  // _GNU_SOURCE && __USE_GNU
 		}
 		else
 		{

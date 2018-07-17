@@ -1,4 +1,6 @@
 CC = gcc
+PMP = ../../proc_maps_parser/
+4UM = ../4-User_Mode/
 
 331:
 	$(CC) -c Fileroad.c
@@ -54,14 +56,28 @@ CC = gcc
 	$(CC) -c 3-18_Threading_Practice-1_Grand_Prix.c
 	$(CC) -o grand_prix.exe -pthread Fileroad.o Fileroad_Descriptors.o Harklecurse.o Harklemath.o Harklepipe.o Harklethread.o Memoroad.o Rando.o Thread_Racer.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses -lm
 
+3221:
+	$(CC) -c Harkledir.c
+	$(CC) -c Harkleproc.c
+	$(CC) -c Harkletrace.c
+	$(CC) -c Memoroad.c
+	$(CC) -c Fileroad.c
+	$(CC) -o pmparser.o -c $(PMP)pmparser.c
+	$(CC) -o Map_Memory.o -c $(4UM)Map_Memory.c
+	nasm -f elf64 3-22-1_Payloads/payload_64_write_1.nasm
+	nasm -f elf64 3-22-1_Payloads/payload_64_write_2.nasm
+	$(CC) -I $(PMP) -I $(4UM) -c 3-22_Process_Injection-1_injector.c
+	$(CC) -o injector.exe Harkledir.o Harkleproc.o Harkletrace.o Memoroad.o Fileroad.o pmparser.o Map_Memory.o 3-22_Process_Injection-1_injector.o
+
 tests:
 	$(CC) -c Fileroad.c
+	$(CC) -c Harklecurse.c
 	$(CC) -c Harklemath.c
 	$(CC) -c Memoroad.c
 	# $(CC) -c 3-10_Fileroad_Tests-2_main.c
 	$(CC) -c 3-18_Harklemath_Tests-1_main.c
 	# $(CC) -o 3-10_Fileroad_Tests-2_main.exe Memoroad.o Fileroad.o 3-10_Fileroad_Tests-2_main.o
-	$(CC) -o 3-18_Harklemath_Tests-1_main.exe Harklemath.o 3-18_Harklemath_Tests-1_main.o -lm
+	$(CC) -o 3-18_Harklemath_Tests-1_main.exe Harklecurse.o Harklemath.o 3-18_Harklemath_Tests-1_main.o -lm -lncurses
 
 echo:
 	$(CC) -o echo_this.exe 3-04_Signal_Handling-1_echo_this.c
@@ -72,6 +88,11 @@ hello:
 waiting:
 	$(CC) -o Waiting.exe 3-04_Signal_Handling-1_Waiting.c
 
+randowave:
+	$(CC) -c Rando.c
+	$(CC) -c 3-22_Process_Injection-1_Randowave.c
+	$(CC) -o Randowave.exe Rando.o 3-22_Process_Injection-1_Randowave.o
+
 all:
 	$(MAKE) 331
 	$(MAKE) 332
@@ -79,6 +100,7 @@ all:
 	$(MAKE) 3101
 	$(MAKE) 3102
 	$(MAKE) 3181
+	$(MAKE) 3221
 
 clean: 
 	rm -f *.o *.exe *.so

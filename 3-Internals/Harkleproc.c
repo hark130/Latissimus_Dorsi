@@ -1,20 +1,24 @@
+#include <errno.h>							// errno
 #include "Harkledir.h"
 #include "Harkleproc.h"
-// #include <fcntl.h>	  // open() flags
-#include "Fileroad.h"   // read_a_file
-#include "Harklerror.h"	// HARKLE_ERROR
+// #include <fcntl.h>	  					// open() flags
+#include "Fileroad.h"   					// read_a_file
+#include "Harklerror.h"						// HARKLE_ERROR
 // #include "Map_Memory.h"
-#include "Memoroad.h"   // copy_a_string
-#include <stdbool.h>	// bool, true, false
+#include <inttypes.h>						// strtoimax()
+#include "Memoroad.h"   					// copy_a_string
+#include <stdbool.h>						// bool, true, false
 #include <stdio.h>
-#include <stdlib.h>	 	// calloc
-#include <string.h>	 	// strlen, strstr
-#include <unistd.h>	 	// read
+#include <stdlib.h>	 						// calloc
+#include <string.h>	 						// strlen, strstr
+#include <unistd.h>	 						// read
 
 #ifndef HPROC_MAX_TRIES
 // MACRO to limit repeated allocation attempts
 #define HPROC_MAX_TRIES 3
 #endif  // HPROC_MAX_TRIES
+
+#define HP_PID_BUFF 10
 
 #ifndef HARKLE_ERROR
 #define HARKLE_ERROR(header, funcName, msg) do { fprintf(stderr, "<<<ERROR>>> - %s - %s() - %s!\n", #header, #funcName, #msg); } while (0);
@@ -33,12 +37,24 @@
 bool proc_builder(char* buf, char* PID, size_t bufSize);
 
 
+/*
+	PURPOSE - Translate a PID string into a pid_t value
+	INPUT
+		PID - Nul-terminated string representing a PID
+	OUTPUT
+		On success, pid_t value based on PID
+		On failure, 0
+ */
+pid_t convert_PID(char* PID);
+
+
 pidDetails_ptr create_PID_struct(void)
 {
 	// LOCAL VARIABLES
 	pidDetails_ptr retVal = NULL;
 	int numTries = 0;
 
+	// ALLOCATE
 	while (!retVal && numTries < HPROC_MAX_TRIES)
 	{
 		retVal = (pidDetails_ptr)calloc(1, sizeof(pidDetails));
@@ -48,7 +64,6 @@ pidDetails_ptr create_PID_struct(void)
 	if (!retVal)
 	{
 		HARKLE_ERROR(Harkleproc, create_PID_struct, Failed to allocate a pidDetails struct pointer);
-		// fprintf(stderr, "<<<ERROR>>> - Harkleproc - create_PID_struct() - Failed to allocate a pidDetails struct pointer!\n");
 	}
 
 	// DONE
@@ -60,6 +75,7 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 {
 	// LOCAL VARIABLES
 	pidDetails_ptr retVal = NULL;
+	int errNum = 0;  // Capture errno here
 	size_t pathLen = 0;  // strlen of pidPath
 	char* newPIDPath = NULL;  // In case we need to add a trailing slash
 	char* temp_ptr = NULL;  // Return value from string.h functions
@@ -67,6 +83,8 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 	size_t cmdlineLen = 0;  // The strlen of pidCommandline
 	int numTries = 0;  // Check this against nax number calloc attempts
 	bool success = true;  // If this is false prior to return, clean up
+	char pidNumber[HP_PID_BUFF + 1] = { 0 };  // Use this to extract and convert the PID
+	int i = 0;  // Iterating variable
 
 	// 1. INPUT VALIDATION
 	if (pidPath)
@@ -186,16 +204,50 @@ pidDetails_ptr populate_PID_struct(char* pidPath)
 		// 2.1. Allocate struct
 		retVal = create_PID_struct();
 
+		// 2.2. Assign values
 		if (retVal)
 		{
-			// 2.2. Copy pidName
+			// 2.2.1. Assign pidNum
+			// 2.2.1.1. Copy the PID portion into pidNumber
+			temp_ptr = newPIDPath + strlen("/proc/");
+			if (pidNumber != strncpy(pidNumber, temp_ptr, HP_PID_BUFF))
+			{
+				HARKLE_ERROR(Harkleproc, populate_PID_struct, strncpy failed);
+				success = false;
+			}
+			else
+			{
+				for (i = 0; i < HP_PID_BUFF; i++)
+				{
+					if ('/' == pidNumber[i])
+					{
+						pidNumber[i] = '\0';  // Terminate the trailing slash
+						break;
+					}
+				}
+				// pid_t pidNum;			// PID number
+				retVal->pidNum = convert_PID(pidNumber);
+
+				if (0 == retVal->pidNum)
+				{
+					errNum = errno;
+					HARKLE_ERROR(Harkleproc, populate_PID_struct, convert_PID failed);
+					if (errNum)
+					{
+						fprintf(stderr, "convert_PID() returned errno:\t%s\n", strerror(errNum));  // DEBUGGING
+					}
+					success = false;
+				}
+			}
+
+			// 2.2.2. Copy pidName
 			retVal->pidName = copy_a_string(newPIDPath);
 
 			if (retVal->pidName)
 			{
 				numTries = 0;
 
-				// 2.3. Read/allocate/copy /proc/<PID>/cmdline into char* pidCmdline
+				// 2.2.3. Read/allocate/copy /proc/<PID>/cmdline into char* pidCmdline
 				while (!pidCommandline && numTries < HPROC_MAX_TRIES)
 				{
 					// pathLen for /proc/<PID>/
@@ -308,7 +360,10 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 		{
 			tmpStruct_ptr = *pidDetailsStruct_ptr;
 
-			// 1. char* pidName;		  // Absolute path of PID
+			// 1. pid_t pidNum;			// PID number
+			tmpStruct_ptr->pidNum = 0;
+
+			// 2. char* pidName;		  // Absolute path of PID
 			if (tmpStruct_ptr->pidName)
 			{
 				// fprintf(stdout, "BEFORE release_a_string(&pidName), (*currStruct_arr)->pidName == %p\n", tmpStruct_ptr->pidName);  // DEBUGGING
@@ -320,7 +375,7 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 				// fprintf(stdout, "AFTER  release_a_string(&pidName), (*currStruct_arr)->pidName == %p\n", tmpStruct_ptr->pidName);  // DEBUGGING
 			}
 
-			// 2. char* pidCmdline;	   // Complete cmdline used to execute the PID
+			// 3. char* pidCmdline;	   // Complete cmdline used to execute the PID
 			if (tmpStruct_ptr->pidCmdline)
 			{
 				if (false == release_a_string(&(tmpStruct_ptr->pidCmdline)))
@@ -330,14 +385,14 @@ bool free_PID_struct(pidDetails_ptr* pidDetailsStruct_ptr)
 				}
 			}
 
-			// 3. bool stillExists;	   // False if PID ever disappears
+			// 4. bool stillExists;	   // False if PID ever disappears
 			// Just in case someone would think about accessing this
 			tmpStruct_ptr->stillExists = false;
 
-			// 4. Free pidDetailsStruct_ptr
+			// 5. Free pidDetailsStruct_ptr
 			free(*pidDetailsStruct_ptr);
 			
-			// 5. NULL pidDetailsStruct_ptr
+			// 6. NULL pidDetailsStruct_ptr
 			*pidDetailsStruct_ptr = NULL;
 		}
 		else
@@ -916,3 +971,68 @@ bool proc_builder(char* buf, char* PID, size_t bufSize)
 	return retVal;
 }
 
+
+/*
+	PURPOSE - Translate a PID string into a pid_t value
+	INPUT
+		PID - Nul-terminated string representing a PID
+	OUTPUT
+		On success, pid_t value based on PID
+		On failure, -1
+ */
+pid_t convert_PID(char* PID)
+{
+	// LOCAL VARIABLES
+	pid_t retVal = -1;
+	int errNum = 0;  // Store errno here on failure
+	bool success = true;  // Make this false if anything fails
+	char* tmp_ptr = NULL;
+	char* endptr;  // Necessary for the strtoimax() call
+
+	// INPUT VALIDATION
+	if (!PID)
+	{
+		HARKLE_ERROR(Harkleproc, convert_PID, NULL pointer);
+		success = false;
+	}
+	else if (!(*PID))
+	{
+		HARKLE_ERROR(Harkleproc, convert_PID, Empty PID);
+		success = false;
+	}
+	else
+	{
+		tmp_ptr = PID;
+
+		while (*tmp_ptr)
+		{
+			if (*tmp_ptr < '0' || *tmp_ptr > '9')
+			{
+				success = false;
+				break;
+			}
+			else
+			{
+				tmp_ptr++;
+			}
+		}
+	}
+
+	// CONVERT
+	if (true == success)
+	{
+		retVal = strtoimax(PID, &endptr, 10);
+
+		if (0 == retVal)
+		{
+			errNum = errno;
+			HARKLE_ERROR(Harkleproc, convert_PID, strtoimax failed);
+			fprintf(stderr, "strtoimax() returned errno:\t%s\n", strerror(errNum));
+			success = false;
+		}
+	}
+
+	// DONE
+	// fprintf(stdout, "Converted '%s' to '%jd'\n", PID, (intmax_t)retVal);  // DEBUGGING
+	return retVal;
+}

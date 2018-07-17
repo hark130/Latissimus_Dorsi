@@ -33,4 +33,6 @@
 		v0.2.0
 			- Added HARKLE_ERRNO
 			- Added HARKLE_WARNG
+		v0.2.1
+			- Fixed bug in HARKLE_ERRNO (errno vs errNum)
  */

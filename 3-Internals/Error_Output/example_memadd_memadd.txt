@@ -1,0 +1,17 @@
+Text Locations:
+	Address of main: 0x400666
+	Address of afunc: 0x400812
+Stack Locations:
+	Stack level 1: address of stack_var: 0x7fff25239f34
+	Stack level 2: address of stack_var: 0x7fff25239f14
+	Start of alloca()'ed array: 0x7fff25239f20
+	End of alloca()'ed array: 0x7fff25239f3f
+Data Locations:
+	Address of data_var: 0x601058
+BSS Locations:
+	Address of bss_var: 0x601064
+Heap Locations:
+	Initial end of heap: 0xf0b000
+	New end of heap: 0xf0b020
+	Final end of heap: 0xf0b010
+

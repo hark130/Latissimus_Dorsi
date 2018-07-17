@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+# Preprocessed source files
+*.i
+
 # Linker output
 *.ilk
 *.map

@@ -95,6 +95,24 @@ IDEAS
 	[ ] Add support for CLI
  */
 
+/*
+	INSTALL NCURSES
+	1. Download
+		- ftp://ftp.gnu.org/pub/gnu/ncurses/ncurses.tar.gz
+		- http://www.gnu.org/order/ftp.html
+	2. Configure
+    	- tar zxvf ncurses<version>.tar.gz  # unzip and untar the archive
+    	- cd ncurses<version>               # cd to the directory
+    	- ./configure                       # configure the build according to your environment
+    		-or-
+    	- ./configure --with-shared         # configure with shared libraries
+    3. Make
+    	- make                              # make it
+    4. Install
+    	- su root                           # become root
+    	- make install                      # install it
+ */
+
 #include <errno.h>
 #include "Harklecurse.h"		// kill_a_window()
 #include "Harklepipe.h"			// read_a_pipe()
