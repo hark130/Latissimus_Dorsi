@@ -115,7 +115,29 @@ CC = gcc
 	$(CC) -o memset-18111.exe -O1 -I $(3) memset-1811.c
 	$(CC) -o memset-18112.exe -O2 -I $(3) memset-1811.c
 	$(CC) -o memset-18113.exe -O3 -I $(3) memset-1811.c
+
+1913:
+	$(CC) -o memset-19130.exe -I $(3) $(3)Memoroad.c memset-1913.c
+	$(CC) -o memset-19131.exe -O1 -I $(3) $(3)Memoroad.c memset-1913.c
+	$(CC) -o memset-19132.exe -O2 -I $(3) $(3)Memoroad.c memset-1913.c
+	$(CC) -o memset-19133.exe -O3 -I $(3) $(3)Memoroad.c memset-1913.c
 	
+1914:
+	$(CC) -c -o memset-19140.o -I $(3) memset-1914.c
+	$(CC) -c -o memset-19141.o -O1 -I $(3) memset-1914.c
+	$(CC) -c -o memset-19142.o -O2 -I $(3) memset-1914.c
+	$(CC) -c -o memset-19143.o -O3 -I $(3) memset-1914.c
+	$(CC) -o memset-19140.exe -I $(3) memoroad-x1150.o memset-19140.o
+	$(CC) -o memset-19141.exe -O1 -I $(3) memoroad-x1151.o memset-19141.o
+	$(CC) -o memset-19142.exe -O2 -I $(3) memoroad-x1152.o memset-19142.o
+	$(CC) -o memset-19143.exe -O3 -I $(3) memoroad-x1153.o memset-19143.o
+
+1915:
+	$(CC) -L./ -o memset-19150.exe -I $(3) memset-1915.c -lmemoroad-x1150
+	$(CC) -L./ -o memset-19151.exe -O1 -I $(3) memset-1915.c -lmemoroad-x1151
+	$(CC) -L./ -o memset-19152.exe -O2 -I $(3) memset-1915.c -lmemoroad-x1152
+	$(CC) -L./ -o memset-19153.exe -O3 -I $(3) memset-1915.c -lmemoroad-x1153
+
 2111:
 	$(CC) -o memset-21110.exe -I $(3) memset-2111.c
 	$(CC) -o memset-21111.exe -O1 -I $(3) memset-2111.c
@@ -223,6 +245,28 @@ CC = gcc
 	$(CC) -o memset-28111.exe -O1 -I $(3) memset-2811.c
 	$(CC) -o memset-28112.exe -O2 -I $(3) memset-2811.c
 	$(CC) -o memset-28113.exe -O3 -I $(3) memset-2811.c
+
+2913:
+	$(CC) -o memset-29130.exe -I $(3) $(3)Memoroad.c memset-2913.c
+	$(CC) -o memset-29131.exe -O1 -I $(3) $(3)Memoroad.c memset-2913.c
+	$(CC) -o memset-29132.exe -O2 -I $(3) $(3)Memoroad.c memset-2913.c
+	$(CC) -o memset-29133.exe -O3 -I $(3) $(3)Memoroad.c memset-2913.c
+	
+2914:
+	$(CC) -c -o memset-29140.o -I $(3) memset-2914.c
+	$(CC) -c -o memset-29141.o -O1 -I $(3) memset-2914.c
+	$(CC) -c -o memset-29142.o -O2 -I $(3) memset-2914.c
+	$(CC) -c -o memset-29143.o -O3 -I $(3) memset-2914.c
+	$(CC) -o memset-29140.exe -I $(3) memoroad-x1150.o memset-29140.o
+	$(CC) -o memset-29141.exe -O1 -I $(3) memoroad-x1151.o memset-29141.o
+	$(CC) -o memset-29142.exe -O2 -I $(3) memoroad-x1152.o memset-29142.o
+	$(CC) -o memset-29143.exe -O3 -I $(3) memoroad-x1153.o memset-29143.o
+
+2915:
+	$(CC) -L./ -o memset-29150.exe -I $(3) memset-2915.c -lmemoroad-x1150
+	$(CC) -L./ -o memset-29151.exe -O1 -I $(3) memset-2915.c -lmemoroad-x1151
+	$(CC) -L./ -o memset-29152.exe -O2 -I $(3) memset-2915.c -lmemoroad-x1152
+	$(CC) -L./ -o memset-29153.exe -O3 -I $(3) memset-2915.c -lmemoroad-x1153
 
 3111:
 	$(CC) -o memset-31110.exe -I $(3) memset-3111.c
@@ -332,6 +376,28 @@ CC = gcc
 	$(CC) -o memset-38112.exe -O2 -I $(3) memset-3811.c
 	$(CC) -o memset-38113.exe -O3 -I $(3) memset-3811.c
 
+3913:
+	$(CC) -o memset-39130.exe -I $(3) $(3)Memoroad.c memset-3913.c
+	$(CC) -o memset-39131.exe -O1 -I $(3) $(3)Memoroad.c memset-3913.c
+	$(CC) -o memset-39132.exe -O2 -I $(3) $(3)Memoroad.c memset-3913.c
+	$(CC) -o memset-39133.exe -O3 -I $(3) $(3)Memoroad.c memset-3913.c
+	
+3914:
+	$(CC) -c -o memset-39140.o -I $(3) memset-3914.c
+	$(CC) -c -o memset-39141.o -O1 -I $(3) memset-3914.c
+	$(CC) -c -o memset-39142.o -O2 -I $(3) memset-3914.c
+	$(CC) -c -o memset-39143.o -O3 -I $(3) memset-3914.c
+	$(CC) -o memset-39140.exe -I $(3) memoroad-x1150.o memset-39140.o
+	$(CC) -o memset-39141.exe -O1 -I $(3) memoroad-x1151.o memset-39141.o
+	$(CC) -o memset-39142.exe -O2 -I $(3) memoroad-x1152.o memset-39142.o
+	$(CC) -o memset-39143.exe -O3 -I $(3) memoroad-x1153.o memset-39143.o
+
+3915:
+	$(CC) -L./ -o memset-39150.exe -I $(3) memset-3915.c -lmemoroad-x1150
+	$(CC) -L./ -o memset-39151.exe -O1 -I $(3) memset-3915.c -lmemoroad-x1151
+	$(CC) -L./ -o memset-39152.exe -O2 -I $(3) memset-3915.c -lmemoroad-x1152
+	$(CC) -L./ -o memset-39153.exe -O3 -I $(3) memset-3915.c -lmemoroad-x1153
+
 4111:
 	$(CC) -o memset-41110.exe -I $(3) memset-4111.c
 	$(CC) -o memset-41111.exe -O1 -I $(3) memset-4111.c
@@ -428,6 +494,28 @@ CC = gcc
 	$(CC) -L./ -o memset-47152.exe -O2 -I $(3) memset-4715.c -lhset2
 	$(CC) -L./ -o memset-47153.exe -O3 -I $(3) memset-4715.c -lhset3
 
+4913:
+	$(CC) -o memset-49130.exe -I $(3) $(3)Memoroad.c memset-4913.c
+	$(CC) -o memset-49131.exe -O1 -I $(3) $(3)Memoroad.c memset-4913.c
+	$(CC) -o memset-49132.exe -O2 -I $(3) $(3)Memoroad.c memset-4913.c
+	$(CC) -o memset-49133.exe -O3 -I $(3) $(3)Memoroad.c memset-4913.c
+	
+4914:
+	$(CC) -c -o memset-49140.o -I $(3) memset-4914.c
+	$(CC) -c -o memset-49141.o -O1 -I $(3) memset-4914.c
+	$(CC) -c -o memset-49142.o -O2 -I $(3) memset-4914.c
+	$(CC) -c -o memset-49143.o -O3 -I $(3) memset-4914.c
+	$(CC) -o memset-49140.exe -I $(3) memoroad-x1150.o memset-49140.o
+	$(CC) -o memset-49141.exe -O1 -I $(3) memoroad-x1151.o memset-49141.o
+	$(CC) -o memset-49142.exe -O2 -I $(3) memoroad-x1152.o memset-49142.o
+	$(CC) -o memset-49143.exe -O3 -I $(3) memoroad-x1153.o memset-49143.o
+
+4915:
+	$(CC) -L./ -o memset-49150.exe -I $(3) memset-4915.c -lmemoroad-x1150
+	$(CC) -L./ -o memset-49151.exe -O1 -I $(3) memset-4915.c -lmemoroad-x1151
+	$(CC) -L./ -o memset-49152.exe -O2 -I $(3) memset-4915.c -lmemoroad-x1152
+	$(CC) -L./ -o memset-49153.exe -O3 -I $(3) memset-4915.c -lmemoroad-x1153
+
 harkleset:
 	$(CC) -o harkleset.o -c harkleset.c
 	$(CC) -o harkleset0.o -c harkleset.c
@@ -488,6 +576,23 @@ harklesetx715:
 	$(CC) -shared -o libhset-x7152.so harklesetpic-x7152.o
 	$(CC) -shared -o libhset-x7153.so harklesetpic-x7153.o
 
+memoroad:
+	$(CC) -o memoroad-x115.o -c $(3)Memoroad.c
+	$(CC) -o memoroad-x1150.o -c $(3)Memoroad.c
+	$(CC) -o memoroad-x1151.o -O1 -c $(3)Memoroad.c
+	$(CC) -o memoroad-x1152.o -O2 -c $(3)Memoroad.c
+	$(CC) -o memoroad-x1153.o -O3 -c $(3)Memoroad.c
+	$(CC) -fPIC -o memoroadpic-x115.o -c $(3)Memoroad.c
+	$(CC) -fPIC -o memoroadpic-x1150.o -c $(3)Memoroad.c
+	$(CC) -fPIC -o memoroadpic-x1151.o -O1 -c $(3)Memoroad.c
+	$(CC) -fPIC -o memoroadpic-x1152.o -O2 -c $(3)Memoroad.c
+	$(CC) -fPIC -o memoroadpic-x1153.o -O3 -c $(3)Memoroad.c
+	$(CC) -shared -o libmemoroad-x115.so memoroadpic-x115.o
+	$(CC) -shared -o libmemoroad-x1150.so memoroadpic-x1150.o
+	$(CC) -shared -o libmemoroad-x1151.so memoroadpic-x1151.o
+	$(CC) -shared -o libmemoroad-x1152.so memoroadpic-x1152.o
+	$(CC) -shared -o libmemoroad-x1153.so memoroadpic-x1153.o
+
 testing:
 	$(CC) -o Elf_Manipulation.o -I $(3) -I $(4) -c $(4)Elf_Manipulation.c
 	$(CC) -o Fileroad.o -I $(3) -c $(3)Fileroad.c
@@ -501,6 +606,7 @@ all:
 	$(MAKE) harklesetx115
 	$(MAKE) harklesetx215
 	$(MAKE) harklesetx715
+	$(MAKE) memoroad
 	$(MAKE) 0000
 	$(MAKE) 1111
 	$(MAKE) 1112
@@ -518,6 +624,9 @@ all:
 	$(MAKE) 1714
 	$(MAKE) 1715
 	$(MAKE) 1811
+	$(MAKE) 1913
+	$(MAKE) 1914
+	$(MAKE) 1915
 	$(MAKE) 2111
 	$(MAKE) 2112
 	$(MAKE) 2113
@@ -534,6 +643,9 @@ all:
 	$(MAKE) 2714
 	$(MAKE) 2715
 	$(MAKE) 2811
+	$(MAKE) 2913
+	$(MAKE) 2914
+	$(MAKE) 2915
 	$(MAKE) 3111
 	$(MAKE) 3112
 	$(MAKE) 3113
@@ -550,6 +662,9 @@ all:
 	$(MAKE) 3714
 	$(MAKE) 3715
 	$(MAKE) 3811
+	$(MAKE) 3913
+	$(MAKE) 3914
+	$(MAKE) 3915
 	$(MAKE) 4111
 	$(MAKE) 4112
 	$(MAKE) 4113
@@ -564,6 +679,9 @@ all:
 	$(MAKE) 4713
 	$(MAKE) 4714
 	$(MAKE) 4715
+	$(MAKE) 4913
+	$(MAKE) 4914
+	$(MAKE) 4915
 	$(MAKE) testing
 	
 clean: 

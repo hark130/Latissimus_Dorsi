@@ -29,6 +29,7 @@ I have devised a thorough combination of situations I wish to attempt to attain 
 	6. read/write/replace
 	7. explicit_bzero()
 	8. ["Touching Memory"](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
+	9. Testing harkleset from Memoroad.h
 - Object - A list of "objects" to call memset (e.g., function, goto, inline assembly)
 	1. Function
 	2. Goto label
@@ -44,9 +45,9 @@ I have devised a thorough combination of situations I wish to attempt to attain 
 	
 Here is the combination of all my ideas into a chart.  That way, I can track my progress and record my results.
 
-[Full experiment results](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180616-191705_memset_results.md)
+[Full experiment results](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180616-204102_memset_results.md)
 
-[Just experiment success](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180616-191705_memset_success.md)
+[Just experiment success](https://github.com/hark130/Latissimus_Dorsi/blob/memset/3-Internals/memset/20180616-204102_memset_success.md)
 
 ### Testing Steps
 

@@ -26,7 +26,7 @@
 #define THING3 "Heap memory"
 #define THING4 "mmap() memory"
 // Trick - A list of "tricks" to attempt (e.g., volatile, explicit_bzero)
-#define TRICK_UPPER_LIMIT 8  // Update this if you add another trick
+#define TRICK_UPPER_LIMIT 9  // Update this if you add another trick
 #define TRICK1 "None"
 #define TRICK2 "Volatile"
 #define TRICK3 "pragma"
@@ -35,6 +35,7 @@
 #define TRICK6 "read/write/replace 	"
 #define TRICK7 "explicit_bzero"
 #define TRICK8 "touching memory"
+#define TRICK9 "Memoroad"
 // Object - A list of "objects" to call memset (e.g., function, goto, inline assembly)
 #define OBJECT_UPPER_LIMIT 3  // Update this if you add another object
 #define OBJECT1 "Function"
@@ -125,7 +126,7 @@ int main(void)
 	mapMem_ptr mapInFile_ptr = NULL;  // map_file_mode() input files here
 	// Update the appropriate array if a new MACRO was added
 	char *thing_arr[THING_UPPER_LIMIT + 1] = { NULL, THING1, THING2, THING3, THING4 };
-	char *trick_arr[TRICK_UPPER_LIMIT + 1] = { NULL, TRICK1, TRICK2, TRICK3, TRICK4, TRICK5, TRICK6, TRICK7, TRICK8 };
+	char *trick_arr[TRICK_UPPER_LIMIT + 1] = { NULL, TRICK1, TRICK2, TRICK3, TRICK4, TRICK5, TRICK6, TRICK7, TRICK8, TRICK9 };
 	char *object_arr[OBJECT_UPPER_LIMIT + 1] = { NULL, OBJECT1, OBJECT2, OBJECT3 };
 	char *scheme_arr[SCHEME_UPPER_LIMIT + 1] = { NULL, SCHEME1, SCHEME2, SCHEME3, SCHEME4 };
 	char *optim_arr[OPTIMIZATION_UPPER_LIMIT + 1] = { OPTIMIZATION0, OPTIMIZATION1, OPTIMIZATION2, OPTIMIZATION3 };
@@ -141,6 +142,9 @@ int main(void)
 	                              "libhset-x715.so", "libhset-x7150.so", \
 	                              "libhset-x7151.so", "libhset-x7152.so", \
 	                              "libhset-x7153.so", \
+	                              "libmemoroad-x115.so", "libmemoroad-x1150.so", \
+	                              "libmemoroad-x1151.so", "libmemoroad-x1152.so", \
+	                              "libmemoroad-x1153.so", \
 	                              NULL };
 
 	// INPUT VALIDATION
