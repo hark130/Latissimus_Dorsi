@@ -232,14 +232,16 @@ bool release_a_string_len(char** charPtr_ptr, size_t buffSize)
 
 		if (buffSize > 0)
 		{
-			// 1. memset
+			// 1. harkleset
 			// fprintf(stdout, "release_a_string_len() - About to memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
-			temp_ptr = (void*)memset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
+			// temp_ptr = (void*)memset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
+			temp_ptr = (void*)harkleset((void*)char_ptr, MEMSET_DEFAULT, buffSize);
 			// fprintf(stdout, "release_a_string_len() - Just memset() char_ptr %s (%p)\n", char_ptr, char_ptr);
 
 			if (temp_ptr != char_ptr)
 			{
-				HARKLE_ERROR(Fileroad, release_a_string_len, memset failed);
+				// HARKLE_ERROR(Fileroad, release_a_string_len, memset failed);
+				HARKLE_ERROR(Fileroad, release_a_string_len, harkleset failed);
 			}
 		}
 
@@ -262,7 +264,7 @@ bool free_char_arr(char*** charArr_ptr)
 	// LOCAL VARIABLES
 	bool retVal = true;
 	char* currChar_ptr = NULL;  // C-string to be cleared
-	char* temp_ptr = NULL;  // Return value from memset
+	char* temp_ptr = NULL;  // Return value from harkleset
 	char** currChar_arr = NULL;  // Array of C-strings to be cleared
 	size_t currLen = 0;  // Length of the current string
 
@@ -280,18 +282,20 @@ bool free_char_arr(char*** charArr_ptr)
 				if (currChar_ptr)
 				{
 					// fprintf(stdout, "About to memset (%p):\t%s\n", currChar_ptr, currChar_ptr);  // DEBUGGING
-					// memset char*
+					// harkleset char*
 					if (*currChar_ptr)
 					{
 						currLen = strlen(currChar_ptr);
 
 						if (currLen > 0)
 						{
-							temp_ptr = memset(currChar_ptr, 0x0, currLen);
+							// temp_ptr = memset(currChar_ptr, 0x0, currLen);
+							temp_ptr = (void*)harkleset((void*)currChar_ptr, MEMSET_DEFAULT, currLen);
 
 							if (temp_ptr != currChar_ptr)
 							{
-								HARKLE_ERROR(Memoroad, free_char_arr, memset failed);
+								HARKLE_ERROR(Memoroad, free_char_arr, harkleset failed);
+								// HARKLE_ERROR(Memoroad, free_char_arr, memset failed);
 								retVal = false;
 							}
 							else
@@ -336,20 +340,11 @@ bool free_char_arr(char*** charArr_ptr)
 }
 
 
-void* harkleset(void* s, int c, size_t n)
+void *harkleset(void *s, int c, size_t n)
 {
-	// LOCAL VARIABLES
-	void* retVal = s;
-	
-	// INPUT VALIDATION
-	if (s && n > 0)
-	{
-  		retVal = memset(s, c, n);
-		asm volatile ("":::"memory");
-	}
-	
-	// DONE
-	return retVal;
+	// return memset(s, c, n);
+	void *(*func_ptr)(void*, int, size_t) = memset;
+	return func_ptr(s, c, n);
 }
 
 
