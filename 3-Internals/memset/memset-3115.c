@@ -14,17 +14,17 @@
  *	Thing -  3. Heap memory
  *	Trick -  1. No tricks
  *	Object - 1. memset is called from a function
- *	Scheme - 1. memset is called from main()
+ *	Scheme - 5. memset is called from a shared library
  */
 
 #include "Harklerror.h"		// HARKLE_ERROR
+#include "harkleset-x115.h"	// harkleset()
 #include <stdio.h>			// puts()
 #include <stdlib.h>			// calloc()
-#include <string.h>			// memset()
 
 #define WRAP_IT(thing) NO_REALLY_I_MEAN_IT(thing)
 #define NO_REALLY_I_MEAN_IT(thing) #thing
-#define SOURCE_NAME memset-3111
+#define SOURCE_NAME memset-3115
 
 
 int main(void)
@@ -50,10 +50,10 @@ int main(void)
 		{
 			puts(buff);
 
-			// 2. memset() it
-			if (buff != memset(buff, 'H', buffLen))
+			// 2. harkleset() it
+			if (buff != harkleset(buff, 'H', buffLen))
 			{
-				HARKLE_ERROR(SOURCE_NAME, main, memset failed);
+				HARKLE_ERROR(SOURCE_NAME, main, harkleset failed);
 			}
 		}
 	}
