@@ -105,4 +105,72 @@ Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr);
 mapMem_ptr find_code_cave(mapMem_ptr elfBinary);
 
 
+/*
+ *	PURPOSE - Search a 64-bit ELF binary's section headers looking for an
+ *		undefined global (see: binding) function named "undFuncName"
+ *	INPUT
+ *		elf64File - mapMem struct pointer of a memory mapped ELF file
+ *		undFuncName - Name of the function to search for
+ *	OUTPUT
+ *		On failure, false (e.g. not an ELF, 32 bit ELF)
+ *		On success, true if undFuncName is found, otherwise false
+ */
+bool search_sect_hdr64_und_func(mapMem_ptr elf64File, const char *undFuncName);
+
+
+/*
+ *	PURPOSE - Find the section header named "sectHdrName"
+ *	INPUT
+ *		elf64File - Pointer to a mapElf64 struct
+ *		sectHdrName - Name of the section header to search for
+ *	OUTPUT
+ *		On success, pointer somewhere into binaryShdr_ptr
+ *		On failure, NULL
+ *		On error, NULL
+ */
+Elf64_Shdr* find_sect_hdr64(mapElf64_ptr elf64File, const char *sectHdrName);
+
+
+/*
+ *	PURPOSE - Find the value at the given index into the section header string table section
+ *	INPUT
+ *		elf64File - Pointer to a mapElf64 struct
+ *		stringIndex - Index into the string table
+ *	OUTPUT
+ *		On success, pointer to the string holding the name
+ *		On failure, NULL
+ *	NOTES
+ *		Do *NOT* free the return value from this function.
+ *		This function will find the SHT_STRTAB type section
+ */
+char* index_section64_name(mapElf64_ptr elf64File, uint32_t stringIndex);
+
+
+/*
+ *	PURPOSE - Parse the section header for the .dynsym table
+ *	INPUT
+ *		elf64File - Pointer to a mapElf64 struct
+ *	OUTPUT
+ *		On success, pointer to the dynsym section header
+ *		On failure, NULL
+ *	NOTES
+ *		Do *NOT* free the return value from this function.
+ */
+Elf64_Shdr* find_sect_hdr64_dynsym(mapElf64_ptr elf64File);
+
+
+
+/*
+ *	PURPOSE - Parse the section header for the .strtab table
+ *	INPUT
+ *		elf64File - Pointer to a mapElf64 struct
+ *	OUTPUT
+ *		On success, pointer to the first strtab section header
+ *		On failure, NULL
+ *	NOTES
+ *		Do *NOT* free the return value from this function.
+ */
+Elf64_Shdr* find_sect_hdr64_strtab(mapElf64_ptr elf64File);
+
+
 #endif  // __ELF_MANIPULATION__

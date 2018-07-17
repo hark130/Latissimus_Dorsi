@@ -1,6 +1,7 @@
 #ifndef __MAP_MEMORY__
 #define __MAP_MEMORY__
 
+#include <sys/mman.h>		// MAP_SHARED, MAP_SHARED_VALIDATE
 #include <stdbool.h>		// bool, true, false
 #include <stdlib.h>			// size_t
 
@@ -9,15 +10,22 @@
 #endif  // NULL
 
 // MEMORY TYPE MACROS
-#define MM_TYPE_HEAP ((int)1)	// malloc'd or calloc'd memory
-#define MM_TYPE_MMAP ((int)2)	// mmap'd memory
+#define MM_TYPE_HEAP ((int)1)	// Anonymous memory
+#define MM_TYPE_MMAP ((int)2)	// File mmap'd memory
 #define MM_TYPE_CAVE ((int)3)	// code cave... mem not owned by this struct
+
+#ifdef MAP_SHARED_VALIDATE
+#define HMAP_SHARED_VALIDATE MAP_SHARED_VALIDATE
+#else
+#define HMAP_SHARED_VALIDATE MAP_SHARED
+#endif  // HMAP_SHARED_VALIDATE
 
 typedef struct mappedMemory 
 {
 	char* fileMem_ptr;
 	size_t memSize;
 	int memType;
+	bool readOnly;  // true if mapped with O_RDONLY
 } mapMem, *mapMem_ptr;
 /*
 	NOTE: Updates to the mappedMemory struct and/or memory type macros
@@ -36,6 +44,20 @@ typedef struct mappedMemory
 		Calling function is responsible for setting the memType member
  */
 mapMem_ptr create_mapMem_ptr(void);
+
+
+/*
+	Purpose - Map an anonymous mapping
+	Input
+		length - length of the mapping
+		prot - protections (see: http://man7.org/linux/man-pages/man2/mmap.2.html)
+		flags - flags (see: http://man7.org/linux/man-pages/man2/mmap.2.html)
+	Output - Pointer to a mappedMemory struct on the heap
+	Notes:
+		mapMem_ptr must be free()'d by the calling function
+		The MAP_ANONYMOUS will automatically be ORd in
+ */
+mapMem_ptr map_anon(size_t length, int prot, int flags);
 
 
 /*
@@ -73,7 +95,7 @@ mapMem_ptr map_file_mode(const char* filename, int flags);
 	Purpose - Unmap a file's contents from memory
 	Input
 		memStruct_ptr - mappedMemory pointer
-		syncMem - if true, msync to file
+		syncMem - if true, msync to file (unless memStruct_ptr->readOnly is true)
 	Output - true on success, otherwise false
 	Notes:
 		Calling function is responsible for free()'ing memStruct_ptr on success

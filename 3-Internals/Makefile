@@ -71,12 +71,13 @@ PMP = ../../proc_maps_parser/
 
 tests:
 	$(CC) -c Fileroad.c
+	$(CC) -c Harklecurse.c
 	$(CC) -c Harklemath.c
 	$(CC) -c Memoroad.c
 	# $(CC) -c 3-10_Fileroad_Tests-2_main.c
 	$(CC) -c 3-18_Harklemath_Tests-1_main.c
 	# $(CC) -o 3-10_Fileroad_Tests-2_main.exe Memoroad.o Fileroad.o 3-10_Fileroad_Tests-2_main.o
-	$(CC) -o 3-18_Harklemath_Tests-1_main.exe Harklemath.o 3-18_Harklemath_Tests-1_main.o -lm
+	$(CC) -o 3-18_Harklemath_Tests-1_main.exe Harklecurse.o Harklemath.o 3-18_Harklemath_Tests-1_main.o -lm -lncurses
 
 echo:
 	$(CC) -o echo_this.exe 3-04_Signal_Handling-1_echo_this.c

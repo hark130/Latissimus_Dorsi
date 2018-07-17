@@ -68,6 +68,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [syscall man page](http://man7.org/linux/man-pages/man2/syscall.2.html)... handy reference extricated from nosig.exe's comments
 * [Interfacing Linux Signals](http://syprog.blogspot.com/2011/10/iterfacing-linux-signals.html)... w/ Assembly
 * [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
+* [ncurses Install](http://tldp.org/HOWTO/NCURSES-Programming-HOWTO/intro.html#WHERETOGETIT)
 * [ncurses](https://www.gnu.org/software/ncurses/)
 * [ncurses How To](http://tldp.org/HOWTO/NCURSES-Programming-HOWTO/index.html)
 * [ncurses overlapping windows](https://www.gnu.org/software/guile-ncurses/manual/html_node/Overlay-and-manipulate-overlapped-windows.html)

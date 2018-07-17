@@ -1,5 +1,6 @@
 #include "Harklemath.h"
 #include "Harklerror.h"
+#include <math.h>               // fabs()
 #include <stdbool.h>            // bool, true, false
 #include <stdlib.h>             // free()
 #include <string.h>             // memset()

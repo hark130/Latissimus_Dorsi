@@ -817,7 +817,7 @@ size_t size_a_file_ptr(FILE* openFile)
 	// INPUT VALIDATION
 	if (!openFile)
 	{
-		HARKLE_ERROR(Fileroad, get_a_file_type, NULL pointer);
+		HARKLE_ERROR(Fileroad, size_a_file_ptr, NULL pointer);
 		success = false;
 	}
 
@@ -925,7 +925,7 @@ unsigned char get_a_file_type(char* fileName)
 	}
 	
 	// DONE
-	fprintf(stdout, "The type of %s is %u.\n", fileName, retVal);
+	// fprintf(stdout, "The type of %s is %u.\n", fileName, retVal);  // DEBUGGING
 	return retVal;
 }
 

@@ -1,6 +1,6 @@
 #include <fenv.h>				// fegetround(), fesetround()
 #include <float.h>				// DBL_MANT_DIG, DBL_MIN_EXP
-#include "Harklecurse.h"		// hcCartCoord_ptr
+#include "Harklecurse.h"		// hcCartCoord_ptr and related functions
 #include "Harklemath.h"			// HM_* MACROs
 #include "Harklerror.h"			// HARKLE_ERROR
 #include <limits.h>				// INT_MIN, INT_MAX
