@@ -38,11 +38,11 @@ int make_a_pipe(int emptyPipes[2], int flags)
 		// Conditional call
 		if (flags)
 		{
-			#ifdef _GNU_SOURCE
+			#if defined _GNU_SOURCE && defined __USE_GNU
 			retVal = pipe2(emptyPipes, flags);
 			#else
 			retVal = pipe(emptyPipes);
-			#endif  // _GNU_SOURCE
+			#endif  // _GNU_SOURCE && __USE_GNU
 		}
 		else
 		{
@@ -57,11 +57,11 @@ int make_a_pipe(int emptyPipes[2], int flags)
 
 			if (flags)
 			{
-				#ifdef _GNU_SOURCE
-				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe2 failed);
+				#if defined _GNU_SOURCE && defined __USE_GNU
+				retVal = pipe2(emptyPipes, flags);
 				#else
-				HARKLE_ERROR(Harklepipe, make_a_pipe, pipe failed);
-				#endif  // _GNU_SOURCE
+				retVal = pipe(emptyPipes);
+				#endif  // _GNU_SOURCE && __USE_GNU
 			}
 			else
 			{
@@ -73,7 +73,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 		{
 			if (flags)
 			{
-				#ifndef _GNU_SOURCE
+				#if !defined _GNU_SOURCE && !defined __USE_GNU
 				errNum = set_fd_flags(emptyPipes[HPIPE_READ], flags, true);
 
 				if (errNum)
@@ -93,7 +93,7 @@ int make_a_pipe(int emptyPipes[2], int flags)
 						success = false;
 					}
 				}
-				#endif  // _GNU_SOURCE
+				#endif  // _GNU_SOURCE && __USE_GNU
 			}
 		}
 	}

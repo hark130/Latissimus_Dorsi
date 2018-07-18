@@ -2,10 +2,12 @@
 #define __HARKLEPROC__
 
 #include "Harkledir.h"
-#include <stdbool.h>	// bool, true, false
+#include <sys/types.h>						// pid_t
+#include <stdbool.h>						// bool, true, false
 
 typedef struct harklePIDDetails
 {
+	pid_t pidNum;			// PID number
     char* pidName;          // Absolute path of PID
     char* pidCmdline;       // Complete cmdline used to execute the PID
     bool stillExists;       // False if PID ever disappears

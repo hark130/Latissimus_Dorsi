@@ -1,0 +1,20 @@
+10743:   ./memadd.exe
+0000000000400000      4K r-x-- memadd.exe
+0000000000600000      4K r---- memadd.exe
+0000000000601000      4K rw--- memadd.exe
+0000000000eea000    136K rw---   [ anon ]
+00007f5a8692f000   1792K r-x-- libc-2.23.so
+00007f5a86aef000   2048K ----- libc-2.23.so
+00007f5a86cef000     16K r---- libc-2.23.so
+00007f5a86cf3000      8K rw--- libc-2.23.so
+00007f5a86cf5000     16K rw---   [ anon ]
+00007f5a86cf9000    152K r-x-- ld-2.23.so
+00007f5a86ef8000     12K rw---   [ anon ]
+00007f5a86f1e000      4K r---- ld-2.23.so
+00007f5a86f1f000      4K rw--- ld-2.23.so
+00007f5a86f20000      4K rw---   [ anon ]
+00007fff2521c000    132K rw---   [ stack ]
+00007fff25395000     12K r----   [ anon ]
+00007fff25398000      8K r-x--   [ anon ]
+ffffffffff600000      4K r-x--   [ anon ]
+ total             4360K
