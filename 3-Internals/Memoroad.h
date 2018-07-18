@@ -10,10 +10,22 @@
 
 
 /*
-	Purpose - Allocate a buffer of size length + 1
+	Purpose - Allocate a buffer of size length
 	Input
 		length - The length of what you want to store
-	Ouput - Heap-allocated, memset, buffer of size length + 1
+	Ouput - Heap-allocated, memset, buffer of size length
+	Notes:
+        It is the caller's responsibility to free the char* returned by 
+        	this function
+ */
+void* get_me_memory(size_t length);
+
+
+/*
+	Purpose - Allocate a character array of size length + 1
+	Input
+		length - The length of what you want to store
+	Ouput - Heap-allocated, memset, character arry of size length + 1
 	Notes:
         It is the caller's responsibility to free the char* returned by 
         	this function

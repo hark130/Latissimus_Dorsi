@@ -23,6 +23,42 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+void* get_me_memory(size_t length)
+{
+    // LOCAL VARIABLES
+    int numTries = 0;  // Max number to calloc attempts
+    void* retVal = NULL;  // Allocated char array
+    void* temp_ptr = NULL;  // Holds string.h function return values
+    bool success = true;  // If anything fails, this is becomes false
+
+    // INPUT VALIDATION
+    if (length < 1)
+    {
+    	HARKLE_ERROR(Memoroad, get_me_memory, Invalid buffer length);
+    	success = false;
+    }
+
+    // ALLOCATION
+    if (success == true)
+    {
+        while (retVal == NULL && numTries < MEMROAD_MAX_TRIES)
+        {
+            retVal = (void*)calloc(length, 1);
+            numTries++;
+        }
+
+        if (!retVal)
+        {
+	    	HARKLE_ERROR(Memoroad, get_me_memory, calloc failed);
+	    	success = false;
+        }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
 char* get_me_a_buffer(size_t length)
 {
     // LOCAL VARIABLES
