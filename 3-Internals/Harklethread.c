@@ -85,7 +85,8 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 		// 1.4. arg
 		if (argSize > 0)
 		{
-			retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
+			// retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
+			retVal->tArgvString = (void*)get_me_memory(argSize + 1);
 			
 			if (!(retVal->tArgvString))
 			{

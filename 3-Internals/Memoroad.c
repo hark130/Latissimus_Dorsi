@@ -56,7 +56,8 @@ void* get_me_memory(size_t length)
     {
         while (retVal == NULL && numTries < MEMOROAD_MAX_TRIES)
         {
-            retVal = (char*)calloc(length + 1, sizeof(char));
+            // retVal = (char*)calloc(length + 1, sizeof(char));
+            retVal = (void*)calloc(length, 1);
             numTries++;
         }
 
