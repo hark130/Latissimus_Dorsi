@@ -273,6 +273,8 @@ int spawn_harklethread(hThrDetails_ptr babyThread)
 	// LOCAL VARIABLES
 	int retVal = 0;
 	bool success = true;
+	errNum = 0;
+	errno = 0;
 
 	// INPUT VALIDATION
 	if (!babyThread)
@@ -294,8 +296,9 @@ int spawn_harklethread(hThrDetails_ptr babyThread)
 
 		if (retVal)
 		{
+			errNum = errno;
 			HARKLE_ERROR(Harklethread, spawn_harklethread, NULL struct pointer);
-			fprintf(stderr, "pthread_create() returned errno:\t%s\n", strerror(retVal));
+			HARKLE_ERRNO(Harklethread, pthread_create, errNum);
 			success = false;
 		}
 	}
