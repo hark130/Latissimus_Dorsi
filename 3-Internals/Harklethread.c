@@ -1,3 +1,4 @@
+#include <errno.h>				// errno
 #include <fcntl.h>				// O_NONBLOCK
 #include "Harklepipe.h"			// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
 #include "Harklerror.h"			// HARKLE_ERROR()
@@ -83,7 +84,8 @@ hThrDetails_ptr create_a_hThrDetails_ptr(char* threadName, \
 		retVal->strtFunc = start_routine;
 		
 		// 1.4. arg
-		retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
+		// retVal->tArgvString = (void*)get_me_a_buffer(argSize - 1);
+		retVal->tArgvString = (void*)get_me_memory(argSize + 1);
 		
 		if (!(retVal->tArgvString))
 		{
@@ -273,7 +275,7 @@ int spawn_harklethread(hThrDetails_ptr babyThread)
 	// LOCAL VARIABLES
 	int retVal = 0;
 	bool success = true;
-	errNum = 0;
+	int errNum = 0;
 	errno = 0;
 
 	// INPUT VALIDATION
