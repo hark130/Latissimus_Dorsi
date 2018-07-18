@@ -1,4 +1,6 @@
 CC = gcc
+PMP = ../../proc_maps_parser/
+4UM = ../4-User_Mode/
 
 331:
 	$(CC) -c Fileroad.c
@@ -61,7 +63,7 @@ CC = gcc
 	$(CC) -c Memoroad.c
 	$(CC) -c Fileroad.c
 	$(CC) -o pmparser.o -c $(PMP)pmparser.c
-	$(CC) -o Map_Memory.o -c $(4UM)Map_Memory.c
+	$(CC) -o Map_Memory.o -I ./ -c $(4UM)Map_Memory.c
 	nasm -f elf64 3-22-1_Payloads/payload_64_write_1.nasm
 	nasm -f elf64 3-22-1_Payloads/payload_64_write_2.nasm
 	$(CC) -I $(PMP) -I $(4UM) -c 3-22_Process_Injection-1_injector.c
