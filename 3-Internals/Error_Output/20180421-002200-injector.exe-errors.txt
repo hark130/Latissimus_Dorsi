@@ -1,0 +1,2 @@
+¿¿¿WARNING??? - Harkletrace - htrace_write_data() - The length of the 'blob' is not word-aligned!
+<<<ERROR>>> - injector - main() - mem_hunt failed!

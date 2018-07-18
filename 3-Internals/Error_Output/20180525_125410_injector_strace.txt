@@ -1,0 +1,2344 @@
+execve("./injector.exe", ["./injector.exe", "12195"], [/* 60 vars */]) = 0
+brk(NULL)                               = 0x107d000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=148415, ...}) = 0
+mmap(NULL, 148415, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7ffaf5ab7000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\t\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=1868984, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffaf5ab6000
+mmap(NULL, 3971488, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7ffaf54ed000
+mprotect(0x7ffaf56ad000, 2097152, PROT_NONE) = 0
+mmap(0x7ffaf58ad000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c0000) = 0x7ffaf58ad000
+mmap(0x7ffaf58b3000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7ffaf58b3000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffaf5ab5000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7ffaf5ab4000
+arch_prctl(ARCH_SET_FS, 0x7ffaf5ab5700) = 0
+mprotect(0x7ffaf58ad000, 16384, PROT_READ) = 0
+mprotect(0x60e000, 4096, PROT_READ)     = 0
+mprotect(0x7ffaf5adc000, 4096, PROT_READ) = 0
+munmap(0x7ffaf5ab7000, 148415)          = 0
+brk(NULL)                               = 0x107d000
+brk(0x109e000)                          = 0x109e000
+open("/proc", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+getdents(3, /* 290 entries */, 32768)   = 7464
+readlink("/proc/net", "self/net", 4096) = 8
+readlink("/proc/mounts", "self/mounts", 4096) = 11
+readlink("/proc/self", "12529", 4096)   = 5
+readlink("/proc/thread-self", "12529/task/12529", 4096) = 16
+getdents(3, /* 0 entries */, 32768)     = 0
+close(3)                                = 0
+open("/proc/1/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/init\0splash\0", 1025)   = 18
+close(3)                                = 0
+open("/proc/2/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/3/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/5/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/7/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/8/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/9/cmdline", O_RDONLY)       = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/10/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/11/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/13/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/15/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/16/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/17/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/18/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/20/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/21/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/22/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/23/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/25/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/26/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/27/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/28/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/29/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/30/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/31/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/32/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/33/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/34/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/35/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/36/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/37/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/38/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/39/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/46/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/47/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/48/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/49/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/65/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/66/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/67/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/68/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/69/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/70/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/71/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/72/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/73/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/74/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/75/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/76/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/77/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/78/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/80/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/81/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/82/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/83/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/90/cmdline", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/103/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/104/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/108/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/110/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/111/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/112/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/113/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/167/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/168/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/171/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/172/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/179/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/180/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/182/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/259/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/260/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/295/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/lib/systemd/systemd-journald\0", 1025) = 30
+close(3)                                = 0
+open("/proc/304/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/334/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/lib/systemd/systemd-udevd\0", 1025) = 27
+close(3)                                = 0
+open("/proc/411/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/458/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/587/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/588/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/695/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/696/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/731/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/794/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/795/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/796/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/797/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/798/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+brk(0x10bf000)                          = 0x10bf000
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/838/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/lib/systemd/systemd-timesyncd\0", 1025) = 31
+close(3)                                = 0
+open("/proc/953/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/accountsservice/account"..., 1025) = 41
+close(3)                                = 0
+open("/proc/962/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/rsyslogd\0-n\0", 1025) = 22
+close(3)                                = 0
+open("/proc/991/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/acpid\0", 1025)      = 16
+close(3)                                = 0
+open("/proc/994/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/ModemManager\0", 1025) = 23
+close(3)                                = 0
+open("/proc/995/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/cgmanager\0-m\0name=systemd\0", 1025) = 32
+close(3)                                = 0
+open("/proc/999/cmdline", O_RDONLY)     = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/lib/systemd/systemd-logind\0", 1025) = 28
+close(3)                                = 0
+open("/proc/1000/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "avahi-daemon: running [Sistemang"..., 1025) = 44
+close(3)                                = 0
+open("/proc/1007/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/cron\0-f\0", 1025)   = 18
+close(3)                                = 0
+open("/proc/1019/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/dbus-daemon\0--system\0--"..., 1025) = 91
+close(3)                                = 0
+open("/proc/1053/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "avahi-daemon: chroot helper", 1025) = 27
+close(3)                                = 0
+open("/proc/1066/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/vmware-usbarbitrator\0", 1025) = 30
+close(3)                                = 0
+open("/proc/1077/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/NetworkManager\0--no-da"..., 1025) = 37
+close(3)                                = 0
+open("/proc/1078/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/freshclam\0-d\0--foregrou"..., 1025) = 40
+close(3)                                = 0
+open("/proc/1079/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/snapd/snapd\0", 1025) = 21
+close(3)                                = 0
+open("/proc/1135/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/colord/colord\0", 1025) = 23
+close(3)                                = 0
+open("/proc/1144/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/lightdm\0", 1025)    = 18
+close(3)                                = 0
+open("/proc/1157/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/irqbalance\0--pid=/var/"..., 1025) = 51
+close(3)                                = 0
+open("/proc/1158/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/policykit-1/polkitd\0--n"..., 1025) = 40
+close(3)                                = 0
+open("/proc/1173/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/xorg/Xorg\0-core\0:0\0-sea"..., 1025) = 101
+close(3)                                = 0
+open("/proc/1185/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/sshd\0-D\0", 1025)   = 18
+close(3)                                = 0
+open("/proc/1222/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/1223/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/1225/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/nvidia-persistenced\0--u"..., 1025) = 88
+close(3)                                = 0
+open("/proc/1226/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/dhclient\0-d\0-q\0-sf\0/usr/li"..., 1025) = 244
+close(3)                                = 0
+open("/proc/1267/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/dhclient\0-d\0-q\0-6\0-N\0-sf\0/"..., 1025) = 253
+close(3)                                = 0
+open("/proc/1306/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/dnsmasq\0--no-resolv\0--"..., 1025) = 300
+close(3)                                = 0
+open("/proc/1402/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "lightdm\0--session-child\00012\00019\0", 1025) = 30
+close(3)                                = 0
+open("/proc/1404/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/whoopsie\0-f\0", 1025) = 21
+close(3)                                = 0
+open("/proc/1416/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/agetty\0--noclear\0tty1\0linu"..., 1025) = 34
+close(3)                                = 0
+open("/proc/1558/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/vmware/bin/vmware-vmblo"..., 1025) = 120
+close(3)                                = 0
+open("/proc/1584/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/rtkit/rtkit-daemon\0", 1025) = 28
+close(3)                                = 0
+open("/proc/1594/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/upower/upowerd\0", 1025) = 24
+close(3)                                = 0
+open("/proc/1599/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/vmware-authdlauncher\0", 1025) = 31
+close(3)                                = 0
+open("/proc/1735/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/cupsd\0-l\0", 1025)  = 19
+close(3)                                = 0
+open("/proc/1739/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/cups-browsed\0", 1025) = 23
+close(3)                                = 0
+open("/proc/1745/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/cups/notifier/dbus\0dbus"..., 1025) = 37
+close(3)                                = 0
+open("/proc/2146/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/2182/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/lib/systemd/systemd\0--user\0", 1025) = 28
+close(3)                                = 0
+open("/proc/2183/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "(sd-pam)\0\0\0\0\0\0\0\0\0\0", 1025) = 18
+close(3)                                = 0
+open("/proc/2189/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/gnome-keyring-daemon\0--"..., 1025) = 50
+close(3)                                = 0
+open("/proc/2191/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/sbin/upstart\0--user\0", 1025) = 21
+close(3)                                = 0
+open("/proc/2278/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "upstart-udev-bridge\0--daemon\0--u"..., 1025) = 36
+close(3)                                = 0
+open("/proc/2279/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "dbus-daemon\0--fork\0--session\0--a"..., 1025) = 74
+close(3)                                = 0
+open("/proc/2291/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/hud/wi"..., 1025) = 50
+close(3)                                = 0
+open("/proc/2315/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "upstart-dbus-bridge\0--daemon\0--s"..., 1025) = 65
+close(3)                                = 0
+open("/proc/2317/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "upstart-dbus-bridge\0--daemon\0--s"..., 1025) = 63
+close(3)                                = 0
+open("/proc/2330/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "upstart-file-bridge\0--daemon\0--u"..., 1025) = 36
+close(3)                                = 0
+open("/proc/2331/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/ibus-daemon\0--daemonize"..., 1025) = 71
+close(3)                                = 0
+open("/proc/2349/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfsd\0", 1025)  = 20
+close(3)                                = 0
+open("/proc/2354/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfsd-fuse\0/run/us"..., 1025) = 62
+close(3)                                = 0
+open("/proc/2362/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/ibus/ibus-dconf\0", 1025) = 25
+close(3)                                = 0
+open("/proc/2364/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/ibus/ibus-ui-gtk3\0", 1025) = 27
+close(3)                                = 0
+open("/proc/2368/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/ibus/ibus-x11\0--kill-da"..., 1025) = 37
+close(3)                                = 0
+open("/proc/2387/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/unity-settings-daemon/u"..., 1025) = 53
+close(3)                                = 0
+open("/proc/2388/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/bamf/b"..., 1025) = 42
+close(3)                                = 0
+open("/proc/2398/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/ibus/ibus-engine-simple"..., 1025) = 33
+close(3)                                = 0
+open("/proc/2400/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/at-spi2-core/at-spi-bus"..., 1025) = 63
+close(3)                                = 0
+open("/proc/2401/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gnome-session/gnome-ses"..., 1025) = 61
+close(3)                                = 0
+open("/proc/2409/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/dbus-daemon\0--config-fi"..., 1025) = 94
+close(3)                                = 0
+open("/proc/2413/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/hud/hu"..., 1025) = 42
+close(3)                                = 0
+open("/proc/2419/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/unity/"..., 1025) = 52
+close(3)                                = 0
+open("/proc/2447/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/at-spi2-core/at-spi2-re"..., 1025) = 60
+close(3)                                = 0
+open("/proc/2480/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/pulseaudio\0--start\0--lo"..., 1025) = 48
+close(3)                                = 0
+open("/proc/2483/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/dconf/dconf-service\0", 1025) = 29
+close(3)                                = 0
+open("/proc/2487/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+close(3)                                = 0
+open("/proc/2488/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 74
+close(3)                                = 0
+open("/proc/2491/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 66
+close(3)                                = 0
+open("/proc/2495/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+close(3)                                = 0
+open("/proc/2496/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 82
+close(3)                                = 0
+open("/proc/2497/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 66
+close(3)                                = 0
+open("/proc/2498/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 72
+close(3)                                = 0
+open("/proc/2499/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 70
+close(3)                                = 0
+open("/proc/2530/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/indica"..., 1025) = 78
+close(3)                                = 0
+open("/proc/2542/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-sou"..., 1025) = 45
+close(3)                                = 0
+open("/proc/2558/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "compiz\0", 1025)               = 7
+close(3)                                = 0
+open("/proc/2582/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 46
+close(3)                                = 0
+open("/proc/2598/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "nautilus\0-n\0", 1025)         = 12
+close(3)                                = 0
+open("/proc/2599/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/gnome-software\0--gappli"..., 1025) = 47
+close(3)                                = 0
+open("/proc/2605/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/policykit-1-gnome/polki"..., 1025) = 63
+close(3)                                = 0
+open("/proc/2611/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "nm-applet\0", 1025)            = 10
+close(3)                                = 0
+open("/proc/2612/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/unity-settings-daemon/u"..., 1025) = 59
+close(3)                                = 0
+open("/proc/2637/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfs-udisks2-volum"..., 1025) = 42
+close(3)                                = 0
+open("/proc/2640/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/udisks2/udisksd\0--no-de"..., 1025) = 36
+close(3)                                = 0
+open("/proc/2652/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfs-gphoto2-volum"..., 1025) = 42
+close(3)                                = 0
+open("/proc/2654/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/fwupd/"..., 1025) = 38
+close(3)                                = 0
+open("/proc/2660/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfs-afc-volume-mo"..., 1025) = 38
+close(3)                                = 0
+open("/proc/2666/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfs-mtp-volume-mo"..., 1025) = 38
+close(3)                                = 0
+open("/proc/2671/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfs-goa-volume-mo"..., 1025) = 38
+close(3)                                = 0
+open("/proc/2678/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/2681/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/home/joe/.dropbox-dist/dropbox-"..., 1025) = 59
+close(3)                                = 0
+open("/proc/2718/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfsd-burn\0--spawn"..., 1025) = 66
+close(3)                                = 0
+open("/proc/2732/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfsd-trash\0--spaw"..., 1025) = 67
+close(3)                                = 0
+open("/proc/2752/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gvfs/gvfsd-metadata\0", 1025) = 29
+close(3)                                = 0
+open("/proc/2783/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 231
+close(3)                                = 0
+open("/proc/2792/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-add"..., 1025) = 49
+close(3)                                = 0
+open("/proc/2794/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-cal"..., 1025) = 228
+close(3)                                = 0
+open("/proc/2813/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/evolution/evolution-add"..., 1025) = 237
+close(3)                                = 0
+open("/proc/2853/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/notify"..., 1025) = 37
+close(3)                                = 0
+open("/proc/2919/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/sbin/uuidd\0--socket-activat"..., 1025) = 36
+close(3)                                = 0
+open("/proc/2921/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "zeitgeist-datahub\0", 1025)    = 18
+close(3)                                = 0
+open("/proc/2930/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/bin/sh\0-c\0/usr/lib/x86_64-linux"..., 1025) = 97
+close(3)                                = 0
+open("/proc/2934/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/zeitgeist-daemon\0", 1025) = 26
+close(3)                                = 0
+open("/proc/2941/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/zeitge"..., 1025) = 40
+close(3)                                = 0
+open("/proc/2968/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/firefox/firefox\0", 1025) = 25
+close(3)                                = 0
+open("/proc/3027/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+close(3)                                = 0
+open("/proc/3059/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+close(3)                                = 0
+open("/proc/3112/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+close(3)                                = 0
+open("/proc/3141/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/firefox/firefox\0-conten"..., 1025) = 302
+close(3)                                = 0
+open("/proc/3263/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "update-notifier\0", 1025)      = 16
+close(3)                                = 0
+open("/proc/3989/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/deja-d"..., 1025) = 52
+close(3)                                = 0
+open("/proc/4028/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/gnome-terminal/gnome-te"..., 1025) = 46
+close(3)                                = 0
+open("/proc/4035/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/4064/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/opt/sublime_text/sublime_text\0", 1025) = 31
+close(3)                                = 0
+open("/proc/4079/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/opt/sublime_text/plugin_host\00040"..., 1025) = 52
+close(3)                                = 0
+open("/proc/4165/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/4368/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/4430/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "dmesg\0-wH\0", 1025)           = 10
+close(3)                                = 0
+open("/proc/4609/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/8515/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/8911/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+brk(0x10e0000)                          = 0x10e0000
+read(3, "/usr/lib/x86_64-linux-gnu/unity-"..., 1025) = 60
+close(3)                                = 0
+open("/proc/8922/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/bin/unity-scope-loader\0appl"..., 1025) = 101
+close(3)                                = 0
+open("/proc/8924/cmdline", O_RDONLY)    = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "/usr/lib/x86_64-linux-gnu/unity-"..., 1025) = 62
+close(3)                                = 0
+open("/proc/10251/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "bash\0", 1025)                 = 5
+close(3)                                = 0
+open("/proc/11301/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/11328/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/11330/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/11782/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/11872/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12087/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12195/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "./memadd.exe\0", 1025)         = 13
+close(3)                                = 0
+open("/proc/12242/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12348/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12436/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12438/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12439/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12440/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "", 1025)                       = 0
+close(3)                                = 0
+open("/proc/12527/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "strace\0-o\0Error_Output/20180525_"..., 1025) = 80
+close(3)                                = 0
+open("/proc/12529/cmdline", O_RDONLY)   = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "./injector.exe\00012195\0", 1025) = 21
+close(3)                                = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 2), ...}) = 0
+write(1, "\n", 1)                       = 1
+write(1, "Parsing /proc/12195/ (./memadd.e"..., 36) = 36
+write(1, "[*] Located /proc/PID/\n", 23) = 23
+rt_sigaction(SIGINT, {SIG_IGN, [], 0}, NULL, 8) = 0
+ptrace(PTRACE_ATTACH, 12195, NULL, NULL) = 0
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_TRAPPED, si_pid=12195, si_uid=1000, si_status=SIGSTOP, si_utime=0, si_stime=0} ---
+wait4(12195, [{WIFSTOPPED(s) && WSTOPSIG(s) == SIGSTOP}], WSTOPPED, NULL) = 12195
+write(1, "[*] Attched to PID\n", 19)    = 19
+ptrace(PTRACE_GETREGS, 12195, NULL, 0x7ffe05278910) = 0
+write(1, "[*] Backed up PID's processor re"..., 40) = 40
+write(1, "RAX:\tfffffffffffffe00\n", 22) = 22
+write(1, "RCX:\t7f9779a25260\n", 18)    = 18
+write(1, "RDX:\t400\n", 9)              = 9
+write(1, "RSI:\t1d49420\n", 13)         = 13
+write(1, "RDI:\t0\n", 7)                = 7
+write(1, "RIP:\t7f9779a25260\n", 18)    = 18
+write(1, "RSP:\t7fff1b16f9d8\n", 18)    = 18
+open("/proc/12195/maps", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+read(3, "00400000-00401000 r-xp 00000000 "..., 1024) = 1024
+read(3, "f9779cf8000-7f9779d1e000 r-xp 00"..., 1024) = 740
+read(3, "", 1024)                       = 0
+write(1, "[*] Found r-xp PID memory\n", 26) = 26
+process_vm_readv(12195, [{"\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\1\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 4096}], 1, [{0x400000, 4096}], 1, 0) = 4096
+write(1, "[*] Successfully backed up PID m"..., 38) = 38
+lstat("./3-22-1_Payloads/payload_64_write_2.o", {st_mode=S_IFREG|0664, st_size=592, ...}) = 0
+open("./3-22-1_Payloads/payload_64_write_2.o", O_RDONLY) = 4
+fstat(4, {st_mode=S_IFREG|0664, st_size=592, ...}) = 0
+lseek(4, 0, SEEK_SET)                   = 0
+read(4, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\1\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 4096) = 592
+read(4, "", 4096)                       = 0
+lseek(4, 0, SEEK_SET)                   = 0
+read(4, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\1\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 4096) = 592
+close(4)                                = 0
+write(1, "[*] Modified mapped memory permi"..., 46) = 46
+write(1, "BEFORE:\t0x400000\n", 17)     = 17
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400000, [0x10102464c457f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400001, [0x10102464c45]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400002, [0x10102464c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400003, [0x1010246]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400004, [0x10102]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400005, [0x101]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400006, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400007, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400008, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400009, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000b, [0x3e00010000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000c, [0x3e000100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000d, [0x1003e0001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000e, [0x1003e00010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000f, [0x1003e000100]) = 0
+write(1, "7F45 4C46 0201 0100 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400010, [0x1003e0001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400011, [0x1003e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400012, [0x1003e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400013, [0x100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400014, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400015, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400016, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400017, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400018, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400019, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001f, [0]) = 0
+write(1, "0100 3E00 0100 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400020, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400021, [0x4000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400022, [0x40000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400023, [0x400000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400024, [0x4000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400025, [0x40000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400026, [0x400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400027, [0x4000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400028, [0x40]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400029, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002d, [0x4000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002e, [0x40000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002f, [0x400000000000]) = 0
+write(1, "0000 0000 0000 0000 4000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400030, [0x4000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400031, [0x40000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400032, [0x400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400033, [0x4000000000004000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400034, [0x40000000000040]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400035, [0x500400000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400036, [0x5004000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400037, [0x200050040000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400038, [0x2000500400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400039, [0x20005004000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003a, [0x200050040]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003b, [0x2000500]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003c, [0x20005]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003d, [0x200]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003e, [0x2]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003f, [0]) = 0
+write(1, "0000 0000 4000 0000 0000 4000 05"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400040, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400041, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400042, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400043, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400044, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400045, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400046, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400047, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400048, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400049, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400050, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400051, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400052, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400053, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400054, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400055, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400056, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400057, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400058, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400059, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400060, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400061, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400062, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400063, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400064, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400065, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400066, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400067, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400068, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400069, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400070, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400071, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400072, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400073, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400074, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400075, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400076, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400077, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400078, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400079, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007b, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007c, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007d, [0x100000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007e, [0x1000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007f, [0x10000000100]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400080, [0x100000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400081, [0x600000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400082, [0x6000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400083, [0x60000000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400084, [0x600000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400085, [0x6000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400086, [0x60000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400087, [0x600]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400088, [0x6]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400089, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008f, [0]) = 0
+write(1, "0100 0000 0100 0000 0600 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400090, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400091, [0x8000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400092, [0x180000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400093, [0x1800000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400094, [0x18000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400095, [0x180000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400096, [0x1800000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400097, [0x18000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400098, [0x180]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400099, [0x800000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009a, [0x8000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009b, [0x80000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009c, [0x800000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009d, [0x8000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009e, [0x80000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009f, [0x800]) = 0
+write(1, "0000 0000 0000 0000 8001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a0, [0x8]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a9, [0x1000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000aa, [0x10000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ab, [0x100000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ac, [0x1000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ad, [0x10000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ae, [0x100000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000af, [0x1000]) = 0
+write(1, "0800 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b0, [0x10]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b9, [0x700000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ba, [0x7000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bb, [0x70000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bc, [0x700000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bd, [0x300000007000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000be, [0x3000000070000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bf, [0x30000000700]) = 0
+write(1, "1000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c0, [0x300000007]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c1, [0x3000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c2, [0x30000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c3, [0x300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c4, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ca, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ce, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cf, [0]) = 0
+write(1, "0700 0000 0300 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d1, [0x9000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d2, [0x190000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d3, [0x1900000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d4, [0x19000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d5, [0x190000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d6, [0x1900000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d7, [0x19000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d8, [0x190]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d9, [0x2100000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000da, [0x21000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000db, [0x210000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000dc, [0x2100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000dd, [0x21000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000de, [0x210000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000df, [0x2100]) = 0
+write(1, "0000 0000 0000 0000 9001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e0, [0x21]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e9, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ea, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000eb, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ec, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ed, [0x1000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ee, [0x10000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ef, [0x100]) = 0
+write(1, "2100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f0, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f9, [0x1100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fa, [0x11000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fb, [0x110000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fc, [0x1100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fd, [0x200000011000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fe, [0x2000000110000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ff, [0x20000001100]) = 0
+write(1, "0100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400100, [0x200000011]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400101, [0x2000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400102, [0x20000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400103, [0x200]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400104, [0x2]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400105, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400106, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400107, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400108, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400109, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010f, [0]) = 0
+write(1, "1100 0000 0200 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400110, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400111, [0xc000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400112, [0x1c0000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400113, [0x1c00000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400114, [0x1c000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400115, [0x1c0000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400116, [0x1c00000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400117, [0x1c000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400118, [0x1c0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400119, [0x6000000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011a, [0x60000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011b, [0x600000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011c, [0x6000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011d, [0x60000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011e, [0x600000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011f, [0x6000]) = 0
+write(1, "0000 0000 0000 0000 C001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400120, [0x60]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400121, [0x400000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400122, [0x4000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400123, [0x40000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400124, [0x400000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400125, [0x400000004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400126, [0x4000000040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400127, [0x40000000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400128, [0x400000004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400129, [0x400000004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012a, [0x4000000040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012b, [0x40000000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012c, [0x400000004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012d, [0x4000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012e, [0x40000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012f, [0x400]) = 0
+write(1, "6000 0000 0000 0000 0400 0000 04"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400130, [0x4]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400131, [0x1800000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400132, [0x18000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400133, [0x180000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400134, [0x1800000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400135, [0x18000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400136, [0x180000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400137, [0x1800]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400138, [0x18]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400139, [0x1900000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013a, [0x19000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013b, [0x190000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013c, [0x1900000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013d, [0x300000019000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013e, [0x3000000190000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013f, [0x30000001900]) = 0
+write(1, "0400 0000 0000 0000 1800 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400140, [0x300000019]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400141, [0x3000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400142, [0x30000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400143, [0x300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400144, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400145, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400146, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400147, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400148, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400149, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014f, [0]) = 0
+write(1, "1900 0000 0300 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400150, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400151, [0x2000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400152, [0x220000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400153, [0x2200000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400154, [0x22000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400155, [0x220000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400156, [0x2200000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400157, [0x22000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400158, [0x220]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400159, [0x3000000000000002]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015a, [0x30000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015b, [0x300000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015c, [0x3000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015d, [0x30000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015e, [0x300000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015f, [0x3000]) = 0
+write(1, "0000 0000 0000 0000 2002 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400160, [0x30]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400161, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400162, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400163, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400164, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400165, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400166, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400167, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400168, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400169, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016b, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016c, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016d, [0x1000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016e, [0x10000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016f, [0x100]) = 0
+write(1, "3000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400170, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400171, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400172, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400173, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400174, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400175, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400176, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400177, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400178, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400179, [0x9000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017a, [0x9090000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017b, [0x9090900000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017c, [0xeb90909000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017d, [0xfeeb909090000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017e, [0x90feeb9090900000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017f, [0x9090feeb90909000]) = 0
+write(1, "0100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400180, [0x909090feeb909090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400181, [0x909090feeb9090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400182, [0x909090feeb90]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400183, [0x909090feeb]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400184, [0x909090fe]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400185, [0x909090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400186, [0x9090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400187, [0x90]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400188, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400189, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018a, [0x2e00000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018b, [0x742e000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018c, [0x65742e0000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018d, [0x7865742e00000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018e, [0x747865742e000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018f, [0x747865742e0000]) = 0
+write(1, "9090 90EB FE90 9090 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400190, [0x2e00747865742e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400191, [0x732e00747865742e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400192, [0x68732e0074786574]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400193, [0x7368732e00747865]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400194, [0x747368732e007478]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400195, [0x72747368732e0074]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400196, [0x7472747368732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400197, [0x617472747368732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400198, [0x6261747274736873]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400199, [0x62617472747368]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019a, [0x2e00626174727473]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019b, [0x732e006261747274]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019c, [0x79732e0062617472]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019d, [0x6d79732e00626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019e, [0x746d79732e006261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019f, [0x61746d79732e0062]) = 0
+write(1, "002E 7465 7874 002E 7368 7374 72"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a0, [0x6261746d79732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a1, [0x6261746d79732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a2, [0x2e006261746d7973]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a3, [0x732e006261746d79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a4, [0x74732e006261746d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a5, [0x7274732e00626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a6, [0x747274732e006261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a7, [0x61747274732e0062]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a8, [0x6261747274732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a9, [0x6261747274732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001aa, [0x626174727473]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ab, [0x6261747274]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ac, [0x62617472]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ad, [0x626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ae, [0x6261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001af, [0x62]) = 0
+write(1, "002E 7379 6D74 6162 002E 7374 72"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ba, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001be, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bf, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ca, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ce, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cf, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d1, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d2, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d3, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d4, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d5, [0x400000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d6, [0x4000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d7, [0xf100040000000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d8, [0xfff1000400000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d9, [0xfff10004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001da, [0xfff100040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001db, [0xfff1000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001dc, [0xfff10004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001dd, [0xfff100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001de, [0xfff1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001df, [0xff]) = 0
+write(1, "0000 0000 0000 0000 0100 0000 04"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ea, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001eb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ec, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ed, [0x300000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ee, [0x3000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ef, [0x100030000000000]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f0, [0x1000300000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f1, [0x10003000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f2, [0x100030000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f3, [0x1000300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f4, [0x10003]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f5, [0x100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f6, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fa, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fe, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ff, [0]) = 0
+write(1, "0000 0000 0300 0100 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400200, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400201, [0x2900000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400202, [0x29000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400203, [0x290000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400204, [0x2900000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400205, [0x29000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400206, [0x290000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400207, [0x100000000002900]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400208, [0x1000000000029]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400209, [0x300010000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020a, [0x3000100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020b, [0x30001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020c, [0x300010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020d, [0x3000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020e, [0x30001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020f, [0x300]) = 0
+write(1, "0000 0000 0000 0000 2900 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400210, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400211, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400212, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400213, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400214, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400215, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400216, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400217, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400218, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400219, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021a, [0x3300000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021b, [0x2d33000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021c, [0x322d330000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021d, [0x32322d3300000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021e, [0x2d32322d33000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021f, [0x312d32322d330000]) = 0
+write(1, "0300 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400220, [0x5f312d32322d3300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400221, [0x505f312d32322d33]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400222, [0x61505f312d32322d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400223, [0x7961505f312d3232]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400224, [0x6c7961505f312d32]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400225, [0x6f6c7961505f312d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400226, [0x616f6c7961505f31]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400227, [0x64616f6c7961505f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400228, [0x7364616f6c796150]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400229, [0x2f7364616f6c7961]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022a, [0x702f7364616f6c79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022b, [0x61702f7364616f6c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022c, [0x7961702f7364616f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022d, [0x6c7961702f736461]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022e, [0x6f6c7961702f7364]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022f, [0x616f6c7961702f73]) = 0
+write(1, "0033 2D32 322D 315F 5061 796C 6F"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400230, [0x64616f6c7961702f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400231, [0x5f64616f6c796170]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400232, [0x365f64616f6c7961]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400233, [0x34365f64616f6c79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400234, [0x5f34365f64616f6c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400235, [0x775f34365f64616f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400236, [0x72775f34365f6461]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400237, [0x6972775f34365f64]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400238, [0x746972775f34365f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400239, [0x65746972775f3436]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023a, [0x5f65746972775f34]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023b, [0x325f65746972775f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023c, [0x2e325f6574697277]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023d, [0x6e2e325f65746972]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023e, [0x616e2e325f657469]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023f, [0x73616e2e325f6574]) = 0
+write(1, "2F70 6179 6C6F 6164 5F36 345F 77"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400240, [0x6d73616e2e325f65]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400241, [0x6d73616e2e325f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400242, [0x40006d73616e2e32]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400243, [0x6c40006d73616e2e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400244, [0x616c40006d73616e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400245, [0x62616c40006d7361]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400246, [0x6562616c40006d73]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400247, [0x6c6562616c40006d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400248, [0x6c6562616c4000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400249, [0x6f006c6562616c40]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024a, [0x2e6f006c6562616c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024b, [0x322e6f006c656261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024c, [0x322e6f006c6562]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024d, [0x400322e6f006c65]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024e, [0x400322e6f006c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024f, [0x400322e6f00]) = 0
+write(1, "655F 322E 6E61 736D 0040 6C61 62"..., 40) = 40
+ptrace(PTRACE_POKETEXT, 12195, 0x400000, 0x10102464c457f) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400008, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400010, 0x1003e0001) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400018, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400020, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400028, 0x40) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400030, 0x4000000000) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400038, 0x2000500400000) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400040, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400048, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400050, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400058, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400060, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400068, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400070, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400078, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400080, 0x100000001) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400088, 0x6) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400090, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400098, 0x180) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000a0, 0x8) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000a8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000b0, 0x10) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000b8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000c0, 0x300000007) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000c8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000d0, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000d8, 0x190) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000e0, 0x21) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000e8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000f0, 0x1) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4000f8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400100, 0x200000011) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400108, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400110, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400118, 0x1c0) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400120, 0x60) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400128, 0x400000004) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400130, 0x4) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400138, 0x18) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400140, 0x300000019) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400148, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400150, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400158, 0x220) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400160, 0x30) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400168, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400170, 0x1) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400178, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400180, 0x909090feeb909090) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400188, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400190, 0x2e00747865742e00) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400198, 0x6261747274736873) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001a0, 0x6261746d79732e00) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001a8, 0x6261747274732e00) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001b0, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001b8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001c0, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001c8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001d0, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001d8, 0xfff1000400000001) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001e0, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001e8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001f0, 0x1000300000000) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x4001f8, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400200, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400208, 0x1000000000029) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400210, 0x3) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400218, NULL) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400220, 0x5f312d32322d3300) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400228, 0x7364616f6c796150) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400230, 0x64616f6c7961702f) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400238, 0x746972775f34365f) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400240, 0x6d73616e2e325f65) = 0
+ptrace(PTRACE_POKETEXT, 12195, 0x400248, 0x6c6562616c4000) = 0
+write(1, "AFTER\t0x400000\n", 15)       = 15
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400000, [0x10102464c457f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400001, [0x10102464c45]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400002, [0x10102464c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400003, [0x1010246]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400004, [0x10102]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400005, [0x101]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400006, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400007, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400008, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400009, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000b, [0x3e00010000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000c, [0x3e000100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000d, [0x1003e0001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000e, [0x1003e00010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40000f, [0x1003e000100]) = 0
+write(1, "7F45 4C46 0201 0100 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400010, [0x1003e0001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400011, [0x1003e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400012, [0x1003e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400013, [0x100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400014, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400015, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400016, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400017, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400018, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400019, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40001f, [0]) = 0
+write(1, "0100 3E00 0100 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400020, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400021, [0x4000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400022, [0x40000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400023, [0x400000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400024, [0x4000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400025, [0x40000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400026, [0x400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400027, [0x4000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400028, [0x40]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400029, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002d, [0x4000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002e, [0x40000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40002f, [0x400000000000]) = 0
+write(1, "0000 0000 0000 0000 4000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400030, [0x4000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400031, [0x40000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400032, [0x400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400033, [0x4000000000004000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400034, [0x40000000000040]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400035, [0x500400000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400036, [0x5004000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400037, [0x200050040000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400038, [0x2000500400000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400039, [0x20005004000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003a, [0x200050040]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003b, [0x2000500]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003c, [0x20005]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003d, [0x200]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003e, [0x2]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40003f, [0]) = 0
+write(1, "0000 0000 4000 0000 0000 4000 05"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400040, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400041, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400042, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400043, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400044, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400045, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400046, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400047, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400048, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400049, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40004f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400050, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400051, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400052, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400053, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400054, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400055, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400056, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400057, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400058, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400059, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40005f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400060, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400061, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400062, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400063, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400064, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400065, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400066, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400067, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400068, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400069, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40006f, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400070, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400071, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400072, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400073, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400074, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400075, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400076, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400077, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400078, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400079, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007b, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007c, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007d, [0x100000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007e, [0x1000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40007f, [0x10000000100]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400080, [0x100000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400081, [0x600000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400082, [0x6000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400083, [0x60000000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400084, [0x600000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400085, [0x6000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400086, [0x60000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400087, [0x600]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400088, [0x6]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400089, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40008f, [0]) = 0
+write(1, "0100 0000 0100 0000 0600 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400090, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400091, [0x8000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400092, [0x180000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400093, [0x1800000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400094, [0x18000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400095, [0x180000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400096, [0x1800000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400097, [0x18000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400098, [0x180]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400099, [0x800000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009a, [0x8000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009b, [0x80000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009c, [0x800000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009d, [0x8000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009e, [0x80000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40009f, [0x800]) = 0
+write(1, "0000 0000 0000 0000 8001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a0, [0x8]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000a9, [0x1000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000aa, [0x10000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ab, [0x100000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ac, [0x1000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ad, [0x10000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ae, [0x100000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000af, [0x1000]) = 0
+write(1, "0800 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b0, [0x10]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000b9, [0x700000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ba, [0x7000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bb, [0x70000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bc, [0x700000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bd, [0x300000007000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000be, [0x3000000070000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000bf, [0x30000000700]) = 0
+write(1, "1000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c0, [0x300000007]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c1, [0x3000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c2, [0x30000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c3, [0x300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c4, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000c9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ca, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ce, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000cf, [0]) = 0
+write(1, "0700 0000 0300 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d1, [0x9000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d2, [0x190000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d3, [0x1900000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d4, [0x19000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d5, [0x190000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d6, [0x1900000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d7, [0x19000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d8, [0x190]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000d9, [0x2100000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000da, [0x21000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000db, [0x210000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000dc, [0x2100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000dd, [0x21000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000de, [0x210000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000df, [0x2100]) = 0
+write(1, "0000 0000 0000 0000 9001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e0, [0x21]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000e9, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ea, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000eb, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ec, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ed, [0x1000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ee, [0x10000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ef, [0x100]) = 0
+write(1, "2100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f0, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000f9, [0x1100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fa, [0x11000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fb, [0x110000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fc, [0x1100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fd, [0x200000011000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000fe, [0x2000000110000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4000ff, [0x20000001100]) = 0
+write(1, "0100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400100, [0x200000011]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400101, [0x2000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400102, [0x20000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400103, [0x200]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400104, [0x2]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400105, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400106, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400107, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400108, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400109, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40010f, [0]) = 0
+write(1, "1100 0000 0200 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400110, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400111, [0xc000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400112, [0x1c0000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400113, [0x1c00000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400114, [0x1c000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400115, [0x1c0000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400116, [0x1c00000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400117, [0x1c000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400118, [0x1c0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400119, [0x6000000000000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011a, [0x60000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011b, [0x600000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011c, [0x6000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011d, [0x60000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011e, [0x600000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40011f, [0x6000]) = 0
+write(1, "0000 0000 0000 0000 C001 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400120, [0x60]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400121, [0x400000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400122, [0x4000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400123, [0x40000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400124, [0x400000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400125, [0x400000004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400126, [0x4000000040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400127, [0x40000000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400128, [0x400000004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400129, [0x400000004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012a, [0x4000000040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012b, [0x40000000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012c, [0x400000004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012d, [0x4000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012e, [0x40000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40012f, [0x400]) = 0
+write(1, "6000 0000 0000 0000 0400 0000 04"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400130, [0x4]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400131, [0x1800000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400132, [0x18000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400133, [0x180000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400134, [0x1800000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400135, [0x18000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400136, [0x180000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400137, [0x1800]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400138, [0x18]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400139, [0x1900000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013a, [0x19000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013b, [0x190000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013c, [0x1900000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013d, [0x300000019000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013e, [0x3000000190000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40013f, [0x30000001900]) = 0
+write(1, "0400 0000 0000 0000 1800 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400140, [0x300000019]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400141, [0x3000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400142, [0x30000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400143, [0x300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400144, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400145, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400146, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400147, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400148, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400149, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014a, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014b, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014c, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014d, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014e, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40014f, [0]) = 0
+write(1, "1900 0000 0300 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400150, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400151, [0x2000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400152, [0x220000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400153, [0x2200000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400154, [0x22000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400155, [0x220000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400156, [0x2200000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400157, [0x22000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400158, [0x220]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400159, [0x3000000000000002]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015a, [0x30000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015b, [0x300000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015c, [0x3000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015d, [0x30000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015e, [0x300000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40015f, [0x3000]) = 0
+write(1, "0000 0000 0000 0000 2002 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400160, [0x30]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400161, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400162, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400163, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400164, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400165, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400166, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400167, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400168, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400169, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016a, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016b, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016c, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016d, [0x1000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016e, [0x10000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40016f, [0x100]) = 0
+write(1, "3000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400170, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400171, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400172, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400173, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400174, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400175, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400176, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400177, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400178, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400179, [0x9000000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017a, [0x9090000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017b, [0x9090900000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017c, [0xeb90909000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017d, [0xfeeb909090000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017e, [0x90feeb9090900000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40017f, [0x9090feeb90909000]) = 0
+write(1, "0100 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400180, [0x909090feeb909090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400181, [0x909090feeb9090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400182, [0x909090feeb90]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400183, [0x909090feeb]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400184, [0x909090fe]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400185, [0x909090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400186, [0x9090]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400187, [0x90]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400188, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400189, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018a, [0x2e00000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018b, [0x742e000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018c, [0x65742e0000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018d, [0x7865742e00000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018e, [0x747865742e000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40018f, [0x747865742e0000]) = 0
+write(1, "9090 90EB FE90 9090 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400190, [0x2e00747865742e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400191, [0x732e00747865742e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400192, [0x68732e0074786574]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400193, [0x7368732e00747865]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400194, [0x747368732e007478]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400195, [0x72747368732e0074]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400196, [0x7472747368732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400197, [0x617472747368732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400198, [0x6261747274736873]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400199, [0x62617472747368]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019a, [0x2e00626174727473]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019b, [0x732e006261747274]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019c, [0x79732e0062617472]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019d, [0x6d79732e00626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019e, [0x746d79732e006261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40019f, [0x61746d79732e0062]) = 0
+write(1, "002E 7465 7874 002E 7368 7374 72"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a0, [0x6261746d79732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a1, [0x6261746d79732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a2, [0x2e006261746d7973]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a3, [0x732e006261746d79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a4, [0x74732e006261746d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a5, [0x7274732e00626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a6, [0x747274732e006261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a7, [0x61747274732e0062]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a8, [0x6261747274732e00]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001a9, [0x6261747274732e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001aa, [0x626174727473]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ab, [0x6261747274]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ac, [0x62617472]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ad, [0x626174]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ae, [0x6261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001af, [0x62]) = 0
+write(1, "002E 7379 6D74 6162 002E 7374 72"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001b9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ba, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001be, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001bf, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001c9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ca, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ce, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001cf, [0]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d1, [0x100000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d2, [0x1000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d3, [0x10000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d4, [0x100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d5, [0x400000001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d6, [0x4000000010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d7, [0xf100040000000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d8, [0xfff1000400000001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001d9, [0xfff10004000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001da, [0xfff100040000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001db, [0xfff1000400]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001dc, [0xfff10004]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001dd, [0xfff100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001de, [0xfff1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001df, [0xff]) = 0
+write(1, "0000 0000 0000 0000 0100 0000 04"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e0, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e1, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e2, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e3, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e4, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e5, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e6, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001e9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ea, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001eb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ec, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ed, [0x300000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ee, [0x3000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ef, [0x100030000000000]) = 0
+write(1, "0000 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f0, [0x1000300000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f1, [0x10003000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f2, [0x100030000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f3, [0x1000300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f4, [0x10003]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f5, [0x100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f6, [0x1]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f7, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f8, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001f9, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fa, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fb, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fc, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fd, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001fe, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x4001ff, [0]) = 0
+write(1, "0000 0000 0300 0100 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400200, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400201, [0x2900000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400202, [0x29000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400203, [0x290000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400204, [0x2900000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400205, [0x29000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400206, [0x290000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400207, [0x100000000002900]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400208, [0x1000000000029]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400209, [0x300010000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020a, [0x3000100000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020b, [0x30001000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020c, [0x300010000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020d, [0x3000100]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020e, [0x30001]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40020f, [0x300]) = 0
+write(1, "0000 0000 0000 0000 2900 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400210, [0x3]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400211, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400212, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400213, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400214, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400215, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400216, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400217, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400218, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400219, [0]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021a, [0x3300000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021b, [0x2d33000000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021c, [0x322d330000000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021d, [0x32322d3300000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021e, [0x2d32322d33000000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40021f, [0x312d32322d330000]) = 0
+write(1, "0300 0000 0000 0000 0000 0000 00"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400220, [0x5f312d32322d3300]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400221, [0x505f312d32322d33]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400222, [0x61505f312d32322d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400223, [0x7961505f312d3232]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400224, [0x6c7961505f312d32]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400225, [0x6f6c7961505f312d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400226, [0x616f6c7961505f31]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400227, [0x64616f6c7961505f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400228, [0x7364616f6c796150]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400229, [0x2f7364616f6c7961]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022a, [0x702f7364616f6c79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022b, [0x61702f7364616f6c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022c, [0x7961702f7364616f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022d, [0x6c7961702f736461]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022e, [0x6f6c7961702f7364]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40022f, [0x616f6c7961702f73]) = 0
+write(1, "0033 2D32 322D 315F 5061 796C 6F"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400230, [0x64616f6c7961702f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400231, [0x5f64616f6c796170]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400232, [0x365f64616f6c7961]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400233, [0x34365f64616f6c79]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400234, [0x5f34365f64616f6c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400235, [0x775f34365f64616f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400236, [0x72775f34365f6461]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400237, [0x6972775f34365f64]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400238, [0x746972775f34365f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400239, [0x65746972775f3436]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023a, [0x5f65746972775f34]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023b, [0x325f65746972775f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023c, [0x2e325f6574697277]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023d, [0x6e2e325f65746972]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023e, [0x616e2e325f657469]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40023f, [0x73616e2e325f6574]) = 0
+write(1, "2F70 6179 6C6F 6164 5F36 345F 77"..., 40) = 40
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400240, [0x6d73616e2e325f65]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400241, [0x6d73616e2e325f]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400242, [0x40006d73616e2e32]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400243, [0x6c40006d73616e2e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400244, [0x616c40006d73616e]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400245, [0x62616c40006d7361]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400246, [0x6562616c40006d73]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400247, [0x6c6562616c40006d]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400248, [0x6c6562616c4000]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x400249, [0x6f006c6562616c40]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024a, [0x2e6f006c6562616c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024b, [0x322e6f006c656261]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024c, [0x322e6f006c6562]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024d, [0x400322e6f006c65]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024e, [0x400322e6f006c]) = 0
+ptrace(PTRACE_PEEKTEXT, 12195, 0x40024f, [0x400322e6f00]) = 0
+write(1, "655F 322E 6E61 736D 0040 6C61 62"..., 40) = 40
+write(1, "[*] Overwrote PID memory space\n", 31) = 31
+write(1, "7F454C46020101000000000000000000"..., 1024) = 1024
+write(1, "52E574640400000010EE000000000000"..., 1024) = 1024
+write(1, "BF000000120000000000000000000000"..., 1024) = 1024
+write(1, "00000000000000000000000000000000"..., 1024) = 1024
+write(1, "00000000000000007A00000012000000"..., 1024) = 1024
+write(1, "7374646F7574006670757463005F5F69"..., 1024) = 1024
+write(1, "95919606000005003602000010000000"..., 1024) = 1024
+write(1, "000000000000000090F0600000000000"..., 1024) = 1024
+write(1, "\n", 1)                       = 1
+write(1, "LET'S SEARCH THE PAYLOAD CONTENT"..., 53) = 53
+write(1, "7F454C46020101000000000000000000"..., 1024) = 1024
+write(1, "00000000000000002900000000000100"..., 161) = 161
+write(2, "<<<ERROR>>> - injector - main() "..., 51) = 51
+ptrace(PTRACE_GETREGS, 12195, NULL, 0x7ffe052789f0) = 0
+write(1, "[*] REretrieved PID's processor "..., 61) = 61
+write(1, "RAX:\tfffffffffffffe00\n", 22) = 22
+write(1, "RCX:\t7f9779a25260\n", 18)    = 18
+write(1, "RDX:\t400\n", 9)              = 9
+write(1, "RSI:\t1d49420\n", 13)         = 13
+write(1, "RDI:\t0\n", 7)                = 7
+write(1, "RIP:\t7f9779a25260\n", 18)    = 18
+write(1, "RSP:\t7fff1b16f9d8\n", 18)    = 18
+ptrace(PTRACE_DETACH, 12195, NULL, SIG_0) = 0
+write(1, "[*] PID detached\n", 17)      = 17
+brk(0x10a6000)                          = 0x10a6000
+exit_group(0)                           = ?
++++ exited with 0 +++
