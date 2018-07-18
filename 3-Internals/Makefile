@@ -55,6 +55,7 @@ PMP = ../../proc_maps_parser/
 	$(CC) -c Thread_Racer.c
 	$(CC) -c 3-18_Threading_Practice-1_Grand_Prix.c
 	$(CC) -o grand_prix.exe -pthread Fileroad.o Fileroad_Descriptors.o Harklecurse.o Harklemath.o Harklepipe.o Harklethread.o Memoroad.o Rando.o Thread_Racer.o 3-18_Threading_Practice-1_Grand_Prix.o -lncurses -lm
+	$(CC) -o ncurses_table.exe 3-18_Ncurses_Table_Generator.c -lncurses
 
 3221:
 	$(CC) -c Harkledir.c
