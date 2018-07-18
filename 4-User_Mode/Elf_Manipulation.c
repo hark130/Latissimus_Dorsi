@@ -1,10 +1,11 @@
 #include <elf.h>
 #include "Elf_Manipulation.h"
-#include <inttypes.h>       // uint format specifiers
+#include "Harklerror.h"                         // HARKLE_ERROR
+#include <inttypes.h>                           // uint format specifiers
 #include "Map_Memory.h"
-#include <stdbool.h>		// bool, true, false
-#include <stdio.h>          // fprintf
-#include <string.h>         // strstr
+#include <stdbool.h>		                    // bool, true, false
+#include <stdio.h>                              // fprintf
+#include <string.h>                             // strstr
 
 
 #ifndef MAX_TRIES
@@ -45,16 +46,6 @@ bool is_elf(mapMem_ptr file)
 }
 
 
-/*
-	Purpose - Determine if a mappedMemory file is 32-bit ELF or 64-bit ELF
-	Input - mappedMemory struct pointer
-	Output
-		ELFCLASSNONE if mappedMemory is not an ELF file
-		ELFCLASS32 if mappedMemory is a 32-bit ELF file
-		ELFCLASS64 if mappedMemory is a 64-bit ELF file
-        -1 on error
-        -999 on 'horrible' error
- */
 int determine_elf_class(mapMem_ptr elfFile)
 {
     // LOCAL VARIABLES
@@ -106,15 +97,6 @@ int determine_elf_class(mapMem_ptr elfFile)
 }
 
 
-/*
-	Purpose - Allocate and populate a Mapped_Memory_Elf64 struct with ELF details
-	Input - mappedMemory struct pointer to an ELF file
-	Output - Dynamically allocated Mapped_Memory_Elf64 pointer
-	Notes
-		Calls validate_struct() to validate elf64File
-		Calls is_elf() to verify format
-		Calls determine_elf_class() to verify this is the right function
- */
 mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elf64File)
 {
     // LOCAL VARIABLES
@@ -169,12 +151,6 @@ mapElf64_ptr populate_mapElf64_struct(mapMem_ptr elf64File)
 }
 
 
-/*
-    Purpose - Determine the ELF file's base virtual address from the first
-        LOAD program header
-    Input - Mapped_Memory_Elf64 struct pointer to an ELF file's details
-    Output - Value of the base virtual address for elf64File
- */
 Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
 {
     // LOCAL VARIABLES
@@ -222,18 +198,6 @@ Elf64_Addr get_elf64_base_address(mapElf64_ptr elf64File)
 }
 
 
-/*
-	Purpose - Find the program header entry associated with a given address
-	Input
-		elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
-		addr - Address somewhere inside the 'haystack' ELF
-	Output
-		On succeess, pointer to the program header table entry responsibile for this address
-		On failure, NULL
-	Notes
-		A valid use case of this function is that addr may not be contained within the program headers
-			so NULL does not mean "error"
- */
 Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 {
 	// LOCAL VARIABLES
@@ -292,18 +256,6 @@ Elf64_Phdr* find_this_prgm_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 }
 
 
-/*
-    Purpose - Find the section header entry associated with a given address
-    Input
-        elf64File - Mapped_Memory_Elf64 pointer of the 'haystack' ELF
-        addr - Address somewhere inside the 'haystack' ELF
-    Output
-        On succeess, pointer to the section header table entry responsible for this address
-        On failure, NULL
-    Notes
-        A valid use case of this function is that addr may not be contained within the section headers
-            so NULL does not mean "error"
- */
 Elf64_Shdr* find_this_sect_hdr_64addr(mapElf64_ptr elf64File, Elf64_Addr addr)
 {
     // LOCAL VARIABLES
@@ -448,3 +400,358 @@ mapMem_ptr find_code_cave(mapMem_ptr elfBinary)
     return retVal;
 }
 
+
+bool search_sect_hdr64_und_func(mapMem_ptr elf64File, const char *undFuncName)
+{
+    // LOCAL VARIABLES
+    bool retVal = false;
+    bool success = true;
+    mapElf64_ptr currElf = NULL;  // Current ELF file
+    Elf64_Shdr *dynsymSectHdr_ptr = NULL;  // Store the .dynsym section header here
+    Elf64_Shdr *strtabSectHdr_ptr = NULL;  // Store the .strtab section header here
+    Elf64_Sym *currSymTable_ptr = NULL;  // Store the .dynsym section header entries here
+    char *tmp_ptr = NULL;  // Store return values here
+    char *currName = NULL;  // Store symbol table name resolution here
+    int numEntries = 0;  // Calculate the number dynsym entries here
+    int symTableNum = 0;  // Keep track of the symbol table entries
+
+    // uint64_t sectHdr_ptr = 0;  // Points to the start of the section header table.
+    // uint64_t sectHdrSize = 0;  // Size of a section header table entry
+    // uint16_t numOfSectHdrs = 0;  // Number of entries in the section header table
+    // uint16_t sectHdrSectNameIndex = 0; // Index of the section header table entry that contains the section names
+
+    // INPUT VALIDATION
+    if (!elf64File || !undFuncName)
+    {
+        HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, NULL pointer);
+        success = false;
+    }
+    else if (!(*undFuncName))
+    {
+        HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, Empty string);
+        success = false;
+    }
+    else if (false == validate_struct(elf64File))
+    {
+        HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, Invalid mapMem struct);
+        success = false;
+    }
+    else if (false == is_elf(elf64File))
+    {
+        HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, Not an ELF);
+        success = false;
+    }
+    else if (ELFCLASS64 != determine_elf_class(elf64File))
+    {
+        HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, Wrong class of ELF);
+        success = false;
+    }
+
+    // SEARCH
+    // 1. Mapped_Memory_Elf64 struct
+    if (true == success)
+    {
+        currElf = populate_mapElf64_struct(elf64File);
+
+        if (!currElf)
+        {
+            HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, populate_mapElf64_struct failed);
+            success = false;
+        }
+    }
+
+    // 2. Find the key Section Headers
+    if (true == success)
+    {
+        dynsymSectHdr_ptr = find_sect_hdr64_dynsym(currElf);
+
+        if (!dynsymSectHdr_ptr)
+        {
+            HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, find_sect_hdr64_dynsym failed);
+            success = false;
+        }
+        else
+        {
+            numEntries = dynsymSectHdr_ptr->sh_size / sizeof(Elf64_Sym);
+            // fprintf(stdout, "There are %d dynamic symbol entries.\n", numEntries);  // DEBUGGING
+        }
+
+        strtabSectHdr_ptr = find_sect_hdr64_strtab(currElf);
+
+        if (!strtabSectHdr_ptr)
+        {
+            HARKLE_ERROR(Elf_Manipulation, search_sect_hdr64_und_func, find_sect_hdr64_strtab failed);
+            success = false;
+        }
+    }
+
+    // 3. Parse the Symbol Table Entries
+    if (true == success)
+    {
+        currSymTable_ptr = (Elf64_Sym *)(dynsymSectHdr_ptr->sh_offset + currElf->binary_ptr->fileMem_ptr);
+        symTableNum = 0;
+
+        while (symTableNum < numEntries)
+        {
+            if (currSymTable_ptr->st_name)
+            {
+                // "Undefined" index number, "Global" binding, and "Function" type
+                if (SHN_UNDEF == currSymTable_ptr->st_shndx \
+                    && STB_GLOBAL == ELF64_ST_BIND(currSymTable_ptr->st_info) \
+                    && STT_FUNC == ELF64_ST_TYPE(currSymTable_ptr->st_info))
+                {
+                    currName = strtabSectHdr_ptr->sh_offset \
+                               + currElf->binary_ptr->fileMem_ptr \
+                               + currSymTable_ptr->st_name;
+                    // puts(currName);  // DEBUGGING
+                    // fprintf(stdout, "Checking Entry #%d:\t%s\n", symTableNum, currName);  // DEBUGGING
+                    tmp_ptr = strstr(currName, undFuncName);
+
+                    if (tmp_ptr)
+                    {
+                        // puts(currName);  // DEBUGGING
+                        retVal = true;
+                        break;
+                    }
+                }
+                /* DEBUGGING */
+                // else
+                // {
+                //     currName = strtabSectHdr_ptr->sh_offset \
+                //                + currElf->binary_ptr->fileMem_ptr \
+                //                + currSymTable_ptr->st_name;
+                //     fprintf(stdout, "Skipping Entry #%d:\t%s\n", symTableNum, currName);  // DEBUGGING
+                // }
+            }
+
+            currSymTable_ptr++;
+            symTableNum++;
+        }
+    }
+
+    // 
+    if (true == success)
+    {
+
+    }
+
+    // CLEAN UP
+    // Dynamic return
+    if (false == success && true == retVal)
+    {
+        retVal = false;
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+Elf64_Shdr* find_sect_hdr64(mapElf64_ptr elf64File, const char *sectHdrName)
+{
+    // LOCAL VARIABLES
+    Elf64_Shdr *retVal = NULL;
+    Elf64_Shdr *currSectHdr = NULL;
+    Elf64_Shdr *stringSectHdr = NULL;
+    char *tmp_ptr = NULL;  // Store section header names here
+    int sectHdrNum = 0;
+    bool success = true;
+    
+    // INPUT VALIDATION
+    if (!elf64File || !sectHdrName)
+    {
+        HARKLE_ERROR(Elf_Manipulation, find_sect_hdr64, NULL pointer);
+        success = false;
+    }
+    else if (!(*sectHdrName))
+    {
+        HARKLE_ERROR(Elf_Manipulation, find_sect_hdr64, Empty string);
+        success = false;
+    }
+    else
+    {
+        currSectHdr = elf64File->binaryShdr_ptr;
+        sectHdrNum = 1;
+    }    
+
+    // FIND IT
+    // Parse the names
+    if (true == success)
+    {
+        for (; sectHdrNum <= elf64File->binaryEhdr_ptr->e_shnum && true == success; sectHdrNum++)
+        {
+            tmp_ptr = index_section64_name(elf64File, currSectHdr->sh_name);
+
+            if (!tmp_ptr)
+            {
+                HARKLE_ERROR(Elf_Manipulation, find_sect_hdr64, index_section64_name failed);
+                success = false;
+            }
+            else
+            {
+                if (!strcmp(tmp_ptr, sectHdrName))
+                {
+                    // Found it
+                    fprintf(stdout, "Found section header name %s at index %d!\n", tmp_ptr, currSectHdr->sh_name);  // DEBUGGING
+                    retVal = currSectHdr;
+                    break;
+                    
+                }
+                else
+                {
+                    // Try again
+                    tmp_ptr = NULL;  // Clear temp pointer var
+                    currSectHdr++;
+                }
+            }
+        }
+
+        if (!tmp_ptr)
+        {
+            success = false;  
+        }
+        else
+        {
+            tmp_ptr = NULL;  // Clear temp pointer var
+        }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+char* index_section64_name(mapElf64_ptr elf64File, uint32_t stringIndex)
+{
+    // LOCAL VARIABLES
+    char *retVal = NULL;
+    bool success = true;
+    Elf64_Shdr *stringSectHdr = NULL;
+    uint32_t curIndex = 0;  // Use this to count into the array of strings
+
+    // INPUT VALIDATION
+    if (!elf64File)
+    {
+        HARKLE_ERROR(Elf_Manipulation, index_section64_name, NULL pointer);
+        success = false;
+    }
+    // Index too far in?  Implement later?
+
+    // FIND IT
+    // Find the SHT_STRTAB section
+    if (true == success)
+    {
+        stringSectHdr = elf64File->binaryShdr_ptr;
+        stringSectHdr += elf64File->binaryEhdr_ptr->e_shstrndx;
+        if (SHT_STRTAB != stringSectHdr->sh_type)
+        {
+            success = false;
+        }
+    }
+    
+    // Find the pointer to the index
+    if (true == success)
+    {
+        retVal = (char*)elf64File->binaryEhdr_ptr + stringSectHdr->sh_offset;
+
+        retVal += stringIndex;  // Advance past the first nul character
+        puts(retVal);  // DEBUGGING
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+Elf64_Shdr* find_sect_hdr64_dynsym(mapElf64_ptr elf64File)
+{
+    // LOCAL VARIABLES
+    Elf64_Shdr *retVal = NULL;
+    int sectNum = 0;
+    bool success = true;
+
+    // INPUT VALIDATION
+    if (!elf64File)
+    {
+        HARKLE_ERROR(Elf_Manipulation, find_sect_hdr64_dynsym, NULL pointer);
+        success = false;
+    }
+    else
+    {
+        retVal = (Elf64_Shdr *)(elf64File->binary_ptr->fileMem_ptr + elf64File->binaryEhdr_ptr->e_shoff);
+        sectNum = 1;
+    }
+
+    // FIND IT
+    if (true == success)
+    {
+        while (sectNum < elf64File->binaryEhdr_ptr->e_shnum)
+        {
+            if (SHT_DYNSYM == retVal->sh_type)
+            {
+                break;
+            }
+            else
+            {
+                retVal++;
+                sectNum++;
+            }
+        }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+Elf64_Shdr* find_sect_hdr64_strtab(mapElf64_ptr elf64File)
+{
+    // LOCAL VARIABLES
+    Elf64_Shdr *retVal = NULL;
+    int sectNum = 0;
+    bool success = true;
+
+    // INPUT VALIDATION
+    if (!elf64File)
+    {
+        HARKLE_ERROR(Elf_Manipulation, find_sect_hdr64_dynsym, NULL pointer);
+        success = false;
+    }
+    else
+    {
+        retVal = (Elf64_Shdr *)(elf64File->binary_ptr->fileMem_ptr + elf64File->binaryEhdr_ptr->e_shoff);
+        sectNum = 1;
+    }
+
+    // FIND IT
+    if (true == success)
+    {
+        while (sectNum < elf64File->binaryEhdr_ptr->e_shnum)
+        {
+            if (SHT_STRTAB == retVal->sh_type)
+            {
+                break;
+            }
+            else
+            {
+                retVal++;
+                sectNum++;
+            }
+        }
+    }
+
+    // DONE
+    return retVal;
+}
+
+
+/*
+typedef uint64_t    Elf64_Addr;
+typedef uint16_t    Elf64_Half;
+typedef uint64_t    Elf64_Off;
+typedef int32_t     Elf64_Sword;
+typedef int64_t     Elf64_Sxword;
+typedef uint32_t    Elf64_Word;
+typedef uint64_t    Elf64_Lword;
+typedef uint64_t    Elf64_Xword;
+ */

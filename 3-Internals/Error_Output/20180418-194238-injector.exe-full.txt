@@ -1,0 +1,20 @@
+¿¿¿WARNING??? - Harkletrace - htrace_write_data() - The length of the 'blob' is not word-aligned!
+<<<ERROR>>> - injector - main() - SIGTRAP not found!
+<<<ERROR>>> - Memoroad - copy_local_to_remote() - process_vm_writev failed!
+<<<ERROR>>> - Memoroad - process_vm_writev() returned errno:	Bad address
+<<<ERROR>>> - injector - main() - copy_local_to_remote failed!
+
+Parsing /proc/3971/ (./Waiting.exe)
+[*] Located /proc/PID/
+[*] Attched to PID
+[*] Backed up PID's processor registers
+[*] Found r-xp PID memory
+[*] Successfully backed up PID memory
+[*] Modified mapped memory permissions (rw-p)
+[*] Overwrote PID memory space
+[*] Modified mapped memory permissions (r-xp)
+[*] Successfully updated RIP
+[*] PID's execution resumed
+[*] PID terminated
+[*] Successfully restored registers
+[*] PID detached

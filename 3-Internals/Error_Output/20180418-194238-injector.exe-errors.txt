@@ -1,0 +1,5 @@
+¿¿¿WARNING??? - Harkletrace - htrace_write_data() - The length of the 'blob' is not word-aligned!
+<<<ERROR>>> - injector - main() - SIGTRAP not found!
+<<<ERROR>>> - Memoroad - copy_local_to_remote() - process_vm_writev failed!
+<<<ERROR>>> - Memoroad - process_vm_writev() returned errno:	Bad address
+<<<ERROR>>> - injector - main() - copy_local_to_remote failed!

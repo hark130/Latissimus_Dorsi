@@ -1,0 +1,5 @@
+Win size == width: 167	length == 58
+'a' (Horizontal) == 83	'b' (Vertical) == 28
+<<<ERROR>>> - Harklecurse - print_plot_list() - mvwaddch failed!
+<<<ERROR>>> - Grand_Prix - main() - print_plot_list failed!
+Failed to print * at (167, 29)

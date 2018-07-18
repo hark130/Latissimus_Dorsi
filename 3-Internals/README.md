@@ -21,10 +21,11 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] 15. Demonstrate and understanding of the difference between virtual and physical File Systems (2c)
 * [ ] 16. Gain knowledge from the proc and sys VFSs and manipulate the system using them (3c)
 * [ ] 17. Understand the role of, interactions between, differences between, and be able to move data between user space and kernel space. (3c)
-* [ ] 18. Create a multi-threaded application and use synchronization primitives (3c)
+* [X] 18. Create a multi-threaded application and use synchronization primitives (3c)
 * [ ] 19. Understand the reason for and send ioctols to a kernel device (3c)
 * [ ] 20. Use ptrace to manipulate flow control and data in a remote application (3c)
 * [ ] 21. Use BSD sockets for network communication (2c)
+* [ ] 22. Inject code into a running process (This is a requirement for the eval)
 
 **NOTE:** See [Air Force Proficiency Codes.jpg](https://github.com/hark130/Latissimus_Dorsi/blob/master/Air%20Force%20Proficiency%20Codes.jpg) for an 'almost' explanation on the 'codes' appending each task list item.
 
@@ -67,6 +68,28 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [syscall man page](http://man7.org/linux/man-pages/man2/syscall.2.html)... handy reference extricated from nosig.exe's comments
 * [Interfacing Linux Signals](http://syprog.blogspot.com/2011/10/iterfacing-linux-signals.html)... w/ Assembly
 * [Synchronization Primitives](http://www.cs.columbia.edu/~hgs/os/sync.html)
+* [ncurses](https://www.gnu.org/software/ncurses/)
+* [ncurses How To](http://tldp.org/HOWTO/NCURSES-Programming-HOWTO/index.html)
+* [ncurses overlapping windows](https://www.gnu.org/software/guile-ncurses/manual/html_node/Overlay-and-manipulate-overlapped-windows.html)
+* [Ncurses Programming Guide](www.cs.ukzn.ac.za/~hughm/os/notes/ncurses.html)
+* [ncurses Extended ASCII Charts](http://melvilletheatre.com/articles/ncurses-extended-characters/index.html)
+* Computation Intensive Examples
+	* [Stack Overflow Java answer](https://stackoverflow.com/questions/3693197/cpu-intensive-calculation-examples)
+	* [How expensive is an operation on a CPU?](https://streamhpc.com/blog/2012-07-16/how-expensive-is-an-operation-on-a-cpu/)
+	* Calculate primes using Newton's method
+	* [GPU_loop.c](http://aut.researchgateway.ac.nz/bitstream/handle/10292/5605/FeronB.pdf?sequence=3)
+	* [Volatile C loop](https://stackoverflow.com/questions/21161175/example-of-very-cpu-intensive-c-function-under-5-lines-of-code)
+	* [Project Euler](https://projecteuler.chat/viewtopic.php?t=1422)
+	* [Simple Prime Test](https://en.wikipedia.org/wiki/Primality_test#Simple_methods) starting at a large number and working down
+	* [Bailey–Borwein–Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
+* [memset() optimized out](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations)
+* Injecting Shell Code into a Process
+	* [Code Injection into Running Linux Application](https://www.codeproject.com/Articles/33340/Code-Injection-into-Running-Linux-Application?fid=1534990&df=90&mpp=10&sort=Position&spc=Relaxed&tid=4678205)
+	* [ptrace man page](https://linux.die.net/man/2/ptrace)
+	* [Injecting code into running process with linux-inject](https://lkubuntu.wordpress.com/2016/01/31/injecting-code-into-running-process-with-linux-inject/)
+	* [Linux ptrace introduction AKA injecting into sshd for fun](https://blog.xpnsec.com/linux-process-injection-aka-injecting-into-sshd-for-fun/)
+	* [Dynamically Inject a Shared Library Into a Running Process on Android/ARM](https://www.evilsocket.net/2015/05/01/dynamically-inject-a-shared-library-into-a-running-process-on-androidarm/)
+	* [Executable Code Injection in Linux](http://www.i-programmer.info/programming/cc/3978-executable-code-injection-in-linux.html?start=1)
 
 ## TO DO
 
@@ -96,7 +119,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [ ] Open a pipe for the redirect_bin_output.exe and the forked binary
 * [ ] Allow input to pass from redirect_bin_output.exe along that pipe
 
-#### IDEAS:
+#### 3-3 IDEAS:
 * [ ] Duplicate a file desc and write to it twice, once for each file descriptor
 * [ ] Replace stdin with a different file descriptor (e.g., the read end of a pipe)
 * [X] Replace stdout with a different file descriptor (e.g., an actual open() file)
@@ -126,7 +149,7 @@ Developers will have an in-depth working knowledge of Linux Internals
 * [X] Call exec*
 * [X] Ignore the signals
 
-#### IDEAS:
+#### 3-4 IDEAS:
 
 * Program that registers a signal to handle, runs, and allows a user to communicate with it from the CLI via the kill command
 * Create a zombie process and then utilize Harkleproc.h to verify the process is a zombie (see: <EMPTY> cmdline file)
@@ -238,15 +261,44 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 
 * [X] See 4-User_Mode/Map_Memory.h 
 
-### 3-18 IDEAS
+### 3-18-1 Monaco Grand Prix Thread Racing
 
-* Kentucky Derby Process Racing
-	* Spawn a bunch of processes (horses)
-	* Send a signal to the process group to start (starting gun)
-	* Wait for the first process to finish (winner)
-	* Send a signal to the process group to stop (race is over) -or-
-	* Wait for the rest to finish (race is over)
-	* Visually report on the status of each horse (Mario Kart)
+#### Original List
+* [X] Spawn threads with dedicated pipes (F1)
+* [ ] Send a signal to the thread group to start (green light)
+* [X] Threads begin process something (ZOOM) to be determined later
+* [X] Main thread begins looping over pipes (track status)
+* [X] Main thread prints status w/ ncurses (track indicator)
+* [X] Continue until the first thread finishes 260.286 km / 161.734 mi (winner) 
+* [ ] Send a signal to the thread group to stop (race is over)
+* [X] Report on the race results
+
+#### Current Functionality
+
+* [X] Instantiates ncurses windows
+* [X] Plots an ellipse race track
+* [X] All windows are dynamically sized based on the terminal size
+* [X] Starts threads
+* [X] Adds them to the track
+* [X] Updates the status in the rank window
+* [X] Races the threads a certain number of laps
+* [X] Temporarily ignores any threads not on the same lap as the front-runner
+* [X] Reports on the results of the race
+
+### 3-18-2 Monaco Grand Prix Thread Racing (continued)
+
+* [ ] Color/bold formatting
+    * [ ] Winner on the track
+    * [ ] Winner in the rank window
+    * [ ] Window titles
+* [ ] Implement a signal as the "starting gun" for the thread group
+* [ ] Take CLI arguments to specify details of the race
+    * [ ] Number of threads
+    * [ ] Number of laps
+* [ ] More functional testing
+    * [ ] Oddly sized terminals
+    * [ ] Better error handling
+    * [ ] Better estimations of necessary sizes
 
 ### NOTES
 
