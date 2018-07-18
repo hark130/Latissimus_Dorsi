@@ -45,3 +45,13 @@ Developers will apply standard ___ techniques to Linux system programming
 * [X] Execute the new binary
 
 ### 4-5-3 (Inject into a running ELF)
+* [X] Accomplished in ../3-Internals Makefile recipe 3221 as injector.c
+
+### 4-6-1 (Shady Code Finder)
+* [ ] Detect entry point modification
+* [ ] Detect control flow hijacking
+* [ ] Identify parasite code
+* [ ] Check the dynamic segment for DLL injection
+* [ ] Identify reverse text padding infections
+* [ ] Identify text segment padding infections
+* [ ] Identify protected binaries
