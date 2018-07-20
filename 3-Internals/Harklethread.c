@@ -1,3 +1,4 @@
+#include <errno.h>			// errno
 #include <fcntl.h>				// O_NONBLOCK
 #include "Harklepipe.h"			// build_a_pipe(), HPIPE_READ, HPIPE_WRITE
 #include "Harklerror.h"			// HARKLE_ERROR()
@@ -273,7 +274,7 @@ int spawn_harklethread(hThrDetails_ptr babyThread)
 	// LOCAL VARIABLES
 	int retVal = 0;
 	bool success = true;
-	errNum = 0;
+	int errNum = 0;
 	errno = 0;
 
 	// INPUT VALIDATION
