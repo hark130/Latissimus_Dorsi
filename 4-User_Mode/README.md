@@ -29,6 +29,7 @@ Developers will apply standard ___ techniques to Linux system programming
 * [Modifying a Dynamic Library Without Changing the Source Code](http://www.linuxjournal.com/article/7795)
 * [Magic of LD_PRELOAD for Userland Rootkits](http://fluxius.handgrep.se/2011/10/31/the-magic-of-ld_preload-for-userland-rootkits/)
 * [Tutorial - Write a System Call](https://brennan.io/2016/11/14/kernel-dev-ep3/)... sounds like an idea?
+* [Reversing with IDA](https://jlospinoso.github.io/developing/software/software%20engineering/reverse%20engineering/assembly/2015/03/06/reversing-with-ida.html)
 
 ## TO DO
 
