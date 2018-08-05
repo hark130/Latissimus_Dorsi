@@ -2,8 +2,6 @@ use64
 ; syscall cdecl parameter: Arguments are pushed onto the call stack by the caller in right-to-left lexical order
 ; ssize_t write(int fd, const void *buf, size_t count);
 
-;SYS_WRITE	= 0x01
-
 nop
 nop
 nop
@@ -16,9 +14,9 @@ start:
 	push    40				; Push string length onto the stack
 	push    rsi 			; Push the string pointer onto the stack
 	push 	1		  		; Push stdout fd onto the stack
-	push    1				; Push syscall number onto the stack
+	mov     rax, 4			; Assign syscall number to rax
 	syscall					; Make the 'write' syscall
-	add esp, 32				; Clean up the stack
+	add esp, 24				; Clean up the stack
 ;	int3                    ; Software interrupt
 	
 message_ptr:
