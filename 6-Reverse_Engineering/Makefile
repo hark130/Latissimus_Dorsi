@@ -10,8 +10,12 @@ CC = g++
 6201: 
 	$(CC) -o 6201_basic_strings.exe 6201_basic_strings.cpp
 
+6202: 
+	$(CC) -o 6202_basic_strings_helper.exe 6202_basic_strings_helper.cpp
+
 all: 
-	$(MAKE) 201
+	$(MAKE) 6201
+	$(MAKE) 6202
 
 clean: 
 	rm -f *.o *.exe *.so
