@@ -14,20 +14,27 @@
 #include <stdbool.h>	// bool, true, false
 #include <string.h>
 
+
+void print_usage(void);
+
  
  int main(int argc, char* argv[])
  {
 	// LOCAL VARIABLES
 	bool success = true;  // If anything fails, set this to false
-	pidDetails_ptr* procPIDStructs = parse_proc_PID_structs();
-	pidDetails_ptr* temp_arr = procPIDStructs;
+	pidDetails_ptr *procPIDStructs = parse_proc_PID_structs();
+	pidDetails_ptr *temp_arr = procPIDStructs;
 	pidDetails_ptr tempStruct_ptr = NULL;  // Single struct from the array
 	dirDetails_ptr userPIDMapFiles = NULL;  // Return value from open_dir()
 	int pidNum = 0;  // Tracks PID count
-	char* userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
-	char* userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice
-	char** uniqueSymNames = NULL;  // Return value from parse_dirDetails_to_char_arr()
-	char** tempChar_arr = NULL;  // Iterating variable for uniqueSymNames
+	char *userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
+	char *userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice
+	char **uniqueSymNames = NULL;  // Return value from parse_dirDetails_to_char_arr()
+	char **tempChar_arr = NULL;  // Iterating variable for uniqueSymNames
+	char *newVerArgs[] = { "-v2", "--version2" };
+	bool newVer = false;  // Set this to true if newVerArgs makes a match with argv[2]
+	int i = 0;  // Iterating variable
+	char *pid_ptr = NULL;  // Store the appropriate PID pointer here
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -40,23 +47,66 @@
 
 	if (argc < 2)
 	{
-		fprintf(stderr, "\nToo few arguments!\nusage: print_PID_libraries.exe <PID>\n\n");
+		fprintf(stderr, "\nToo few arguments!\n");
+		print_usage();
 		success = false;
 	}
-	else if (argc > 2)
+	else if (2 == argc)
 	{
-		fprintf(stderr, "\nToo many arguments!\nusage: print_PID_libraries.exe <PID>\n\n");
-		success = false;
+		newVer = false;
+		pid_ptr = argv[1];
 	}
-	else if (false == is_it_a_PID(argv[1]))
+	else if (3 == argc)
 	{
-		fprintf(stderr, "\nInvalid PID!\nusage: print_PID_libraries.exe <PID>\nexample: print_PID_libraries.exe 1234\n\n");
-		success = false;
+		success = false;  // Check it after looping
+
+		for (i = 0; i < (sizeof(newVerArgs)/sizeof(*newVerArgs)); i++)
+		{
+			if (!strcmp(argv[1], (*(newVerArgs + i))))
+			{
+				success = true;  // Found a match
+				newVer = true;  // User wants the new version
+				break;  // Stop looking
+			}
+		}
+
+		if (false == success)
+		{
+			fprintf(stderr, "\nToo few arguments!\n");
+			print_usage();
+			success = false;
+		}
+		else
+		{
+			pid_ptr = argv[2];
+		}
 	}
 	else
 	{
+		fprintf(stderr, "\nToo many arguments!\n");
+		print_usage();
+		success = false;
+	}
+
+	// Check the PID
+	if (true == success && false == newVer && false == is_it_a_PID(pid_ptr))
+	{
+		fprintf(stderr, "\nInvalid PID!\n");
+		fprintf(stderr, "example: print_PID_libraries.exe 1234\n");
+		print_usage();
+		success = false;
+	}
+	else if (true == success && true == newVer && false == is_it_a_PID(pid_ptr))
+	{
+		fprintf(stderr, "\nInvalid PID!\n");
+		fprintf(stderr, "example: print_PID_libraries.exe 1234\n");
+		print_usage();
+		success = false;
+	}
+	else if (true == success)
+	{
 		// Create absolute path of PID
-		userProcPID = make_PID_into_proc(argv[1]);
+		userProcPID = make_PID_into_proc(pid_ptr);
 
 		if (!userProcPID)
 		{
@@ -210,3 +260,13 @@
 	return 0;
  }
  
+
+void print_usage(void)
+{
+	fprintf(stderr, "usage: print_PID_libraries.exe <PID>\n");
+	fprintf(stderr, "usage: print_PID_libraries.exe -v2 <PID>\n");
+	fprintf(stderr, "usage: print_PID_libraries.exe --version2 <PID>\n\n");
+
+	return;
+}
+
