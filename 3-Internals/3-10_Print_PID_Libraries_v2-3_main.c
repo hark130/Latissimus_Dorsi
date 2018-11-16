@@ -99,7 +99,7 @@ void print_usage(void);
 	else if (true == success && true == newVer && false == is_it_a_PID(pid_ptr))
 	{
 		fprintf(stderr, "\nInvalid PID!\n");
-		fprintf(stderr, "example: print_PID_libraries.exe 1234\n");
+		fprintf(stderr, "example: print_PID_libraries.exe -v2 1234\n");
 		print_usage();
 		success = false;
 	}
