@@ -239,7 +239,13 @@ NOTE:  Big shoutout to ```strace``` for showing me the sudo error that was being
 
 **NOTE:** This is a continuation of 3-10-2
 
+* [X] Parse arguments to determine version/usage
+* [ ] Determine binary name (/proc/PID/cmdline or /proc/PID/exe)
+* [ ] Determine working directory of binary (/proc/PID/cwd, /proc/PID/environ, or /proc/PID/exe)
+* [ ] OR... determine where the binary is mapped into memory and parse it there
 * [ ] Parse the ELF of a PID's application to determine "NEEDED" libraries
+* [ ] Print the DT_NEEDED
+* [ ] THEN roll into version 1 functionality
 * [ ] Allow the user to visually compare the differences
 
 ### 3-10-4
