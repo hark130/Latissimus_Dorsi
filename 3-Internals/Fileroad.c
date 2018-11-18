@@ -1497,6 +1497,47 @@ char* clean_filename(char* dirtyFile, bool inPlace)
 }
 
 
+char *resolve_symlink(char *symlinkName)
+{
+	// LOCAL VARIABLES
+	char *retVal = NULL;
+
+	// TEMP NOTES
+	/*
+The readlink() function that has been mentioned is part of the answer. However, you should be
+aware of its horrid interface (it does not null terminate the response string!).
+You might also want to look at the realpath() function, the use of which was discussed in
+SO 1563186. You could also look at the code for 'linkpath' at the IIUG Software Archive. It
+analyzes the security of all the directories encountered as a symbolic link is resolved - it
+uses readlink() and lstat() and stat(); one of the checks when testing the program was to ensure
+that realpath() resolved the name to the same file.
+
+char *readlink_malloc (const char *filename)
+{
+  int size = 100;
+  char *buffer = NULL;
+
+  while (1)
+    {
+      buffer = (char *) xrealloc (buffer, size);
+      int nchars = readlink (filename, buffer, size);
+      if (nchars < 0)
+        {
+          free (buffer);
+          return NULL;
+        }
+      if (nchars < size)
+        return buffer;
+      size *= 2;
+    }
+}
+	 */
+
+	// DONE
+	return retVal;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FILE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

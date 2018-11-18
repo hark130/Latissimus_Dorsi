@@ -291,6 +291,22 @@ bool rewind_a_file_desc(int fileDesc, int* errNum);
 char* clean_filename(char* dirtyFile, bool inPlace);
 
 
+/*
+	Purpose - Resolve a symbolic link into a dynamically allocated buffer
+	Input
+		symlinkName - C string representing a symbolic link
+	Output
+		On success - Symbolic link resolution stored in a dynamically sized
+			buffer allocated in heap memory
+		On failure, NULL
+	Notes:
+		Attempts to determine necessary size by using lstat to get stat.st_size value
+		Will continue to allocate memory until buffer size large enough
+		Does *not* rely on PATH_MAX
+ */
+char *resolve_symlink(char *symlinkName);
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// FILE FUNCTIONS STOP /////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
