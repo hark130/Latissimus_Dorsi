@@ -1,4 +1,5 @@
 #include "ELFleroad.h"
+#include "Harklerror.h"
 
 bool is_elf(char *filename)
 {
@@ -10,6 +11,10 @@ bool is_elf(char *filename)
 	{
 		// CHECK FILE	
 	}	
+	else
+	{
+		HARKLE_ERROR(ELFleroad, is_elf, Bad input);
+	}
 
 	// DONE
 	return retVal;
