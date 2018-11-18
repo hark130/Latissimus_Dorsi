@@ -300,7 +300,6 @@ char* clean_filename(char* dirtyFile, bool inPlace);
 			buffer allocated in heap memory
 		On failure, NULL
 	Notes:
-		Attempts to determine necessary size by using lstat to get stat.st_size value
 		Will continue to allocate memory until buffer size large enough
 		Does *not* rely on PATH_MAX
  */
