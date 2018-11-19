@@ -9,7 +9,7 @@
 #include <sys/stat.h>							// open()
 
 
-void *map_file(char *filename)
+void *map_file(char *filename, size_t *memSize_ptr)
 {
 	// LOCAL VARIABLES
 	void *retVal = NULL;
@@ -18,7 +18,7 @@ void *map_file(char *filename)
 	int errNum = 0;  // Store errno here
 	
 	// INPUT VALIDATION
-	if (filename && *filename)
+	if (filename && *filename && memSize_ptr)
 	{
 		// MAP IT
 		// 1. Get file descriptor
@@ -43,6 +43,8 @@ void *map_file(char *filename)
 				}
 				else
 				{
+					*memSize_ptr = fileStat.st_size;
+					
 					retVal = mmap(NULL, fileStat.st_size, PROT_READ, MAP_SHARED, fileDesc, 0);
 					
 					if (!retVal || MAP_FAILED == retVal)
