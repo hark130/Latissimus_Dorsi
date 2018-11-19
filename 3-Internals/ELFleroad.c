@@ -1,3 +1,4 @@
+#include <elf.h>
 #include "ELFleroad.h"
 #include <errno.h>								// errno
 #include <fcntl.h>								// O_RDONLY
@@ -81,6 +82,41 @@ bool is_elf(void *fileCont)
 		HARKLE_ERROR(ELFleroad, is_elf, Bad input);
 	}
 
+	// DONE
+	return retVal;
+}
+
+
+int determine_elf_class(void *fileCont)
+{
+	// LOCAL VARIABLES
+	int retVal = -1;
+	char *tmp_ptr = (char *)fileCont;
+	
+	// INPUT VALIDATION
+	if (fileCont && *fileCont)
+	{
+		if (false == is_elf(fileCont))
+		{
+			retVal = ELFCLASSNONE;	
+		}
+		else
+		{
+			// READ IT
+			retVal = (int)(tmp_ptr[4]);
+			
+			// VALIDATE IT
+			if (ELFCLASSNONE != retVal && ELFCLASS32 != retVal && ELFCLASS64 != retVal)
+			{
+				retVal = -1;	
+			}
+		}
+	}
+	else
+	{
+		HARKLE_ERROR(ELFleroad, determine_elf_class, Bad input);	
+	}
+	
 	// DONE
 	return retVal;
 }
