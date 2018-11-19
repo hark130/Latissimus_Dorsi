@@ -84,3 +84,45 @@ bool is_elf(void *fileCont)
 	// DONE
 	return retVal;
 }
+
+
+bool unmap_file(void **oldMem_ptr, size_t memSize)
+{
+	// LOCAL VARIABLES
+	bool retVal = false;
+	int errNum = 0;  // Store errno here
+	void *tmp_ptr = NULL;  // Store *oldMem_ptr here
+	
+	// INPUT VALIDATION
+	if (!oldMem_ptr)
+	{
+		HARKLE_ERROR(ELFleroad, unmap_file, NULL pointer);
+	}
+	else if (0 >= memSize)
+	{
+		HARKLE_ERROR(ELFleroad, unmap_file, Invalid memory size);
+	}
+	else
+	{
+		tmp_ptr = *oldMem_ptr;
+		
+		if (!tmp_ptr)
+		{
+			HARKLE_ERROR(ELFleroad, unmap_file, NULL mapped pointer);
+		}
+		else
+		{
+			if (munmap(tmp_ptr, memSize))
+			{
+				errNum = errno;
+				HARKLE_ERROR(ELFleroad, unmap_file, munmap failed);
+				HARKLE_ERRNO(ELFleroad, munmap, errNum);
+			}
+			else
+			{
+				*oldMem_ptr = NULL;
+				retVal = true;
+			}
+		}
+	}
+}
