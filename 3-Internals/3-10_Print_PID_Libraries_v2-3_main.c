@@ -7,6 +7,7 @@
 	This source is the culmination of all the work completed on 3-10-2.
  */
 
+#include <elf.h>
 #include "Fileroad.h"
 #include "Harkledir.h"
 #include "Harkleproc.h"
@@ -42,6 +43,7 @@ void print_usage(void);
 	char *realExe_ptr = NULL;  // Resolved symlink of /proc/PID/exe
 	void *mappedElf_ptr = NULL;  // Map the realExe_ptr here
 	size_t mappedElfSize = 0;  // Store the size of realExe_ptr here
+	int elfClass = 0;  // Store the ELF class here
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -270,14 +272,30 @@ void print_usage(void);
 			}
 			else
 			{
-				fprintf(stdout, "%s is an ELF\n", realExe_ptr);  // DEBUGGING	
+				fprintf(stdout, "%s is an ELF\n", realExe_ptr);  // DEBUGGING
 			}
 		}
 		
 		// PLACEHOLDER
 		if (true == success)
 		{
-			// IMPLEMENT LATER
+			elfClass = determine_elf_class(mappedElf_ptr);
+			if (ELFCLASSNONE == elfClass)
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, /proc/PID/exe is not an ELF?!);
+			}
+			else if (ELFCLASS32 == elfClass)
+			{
+				fprintf(stderr, "Unable to currently support 32-bit ELF files\n");  // DEBUGGING
+			}
+			else if (ELFCLASS64 != elfClass)
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, Unknown ELF class);
+			}
+			else
+			{
+				fprintf(stdout, "Parsing 64-bit ELF file\n");  // DEBUGGING
+			}
 		}
 		
 		// PLACEHOLDER
