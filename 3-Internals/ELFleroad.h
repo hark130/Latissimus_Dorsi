@@ -34,4 +34,15 @@ void *map_file(char *filename);
 bool is_elf(void *fileCont);
 
 
+/*
+	PURPOSE - Unmap a file
+	INPUT
+		oldMem_ptr - Pointer the variable holding the old pointer
+	OUTPUT
+		On success, true
+		On failure, false
+ */
+bool unmap_file(void **oldMem_ptr);
+
+
 #endif  // __ELFEROAD__
