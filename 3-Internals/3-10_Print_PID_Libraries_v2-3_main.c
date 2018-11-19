@@ -2,16 +2,18 @@
 	This source code's entire purprose is to:
 		Take a PID as an argument
 		Print the libraries opened by that PID
+	Version 2:
+		Also parse the original ELF to print the libraries
 	This source is the culmination of all the work completed on 3-10-2.
  */
 
 #include "Fileroad.h"
 #include "Harkledir.h"
 #include "Harkleproc.h"
-#include "Harklerror.h"	// HARKLE_ERROR
+#include "Harklerror.h"								// HARKLE_ERROR
 #include "Memoroad.h"
 #include <stdio.h>
-#include <stdbool.h>	// bool, true, false
+#include <stdbool.h>								// bool, true, false
 #include <string.h>
 
 
@@ -28,13 +30,18 @@ void print_usage(void);
 	dirDetails_ptr userPIDMapFiles = NULL;  // Return value from open_dir()
 	int pidNum = 0;  // Tracks PID count
 	char *userProcPID = NULL;  // Will hold char* holding /proc/<PID>/ built from user's choice
-	char *userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice
+	char *userProcPIDMapFiles = NULL;  // Will hold char* with user's /proc/<PID>/map_files/ choice	
 	char **uniqueSymNames = NULL;  // Return value from parse_dirDetails_to_char_arr()
 	char **tempChar_arr = NULL;  // Iterating variable for uniqueSymNames
 	char *newVerArgs[] = { "-v2", "--version2" };
 	bool newVer = false;  // Set this to true if newVerArgs makes a match with argv[2]
 	int i = 0;  // Iterating variable
 	char *pid_ptr = NULL;  // Store the appropriate PID pointer here
+	// Version 2
+	char *userProcPIDExe = NULL;  // /proc/PID/exe
+	char *realExe_ptr = NULL;  // Resolved symlink of /proc/PID/exe
+	void *mappedElf_ptr = NULL;  // Map the realExe_ptr here
+	size_t mappedElfSize = 0;  // Store the size of realExe_ptr here
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -201,6 +208,96 @@ void print_usage(void);
 	{
 		fprintf(stdout, "\n%s does not have any files loaded.\n\n", userProcPID);
 	}
+	 
+	// VERSION 2
+	if (true == newVer)
+	{
+		// Build path to /proc/PID/exe
+		if (true == success)
+		{
+			userProcPIDExe = os_path_join(userProcPID, "exe", true);
+
+			if (!userProcPIDExe)
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, os_path_join failed to build /proc/PID/exe);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "/proc/PID/exe:\t%s\n", userProcPIDExe);  // DEBUGGING	
+			}
+		}
+
+		// Resolve /proc/PID/exe symlink
+		if (true == success)
+		{
+			realExe_ptr = resolve_symlink(userProcPIDExe);
+
+			if (!realExe_ptr)
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, resolve_symlink failed);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "/proc/PID/exe symlink:\t%s\n", realExe_ptr);  // DEBUGGING	
+			}
+		}
+		
+		// Map that symlink to memory
+		if (true == success)
+		{
+			mappedElf_ptr = map_file(realExe_ptr, &mappedElfSize);
+			
+			if (!mappedElf_ptr)
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, map_file failed);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "%p contains %zu bytes\n", mappedElf_ptr, mappedElfSize);  // DEBUGGING	
+			}
+		}
+		
+		// Verify it's an ELF
+		if (true == success)
+		{
+			if (false == is_elf(mappedElf_ptr))
+			{
+				HARKLE_ERROR(print_PID_libraries_v2, main, /proc/PID/exe is not an ELF);
+				success = false;
+			}
+			else
+			{
+				fprintf(stdout, "%s is an ELF\n", realExe_ptr);  // DEBUGGING	
+			}
+		}
+		
+		// PLACEHOLDER
+		if (true == success)
+		{
+			// IMPLEMENT LATER
+		}
+		
+		// PLACEHOLDER
+		if (true == success)
+		{
+			// IMPLEMENT LATER
+		}
+		
+		// PLACEHOLDER
+		if (true == success)
+		{
+			// IMPLEMENT LATER
+		}
+		
+		// PLACEHOLDER
+		if (true == success)
+		{
+			// IMPLEMENT LATER
+		}		
+	}
 
 	// CLEAN UP
 	// 1. procPIDStructs
@@ -253,7 +350,33 @@ void print_usage(void);
 			// fprintf(stderr, "\n<<<ERROR>>> - print_PID_libraries - free_char_arr has failed!\n\n");
 		}
 	}
-
+	 
+	// VERSION 2
+	// userProcPIDExe
+	if (userProcPIDExe)
+	{
+		if (false == free_char_arr(&userProcPIDExe))
+		{
+			HARKLE_ERROR(print_PID_libraries_v2, main, free_char_arr has failed);
+		}
+	}
+	// realExe_ptr
+	if (realExe_ptr)
+	{
+		if (false == free_char_arr(&realExe_ptr))
+		{
+			HARKLE_ERROR(print_PID_libraries_v2, main, free_char_arr has failed);
+		}
+	}
+	// mappedElf_ptr
+	if (mappedElf_ptr)
+	{
+		if (false == unmap_file(&mappedElf_ptr, mappedElfSize))
+		{
+			HARKLE_ERROR(print_PID_libraries_v2, main, unmap_file has failed);
+		}
+	}
+	 
 	fprintf(stdout, "\n");
 
 	// DONE
