@@ -1,6 +1,8 @@
 #include "ELFleroad.h"
 #include "Fileroad.h"
 #include "Harklerror.h"
+#include <string.h>								// strstr()
+
 
 bool is_elf(char *filename)
 {
@@ -19,7 +21,7 @@ bool is_elf(char *filename)
 		{
 			if (*fileCont)
 			{
-				if (!strcmp(fileCont, magicNum))
+				if (fileCont == strstr(fileCont, magicNum))
 				{
 					retVal = true;	
 				}
