@@ -26,12 +26,12 @@ void *map_file(char *filename);
 /*
 	PURPOSE - Check a file for the ELF Magic Number
 	INPUT
-		filename - C String to a relative or absolute file
+		fileCont - Pointer to a read-only file mapping
 	OUTPUT
 		true if is in ELF format
 		Otherwise, false
  */
-bool is_elf(char *filename);
+bool is_elf(void *fileCont);
 
 
 #endif  // __ELFEROAD__
