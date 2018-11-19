@@ -12,6 +12,18 @@
 
 
 /*
+	PURPOSE - Map a file into read-only memory
+	INPUT
+		filename - C String to a relative or absolute file
+	OUTPUT
+		On success, pointer to filename's file mapping
+	NOTES
+		Utilizes mmap()
+ */
+void *map_file(char *filename);
+
+
+/*
 	PURPOSE - Check a file for the ELF Magic Number
 	INPUT
 		filename - C String to a relative or absolute file
