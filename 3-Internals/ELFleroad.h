@@ -35,6 +35,20 @@ bool is_elf(void *fileCont);
 
 
 /*
+	PURPOSE - Determine if the mapped file is a 32-bit ELF or 64-bit ELF
+	INPUT
+		fileCont - Pointer to a read-only file mapping
+	OUTPUT
+		On success:
+			ELFCLASSNONE if fileCont is not an ELF file
+			ELFCLASS32 if fileCont is a 32-bit ELF file
+			ELFCLASS64 if fileCont is a 64-bit ELF file
+		On failure, -1
+ */
+int determine_elf_class(void *fileCont);
+
+
+/*
 	PURPOSE - Unmap a file
 	INPUT
 		oldMem_ptr - Pointer the variable holding the old pointer
