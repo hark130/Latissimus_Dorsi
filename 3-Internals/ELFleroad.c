@@ -61,32 +61,19 @@ void *map_file(char *filename)
 }
 
 
-bool is_elf(char *filename)
+bool is_elf(void *fileCont)
 {
 	// LOCAL VARIABLES
 	bool retVal = false;
-	char *fileCont = NULL;
 	char magicNum[] = { 0x7F, 'E', 'L', 'F', 0x0 };
 
 	// INPUT VALIDATION
-	if (filename && *filename)
+	if (fileCont && *fileCont)
 	{
 		// CHECK FILE
-		fileCont = fread_a_file(filename);
-		
-		if (fileCont)
+		if (fileCont == strstr(fileCont, magicNum))
 		{
-			if (*fileCont)
-			{
-				if (fileCont == strstr(fileCont, magicNum))
-				{
-					retVal = true;	
-				}
-			}
-		}
-		else
-		{
-			HARKLE_ERROR(ELFleroad, is_elf, fread_a_file failed to read a file);
+			retVal = true;	
 		}
 	}	
 	else
