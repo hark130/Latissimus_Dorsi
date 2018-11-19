@@ -15,13 +15,13 @@
 	PURPOSE - Map a file into read-only memory
 	INPUT
 		filename - C String to a relative or absolute file
-		memSize [out] - Size of the mapped memory
+		memSize_ptr [out] - Size of the mapped memory
 	OUTPUT
 		On success, pointer to filename's file mapping
 	NOTES
 		Utilizes mmap()
  */
-void *map_file(char *filename, size_t *memSize);
+void *map_file(char *filename, size_t *memSize_ptr);
 
 
 /*
