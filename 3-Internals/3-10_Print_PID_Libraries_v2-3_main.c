@@ -8,13 +8,14 @@
  */
 
 #include <elf.h>
+#include "ELFleroad.h"
 #include "Fileroad.h"
 #include "Harkledir.h"
 #include "Harkleproc.h"
 #include "Harklerror.h"								// HARKLE_ERROR
 #include "Memoroad.h"
-#include <stdio.h>
 #include <stdbool.h>								// bool, true, false
+#include <stdio.h>
 #include <string.h>
 
 
@@ -38,6 +39,7 @@ void print_usage(void);
 	bool newVer = false;  // Set this to true if newVerArgs makes a match with argv[2]
 	int i = 0;  // Iterating variable
 	char *pid_ptr = NULL;  // Store the appropriate PID pointer here
+	int errNum = 0;  // Store errno here
 	// Version 2
 	char *userProcPIDExe = NULL;  // /proc/PID/exe
 	char *realExe_ptr = NULL;  // Resolved symlink of /proc/PID/exe
@@ -236,11 +238,12 @@ void print_usage(void);
 		// Resolve /proc/PID/exe symlink
 		if (true == success)
 		{
-			realExe_ptr = resolve_symlink(userProcPIDExe);
+			realExe_ptr = resolve_symlink(userProcPIDExe, &errNum);
 
 			if (!realExe_ptr)
 			{
 				HARKLE_ERROR(print_PID_libraries_v2, main, resolve_symlink failed);
+				HARKLE_ERRNO(print_PID_libraries_v2, resolve_symlink, errNum);
 				success = false;
 			}
 			else
@@ -378,17 +381,17 @@ void print_usage(void);
 	// userProcPIDExe
 	if (userProcPIDExe)
 	{
-		if (false == free_char_arr(&userProcPIDExe))
+		if (false == release_a_string(&userProcPIDExe))
 		{
-			HARKLE_ERROR(print_PID_libraries_v2, main, free_char_arr has failed);
+			HARKLE_ERROR(print_PID_libraries_v2, main, release_a_string has failed);
 		}
 	}
 	// realExe_ptr
 	if (realExe_ptr)
 	{
-		if (false == free_char_arr(&realExe_ptr))
+		if (false == release_a_string(&realExe_ptr))
 		{
-			HARKLE_ERROR(print_PID_libraries_v2, main, free_char_arr has failed);
+			HARKLE_ERROR(print_PID_libraries_v2, main, release_a_string has failed);
 		}
 	}
 	// mappedElf_ptr
