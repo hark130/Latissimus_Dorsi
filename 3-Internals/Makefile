@@ -44,14 +44,13 @@ PMP = ../../proc_maps_parser/
 	$(CC) -o print_PID_libraries_v1.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Print_PID_Libraries-2_main.o
 
 3103:
+	$(CC) -c ELFleroad.c
 	$(CC) -c Harkledir.c
 	$(CC) -c Harkleproc.c
 	$(CC) -c Memoroad.c
 	$(CC) -c Fileroad.c
-	$(CC) -c 3-10_Proc_Walk-2_main.c
-	$(CC) -o 3-10_Proc_Walk-2_main.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Proc_Walk-2_main.o
 	$(CC) -c 3-10_Print_PID_Libraries_v2-3_main.c
-	$(CC) -o print_PID_libraries_v2.exe Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Print_PID_Libraries_v2-3_main.o
+	$(CC) -o print_PID_libraries_v2.exe ELFleroad.o Harkledir.o Harkleproc.o Memoroad.o Fileroad.o 3-10_Print_PID_Libraries_v2-3_main.o
 
 3181:
 	$(CC) -c Fileroad.c
