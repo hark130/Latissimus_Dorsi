@@ -303,7 +303,7 @@ char* clean_filename(char* dirtyFile, bool inPlace);
 		Will continue to allocate memory until buffer size large enough
 		Does *not* rely on PATH_MAX
  */
-char *resolve_symlink(char *symlinkName);
+// char *resolve_symlink(char *symlinkName);
 
 
 //////////////////////////////////////////////////////////////////////////////

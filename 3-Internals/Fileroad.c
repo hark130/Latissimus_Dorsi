@@ -1497,34 +1497,34 @@ char* clean_filename(char* dirtyFile, bool inPlace)
 }
 
 
-char *resolve_symlink(char *symlinkName)
-{
-	// LOCAL VARIABLES
-	char *retVal = NULL;
-	int errNum = 0;
+// char *resolve_symlink(char *symlinkName)
+// {
+// 	// LOCAL VARIABLES
+// 	char *retVal = NULL;
+// 	int errNum = 0;
 
-	// INPUT VALIDATION
-	if (symlinkName && *symlinkName)
-	{
-		// REALPATH
-		errno = 0;  // Reset errno
-		retVal = realpath(symlinkName, NULL);
+// 	// INPUT VALIDATION
+// 	if (symlinkName && *symlinkName)
+// 	{
+// 		// REALPATH
+// 		errno = 0;  // Reset errno
+// 		retVal = realpath(symlinkName, NULL);
 
-		if (!retVal)
-		{
-			errNum = errno;
-			HARKLE_ERROR(Fileroad, realpath, Failed to succeed);  // DEBUGGING
-			HARKLE_ERRNO(Fileroad, realpath, errNum);  // DEBUGGING
-		}
-	}
-	else
-	{
-		HARKLE_ERROR(Fileroad, resolve_symlink, Bad input);  // DEBUGGING
-	}
+// 		if (!retVal)
+// 		{
+// 			errNum = errno;
+// 			HARKLE_ERROR(Fileroad, realpath, Failed to succeed);  // DEBUGGING
+// 			HARKLE_ERRNO(Fileroad, realpath, errNum);  // DEBUGGING
+// 		}
+// 	}
+// 	else
+// 	{
+// 		HARKLE_ERROR(Fileroad, resolve_symlink, Bad input);  // DEBUGGING
+// 	}
 
-	// DONE
-	return retVal;
-}
+// 	// DONE
+// 	return retVal;
+// }
 
 
 //////////////////////////////////////////////////////////////////////////////
