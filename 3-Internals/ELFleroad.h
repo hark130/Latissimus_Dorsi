@@ -4,11 +4,12 @@
 		helper functions/structs.  Here, we're doing it live!
  */
 
-#ifndef __ELFEROAD__
-#define __ELFEROAD__
+#ifndef __ELFLEROAD__
+#define __ELFLEROAD__
 
 #include <elf.h>
 #include <stdbool.h>							// bool, true, false
+#include <stdlib.h>								// size_t
 
 
 /*
@@ -53,11 +54,12 @@ int determine_elf_class(void *fileCont);
 	PURPOSE - Unmap a file
 	INPUT
 		oldMem_ptr - Pointer the variable holding the old pointer
+		memSize - Size of the memory mapped file to free
 	OUTPUT
 		On success, true
 		On failure, false
  */
-bool unmap_file(void **oldMem_ptr);
+bool unmap_file(void **oldMem_ptr, size_t memSize);
 
 
-#endif  // __ELFEROAD__
+#endif  // __ELFLEROAD__
