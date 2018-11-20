@@ -44,6 +44,9 @@ void print_usage(void);
 	void *mappedElf_ptr = NULL;  // Map the realExe_ptr here
 	size_t mappedElfSize = 0;  // Store the size of realExe_ptr here
 	int elfClass = 0;  // Store the ELF class here
+	Elf64_Ehdr *elfEhdr_ptr = NULL;  // Pointer to a 64-bit ELF header
+	Elf64_Phdr *elfPhdr_ptr = NULL;  // Pointer to a 64-bit ELF Program header
+	Elf64_Shdr *elfShdr_ptr = NULL;  // Pointer to a 64-bit ELF Section header
 
 	// INPUT VALIDATION
 	// procPIDStructs
@@ -280,6 +283,7 @@ void print_usage(void);
 		if (true == success)
 		{
 			elfClass = determine_elf_class(mappedElf_ptr);
+			
 			if (ELFCLASSNONE == elfClass)
 			{
 				HARKLE_ERROR(print_PID_libraries_v2, main, /proc/PID/exe is not an ELF?!);
@@ -295,6 +299,7 @@ void print_usage(void);
 			else
 			{
 				fprintf(stdout, "Parsing 64-bit ELF file\n");  // DEBUGGING
+				elfEhdr_ptr = (Elf64_Ehdr *)mappedElf_ptr;
 			}
 		}
 		
