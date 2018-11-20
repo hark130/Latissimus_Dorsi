@@ -22,11 +22,13 @@ void *map_file(char *filename, size_t *memSize_ptr)
 	{
 		// MAP IT
 		// 1. Get file descriptor
-		fileDes = open(filename, O_RDONLY);
+		fileDesc = open(filename, O_RDONLY);
 		
 		if (0 > fileDesc)
 		{
-			HARKLE_ERROR(ELFleroad, map_file, Unable to open filename);	
+			errNum = errno;
+			HARKLE_ERROR(ELFleroad, map_file, Unable to open filename);
+			HARKLE_ERRNO(ELFleroad, open, errNum);
 		}
 		else
 		{
@@ -69,12 +71,13 @@ bool is_elf(void *fileCont)
 	// LOCAL VARIABLES
 	bool retVal = false;
 	char magicNum[] = { 0x7F, 'E', 'L', 'F', 0x0 };
+	char *tmp_ptr = (char *)fileCont;
 
 	// INPUT VALIDATION
-	if (fileCont && *fileCont)
+	if (tmp_ptr && *tmp_ptr)
 	{
 		// CHECK FILE
-		if (fileCont == strstr(fileCont, magicNum))
+		if (tmp_ptr == strstr(tmp_ptr, magicNum))
 		{
 			retVal = true;	
 		}
@@ -96,7 +99,7 @@ int determine_elf_class(void *fileCont)
 	char *tmp_ptr = (char *)fileCont;
 	
 	// INPUT VALIDATION
-	if (fileCont && *fileCont)
+	if (tmp_ptr && *tmp_ptr)
 	{
 		if (false == is_elf(fileCont))
 		{
@@ -150,7 +153,7 @@ bool unmap_file(void **oldMem_ptr, size_t memSize)
 		}
 		else
 		{
-			if (munmap(tmp_ptr, memSize))
+			if (0 != munmap(tmp_ptr, memSize))
 			{
 				errNum = errno;
 				HARKLE_ERROR(ELFleroad, unmap_file, munmap failed);
@@ -163,4 +166,7 @@ bool unmap_file(void **oldMem_ptr, size_t memSize)
 			}
 		}
 	}
+
+	// DONE
+	return retVal;
 }
