@@ -51,6 +51,16 @@ int determine_elf_class(void *fileCont);
 
 
 /*
+	PURPOSE - Get a pointer to the start of the program header table
+	INPUT
+		fileCont - Pointer to a read-only file mapping
+	OUTPUT
+		On success, a pointer into fileCont
+ */
+Elf64_Phdr *get_prgrm_hdr_64_start(void *fileCont);
+
+
+/*
 	PURPOSE - Unmap a file
 	INPUT
 		oldMem_ptr - Pointer the variable holding the old pointer
