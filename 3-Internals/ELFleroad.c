@@ -127,6 +127,36 @@ int determine_elf_class(void *fileCont)
 }
 
 
+Elf64_Phdr *get_prgrm_hdr_64_start(void *fileCont)
+{
+	// LOCAL VARIABLES
+	Elf64_Phdr *retVal = NULL;
+	Elf64_Ehdr *tmp_ptr = fileCont;
+	
+	// INPUT VALIDATION
+	if (!fileCont)
+	{
+		HARKLE_ERROR(ELFleroad, get_prgrm_hdr_64_start, NULL pointer);
+	}
+	else if (false == is_elf(fileCont))
+	{
+		HARKLE_ERROR(ELFleroad, get_prgrm_hdr_64_start, Not an ELF);
+	}
+	else if (ELFCLASS64 != determine_elf_class(fileCont))
+	{
+		HARKLE_ERROR(ELFleroad, get_prgrm_hdr_64_start, Not a 64-bit ELF);
+	}
+	else
+	{
+		// FIND OFFSET
+		retVal = (Elf64_Phdr *)(fileCont + tmp_ptr->e_phoff);
+	}
+	
+	// DONE
+	return retVal;
+}
+
+
 bool unmap_file(void **oldMem_ptr, size_t memSize)
 {
 	// LOCAL VARIABLES
