@@ -282,7 +282,7 @@ void print_usage(void);
 			}
 		}
 		
-		// PLACEHOLDER
+		// Determine ELF Class
 		if (true == success)
 		{
 			elfClass = determine_elf_class(mappedElf_ptr);
